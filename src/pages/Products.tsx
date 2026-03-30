@@ -127,7 +127,7 @@ export default function Products() {
         <div className="sticky top-[72px] z-30 bg-white border-b border-gray-100 shadow-sm">
           <div className="max-w-7xl mx-auto px-6 md:px-12 flex items-center gap-4 py-3">
             {/* Tabs - scrollable */}
-            <div className="flex items-center gap-0 overflow-x-auto scrollbar-hide flex-1">
+            <div className="flex items-center gap-0 overflow-x-auto flex-1 pb-2">
               {TABS.map(tab => (
                 <button
                   key={tab.id}
