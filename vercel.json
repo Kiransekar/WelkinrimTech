@@ -1,5 +1,5 @@
 {
-  "installCommand": "cd Propulsion-Systems-Landing && pnpm install",
+  "installCommand": "corepack enable && cd Propulsion-Systems-Landing && pnpm install --no-frozen-lockfile",
   "buildCommand": "cd Propulsion-Systems-Landing/artifacts/landing-page && npx vite build --config vite.config.ts",
   "outputDirectory": "Propulsion-Systems-Landing/artifacts/landing-page/dist/public",
   "framework": null,
