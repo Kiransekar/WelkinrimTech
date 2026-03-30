@@ -1,7 +1,6 @@
 {
-  "installCommand": "cd Propulsion-Systems-Landing/artifacts/landing-page && npm install --legacy-peer-deps",
-  "buildCommand": "cd Propulsion-Systems-Landing/artifacts/landing-page && npx vite build --config vite.config.ts",
-  "outputDirectory": "Propulsion-Systems-Landing/artifacts/landing-page/dist/public",
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
   "framework": null,
   "rewrites": [
     { "source": "/(.*)", "destination": "/index.html" }

@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cp -r E:/Aneesh/UBUNTU/Projects/WelkinrimTech/Propulsion-Systems-Landing/artifacts/landing-page/public/* E:/Aneesh/UBUNTU/Projects/WelkinrimTech/public/)"
+    ]
+  }
+}
