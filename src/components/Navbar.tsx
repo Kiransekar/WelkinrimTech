@@ -97,14 +97,20 @@ export default function Navbar() {
     }
   };
 
-  const goToProducts = () => {
+  const goToProducts = (categoryId?: string) => {
     setMenuOpen(false);
     setMegaOpen(false);
-    navigate("/products");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    // Set hash first, then navigate
+    const newHash = categoryId || "";
+    window.location.hash = newHash;
+    // Force a small delay to ensure hashchange fires before navigate
+    setTimeout(() => navigate("/products"), 10);
   };
 
   const goToProduct = (id: string) => {
     setMegaOpen(false);
+    window.scrollTo({ top: 0, behavior: "smooth" });
     navigate(`/products/${id}`);
   };
 
@@ -247,7 +253,7 @@ export default function Navbar() {
                   <button
                     key={cat.id}
                     onMouseEnter={() => setActiveCategory(cat.id)}
-                    onClick={goToProducts}
+                    onClick={() => goToProducts(cat.id)}
                     className={`flex items-center gap-3 px-3 py-3 rounded-sm text-left transition-all duration-200 group ${
                       activeCategory === cat.id ? "bg-[#FFCC00]/10 text-black" : "text-[#444] hover:bg-gray-50"
                     }`}
@@ -279,7 +285,7 @@ export default function Navbar() {
                   <p className="text-xs text-[#444] mt-0.5">{activeCat.tagline}</p>
                 </div>
                 <button
-                  onClick={goToProducts}
+                  onClick={() => goToProducts(activeCategory)}
                   className="text-[10px] text-[#FFCC00] hover:text-black tracking-widest uppercase transition-colors duration-200 flex items-center gap-1"
                   style={{ fontFamily: "Michroma, sans-serif" }}
                 >
@@ -312,7 +318,7 @@ export default function Navbar() {
                 ))}
                 {activeCat.products.length > 4 && (
                   <button
-                    onClick={goToProducts}
+                    onClick={() => goToProducts(activeCategory)}
                     className="border border-dashed border-gray-200 hover:border-[#FFCC00] p-3 flex flex-col items-center justify-center gap-2 group transition-all duration-200"
                   >
                     <div className="w-8 h-8 rounded-full bg-gray-100 group-hover:bg-[#FFCC00]/10 flex items-center justify-center transition-colors duration-200">

@@ -1,15 +1,28 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { PRODUCTS, SERIES_CFG } from "@/data/products";
 import Footer from "@/components/Footer";
 
+// Hook to get current hash and subscribe to hash changes
+function useHash() {
+  const [hash, setHash] = useState(() => window.location.hash.slice(1));
+
+  useEffect(() => {
+    const onHashChange = () => setHash(window.location.hash.slice(1));
+    window.addEventListener("hashchange", onHashChange);
+    return () => window.removeEventListener("hashchange", onHashChange);
+  }, []);
+
+  return hash;
+}
+
 const TABS = [
-  { id: "all",     label: "All",                    count: PRODUCTS.length },
-  { id: "haemng",  label: "Haemng Series",           count: PRODUCTS.filter(p => p.series === "haemng").length },
-  { id: "maelard", label: "Maelard Series",          count: PRODUCTS.filter(p => p.series === "maelard").length },
-  { id: "esc",     label: "ESCs",                    count: PRODUCTS.filter(p => p.series === "esc").length },
-  { id: "fc",      label: "Flight Controller",       count: 1 },
-  { id: "ips",     label: "Integrated Systems",      count: PRODUCTS.filter(p => p.series === "ips").length },
+  { id: "all",     label: "All",                        count: PRODUCTS.length },
+  { id: "haemng",  label: "Haemng Series",              count: PRODUCTS.filter(p => p.series === "haemng").length },
+  { id: "maelard", label: "Maelard Series",             count: PRODUCTS.filter(p => p.series === "maelard").length },
+  { id: "esc",     label: "ESCs",                       count: PRODUCTS.filter(p => p.series === "esc").length },
+  { id: "fc",      label: "Flight Controller",          count: 1 },
+  { id: "ips",     label: "Integrated Power Systems",   count: PRODUCTS.filter(p => p.series === "ips").length },
 ];
 
 function MotorIcon({ color }: { color: string }) {
@@ -56,8 +69,11 @@ function FcIcon({ color }: { color: string }) {
 
 export default function Products() {
   const [, navigate] = useLocation();
-  const [activeTab, setActiveTab] = useState("all");
+  const hash = useHash();
   const [search, setSearch] = useState("");
+
+  // Derive activeTab directly from hash - no separate state needed
+  const activeTab = (hash && TABS.some(t => t.id === hash)) ? hash : "all";
 
   const visible = PRODUCTS.filter(p => {
     const matchTab = activeTab === "all" || p.series === activeTab;
@@ -109,13 +125,14 @@ export default function Products() {
 
         {/* ── Sticky filter bar ── */}
         <div className="sticky top-[72px] z-30 bg-white border-b border-gray-100 shadow-sm">
-          <div className="max-w-7xl mx-auto px-6 md:px-12">
-            <div className="flex items-center gap-0 overflow-x-auto py-0 scrollbar-hide">
+          <div className="max-w-7xl mx-auto px-6 md:px-12 flex items-center gap-4 py-3">
+            {/* Tabs - scrollable */}
+            <div className="flex items-center gap-0 overflow-x-auto scrollbar-hide flex-1">
               {TABS.map(tab => (
                 <button
                   key={tab.id}
-                  onClick={() => { setActiveTab(tab.id); setSearch(""); }}
-                  className={`flex items-center gap-2 px-5 py-4 text-[10px] tracking-widest uppercase font-bold whitespace-nowrap transition-all duration-200 border-b-2 ${
+                  onClick={() => { window.location.hash = tab.id; setSearch(""); }}
+                  className={`flex items-center gap-2 px-5 py-2 text-[10px] tracking-widest uppercase font-bold whitespace-nowrap transition-all duration-200 border-b-2 ${
                     activeTab === tab.id
                       ? "border-[#FFCC00] text-black"
                       : "border-transparent text-[#808080] hover:text-black hover:border-gray-200"
@@ -130,17 +147,17 @@ export default function Products() {
                   </span>
                 </button>
               ))}
-              {/* Search */}
-              <div className="ml-auto flex-shrink-0 pl-4 py-3">
-                <input
-                  type="text"
-                  placeholder="Search model, KV, application…"
-                  value={search}
-                  onChange={e => setSearch(e.target.value)}
-                  className="text-[10px] border border-gray-200 px-3 py-1.5 w-52 focus:outline-none focus:border-[#FFCC00] transition-colors duration-200"
-                  style={{ fontFamily: "Michroma, sans-serif" }}
-                />
-              </div>
+            </div>
+            {/* Search - fixed on right */}
+            <div className="flex-shrink-0">
+              <input
+                type="text"
+                placeholder="Search model, KV, application…"
+                value={search}
+                onChange={e => setSearch(e.target.value)}
+                className="text-[10px] border border-gray-200 px-3 py-2 w-64 focus:outline-none focus:border-[#FFCC00] transition-colors duration-200"
+                style={{ fontFamily: "Michroma, sans-serif" }}
+              />
             </div>
           </div>
         </div>
