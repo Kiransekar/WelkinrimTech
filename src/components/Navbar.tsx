@@ -101,11 +101,12 @@ export default function Navbar() {
     setMenuOpen(false);
     setMegaOpen(false);
     window.scrollTo({ top: 0, behavior: "smooth" });
-    // Set hash first, then navigate
-    const newHash = categoryId || "";
-    window.location.hash = newHash;
-    // Force a small delay to ensure hashchange fires before navigate
-    setTimeout(() => navigate("/products"), 10);
+    // Use window.location for hash-based navigation to ensure hash is preserved
+    if (categoryId) {
+      window.location.href = `/products#${categoryId}`;
+    } else {
+      window.location.href = "/products";
+    }
   };
 
   const goToProduct = (id: string) => {
