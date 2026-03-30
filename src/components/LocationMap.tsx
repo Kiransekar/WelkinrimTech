@@ -259,10 +259,10 @@ export default function LocationMap() {
   };
 
   return (
-    <section id="about" className="py-20 bg-[#f8f8f8] scroll-mt-[72px]">
-      <div className="max-w-7xl mx-auto px-6 md:px-12">
+    <section id="about" className="py-8 lg:py-6 bg-[#f8f8f8] scroll-mt-[72px] flex flex-col justify-center min-h-[100vh] lg:h-[calc(100vh-72px)] overflow-hidden">
+      <div className="max-w-7xl mx-auto px-6 md:px-12 w-full h-full flex flex-col">
         {/* Header */}
-        <div className="mb-10 flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+        <div className="mb-4 lg:mb-4 shrink-0 flex flex-col md:flex-row md:items-end md:justify-between gap-4">
           <div>
             <div className="flex items-center gap-3 mb-3">
               <div className="h-px w-10 bg-[#FFCC00]" />
@@ -284,10 +284,10 @@ export default function LocationMap() {
         </div>
 
         {/* Map block */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-0 rounded-sm overflow-hidden shadow-2xl border border-gray-200">
+        <div className="flex-1 min-h-[400px] lg:min-h-0 flex flex-col lg:grid lg:grid-cols-3 gap-0 rounded-sm overflow-hidden shadow-2xl border border-gray-200">
 
           {/* ── Map pane ── */}
-          <div className="lg:col-span-2 relative" style={{ height: "520px" }}>
+          <div className="lg:col-span-2 relative min-h-[300px] lg:min-h-0 h-full">
             <div ref={mapRef} className="w-full h-full" />
             {/* WebGL fallback */}
             {webGlError && (
@@ -339,7 +339,7 @@ export default function LocationMap() {
           </div>
 
           {/* ── Sidebar ── */}
-          <div className="bg-[#0d1b2a] flex flex-col" style={{ maxHeight: "520px", overflowY: "auto" }}>
+          <div className="bg-[#0d1b2a] flex flex-col overflow-y-auto h-full">
 
             {/* Our facility header */}
             <div className="px-5 py-4 border-b border-white/5">

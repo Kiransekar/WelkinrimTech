@@ -27,32 +27,32 @@ export default function ContactSection() {
   };
 
   return (
-    <section id="contact" className="py-24 bg-white scroll-mt-[72px]">
-      <div className="max-w-7xl mx-auto px-6 md:px-12">
+    <section id="contact" className="py-8 lg:py-12 bg-white scroll-mt-[72px] flex flex-col justify-center min-h-[100vh] lg:min-h-[calc(100vh-72px)]">
+      <div className="max-w-7xl mx-auto px-6 md:px-12 w-full my-auto">
         {/* Header */}
-        <div className="mb-16">
-          <div className="flex items-center gap-3 mb-4">
+        <div className="mb-8 lg:mb-12">
+          <div className="flex items-center gap-3 mb-3">
             <div className="h-px w-10 bg-[#FFCC00]" />
-            <span className="text-[#808080] text-xs tracking-[0.3em] uppercase" style={{ fontFamily: 'Michroma, sans-serif' }}>
+            <span className="text-[#808080] text-[10px] md:text-xs tracking-[0.3em] uppercase" style={{ fontFamily: 'Michroma, sans-serif' }}>
               Enquiry
             </span>
           </div>
-          <h2 className="text-4xl md:text-5xl font-bold text-black leading-tight" style={{ fontFamily: 'Michroma, sans-serif' }}>
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-black leading-tight" style={{ fontFamily: 'Michroma, sans-serif' }}>
             Start a Conversation
             <br />
             <span className="text-[#FFCC00]">With Our Engineers</span>
           </h2>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-12">
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 lg:gap-8 items-center">
           {/* Left: Info */}
-          <div className="lg:col-span-2 flex flex-col gap-8">
+          <div className="lg:col-span-2 flex flex-col gap-4">
             <p className="text-[#808080] text-sm leading-relaxed" style={{ fontFamily: 'Inter, sans-serif' }}>
               Whether you're integrating our propulsion systems into an existing platform or starting from scratch, our engineering team is ready to discuss your specific requirements.
             </p>
 
             {/* Contact cards */}
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-3">
               {[
                 {
                   icon: (
@@ -84,7 +84,7 @@ export default function ContactSection() {
                   value: "Chennai Industrial Corridor, Tamil Nadu",
                 },
               ].map((item) => (
-                <div key={item.label} className="flex items-start gap-4 p-4 border border-gray-100 hover:border-[#FFCC00]/50 transition-colors duration-200">
+                <div key={item.label} className="flex items-start gap-4 p-3 border border-gray-100 hover:border-[#FFCC00]/50 transition-colors duration-200">
                   <div className="w-8 h-8 bg-[#FFCC00]/10 flex items-center justify-center flex-shrink-0 text-[#FFCC00]">
                     {item.icon}
                   </div>
@@ -98,12 +98,12 @@ export default function ContactSection() {
 
             {/* Industries badge */}
             <div>
-              <div className="text-[10px] text-[#808080] uppercase tracking-widest mb-3" style={{ fontFamily: 'Michroma, sans-serif' }}>We Serve</div>
-              <div className="flex flex-wrap gap-2">
-                {["UAV/eVTOL", "Marine", "Land", "Robotics"].map((ind) => (
+              <div className="text-[9px] text-[#808080] uppercase tracking-widest mb-2" style={{ fontFamily: 'Michroma, sans-serif' }}>We Serve</div>
+              <div className="flex flex-wrap gap-1 md:gap-2">
+                {["UAV/eVTOL", "Marine", "Land", "Robotics"].map((ind) => (     
                   <span
                     key={ind}
-                    className="px-3 py-1 border border-[#FFCC00]/30 text-[10px] tracking-widest uppercase text-black"
+                    className="px-2 py-1 border border-[#FFCC00]/30 text-[9px] tracking-[0.15em] uppercase text-black"
                     style={{ fontFamily: 'Michroma, sans-serif' }}
                   >
                     {ind}
@@ -137,9 +137,9 @@ export default function ContactSection() {
                 </button>
               </div>
             ) : (
-              <form onSubmit={handleSubmit} className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+              <form onSubmit={handleSubmit} className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-5 lg:gap-y-4">
                 {/* Name */}
-                <div className="flex flex-col gap-1.5">
+                <div className="flex flex-col gap-1">
                   <label className="text-[10px] uppercase tracking-widest text-[#808080]" style={{ fontFamily: 'Michroma, sans-serif' }}>Full Name *</label>
                   <input
                     required
@@ -147,26 +147,26 @@ export default function ContactSection() {
                     value={form.name}
                     onChange={handleChange}
                     placeholder="John Smith"
-                    className="w-full border border-gray-200 px-4 py-3 text-sm text-black focus:outline-none focus:border-[#FFCC00] transition-colors duration-200 bg-white"
+                    className="w-full border border-gray-200 px-3 py-2 text-sm text-black focus:outline-none focus:border-[#FFCC00] transition-colors duration-200 bg-white"
                     style={{ fontFamily: 'Inter, sans-serif' }}
                   />
                 </div>
 
                 {/* Company */}
-                <div className="flex flex-col gap-1.5">
+                <div className="flex flex-col gap-1">
                   <label className="text-[10px] uppercase tracking-widest text-[#808080]" style={{ fontFamily: 'Michroma, sans-serif' }}>Company</label>
                   <input
                     name="company"
                     value={form.company}
                     onChange={handleChange}
                     placeholder="Acme Corporation"
-                    className="w-full border border-gray-200 px-4 py-3 text-sm text-black focus:outline-none focus:border-[#FFCC00] transition-colors duration-200 bg-white"
+                    className="w-full border border-gray-200 px-3 py-2 text-sm text-black focus:outline-none focus:border-[#FFCC00] transition-colors duration-200 bg-white"
                     style={{ fontFamily: 'Inter, sans-serif' }}
                   />
                 </div>
 
                 {/* Email */}
-                <div className="flex flex-col gap-1.5">
+                <div className="flex flex-col gap-1">
                   <label className="text-[10px] uppercase tracking-widest text-[#808080]" style={{ fontFamily: 'Michroma, sans-serif' }}>Email *</label>
                   <input
                     required
@@ -175,13 +175,13 @@ export default function ContactSection() {
                     value={form.email}
                     onChange={handleChange}
                     placeholder="john@company.com"
-                    className="w-full border border-gray-200 px-4 py-3 text-sm text-black focus:outline-none focus:border-[#FFCC00] transition-colors duration-200 bg-white"
+                    className="w-full border border-gray-200 px-3 py-2 text-sm text-black focus:outline-none focus:border-[#FFCC00] transition-colors duration-200 bg-white"
                     style={{ fontFamily: 'Inter, sans-serif' }}
                   />
                 </div>
 
                 {/* Phone */}
-                <div className="flex flex-col gap-1.5">
+                <div className="flex flex-col gap-1">
                   <label className="text-[10px] uppercase tracking-widest text-[#808080]" style={{ fontFamily: 'Michroma, sans-serif' }}>Phone</label>
                   <input
                     type="tel"
@@ -189,19 +189,19 @@ export default function ContactSection() {
                     value={form.phone}
                     onChange={handleChange}
                     placeholder="+91 XXXXX XXXXX"
-                    className="w-full border border-gray-200 px-4 py-3 text-sm text-black focus:outline-none focus:border-[#FFCC00] transition-colors duration-200 bg-white"
+                    className="w-full border border-gray-200 px-3 py-2 text-sm text-black focus:outline-none focus:border-[#FFCC00] transition-colors duration-200 bg-white"
                     style={{ fontFamily: 'Inter, sans-serif' }}
                   />
                 </div>
 
                 {/* Industry */}
-                <div className="sm:col-span-2 flex flex-col gap-1.5">
+                <div className="sm:col-span-2 flex flex-col gap-1">
                   <label className="text-[10px] uppercase tracking-widest text-[#808080]" style={{ fontFamily: 'Michroma, sans-serif' }}>Industry Sector</label>
                   <select
                     name="industry"
                     value={form.industry}
                     onChange={handleChange}
-                    className="w-full border border-gray-200 px-4 py-3 text-sm text-black focus:outline-none focus:border-[#FFCC00] transition-colors duration-200 bg-white appearance-none"
+                    className="w-full border border-gray-200 px-3 py-2 text-sm text-black focus:outline-none focus:border-[#FFCC00] transition-colors duration-200 bg-white appearance-none"
                     style={{ fontFamily: 'Inter, sans-serif' }}
                   >
                     <option value="">Select your industry...</option>
@@ -212,16 +212,16 @@ export default function ContactSection() {
                 </div>
 
                 {/* Message */}
-                <div className="sm:col-span-2 flex flex-col gap-1.5">
+                <div className="sm:col-span-2 flex flex-col gap-1">
                   <label className="text-[10px] uppercase tracking-widest text-[#808080]" style={{ fontFamily: 'Michroma, sans-serif' }}>Message *</label>
                   <textarea
                     required
                     name="message"
                     value={form.message}
                     onChange={handleChange}
-                    rows={5}
+                    rows={3}
                     placeholder="Tell us about your propulsion requirements, power needs, application environment..."
-                    className="w-full border border-gray-200 px-4 py-3 text-sm text-black focus:outline-none focus:border-[#FFCC00] transition-colors duration-200 bg-white resize-none"
+                    className="w-full border border-gray-200 px-3 py-2 text-sm text-black focus:outline-none focus:border-[#FFCC00] transition-colors duration-200 bg-white resize-none"
                     style={{ fontFamily: 'Inter, sans-serif' }}
                   />
                 </div>
@@ -231,7 +231,7 @@ export default function ContactSection() {
                   <button
                     type="submit"
                     disabled={loading}
-                    className="w-full py-4 bg-[#FFCC00] text-black text-xs tracking-[0.2em] uppercase font-bold hover:bg-[#e6b800] transition-all duration-300 disabled:opacity-70 flex items-center justify-center gap-3"
+                    className="w-full py-3 bg-[#FFCC00] text-black text-xs tracking-[0.2em] uppercase font-bold hover:bg-[#e6b800] transition-all duration-300 disabled:opacity-70 flex items-center justify-center gap-3"
                     style={{ fontFamily: 'Michroma, sans-serif' }}
                   >
                     {loading ? (
