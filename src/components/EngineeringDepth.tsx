@@ -124,12 +124,12 @@ function MetricCell({
 
   return (
     <div
-      className={`flex flex-col justify-center py-2 md:py-3 px-2 md:px-3 ${
+      className={`flex flex-col justify-center py-1 px-1.5 ${
         !isLastRow ? "border-b border-black/10" : ""
       } ${!isLastCol ? "border-r border-black/10" : ""}`}
     >
       <p
-        className="text-[7px] md:text-[8px] tracking-[0.15em] text-black/40 uppercase mb-1"
+        className="text-[6px] md:text-[7px] tracking-[0.15em] text-black/40 uppercase mb-1"
         style={{ fontFamily: "Michroma, sans-serif" }}
       >
         {metric.label}
@@ -137,7 +137,7 @@ function MetricCell({
       <div className="flex items-baseline gap-1 leading-none flex-wrap">
         {metric.prefix ? (
           <span
-            className="text-[18px] md:text-[22px] xl:text-[26px] font-bold text-black leading-none"
+            className="text-[12px] md:text-[14px] xl:text-[16px] font-bold text-black leading-none"
             style={{ fontFamily: "Michroma, sans-serif" }}
           >
             {metric.prefix}{da ? Math.round(metric.value) : "0"}
@@ -145,7 +145,7 @@ function MetricCell({
         ) : (
           <>
             <span
-              className="text-[18px] md:text-[22px] xl:text-[26px] font-bold text-black leading-none"
+              className="text-[12px] md:text-[14px] xl:text-[16px] font-bold text-black leading-none"
               style={{ fontFamily: "Michroma, sans-serif" }}
             >
               {metric.value >= 1000 && da
@@ -154,7 +154,7 @@ function MetricCell({
             </span>
             {metric.unit && (
               <span
-                className="text-[9px] md:text-[10px] font-bold text-black/50"
+                className="text-[7px] md:text-[8px] font-bold text-black/50"
                 style={{ fontFamily: "Michroma, sans-serif" }}
               >
                 {metric.unit}
@@ -201,8 +201,8 @@ export default function EngineeringDepth() {
 
         {/* ══════════ LEFT WHITE PANEL ══════════ */}
         <div className="relative flex flex-col justify-center bg-white z-10
-                        w-full lg:w-[40%] flex-shrink-0
-                        px-6 md:px-8 lg:pl-10 lg:pr-[130px] xl:pr-[150px] py-8 lg:py-10 gap-3">
+                        w-full lg:w-[45%] flex-shrink-0
+                        px-6 md:px-8 lg:pl-10 lg:pr-[180px] xl:pr-[200px] py-8 lg:py-10 gap-3">
 
           {/* Tag */}
           <p
@@ -295,16 +295,16 @@ export default function EngineeringDepth() {
 
         {/* ══════════ CENTER MOTOR IMAGE (overlapping both panels) ══════════ */}
         <div
-          className="hidden lg:flex absolute z-20 items-center justify-center pointer-events-none"
+          className="hidden lg:flex absolute z-30 items-center justify-center pointer-events-none"
           style={{
-            left: "40%",
+            left: "45%",
             top: "50%",
             transform: "translate(-50%, -50%)",
-            width: "220px",
-            height: "220px",
+            width: "380px",
+            height: "380px",
           }}
         >
-          <div className="w-[180px] h-[180px] xl:w-[220px] xl:h-[220px] rounded-full overflow-hidden border-[5px] border-white shadow-xl bg-[#1a1a1a]">
+          <div className="w-[280px] h-[280px] xl:w-[380px] xl:h-[380px] rounded-full overflow-hidden border-[6px] border-white shadow-xl bg-[#1a1a1a]">
             <img
               key={activeIdx}
               src={`${import.meta.env.BASE_URL}motor-hero.png`}
@@ -316,7 +316,7 @@ export default function EngineeringDepth() {
 
         {/* Mobile motor image */}
         <div className="lg:hidden flex justify-center -mt-4 mb-4 relative z-20">
-          <div className="w-[200px] h-[200px] rounded-full overflow-hidden border-4 border-white shadow-2xl bg-[#1a1a1a]">
+          <div className="w-[240px] h-[240px] rounded-full overflow-hidden border-4 border-white shadow-2xl bg-[#1a1a1a]">
             <img
               key={`mobile-${activeIdx}`}
               src={`${import.meta.env.BASE_URL}motor-hero.png`}
@@ -327,34 +327,38 @@ export default function EngineeringDepth() {
         </div>
 
         {/* ══════════ RIGHT YELLOW PANEL ══════════ */}
-        <div className="flex-1 bg-[#FFCC00] relative flex flex-col justify-center">
+        <div className="flex-1 relative flex flex-col justify-center z-20">
+          {/* Parallelogram shape using clip-path */}
+          <div
+            className="absolute inset-0 bg-[#FFCC00]"
+            style={{
+              clipPath: "polygon(15% 0, 100% 0, 100% 100%, 0% 100%)",
+            }}
+          />
 
-          {/* Inner content */}
-          <div className="relative z-0 flex flex-col px-4 lg:pl-[120px] xl:pl-[150px] lg:pr-8 xl:pr-10 py-6 lg:py-8">
+          {/* AIR/WATER label - on top of yellow and motor */}
+          <div className="relative z-40 px-4 lg:pl-[200px] xl:pl-[220px] lg:pr-8 xl:pr-10 pt-6 lg:pt-8">
+            <h3
+              className="text-[44px] md:text-[56px] xl:text-[72px] font-black text-black/30 uppercase leading-none"
+              style={{ fontFamily: "Michroma, sans-serif" }}
+            >
+              {active.label}
+            </h3>
+          </div>
 
-            {/* Industry label + specs header */}
-            <div className="flex items-start justify-between mb-1 lg:mb-2">
-              <div>
-                <h3
-                  className="text-[32px] md:text-[44px] xl:text-[52px] font-black text-black/10 uppercase leading-none"
-                  style={{ fontFamily: "Michroma, sans-serif" }}
-                >
-                  {active.label}
-                </h3>
-              </div>
-            </div>
-
+          {/* Inner content - metrics grid on top of yellow */}
+          <div className="relative z-40 flex flex-col px-4 lg:pl-[200px] xl:pl-[220px] lg:pr-8 xl:pr-10 pb-6 lg:pb-8">
             <p
-              className="text-[9px] tracking-[0.25em] text-black/50 uppercase mb-3"
+              className="text-[11px] tracking-[0.25em] text-black/70 font-semibold uppercase mb-4"
               style={{ fontFamily: "Michroma, sans-serif" }}
             >
               Motor Specifications
             </p>
 
-            {/* 3×3 Metric grid */}
+            {/* 3×3 Metric grid - smaller cells */}
             <div
               key={resetKey}
-              className="grid grid-cols-3 flex-1"
+              className="grid grid-cols-3 gap-1"
             >
               {active.metrics.map((metric, i) => (
                 <MetricCell
