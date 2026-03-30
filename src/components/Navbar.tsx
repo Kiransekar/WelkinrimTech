@@ -129,7 +129,7 @@ export default function Navbar() {
             className="flex items-center gap-3"
           >
             <img
-              src={`${import.meta.env.BASE_URL}welkinrim-logo.svg`}
+              src={`${import.meta.env.BASE_URL}${isTransparent ? "welkinrim-logo-white.svg" : "welkinrim-logo.svg"}`}
               alt="Welkinrim Technologies"
               className="h-10 w-auto"
             />
