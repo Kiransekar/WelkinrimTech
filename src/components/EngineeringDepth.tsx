@@ -124,12 +124,12 @@ function MetricCell({
 
   return (
     <div
-      className={`flex flex-col justify-center py-4 md:py-5 px-4 md:px-5 ${
+      className={`flex flex-col justify-center py-2 md:py-3 px-2 md:px-3 ${
         !isLastRow ? "border-b border-black/10" : ""
       } ${!isLastCol ? "border-r border-black/10" : ""}`}
     >
       <p
-        className="text-[8px] md:text-[9px] tracking-[0.18em] text-black/40 uppercase mb-1.5"
+        className="text-[7px] md:text-[8px] tracking-[0.15em] text-black/40 uppercase mb-1"
         style={{ fontFamily: "Michroma, sans-serif" }}
       >
         {metric.label}
@@ -137,7 +137,7 @@ function MetricCell({
       <div className="flex items-baseline gap-1 leading-none flex-wrap">
         {metric.prefix ? (
           <span
-            className="text-[22px] md:text-[30px] font-bold text-black leading-none"
+            className="text-[18px] md:text-[22px] xl:text-[26px] font-bold text-black leading-none"
             style={{ fontFamily: "Michroma, sans-serif" }}
           >
             {metric.prefix}{da ? Math.round(metric.value) : "0"}
@@ -145,7 +145,7 @@ function MetricCell({
         ) : (
           <>
             <span
-              className="text-[22px] md:text-[30px] font-bold text-black leading-none"
+              className="text-[18px] md:text-[22px] xl:text-[26px] font-bold text-black leading-none"
               style={{ fontFamily: "Michroma, sans-serif" }}
             >
               {metric.value >= 1000 && da
@@ -154,7 +154,7 @@ function MetricCell({
             </span>
             {metric.unit && (
               <span
-                className="text-[10px] md:text-xs font-bold text-black/50"
+                className="text-[9px] md:text-[10px] font-bold text-black/50"
                 style={{ fontFamily: "Michroma, sans-serif" }}
               >
                 {metric.unit}
@@ -196,17 +196,17 @@ export default function EngineeringDepth() {
   };
 
   return (
-    <section id="technology" ref={sectionRef} className="w-full bg-white overflow-hidden">
-      <div className="relative flex flex-col lg:flex-row min-h-[600px]">
+    <section id="technology" ref={sectionRef} className="w-full bg-white overflow-hidden scroll-mt-[72px]">
+      <div className="relative flex flex-col lg:flex-row min-h-[100vh] lg:min-h-[calc(100vh-72px)]">
 
         {/* ══════════ LEFT WHITE PANEL ══════════ */}
         <div className="relative flex flex-col justify-center bg-white z-10
-                        w-full lg:w-[42%] flex-shrink-0
-                        px-8 md:px-12 lg:px-16 py-14 lg:py-16 gap-5">
+                        w-full lg:w-[40%] flex-shrink-0
+                        px-6 md:px-8 lg:pl-10 lg:pr-[130px] xl:pr-[150px] py-8 lg:py-10 gap-3">
 
           {/* Tag */}
           <p
-            className="text-[10px] tracking-[0.3em] text-[#808080] uppercase"
+            className="text-[9px] tracking-[0.2em] text-[#808080] uppercase"
             style={{ fontFamily: "Michroma, sans-serif" }}
           >
             Simulation-Validated
@@ -215,13 +215,13 @@ export default function EngineeringDepth() {
           {/* Heading */}
           <div className="leading-[0.95]">
             <div
-              className="text-[42px] md:text-[56px] lg:text-[62px] font-black text-black uppercase tracking-tight"
+              className="text-[32px] md:text-[40px] xl:text-[48px] font-black text-black uppercase tracking-tight"
               style={{ fontFamily: "Michroma, sans-serif" }}
             >
               Engineering
             </div>
             <div
-              className="text-[42px] md:text-[56px] lg:text-[62px] font-black text-[#FFCC00] uppercase tracking-tight"
+              className="text-[32px] md:text-[40px] xl:text-[48px] font-black text-[#FFCC00] uppercase tracking-tight"
               style={{ fontFamily: "Michroma, sans-serif" }}
             >
               Depth
@@ -259,11 +259,11 @@ export default function EngineeringDepth() {
           </p>
 
           {/* Tags */}
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-1.5 md:gap-2">
             {active.tags.map((tag) => (
               <span
                 key={tag}
-                className="text-[9px] tracking-[0.12em] uppercase border border-[#808080]/30 rounded-sm px-2.5 py-1 text-[#808080]"
+                className="text-[8px] tracking-[0.1em] uppercase border border-[#808080]/30 rounded-sm px-2 py-1 text-[#808080]"
                 style={{ fontFamily: "Michroma, sans-serif" }}
               >
                 {tag}
@@ -295,16 +295,16 @@ export default function EngineeringDepth() {
 
         {/* ══════════ CENTER MOTOR IMAGE (overlapping both panels) ══════════ */}
         <div
-          className="hidden lg:flex absolute z-20 items-center justify-center"
+          className="hidden lg:flex absolute z-20 items-center justify-center pointer-events-none"
           style={{
-            left: "33%",
+            left: "40%",
             top: "50%",
-            transform: "translateY(-50%)",
-            width: "320px",
-            height: "320px",
+            transform: "translate(-50%, -50%)",
+            width: "220px",
+            height: "220px",
           }}
         >
-          <div className="w-[280px] h-[280px] xl:w-[320px] xl:h-[320px] rounded-full overflow-hidden border-[6px] border-white shadow-2xl bg-[#1a1a1a]">
+          <div className="w-[180px] h-[180px] xl:w-[220px] xl:h-[220px] rounded-full overflow-hidden border-[5px] border-white shadow-xl bg-[#1a1a1a]">
             <img
               key={activeIdx}
               src={`${import.meta.env.BASE_URL}motor-hero.png`}
@@ -327,16 +327,16 @@ export default function EngineeringDepth() {
         </div>
 
         {/* ══════════ RIGHT YELLOW PANEL ══════════ */}
-        <div className="flex-1 bg-[#FFCC00] relative flex flex-col">
+        <div className="flex-1 bg-[#FFCC00] relative flex flex-col justify-center">
 
           {/* Inner content */}
-          <div className="relative z-0 flex flex-col h-full px-6 lg:pl-[180px] xl:pl-[200px] lg:pr-10 xl:pr-14 pt-8 lg:pt-10 pb-6 lg:pb-8">
+          <div className="relative z-0 flex flex-col px-4 lg:pl-[120px] xl:pl-[150px] lg:pr-8 xl:pr-10 py-6 lg:py-8">
 
             {/* Industry label + specs header */}
-            <div className="flex items-start justify-between mb-4 lg:mb-6">
+            <div className="flex items-start justify-between mb-1 lg:mb-2">
               <div>
                 <h3
-                  className="text-[52px] md:text-[64px] lg:text-[72px] font-black text-black/10 uppercase leading-none"
+                  className="text-[32px] md:text-[44px] xl:text-[52px] font-black text-black/10 uppercase leading-none"
                   style={{ fontFamily: "Michroma, sans-serif" }}
                 >
                   {active.label}

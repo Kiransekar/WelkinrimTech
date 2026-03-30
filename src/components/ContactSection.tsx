@@ -27,7 +27,7 @@ export default function ContactSection() {
   };
 
   return (
-    <section id="contact" className="py-24 bg-white">
+    <section id="contact" className="py-24 bg-white scroll-mt-[72px]">
       <div className="max-w-7xl mx-auto px-6 md:px-12">
         {/* Header */}
         <div className="mb-16">

@@ -259,7 +259,7 @@ export default function LocationMap() {
   };
 
   return (
-    <section className="py-20 bg-[#f8f8f8]">
+    <section id="about" className="py-20 bg-[#f8f8f8] scroll-mt-[72px]">
       <div className="max-w-7xl mx-auto px-6 md:px-12">
         {/* Header */}
         <div className="mb-10 flex flex-col md:flex-row md:items-end md:justify-between gap-4">
