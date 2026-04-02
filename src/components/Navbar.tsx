@@ -6,6 +6,8 @@ const PRODUCT_CATEGORIES = [
   {
     id: "haemng",
     label: "Haemng Series",
+    useSvgLogo: true,
+    logoSrc: "haemng.svg",
     tagline: "UAV & eVTOL Motors — 11 variants",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-5 h-5">
@@ -19,6 +21,8 @@ const PRODUCT_CATEGORIES = [
   {
     id: "maelard",
     label: "Maelard Series",
+    useSvgLogo: true,
+    logoSrc: "Maelard.svg",
     tagline: "Marine, UAV & Multi-mission — 10 variants",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-5 h-5">
@@ -263,7 +267,15 @@ export default function Navbar() {
                       {cat.icon}
                     </span>
                     <div>
-                      <p className="text-xs font-bold tracking-wide" style={{ fontFamily: "Michroma, sans-serif" }}>{cat.label}</p>
+                      {cat.useSvgLogo ? (
+                        <img
+                          src={`${import.meta.env.BASE_URL}${cat.logoSrc}`}
+                          alt={cat.label}
+                          className="h-4 w-auto"
+                        />
+                      ) : (
+                        <p className="text-xs font-bold tracking-wide" style={{ fontFamily: "Michroma, sans-serif" }}>{cat.label}</p>
+                      )}
                       <p className="text-[10px] text-[#808080] mt-0.5" style={{ fontFamily: "Lexend, sans-serif" }}>{cat.tagline}</p>
                     </div>
                     {activeCategory === cat.id && (
