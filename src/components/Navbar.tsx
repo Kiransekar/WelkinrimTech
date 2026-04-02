@@ -271,7 +271,7 @@ export default function Navbar() {
                         <img
                           src={`${import.meta.env.BASE_URL}${cat.logoSrc}`}
                           alt={cat.label}
-                          className="h-4 w-auto"
+                          className="h-8 w-auto"
                         />
                       ) : (
                         <p className="text-xs font-bold tracking-wide" style={{ fontFamily: "Michroma, sans-serif" }}>{cat.label}</p>

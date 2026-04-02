@@ -7,16 +7,17 @@ const industries = [
     tabLabel: "UAV / eVTOL",
     fullLabel: "UAV / eVTOL",
     tags: ["FLUX DENSITY", "THERMAL", "EFFICIENCY", "STRESS", "COGGING", "FOC"],
+    certification: "JSS 55555 and MIL STD 810 G Certified",
     metrics: [
-      { label: "RATED POWER",    value: 1.2,    unit: "kW",    decimals: 1 },
-      { label: "RATED TORQUE",   value: 0.96,   unit: "Nm",    decimals: 2 },
-      { label: "MAX RPM",        value: 12000,  unit: "",      decimals: 0 },
-      { label: "WEIGHT",         value: 0.42,   unit: "kg",    decimals: 2 },
-      { label: "DIAMETER",       value: 38,     unit: "mm",    decimals: 0 },
-      { label: "PROTECTION",     value: 54,     unit: "",      prefix: "IP", decimals: 0 },
-      { label: "PEAK η",         value: 97.2,   unit: "%",     decimals: 1 },
-      { label: "MAX WINDING",    value: 218,    unit: "°C",    decimals: 0 },
-      { label: "PWR DENSITY",    value: 5.2,    unit: "kW/kg", decimals: 1 },
+      { label: "POWER",           display: "100W to 30kW" },
+      { label: "TORQUE",          display: "1 Nm to 100 Nm" },
+      { label: "MAX RPM",         display: "Upto 10,000 RPM" },
+      { label: "WEIGHT",          display: "50g to 5kg" },
+      { label: "DIAMETER",        display: "30 to 300mm" },
+      { label: "TORQUE DENSITY",  display: "20 to 30 Nm/kg" },
+      { label: "PEAK EFFICIENCY", display: "Upto 97%" },
+      { label: "TEMPERATURE",     display: "\u221245\u00B0C to 70\u00B0C" },
+      { label: "POWER DENSITY",   display: "10 to 15 kW/kg" },
     ],
   },
   {
@@ -25,16 +26,17 @@ const industries = [
     tabLabel: "MARINE",
     fullLabel: "Marine",
     tags: ["WATERPROOFING", "CORROSION", "EFFICIENCY", "TORQUE", "THERMAL", "SEAL"],
+    certification: "JSS 55555 and MIL STD 810 G to be Certified",
     metrics: [
-      { label: "RATED POWER",    value: 22,    unit: "kW",    decimals: 0 },
-      { label: "RATED TORQUE",   value: 1200,  unit: "Nm",    decimals: 0 },
-      { label: "MAX RPM",        value: 3600,  unit: "",      decimals: 0 },
-      { label: "WEIGHT",         value: 18,    unit: "kg",    decimals: 0 },
-      { label: "DIAMETER",       value: 280,   unit: "mm",    decimals: 0 },
-      { label: "PROTECTION",     value: 68,    unit: "",      prefix: "IP", decimals: 0 },
-      { label: "PEAK η",         value: 94.5,  unit: "%",     decimals: 1 },
-      { label: "MAX WINDING",    value: 155,   unit: "°C",    decimals: 0 },
-      { label: "PWR DENSITY",    value: 1.2,   unit: "kW/kg", decimals: 1 },
+      { label: "POWER",           display: "100W to 2.5kW" },
+      { label: "TORQUE",          display: "1 Nm to 10 Nm" },
+      { label: "MAX RPM",         display: "Upto 3,600 RPM" },
+      { label: "WEIGHT",          display: "150g to 5kg" },
+      { label: "DIAMETER",        display: "50mm to 300mm" },
+      { label: "TORQUE DENSITY",  display: "20 to 30 Nm/kg" },
+      { label: "PEAK EFFICIENCY", display: "Upto 97%" },
+      { label: "TEMPERATURE",     display: "5\u00B0C to 55\u00B0C" },
+      { label: "POWER DENSITY",   display: "10 to 15 kW/kg" },
     ],
   },
   {
@@ -43,16 +45,17 @@ const industries = [
     tabLabel: "LAND",
     fullLabel: "Land Vehicles",
     tags: ["TORQUE DENSITY", "THERMAL", "RESPONSE", "VOLTAGE", "RELIABILITY", "VECTOR"],
+    certification: "JSS 55555 and MIL STD 810 G to be Certified",
     metrics: [
-      { label: "RATED POWER",    value: 150,   unit: "kW",    decimals: 0 },
-      { label: "RATED TORQUE",   value: 2400,  unit: "Nm",    decimals: 0 },
-      { label: "MAX RPM",        value: 18000, unit: "",      decimals: 0 },
-      { label: "WEIGHT",         value: 45,    unit: "kg",    decimals: 0 },
-      { label: "DIAMETER",       value: 350,   unit: "mm",    decimals: 0 },
-      { label: "VOLTAGE",        value: 800,   unit: "V",     decimals: 0 },
-      { label: "RESPONSE",       value: 2,     unit: "ms",    decimals: 0 },
-      { label: "MAX WINDING",    value: 200,   unit: "°C",    decimals: 0 },
-      { label: "PWR DENSITY",    value: 3.3,   unit: "kW/kg", decimals: 1 },
+      { label: "POWER",           display: "50W to 15kW" },
+      { label: "TORQUE",          display: "Upto 60 Nm" },
+      { label: "MAX RPM",         display: "Upto 20,000 RPM" },
+      { label: "WEIGHT",          display: "2kg to 20kg" },
+      { label: "DIAMETER",        display: "150mm to 300mm" },
+      { label: "TORQUE DENSITY",  display: "4 to 8 Nm/kg" },
+      { label: "PEAK EFFICIENCY", display: "Upto 97%" },
+      { label: "TEMPERATURE",     display: "\u221220\u00B0C to 55\u00B0C" },
+      { label: "POWER DENSITY",   display: "8 to 10 kW/kg" },
     ],
   },
   {
@@ -61,42 +64,21 @@ const industries = [
     tabLabel: "ROBOTICS",
     fullLabel: "Robotics",
     tags: ["PRECISION", "BACKDRIVABILITY", "BANDWIDTH", "COMPLIANCE", "STIFFNESS", "FOC"],
+    certification: "JSS 55555 and MIL STD 810 G to be Certified",
     metrics: [
-      { label: "RATED POWER",    value: 2.4,   unit: "kW",    decimals: 1 },
-      { label: "RATED TORQUE",   value: 48,    unit: "Nm",    decimals: 0 },
-      { label: "MAX RPM",        value: 6000,  unit: "",      decimals: 0 },
-      { label: "WEIGHT",         value: 1.2,   unit: "kg",    decimals: 1 },
-      { label: "ACCURACY",       value: 0.01,  unit: "°",     decimals: 2 },
-      { label: "BACKDRIVE",      value: 99,    unit: "%",     decimals: 0 },
-      { label: "BANDWIDTH",      value: 10,    unit: "kHz",   decimals: 0 },
-      { label: "MAX WINDING",    value: 155,   unit: "°C",    decimals: 0 },
-      { label: "PWR DENSITY",    value: 2.0,   unit: "kW/kg", decimals: 1 },
+      { label: "POWER",           display: "100W to 30kW" },
+      { label: "TORQUE",          display: "1 Nm to 100 Nm" },
+      { label: "MAX RPM",         display: "Upto 10,000 RPM" },
+      { label: "WEIGHT",          display: "50g to 5kg" },
+      { label: "DIAMETER",        display: "30 to 300mm" },
+      { label: "TORQUE DENSITY",  display: "20 to 30 Nm/kg" },
+      { label: "PEAK EFFICIENCY", display: "Upto 97%" },
+      { label: "TEMPERATURE",     display: "\u221210\u00B0C to 55\u00B0C" },
+      { label: "POWER DENSITY",   display: "10 to 15 kW/kg" },
     ],
   },
 ];
 
-function useCountUp(target: number, duration = 1100, active = false, decimals = 0) {
-  const [count, setCount] = useState(0);
-  const rafRef = useRef<number>(0);
-
-  useEffect(() => {
-    cancelAnimationFrame(rafRef.current);
-    if (!active) { setCount(0); return; }
-    const start = performance.now();
-    const run = (now: number) => {
-      const t = Math.min((now - start) / duration, 1);
-      const eased = 1 - Math.pow(1 - t, 3);
-      const val = parseFloat((eased * target).toFixed(decimals));
-      setCount(val);
-      if (t < 1) rafRef.current = requestAnimationFrame(run);
-      else setCount(target);
-    };
-    rafRef.current = requestAnimationFrame(run);
-    return () => cancelAnimationFrame(rafRef.current);
-  }, [active, target, duration, decimals]);
-
-  return count;
-}
 
 function MetricCell({
   metric,
@@ -107,15 +89,12 @@ function MetricCell({
   active: boolean;
   idx: number;
 }) {
-  const [da, setDa] = useState(false);
+  const [visible, setVisible] = useState(false);
   useEffect(() => {
-    if (!active) { setDa(false); return; }
-    const t = setTimeout(() => setDa(true), idx * 60);
+    if (!active) { setVisible(false); return; }
+    const t = setTimeout(() => setVisible(true), idx * 60);
     return () => clearTimeout(t);
   }, [active, idx]);
-
-  const count = useCountUp(metric.value, 1100, da, metric.decimals);
-  const displayed = da ? count.toFixed(metric.decimals) : "0";
 
   const row = Math.floor(idx / 3);
   const col = idx % 3;
@@ -134,35 +113,14 @@ function MetricCell({
       >
         {metric.label}
       </p>
-      <div className="flex items-baseline gap-1 leading-none flex-wrap">
-        {metric.prefix ? (
-          <span
-            className="text-sm font-bold text-black leading-none"
-            style={{ fontFamily: "Michroma, sans-serif" }}
-          >
-            {metric.prefix}{da ? Math.round(metric.value) : "0"}
-          </span>
-        ) : (
-          <>
-            <span
-              className="text-sm font-bold text-black leading-none"
-              style={{ fontFamily: "Michroma, sans-serif" }}
-            >
-              {metric.value >= 1000 && da
-                ? Number(count.toFixed(metric.decimals)).toLocaleString()
-                : displayed}
-            </span>
-            {metric.unit && (
-              <span
-                className="text-xs font-bold text-black/50"
-                style={{ fontFamily: "Michroma, sans-serif" }}
-              >
-                {metric.unit}
-              </span>
-            )}
-          </>
-        )}
-      </div>
+      <span
+        className={`text-sm font-bold text-black leading-none transition-opacity duration-300 ${
+          visible ? "opacity-100" : "opacity-0"
+        }`}
+        style={{ fontFamily: "Michroma, sans-serif" }}
+      >
+        {metric.display}
+      </span>
     </div>
   );
 }
@@ -333,7 +291,7 @@ export default function EngineeringDepth() {
               className="text-xs tracking-[0.25em] text-black/70 font-semibold uppercase mb-4"
               style={{ fontFamily: "Michroma, sans-serif" }}
             >
-              Motor Specifications
+              Product Range
             </p>
 
             {/* 3×3 Metric grid - smaller cells */}
@@ -357,7 +315,7 @@ export default function EngineeringDepth() {
                 className="text-xs tracking-[0.2em] text-black/30 uppercase text-right"
                 style={{ fontFamily: "Michroma, sans-serif" }}
               >
-                Welkinrim Technologies &nbsp;|&nbsp; Proprietary &nbsp;|&nbsp; Rev. 0003.1
+                {active.certification}
               </p>
             </div>
           </div>

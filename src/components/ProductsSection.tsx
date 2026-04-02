@@ -924,8 +924,8 @@ const PRODUCTS: Product[] = [
    SERIES CONFIG
 ═══════════════════════════════════════════════════════════════════════════ */
 const SERIES_CFG = {
-  haemng:  { label: "Haemng Series",             accent: "#ffc914", bg: "#fffbe6", dim: "100" },
-  maelard: { label: "Maelard Series",             accent: "#1a73e8", bg: "#e8f0fe", dim: "100" },
+  haemng:  { label: "Haemng Series",             useSvgLogo: true, logoSrc: "haemng.svg", accent: "#ffc914", bg: "#fffbe6", dim: "100" },
+  maelard: { label: "Maelard Series",             useSvgLogo: true, logoSrc: "Maelard.svg", accent: "#1a73e8", bg: "#e8f0fe", dim: "100" },
   esc:     { label: "Electronic Speed Controllers", accent: "#222",   bg: "#f4f4f4", dim: "100" },
   fc:      { label: "Flight Controller",          accent: "#0f9d58", bg: "#e6f4ea", dim: "100" },
   ips:     { label: "Integrated Power Systems",   accent: "#e0440e", bg: "#fce8e6", dim: "100" },
@@ -1014,7 +1014,11 @@ function ProductCard({ p, expanded, onToggle }: {
 
         {/* motor/esc/fc icon */}
         <div className="relative z-10 mb-2">
-          {p.series === "esc" ? <EscIcon color={cfg.accent} />
+          {p.series === "haemng" ? (
+            <img src={`${import.meta.env.BASE_URL}haemng.svg`} alt="Haemng" className="h-14 w-auto" style={{ filter: "brightness(0) invert(1)", opacity: 0.7 }} />
+          ) : p.series === "maelard" ? (
+            <img src={`${import.meta.env.BASE_URL}Maelard.svg`} alt="Maelard" className="h-10 w-auto" style={{ filter: "brightness(0) invert(1)", opacity: 0.7 }} />
+          ) : p.series === "esc" ? <EscIcon color={cfg.accent} />
             : p.series === "fc" ? <FcIcon color={cfg.accent} />
             : <MotorIcon color={cfg.accent} />}
         </div>
@@ -1225,10 +1229,18 @@ export default function ProductsSection() {
                 <div className="flex items-center gap-4 mb-6">
                   <div className="w-1 h-8 flex-shrink-0" style={{ background: cfg.accent }} />
                   <div>
-                    <h3 className="text-lg font-bold text-black leading-none"
-                        style={{ fontFamily: "Michroma, sans-serif" }}>
-                      {cfg.label}
-                    </h3>
+                    {'useSvgLogo' in cfg && cfg.useSvgLogo ? (
+                      <img
+                        src={`${import.meta.env.BASE_URL}${cfg.logoSrc}`}
+                        alt={cfg.label}
+                        className="h-8 w-auto"
+                      />
+                    ) : (
+                      <h3 className="text-lg font-bold text-black leading-none"
+                          style={{ fontFamily: "Michroma, sans-serif" }}>
+                        {cfg.label}
+                      </h3>
+                    )}
                     <p className="text-[10px] text-[#808080] mt-0.5" style={{ fontFamily: "Lexend, sans-serif" }}>
                       {group.length} model{group.length > 1 ? "s" : ""}
                     </p>

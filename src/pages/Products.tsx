@@ -178,9 +178,17 @@ export default function Products() {
                 <div className="flex items-center gap-4 mb-7">
                   <div className="w-1 h-8 flex-shrink-0" style={{ background: cfg.accent }} />
                   <div>
-                    <h2 className="text-xl font-bold text-black" style={{ fontFamily: "Michroma, sans-serif" }}>
-                      {cfg.label}
-                    </h2>
+                    {cfg.useSvgLogo ? (
+                      <img
+                        src={`${import.meta.env.BASE_URL}${cfg.logoSrc}`}
+                        alt={cfg.label}
+                        className="h-8 w-auto"
+                      />
+                    ) : (
+                      <h2 className="text-xl font-bold text-black" style={{ fontFamily: "Michroma, sans-serif" }}>
+                        {cfg.label}
+                      </h2>
+                    )}
                     <p className="text-[10px] text-[#808080] mt-0.5">{items.length} model{items.length > 1 ? "s" : ""}</p>
                   </div>
                   <div className="flex-1 h-px bg-gray-100" />
@@ -253,7 +261,11 @@ function ProductGrid({
               }}
             />
             <div className="relative z-10">
-              {p.series === "esc" ? <EscIcon color={cfg.accent} />
+              {p.series === "haemng" ? (
+                <img src={`${import.meta.env.BASE_URL}haemng.svg`} alt="Haemng" className="h-14 w-auto" style={{ filter: "brightness(0) invert(1)", opacity: 0.7 }} />
+              ) : p.series === "maelard" ? (
+                <img src={`${import.meta.env.BASE_URL}Maelard.svg`} alt="Maelard" className="h-10 w-auto" style={{ filter: "brightness(0) invert(1)", opacity: 0.7 }} />
+              ) : p.series === "esc" ? <EscIcon color={cfg.accent} />
                 : p.series === "fc" ? <FcIcon color={cfg.accent} />
                 : <MotorIcon color={cfg.accent} />}
             </div>

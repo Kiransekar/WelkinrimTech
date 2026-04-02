@@ -160,7 +160,11 @@ export default function ProductDetail() {
                 <div className="absolute inset-0 blur-3xl opacity-20 scale-75"
                      style={{ background: cfg.accent }} />
                 <div className="relative z-10">
-                  {product.series === "esc" ? <EscIcon color={cfg.accent} size={220} />
+                  {product.series === "haemng" ? (
+                    <img src={`${import.meta.env.BASE_URL}haemng.svg`} alt="Haemng" className="h-32 w-auto" style={{ filter: "brightness(0) invert(1)", opacity: 0.8 }} />
+                  ) : product.series === "maelard" ? (
+                    <img src={`${import.meta.env.BASE_URL}Maelard.svg`} alt="Maelard" className="h-24 w-auto" style={{ filter: "brightness(0) invert(1)", opacity: 0.8 }} />
+                  ) : product.series === "esc" ? <EscIcon color={cfg.accent} size={220} />
                     : product.series === "fc" ? <FcIcon color={cfg.accent} size={200} />
                     : <MotorIcon color={cfg.accent} size={220} />}
                 </div>
@@ -343,7 +347,11 @@ export default function ProductDetail() {
                     className="h-24 flex items-center justify-center"
                     style={{ background: "linear-gradient(135deg, #111 0%, #1c1c1c 100%)" }}
                   >
-                    {p.series === "esc" ? <EscIcon color={cfg.accent} size={60} />
+                    {p.series === "haemng" ? (
+                      <img src={`${import.meta.env.BASE_URL}haemng.svg`} alt="Haemng" className="h-10 w-auto" style={{ filter: "brightness(0) invert(1)", opacity: 0.7 }} />
+                    ) : p.series === "maelard" ? (
+                      <img src={`${import.meta.env.BASE_URL}Maelard.svg`} alt="Maelard" className="h-7 w-auto" style={{ filter: "brightness(0) invert(1)", opacity: 0.7 }} />
+                    ) : p.series === "esc" ? <EscIcon color={cfg.accent} size={60} />
                       : p.series === "fc" ? <FcIcon color={cfg.accent} size={55} />
                       : <MotorIcon color={cfg.accent} size={55} />}
                   </div>

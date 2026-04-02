@@ -20,8 +20,8 @@ export type Product = {
 };
 
 export const SERIES_CFG = {
-  haemng:  { label: "Haemng Series",                accent: "#ffc914", textOnAccent: "#000" },
-  maelard: { label: "Maelard Series",               accent: "#1a73e8", textOnAccent: "#fff" },
+  haemng:  { label: "Haemng Series", useSvgLogo: true, logoSrc: "haemng.svg", accent: "#ffc914", textOnAccent: "#000" },
+  maelard: { label: "Maelard Series", useSvgLogo: true, logoSrc: "Maelard.svg", accent: "#1a73e8", textOnAccent: "#fff" },
   esc:     { label: "Electronic Speed Controllers", accent: "#111",    textOnAccent: "#fff" },
   fc:      { label: "Flight Controller",            accent: "#0f9d58", textOnAccent: "#fff" },
   ips:     { label: "Integrated Power Systems",     accent: "#e0440e", textOnAccent: "#fff" },
@@ -791,10 +791,7 @@ export const PRODUCTS: Product[] = [
       { label: "Recommended Battery", value: "12S–14S"               },
       { label: "Size",                value: "123.5×58.6×30.25 mm"  },
       { label: "Power Line",          value: "10 AWG"                },
-      { label: "Weight",              value: "248 g"                 },
-      { label: "Protection Grade",    value: "IP67"                  },
-      { label: "BEC",                 value: "No"                    },
-      { label: "Speed Signal",        value: "No"                    },
+      { label: "Weight",              value: "142 g"                  },
     ],
   },
 
