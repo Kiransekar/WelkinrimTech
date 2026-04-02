@@ -117,7 +117,7 @@ export default function Products() {
             <h1 className="text-4xl md:text-6xl font-bold text-white leading-tight" style={{ fontFamily: "Michroma, sans-serif" }}>
               Product <span className="text-[#FFCC00]">Catalogue</span>
             </h1>
-            <p className="text-white/40 text-sm mt-3 max-w-lg" style={{ fontFamily: "Inter, sans-serif" }}>
+            <p className="text-white/40 text-sm mt-3 max-w-lg" style={{ fontFamily: "Lexend, sans-serif" }}>
               IIT Madras Incubated · 36+ variants · Haemng, Maelard, ESC, Flight Controller & Integrated Systems
             </p>
           </div>
@@ -137,13 +137,15 @@ export default function Products() {
                       ? "border-[#FFCC00] text-black"
                       : "border-transparent text-[#808080] hover:text-black hover:border-gray-200"
                   }`}
-                  style={{ fontFamily: "Michroma, sans-serif" }}
+                  style={{ fontFamily: "Michroma, sans-serif", transform: "skewX(-10deg)" }}
                 >
-                  {tab.label}
-                  <span className={`text-[8px] px-1.5 py-0.5 rounded-sm font-medium ${
-                    activeTab === tab.id ? "bg-[#FFCC00] text-black" : "bg-gray-100 text-[#808080]"
-                  }`}>
-                    {tab.count}
+                  <span className="inline-flex items-center gap-2" style={{ transform: "skewX(10deg)" }}>
+                    {tab.label}
+                    <span className={`text-[8px] px-1.5 py-0.5 rounded-sm font-medium ${
+                      activeTab === tab.id ? "bg-[#FFCC00] text-black" : "bg-gray-100 text-[#808080]"
+                    }`}>
+                      {tab.count}
+                    </span>
                   </span>
                 </button>
               ))}
@@ -156,7 +158,7 @@ export default function Products() {
                 value={search}
                 onChange={e => setSearch(e.target.value)}
                 className="text-[10px] border border-gray-200 px-3 py-2 w-64 focus:outline-none focus:border-[#FFCC00] transition-colors duration-200"
-                style={{ fontFamily: "Michroma, sans-serif" }}
+                style={{ fontFamily: "Michroma, sans-serif", transform: "skewX(-10deg)" }}
               />
             </div>
           </div>
@@ -206,9 +208,9 @@ export default function Products() {
             <button
               onClick={() => navigate("/#contact")}
               className="px-10 py-3 bg-[#FFCC00] text-black text-[10px] tracking-widest uppercase font-black hover:bg-[#e6b800] transition-colors duration-300 whitespace-nowrap flex-shrink-0"
-              style={{ fontFamily: "Michroma, sans-serif" }}
+              style={{ fontFamily: "Michroma, sans-serif", transform: "skewX(-10deg)" }}
             >
-              Get in Touch
+              <span style={{ display: "inline-block", transform: "skewX(10deg)" }}>Get in Touch</span>
             </button>
           </div>
         </div>
@@ -262,16 +264,16 @@ function ProductGrid({
               </p>
             )}
             {/* Series badge */}
-            <div className="absolute top-2.5 right-2.5 px-2 py-0.5" style={{ background: cfg.accent }}>
+            <div className="absolute top-2.5 right-2.5 px-2 py-0.5" style={{ background: cfg.accent, transform: "skewX(-10deg)" }}>
               <span className="text-[7px] font-black tracking-widest uppercase"
-                    style={{ fontFamily: "Michroma, sans-serif", color: cfg.textOnAccent }}>
+                    style={{ fontFamily: "Michroma, sans-serif", color: cfg.textOnAccent, display: "inline-block", transform: "skewX(10deg)" }}>
                 {p.series === "ips" ? "IPS" : p.series === "fc" ? "FC" : p.series.toUpperCase()}
               </span>
             </div>
             {/* Tag */}
-            <div className="absolute bottom-2.5 left-2.5 border border-white/20 px-2 py-0.5">
+            <div className="absolute bottom-2.5 left-2.5 border border-white/20 px-2 py-0.5" style={{ transform: "skewX(-10deg)" }}>
               <span className="text-[7px] tracking-widest uppercase text-white/50"
-                    style={{ fontFamily: "Michroma, sans-serif" }}>{p.tag}</span>
+                    style={{ fontFamily: "Michroma, sans-serif", display: "inline-block", transform: "skewX(10deg)" }}>{p.tag}</span>
             </div>
             {/* Hover arrow */}
             <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200"

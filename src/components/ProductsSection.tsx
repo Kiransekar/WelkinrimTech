@@ -1029,10 +1029,11 @@ function ProductCard({ p, expanded, onToggle }: {
 
         {/* Series badge top-right */}
         <div className="absolute top-3 right-3 px-2 py-0.5"
-             style={{ background: cfg.accent }}>
+             style={{ background: cfg.accent, transform: "skewX(-10deg)" }}>
           <span className="text-[8px] font-black tracking-widest uppercase"
                 style={{ fontFamily: "Michroma, sans-serif",
-                         color: p.series === "haemng" ? "#000" : "#fff" }}>
+                         color: p.series === "haemng" ? "#000" : "#fff",
+                         display: "inline-block", transform: "skewX(10deg)" }}>
             {p.series === "ips" ? "IPS" : p.series === "fc" ? "FC" : p.series.toUpperCase()}
           </span>
         </div>
@@ -1040,8 +1041,8 @@ function ProductCard({ p, expanded, onToggle }: {
         {/* tag bottom-left */}
         <div className="absolute bottom-3 left-3">
           <span className="text-[8px] tracking-widest uppercase text-white/60 border border-white/20 px-2 py-0.5"
-                style={{ fontFamily: "Michroma, sans-serif" }}>
-            {p.tag}
+                style={{ fontFamily: "Michroma, sans-serif", transform: "skewX(-10deg)", display: "inline-block" }}>
+            <span style={{ display: "inline-block", transform: "skewX(10deg)" }}>{p.tag}</span>
           </span>
         </div>
       </div>
@@ -1055,7 +1056,7 @@ function ProductCard({ p, expanded, onToggle }: {
         <h3 className="text-sm font-bold text-black mb-1" style={{ fontFamily: "Michroma, sans-serif" }}>
           {p.seriesLabel}
         </h3>
-        <p className="text-[10px] text-[#808080] mb-4 leading-relaxed">{p.application}</p>
+        <p className="text-[10px] text-[#808080] mb-4 leading-relaxed" style={{ fontFamily: "Lexend, sans-serif" }}>{p.application}</p>
 
         {/* Key 3 specs as badges */}
         <div className="grid grid-cols-3 gap-px bg-gray-100 mb-4">
@@ -1064,7 +1065,7 @@ function ProductCard({ p, expanded, onToggle }: {
               <p className="text-[10px] font-black text-black" style={{ fontFamily: "Michroma, sans-serif" }}>
                 {s.value}
               </p>
-              <p className="text-[8px] text-[#808080] mt-0.5 leading-tight">{s.label}</p>
+              <p className="text-[8px] text-[#808080] mt-0.5 leading-tight" style={{ fontFamily: "Lexend, sans-serif" }}>{s.label}</p>
             </div>
           ))}
         </div>
@@ -1079,8 +1080,8 @@ function ProductCard({ p, expanded, onToggle }: {
             <div className="border border-gray-100 divide-y divide-gray-50">
               {p.allSpecs.map(s => (
                 <div key={s.label} className="flex items-center justify-between px-3 py-1.5">
-                  <span className="text-[9px] text-[#808080]">{s.label}</span>
-                  <span className="text-[9px] font-bold text-black">{s.value}</span>
+                  <span className="text-[9px] text-[#808080]" style={{ fontFamily: "Lexend, sans-serif" }}>{s.label}</span>
+                  <span className="text-[9px] font-bold text-black" style={{ fontFamily: "Lexend, sans-serif" }}>{s.value}</span>
                 </div>
               ))}
             </div>
@@ -1108,12 +1109,11 @@ function ProductCard({ p, expanded, onToggle }: {
                           <td className="px-2 py-1.5 text-[#444]">{r.voltage}</td>
                           <td className="px-2 py-1.5 text-[#444]">{r.power}</td>
                           <td className="px-2 py-1.5 font-bold" style={{ color: cfg.accent }}>{r.thrust}</td>
-                          <td className="px-2 py-1.5 text-[#444]">{r.current}</td>
                         </tr>
                       ))}
                     </tbody>
                   </table>
-                  <p className="text-[7px] text-[#aaa] mt-1.5 leading-relaxed">
+                  <p className="text-[7px] text-[#aaa] mt-1.5 leading-relaxed" style={{ fontFamily: "Lexend, sans-serif" }}>
                     * Bench test at ambient room temperature, MSL. Actual results may vary by field conditions.
                   </p>
                 </div>
@@ -1127,18 +1127,19 @@ function ProductCard({ p, expanded, onToggle }: {
           <button
             onClick={onToggle}
             className="flex-1 py-2 border border-gray-200 text-[9px] tracking-widest uppercase text-[#808080] hover:border-black hover:text-black transition-all duration-200"
-            style={{ fontFamily: "Michroma, sans-serif" }}
+            style={{ fontFamily: "Michroma, sans-serif", transform: "skewX(-10deg)" }}
           >
-            {expanded ? "Collapse" : "Full Specs"}
+            <span style={{ display: "inline-block", transform: "skewX(10deg)" }}>{expanded ? "Collapse" : "Full Specs"}</span>
           </button>
           <button
             onClick={() => document.querySelector("#contact")?.scrollIntoView({ behavior: "smooth" })}
             className="flex-1 py-2 text-[9px] tracking-widest uppercase font-black transition-all duration-200"
             style={{ fontFamily: "Michroma, sans-serif",
                      background: cfg.accent,
-                     color: p.series === "haemng" ? "#000" : "#fff" }}
+                     color: p.series === "haemng" ? "#000" : "#fff",
+                     transform: "skewX(-10deg)" }}
           >
-            Enquire
+            <span style={{ display: "inline-block", transform: "skewX(10deg)" }}>Enquire</span>
           </button>
         </div>
       </div>
@@ -1178,7 +1179,7 @@ export default function ProductsSection() {
               Engineered for<br /><span className="text-[#FFCC00]">Every Frontier</span>
             </h2>
           </div>
-          <p className="text-[#808080] text-sm max-w-xs leading-relaxed">
+          <p className="text-[#808080] text-sm max-w-xs leading-relaxed" style={{ fontFamily: "Lexend, sans-serif" }}>
             IIT Madras incubated · Five purpose-built product lines · 36+ variants ·
             Designed and tested in Chennai, India.
           </p>
@@ -1195,13 +1196,15 @@ export default function ProductsSection() {
                   ? "bg-black text-[#FFCC00]"
                   : "bg-gray-100 text-[#808080] hover:bg-gray-200 hover:text-black"
               }`}
-              style={{ fontFamily: "Michroma, sans-serif" }}
+              style={{ fontFamily: "Michroma, sans-serif", transform: "skewX(-10deg)" }}
             >
-              {tab.label}
-              <span className={`text-[8px] px-1.5 py-0.5 rounded-sm font-medium ${
-                activeTab === tab.id ? "bg-[#FFCC00] text-black" : "bg-white text-[#808080]"
-              }`}>
-                {tab.count}
+              <span className="inline-flex items-center gap-2" style={{ transform: "skewX(10deg)" }}>
+                {tab.label}
+                <span className={`text-[8px] px-1.5 py-0.5 rounded-sm font-medium ${
+                  activeTab === tab.id ? "bg-[#FFCC00] text-black" : "bg-white text-[#808080]"
+                }`}>
+                  {tab.count}
+                </span>
               </span>
             </button>
           ))}
@@ -1226,7 +1229,7 @@ export default function ProductsSection() {
                         style={{ fontFamily: "Michroma, sans-serif" }}>
                       {cfg.label}
                     </h3>
-                    <p className="text-[10px] text-[#808080] mt-0.5">
+                    <p className="text-[10px] text-[#808080] mt-0.5" style={{ fontFamily: "Lexend, sans-serif" }}>
                       {group.length} model{group.length > 1 ? "s" : ""}
                     </p>
                   </div>
@@ -1268,7 +1271,7 @@ export default function ProductsSection() {
             <h3 className="text-xl font-bold text-white" style={{ fontFamily: "Michroma, sans-serif" }}>
               Need a custom propulsion solution?
             </h3>
-            <p className="text-sm text-white/50 mt-1">
+            <p className="text-sm text-white/50 mt-1" style={{ fontFamily: "Lexend, sans-serif" }}>
               Custom KV ratings · Form factors · Voltage ranges · IP ratings · OEM available
             </p>
           </div>
@@ -1276,16 +1279,16 @@ export default function ProductsSection() {
             <button
               onClick={() => document.querySelector("#contact")?.scrollIntoView({ behavior: "smooth" })}
               className="px-8 py-3 bg-[#FFCC00] text-black text-[10px] tracking-widest uppercase font-black hover:bg-[#e6b800] transition-all duration-300 whitespace-nowrap"
-              style={{ fontFamily: "Michroma, sans-serif" }}
+              style={{ fontFamily: "Michroma, sans-serif", transform: "skewX(-10deg)" }}
             >
-              Get in Touch
+              <span style={{ display: "inline-block", transform: "skewX(10deg)" }}>Get in Touch</span>
             </button>
             <button
               onClick={() => document.querySelector("#contact")?.scrollIntoView({ behavior: "smooth" })}
               className="px-8 py-3 border border-white/20 text-white text-[10px] tracking-widest uppercase hover:border-[#FFCC00] hover:text-[#FFCC00] transition-all duration-300 whitespace-nowrap"
-              style={{ fontFamily: "Michroma, sans-serif" }}
+              style={{ fontFamily: "Michroma, sans-serif", transform: "skewX(-10deg)" }}
             >
-              Download Catalogue
+              <span style={{ display: "inline-block", transform: "skewX(10deg)" }}>Download Catalogue</span>
             </button>
           </div>
         </div>

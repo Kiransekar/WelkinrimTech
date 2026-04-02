@@ -128,21 +128,9 @@ export default function Navbar() {
           isTransparent ? "bg-transparent" : "bg-white/95 backdrop-blur-md shadow-sm"
         }`}
       >
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center">
 
-          {/* ── Logo ── */}
-          <button
-            onClick={() => { navigate("/"); window.scrollTo({ top: 0, behavior: "smooth" }); }}
-            className="flex items-center gap-3"
-          >
-            <img
-              src={`${import.meta.env.BASE_URL}${isTransparent ? "welkinrim-logo-white.svg" : "welkinrim-logo.svg"}`}
-              alt="Welkinrim Technologies"
-              className="h-10 w-auto"
-            />
-          </button>
-
-          {/* ── Desktop Nav ── */}
+          {/* ── Desktop Nav (left) ── */}
           <div className="hidden md:flex items-center gap-8">
             {[
               { label: "Home",       action: () => scrollToSection("home")       },
@@ -186,15 +174,30 @@ export default function Navbar() {
             <button
               onClick={() => scrollToSection("contact")}
               className="ml-2 px-5 py-2 bg-[#FFCC00] text-black text-xs tracking-widest uppercase font-bold hover:bg-[#e6b800] transition-all duration-300"
-              style={{ fontFamily: "Michroma, sans-serif" }}
+              style={{ fontFamily: "Michroma, sans-serif", transform: "skewX(-10deg)" }}
             >
-              Get Quote
+              <span style={{ display: "inline-block", transform: "skewX(10deg)" }}>Get Quote</span>
             </button>
           </div>
 
+          {/* ── Logo (right) ── */}
+          <button
+            onClick={() => { navigate("/"); window.scrollTo({ top: 0, behavior: "smooth" }); }}
+            className={`flex items-center gap-3 ml-auto rounded-md transition-all duration-500 ${isTransparent ? 'bg-white/90 backdrop-blur-sm px-3 py-1' : ''}`}
+          >
+            <img
+              src={`${import.meta.env.BASE_URL}welkinrim-logo.svg`}
+              alt="Welkinrim Technologies"
+              className="h-12 w-auto"
+              style={{
+                mixBlendMode: 'multiply',
+              }}
+            />
+          </button>
+
           {/* ── Mobile toggle ── */}
           <button
-            className={`md:hidden flex flex-col gap-1.5 transition-colors duration-300 ${isTransparent ? "text-white" : "text-black"}`}
+            className={`md:hidden flex flex-col gap-1.5 transition-colors duration-300 ml-4 ${isTransparent ? "text-white" : "text-black"}`}
             onClick={() => setMenuOpen(!menuOpen)}
           >
             <span className={`block w-6 h-0.5 bg-current transition-all duration-300 ${menuOpen ? "rotate-45 translate-y-2" : ""}`} />
@@ -225,9 +228,9 @@ export default function Navbar() {
             <button
               onClick={() => scrollToSection("contact")}
               className="px-5 py-2 bg-[#FFCC00] text-black text-xs tracking-widest uppercase font-bold hover:bg-[#e6b800] transition-all duration-300 text-left"
-              style={{ fontFamily: "Michroma, sans-serif" }}
+              style={{ fontFamily: "Michroma, sans-serif", transform: "skewX(-10deg)" }}
             >
-              Get Quote
+              <span style={{ display: "inline-block", transform: "skewX(10deg)" }}>Get Quote</span>
             </button>
           </div>
         </div>
@@ -264,7 +267,7 @@ export default function Navbar() {
                     </span>
                     <div>
                       <p className="text-xs font-bold tracking-wide" style={{ fontFamily: "Michroma, sans-serif" }}>{cat.label}</p>
-                      <p className="text-[10px] text-[#808080] mt-0.5">{cat.tagline}</p>
+                      <p className="text-[10px] text-[#808080] mt-0.5" style={{ fontFamily: "Lexend, sans-serif" }}>{cat.tagline}</p>
                     </div>
                     {activeCategory === cat.id && (
                       <svg className="ml-auto w-4 h-4 text-[#FFCC00]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -283,7 +286,7 @@ export default function Navbar() {
                   <p className="text-[9px] text-[#808080] tracking-[0.3em] uppercase" style={{ fontFamily: "Michroma, sans-serif" }}>
                     {activeCat.label}
                   </p>
-                  <p className="text-xs text-[#444] mt-0.5">{activeCat.tagline}</p>
+                  <p className="text-xs text-[#444] mt-0.5" style={{ fontFamily: "Lexend, sans-serif" }}>{activeCat.tagline}</p>
                 </div>
                 <button
                   onClick={() => goToProducts(activeCategory)}
@@ -312,7 +315,7 @@ export default function Navbar() {
                     <p className="text-xs font-bold text-black truncate" style={{ fontFamily: "Michroma, sans-serif" }}>{p.model}</p>
                     <div className="flex flex-wrap gap-1 mt-1.5">
                       {p.keySpecs.map((s) => (
-                        <span key={s.label} className="text-[7px] bg-gray-100 text-[#444] px-1 py-0.5">{s.value}</span>
+                        <span key={s.label} className="text-[7px] bg-gray-100 text-[#444] px-1 py-0.5" style={{ fontFamily: "Lexend, sans-serif" }}>{s.value}</span>
                       ))}
                     </div>
                   </button>
@@ -333,15 +336,15 @@ export default function Navbar() {
               </div>
 
               <div className="mt-6 pt-4 border-t border-gray-100 flex items-center justify-between">
-                <p className="text-[10px] text-[#808080]">
+                <p className="text-[10px] text-[#808080]" style={{ fontFamily: "Lexend, sans-serif" }}>
                   36+ product variants across 5 lines
                 </p>
                 <button
                   onClick={() => scrollToSection("contact")}
                   className="px-4 py-1.5 bg-[#FFCC00] text-black text-[9px] tracking-widest uppercase font-bold hover:bg-[#e6b800] transition-colors duration-200"
-                  style={{ fontFamily: "Michroma, sans-serif" }}
+                  style={{ fontFamily: "Michroma, sans-serif", transform: "skewX(-10deg)" }}
                 >
-                  Request a Quote
+                  <span style={{ display: "inline-block", transform: "skewX(10deg)" }}>Request a Quote</span>
                 </button>
               </div>
             </div>

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Michroma&family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Michroma&family=Lexend:wght@300;400;500;600;700&display=swap');
 @import "tailwindcss";
 @import "tw-animate-css";
 @plugin "@tailwindcss/typography";
@@ -62,7 +62,7 @@
   --chart-3: 0 0% 0%;
   --chart-4: 47 80% 60%;
   --chart-5: 0 0% 30%;
-  --app-font-sans: 'Michroma', 'Inter', sans-serif;
+  --app-font-sans: 'Michroma', 'Lexend', sans-serif;
   --app-font-mono: Menlo, monospace;
   --radius: 0.5rem;
 }

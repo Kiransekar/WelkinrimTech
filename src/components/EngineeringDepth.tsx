@@ -253,7 +253,7 @@ export default function EngineeringDepth() {
           {/* Description */}
           <p
             className="text-sm text-[#555] leading-relaxed max-w-[320px]"
-            style={{ fontFamily: "Inter, sans-serif" }}
+            style={{ fontFamily: "Lexend, sans-serif" }}
           >
             Every motor validated through six layers of engineering before a single prototype cut.
           </p>
@@ -264,9 +264,9 @@ export default function EngineeringDepth() {
               <span
                 key={tag}
                 className="text-[8px] tracking-[0.1em] uppercase border border-[#808080]/30 rounded-sm px-2 py-1 text-[#808080]"
-                style={{ fontFamily: "Michroma, sans-serif" }}
+                style={{ fontFamily: "Michroma, sans-serif", transform: "skewX(-10deg)" }}
               >
-                {tag}
+                <span style={{ display: "inline-block", transform: "skewX(10deg)" }}>{tag}</span>
               </span>
             ))}
           </div>
@@ -277,19 +277,21 @@ export default function EngineeringDepth() {
               document.querySelector("#contact")?.scrollIntoView({ behavior: "smooth" })
             }
             className="self-start inline-flex items-center gap-2 px-6 py-3 bg-[#FFCC00] text-black text-[10px] tracking-[0.22em] uppercase font-bold hover:bg-[#e6b800] transition-all duration-300 mt-2"
-            style={{ fontFamily: "Michroma, sans-serif" }}
+            style={{ fontFamily: "Michroma, sans-serif", transform: "skewX(-10deg)" }}
           >
-            Explore Technology
-            <svg
-              width="11"
-              height="11"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.5"
-            >
-              <path d="M5 12h14M12 5l7 7-7 7" />
-            </svg>
+            <span className="inline-flex items-center gap-2" style={{ transform: "skewX(10deg)" }}>
+              Explore Technology
+              <svg
+                width="11"
+                height="11"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+              >
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg>
+            </span>
           </button>
         </div>
 

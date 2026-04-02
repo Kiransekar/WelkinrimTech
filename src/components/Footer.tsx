@@ -20,14 +20,17 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-6 md:px-12 py-16 grid grid-cols-1 md:grid-cols-4 gap-12">
         {/* Brand */}
         <div className="md:col-span-1">
-          <div className="flex items-center gap-3 mb-6">
+          <div className="inline-flex items-center gap-3 mb-6 bg-white/90 rounded-md px-3 py-1">
             <img
               src={`${import.meta.env.BASE_URL}welkinrim-logo.svg`}
               alt="Welkinrim Technologies"
               className="h-10 w-auto"
+              style={{
+                mixBlendMode: 'multiply',
+              }}
             />
           </div>
-          <p className="text-[#808080] text-xs leading-relaxed mb-6" style={{ fontFamily: 'Inter, sans-serif' }}>
+          <p className="text-[#808080] text-xs leading-relaxed mb-6" style={{ fontFamily: 'Lexend, sans-serif' }}>
             Pioneering the future of electric propulsion for UAV, Marine, Land and Robotics applications.
           </p>
           <div className="flex gap-3">
@@ -81,7 +84,7 @@ export default function Footer() {
           <div className="text-[10px] tracking-[0.3em] uppercase text-[#FFCC00] mb-6" style={{ fontFamily: 'Michroma, sans-serif' }}>
             Contact
           </div>
-          <div className="flex flex-col gap-4 text-xs text-white/60" style={{ fontFamily: 'Inter, sans-serif' }}>
+          <div className="flex flex-col gap-4 text-xs text-white/60" style={{ fontFamily: 'Lexend, sans-serif' }}>
             <div>
               <div className="text-[#808080] text-[10px] uppercase tracking-widest mb-1" style={{ fontFamily: 'Michroma, sans-serif' }}>Address</div>
               Chennai Industrial Corridor,<br />Tamil Nadu, India

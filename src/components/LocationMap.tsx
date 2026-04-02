@@ -277,7 +277,7 @@ export default function LocationMap() {
             </h2>
           </div>
           <p className="text-[#808080] text-sm max-w-xs leading-relaxed"
-             style={{ fontFamily: "Inter, sans-serif" }}>
+             style={{ fontFamily: "Lexend, sans-serif" }}>
             Our facility sits in the Oragadam Industrial Corridor — surrounded by global
             automotive and technology leaders within a 20 km radius.
           </p>
@@ -331,9 +331,9 @@ export default function LocationMap() {
               <button
                 onClick={reset}
                 className="absolute top-3 right-3 z-10 px-3 py-1.5 bg-[#FFCC00] text-black text-[10px] tracking-widest uppercase font-bold shadow hover:bg-[#e6b800] transition-colors"
-                style={{ fontFamily: "Michroma, sans-serif" }}
+                style={{ fontFamily: "Michroma, sans-serif", transform: "skewX(-10deg)" }}
               >
-                ← Reset View
+                <span style={{ display: "inline-block", transform: "skewX(10deg)" }}>← Reset View</span>
               </button>
             )}
           </div>
@@ -355,7 +355,7 @@ export default function LocationMap() {
               <p className="text-white text-sm font-bold" style={{ fontFamily: "Michroma, sans-serif" }}>
                 Welkinrim Technologies
               </p>
-              <p className="text-white/40 text-[10px] mt-0.5" style={{ fontFamily: "Inter, sans-serif" }}>
+              <p className="text-white/40 text-[10px] mt-0.5" style={{ fontFamily: "Lexend, sans-serif" }}>
                 Oragadam, Chennai, Tamil Nadu
               </p>
             </div>
@@ -384,7 +384,7 @@ export default function LocationMap() {
                           {co.name}
                         </p>
                         <p className="text-[10px] text-white/30 truncate mt-0.5"
-                           style={{ fontFamily: "Inter, sans-serif" }}>
+                           style={{ fontFamily: "Lexend, sans-serif" }}>
                           {co.sector}
                         </p>
                       </div>

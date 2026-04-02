@@ -63,9 +63,9 @@ export default function ProductDetail() {
           <button
             onClick={() => navigate("/products")}
             className="px-6 py-2 bg-[#FFCC00] text-black text-[10px] tracking-widest uppercase font-bold"
-            style={{ fontFamily: "Michroma, sans-serif" }}
+            style={{ fontFamily: "Michroma, sans-serif", transform: "skewX(-10deg)" }}
           >
-            Back to Products
+            <span style={{ display: "inline-block", transform: "skewX(10deg)" }}>Back to Products</span>
           </button>
         </div>
       </div>
@@ -109,9 +109,9 @@ export default function ProductDetail() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-end pb-12">
             {/* Left */}
             <div>
-              <div className="inline-flex items-center gap-2 mb-4 px-3 py-1" style={{ background: cfg.accent }}>
+              <div className="inline-flex items-center gap-2 mb-4 px-3 py-1" style={{ background: cfg.accent, transform: "skewX(-10deg)" }}>
                 <span className="text-[9px] font-black tracking-widest uppercase"
-                      style={{ fontFamily: "Michroma, sans-serif", color: cfg.textOnAccent }}>
+                      style={{ fontFamily: "Michroma, sans-serif", color: cfg.textOnAccent, display: "inline-block", transform: "skewX(10deg)" }}>
                   {product.tag}
                 </span>
               </div>
@@ -140,16 +140,16 @@ export default function ProductDetail() {
                 <button
                   onClick={() => navigate("/#contact")}
                   className="px-8 py-3 text-[10px] tracking-widest uppercase font-black transition-colors duration-300 hover:opacity-90"
-                  style={{ fontFamily: "Michroma, sans-serif", background: cfg.accent, color: cfg.textOnAccent }}
+                  style={{ fontFamily: "Michroma, sans-serif", background: cfg.accent, color: cfg.textOnAccent, transform: "skewX(-10deg)" }}
                 >
-                  Enquire Now
+                  <span style={{ display: "inline-block", transform: "skewX(10deg)" }}>Enquire Now</span>
                 </button>
                 <button
                   onClick={() => navigate("/products")}
                   className="px-8 py-3 border border-white/20 text-white text-[10px] tracking-widest uppercase hover:border-white/60 transition-colors duration-300"
-                  style={{ fontFamily: "Michroma, sans-serif" }}
+                  style={{ fontFamily: "Michroma, sans-serif", transform: "skewX(-10deg)" }}
                 >
-                  ← All Products
+                  <span style={{ display: "inline-block", transform: "skewX(10deg)" }}>← All Products</span>
                 </button>
               </div>
             </div>
@@ -188,7 +188,7 @@ export default function ProductDetail() {
               {product.allSpecs.map((s, i) => (
                 <div key={s.label}
                      className={`flex items-center justify-between px-5 py-3 ${i % 2 === 0 ? "bg-white" : "bg-gray-50/50"}`}>
-                  <span className="text-[11px] text-[#808080]" style={{ fontFamily: "Inter, sans-serif" }}>
+                  <span className="text-[11px] text-[#808080]" style={{ fontFamily: "Lexend, sans-serif" }}>
                     {s.label}
                   </span>
                   <span className="text-[11px] font-bold text-black" style={{ fontFamily: "Michroma, sans-serif" }}>
@@ -285,9 +285,9 @@ export default function ProductDetail() {
                 <button
                   onClick={() => navigate("/#contact")}
                   className="mt-4 px-6 py-2 text-[9px] tracking-widest uppercase font-black"
-                  style={{ fontFamily: "Michroma, sans-serif", background: cfg.accent, color: cfg.textOnAccent }}
+                  style={{ fontFamily: "Michroma, sans-serif", background: cfg.accent, color: cfg.textOnAccent, transform: "skewX(-10deg)" }}
                 >
-                  Get in Touch
+                  <span style={{ display: "inline-block", transform: "skewX(10deg)" }}>Get in Touch</span>
                 </button>
               </div>
             </div>
@@ -309,9 +309,9 @@ export default function ProductDetail() {
           <button
             onClick={() => navigate("/#contact")}
             className="px-10 py-3 bg-[#FFCC00] text-black text-[10px] tracking-widest uppercase font-black hover:bg-[#e6b800] transition-colors duration-300 whitespace-nowrap flex-shrink-0"
-            style={{ fontFamily: "Michroma, sans-serif" }}
+            style={{ fontFamily: "Michroma, sans-serif", transform: "skewX(-10deg)" }}
           >
-            Enquire Now
+            <span style={{ display: "inline-block", transform: "skewX(10deg)" }}>Enquire Now</span>
           </button>
         </div>
 
