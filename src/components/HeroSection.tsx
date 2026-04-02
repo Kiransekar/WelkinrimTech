@@ -29,7 +29,6 @@ const industries = [
 
 export default function HeroSection() {
   const [activeIdx, setActiveIdx] = useState(0);
-  const [prevIdx, setPrevIdx] = useState<number | null>(null);
   const [transitioning, setTransitioning] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -38,11 +37,9 @@ export default function HeroSection() {
     (idx: number) => {
       if (transitioning || idx === activeIdx) return;
       setTransitioning(true);
-      setPrevIdx(activeIdx);
       setTimeout(() => {
         setActiveIdx(idx);
         setTimeout(() => {
-          setPrevIdx(null);
           setTransitioning(false);
         }, 800);
       }, 50);
@@ -118,7 +115,7 @@ export default function HeroSection() {
               style={{ top: 0 }}
             >
               <h1
-                className="text-[48px] md:text-[64px] lg:text-[7vw] font-bold text-[#FFCC00] leading-[1.1] whitespace-nowrap"
+                className="text-[48px] md:text-[64px] lg:text-[7vw] font-bold text-[#ffc914] leading-[1.1] whitespace-nowrap"
                 style={{ fontFamily: 'Michroma, sans-serif' }}
               >
                 {ind.label}
@@ -154,7 +151,7 @@ export default function HeroSection() {
             onClick={() => {
               document.querySelector("#contact")?.scrollIntoView({ behavior: "smooth" });
             }}
-            className="px-8 py-3 bg-[#FFCC00] text-black text-xs tracking-[0.2em] uppercase font-bold hover:bg-[#e6b800] transition-all duration-300 hover:shadow-lg hover:shadow-[#FFCC00]/30"
+            className="px-8 py-3 bg-[#ffc914] text-black text-xs tracking-[0.2em] uppercase font-bold hover:bg-[#e0b212] transition-all duration-300 hover:shadow-lg hover:shadow-[#ffc914]/30"
             style={{ fontFamily: 'Michroma, sans-serif', transform: 'skewX(-10deg)' }}
           >
             <span style={{ display: 'inline-block', transform: 'skewX(10deg)' }}>Get in Touch</span>
@@ -163,7 +160,7 @@ export default function HeroSection() {
             onClick={() => {
               document.querySelector("#technology")?.scrollIntoView({ behavior: "smooth" });
             }}
-            className="px-8 py-3 border border-white/50 text-white text-xs tracking-[0.2em] uppercase font-medium transition-all duration-300 backdrop-blur-sm hover:border-[#FFCC00] hover:text-[#FFCC00]"
+            className="px-8 py-3 border border-white/50 text-white text-xs tracking-[0.2em] uppercase font-medium transition-all duration-300 backdrop-blur-sm hover:border-[#ffc914] hover:text-[#ffc914]"
             style={{ fontFamily: 'Michroma, sans-serif', transform: 'skewX(-10deg)' }}
           >
             <span style={{ display: 'inline-block', transform: 'skewX(10deg)' }}>Our Technology</span>
@@ -183,7 +180,7 @@ export default function HeroSection() {
               onClick={() => goTo(i)}
               className={`text-xs tracking-[0.15em] uppercase font-bold pb-1 transition-all duration-200 ${
                 i === activeIdx
-                  ? "text-white border-b-2 border-[#FFCC00]"
+                  ? "text-white border-b-2 border-[#ffc914]"
                   : "text-white/50 hover:text-white border-b-2 border-transparent"
               }`}
               style={{ fontFamily: 'Michroma, sans-serif' }}
@@ -199,7 +196,7 @@ export default function HeroSection() {
 
       {/* Scroll indicator */}
       <div className="absolute bottom-8 right-10 z-10 flex flex-col items-center gap-2">
-        <div className="w-px h-12 bg-gradient-to-b from-transparent to-[#FFCC00]" />
+        <div className="w-px h-12 bg-gradient-to-b from-transparent to-[#ffc914]" />
         <span className="text-[10px] tracking-widest uppercase rotate-90 origin-center translate-y-6 text-white/40" style={{ fontFamily: 'Michroma, sans-serif' }}>Scroll</span>
       </div>
     </section>

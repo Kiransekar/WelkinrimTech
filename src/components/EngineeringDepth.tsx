@@ -3,8 +3,8 @@ import { useState, useEffect, useRef } from "react";
 const industries = [
   {
     id: "air",
-    label: "AIR",
-    tabLabel: "AIR",
+    label: "UAV / eVTOL",
+    tabLabel: "UAV / eVTOL",
     fullLabel: "UAV / eVTOL",
     tags: ["FLUX DENSITY", "THERMAL", "EFFICIENCY", "STRESS", "COGGING", "FOC"],
     metrics: [
@@ -21,8 +21,8 @@ const industries = [
   },
   {
     id: "marine",
-    label: "WATER",
-    tabLabel: "WATER",
+    label: "MARINE",
+    tabLabel: "MARINE",
     fullLabel: "Marine",
     tags: ["WATERPROOFING", "CORROSION", "EFFICIENCY", "TORQUE", "THERMAL", "SEAL"],
     metrics: [
@@ -129,7 +129,7 @@ function MetricCell({
       } ${!isLastCol ? "border-r border-black/10" : ""}`}
     >
       <p
-        className="text-[6px] md:text-[7px] tracking-[0.15em] text-black/40 uppercase mb-1"
+        className="text-xs tracking-[0.15em] text-black/40 uppercase mb-1"
         style={{ fontFamily: "Michroma, sans-serif" }}
       >
         {metric.label}
@@ -137,7 +137,7 @@ function MetricCell({
       <div className="flex items-baseline gap-1 leading-none flex-wrap">
         {metric.prefix ? (
           <span
-            className="text-[12px] md:text-[14px] xl:text-[16px] font-bold text-black leading-none"
+            className="text-sm font-bold text-black leading-none"
             style={{ fontFamily: "Michroma, sans-serif" }}
           >
             {metric.prefix}{da ? Math.round(metric.value) : "0"}
@@ -145,7 +145,7 @@ function MetricCell({
         ) : (
           <>
             <span
-              className="text-[12px] md:text-[14px] xl:text-[16px] font-bold text-black leading-none"
+              className="text-sm font-bold text-black leading-none"
               style={{ fontFamily: "Michroma, sans-serif" }}
             >
               {metric.value >= 1000 && da
@@ -154,7 +154,7 @@ function MetricCell({
             </span>
             {metric.unit && (
               <span
-                className="text-[7px] md:text-[8px] font-bold text-black/50"
+                className="text-xs font-bold text-black/50"
                 style={{ fontFamily: "Michroma, sans-serif" }}
               >
                 {metric.unit}
@@ -206,7 +206,7 @@ export default function EngineeringDepth() {
 
           {/* Tag */}
           <p
-            className="text-[9px] tracking-[0.2em] text-[#808080] uppercase"
+            className="text-xs tracking-[0.2em] text-[#808080] uppercase"
             style={{ fontFamily: "Michroma, sans-serif" }}
           >
             Simulation-Validated
@@ -221,7 +221,7 @@ export default function EngineeringDepth() {
               Engineering
             </div>
             <div
-              className="text-[32px] md:text-[40px] xl:text-[48px] font-black text-[#FFCC00] uppercase tracking-tight"
+              className="text-[32px] md:text-[40px] xl:text-[48px] font-black text-[#ffc914] uppercase tracking-tight"
               style={{ fontFamily: "Michroma, sans-serif" }}
             >
               Depth
@@ -234,9 +234,9 @@ export default function EngineeringDepth() {
               <div key={ind.id} className="flex items-center">
                 <button
                   onClick={() => handleTab(i)}
-                  className={`text-[11px] tracking-[0.15em] uppercase font-bold pb-1 transition-all duration-200 ${
+                  className={`text-xs tracking-[0.15em] uppercase font-bold pb-1 transition-all duration-200 ${
                     i === activeIdx
-                      ? "text-black border-b-2 border-[#FFCC00]"
+                      ? "text-black border-b-2 border-[#ffc914]"
                       : "text-[#aaa] border-b-2 border-transparent hover:text-black"
                   }`}
                   style={{ fontFamily: "Michroma, sans-serif" }}
@@ -244,30 +244,9 @@ export default function EngineeringDepth() {
                   {ind.tabLabel}
                 </button>
                 {i < industries.length - 1 && (
-                  <span className="text-[#ccc] mx-3 text-sm select-none">|</span>
+                  <span className="text-[#ccc] mx-3 text-xs select-none">|</span>
                 )}
               </div>
-            ))}
-          </div>
-
-          {/* Description */}
-          <p
-            className="text-sm text-[#555] leading-relaxed max-w-[320px]"
-            style={{ fontFamily: "Lexend, sans-serif" }}
-          >
-            Every motor validated through six layers of engineering before a single prototype cut.
-          </p>
-
-          {/* Tags */}
-          <div className="flex flex-wrap gap-1.5 md:gap-2">
-            {active.tags.map((tag) => (
-              <span
-                key={tag}
-                className="text-[8px] tracking-[0.1em] uppercase border border-[#808080]/30 rounded-sm px-2 py-1 text-[#808080]"
-                style={{ fontFamily: "Michroma, sans-serif", transform: "skewX(-10deg)" }}
-              >
-                <span style={{ display: "inline-block", transform: "skewX(10deg)" }}>{tag}</span>
-              </span>
             ))}
           </div>
 
@@ -276,7 +255,7 @@ export default function EngineeringDepth() {
             onClick={() =>
               document.querySelector("#contact")?.scrollIntoView({ behavior: "smooth" })
             }
-            className="self-start inline-flex items-center gap-2 px-6 py-3 bg-[#FFCC00] text-black text-[10px] tracking-[0.22em] uppercase font-bold hover:bg-[#e6b800] transition-all duration-300 mt-2"
+            className="self-start inline-flex items-center gap-2 px-6 py-3 bg-[#ffc914] text-black text-xs tracking-[0.22em] uppercase font-bold hover:bg-[#e0b212] transition-all duration-300 mt-2"
             style={{ fontFamily: "Michroma, sans-serif", transform: "skewX(-10deg)" }}
           >
             <span className="inline-flex items-center gap-2" style={{ transform: "skewX(10deg)" }}>
@@ -332,7 +311,7 @@ export default function EngineeringDepth() {
         <div className="flex-1 relative flex flex-col justify-center z-20">
           {/* Parallelogram shape using clip-path */}
           <div
-            className="absolute inset-0 bg-[#FFCC00]"
+            className="absolute inset-0 bg-[#ffc914]"
             style={{
               clipPath: "polygon(15% 0, 100% 0, 100% 100%, 0% 100%)",
             }}
@@ -351,7 +330,7 @@ export default function EngineeringDepth() {
           {/* Inner content - metrics grid on top of yellow */}
           <div className="relative z-40 flex flex-col px-4 lg:pl-[200px] xl:pl-[220px] lg:pr-8 xl:pr-10 pb-6 lg:pb-8">
             <p
-              className="text-[11px] tracking-[0.25em] text-black/70 font-semibold uppercase mb-4"
+              className="text-xs tracking-[0.25em] text-black/70 font-semibold uppercase mb-4"
               style={{ fontFamily: "Michroma, sans-serif" }}
             >
               Motor Specifications
@@ -375,7 +354,7 @@ export default function EngineeringDepth() {
             {/* Proprietary footer */}
             <div className="mt-4 pt-3 border-t border-black/10">
               <p
-                className="text-[8px] tracking-[0.2em] text-black/30 uppercase text-right"
+                className="text-xs tracking-[0.2em] text-black/30 uppercase text-right"
                 style={{ fontFamily: "Michroma, sans-serif" }}
               >
                 Welkinrim Technologies &nbsp;|&nbsp; Proprietary &nbsp;|&nbsp; Rev. 0003.1

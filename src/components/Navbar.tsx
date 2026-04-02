@@ -141,23 +141,23 @@ export default function Navbar() {
               <button
                 key={label}
                 onClick={action}
-                className={`text-xs tracking-widest uppercase font-medium transition-all duration-300 hover:text-[#FFCC00] relative group ${
+                className={`text-xs tracking-widest uppercase font-medium transition-all duration-300 hover:text-[#ffc914] relative group ${
                   isTransparent ? "text-white" : "text-black"
                 }`}
                 style={{ fontFamily: "Michroma, sans-serif" }}
               >
                 {label}
-                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-[#FFCC00] transition-all duration-300 group-hover:w-full" />
+                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-[#ffc914] transition-all duration-300 group-hover:w-full" />
               </button>
             ))}
 
             {/* Products trigger */}
             <div className="relative" onMouseEnter={openMega} onMouseLeave={closeMega}>
               <button
-                onClick={goToProducts}
+                onClick={() => goToProducts()}
                 className={`text-xs tracking-widest uppercase font-medium transition-all duration-300 flex items-center gap-1 relative group ${
                   isTransparent ? "text-white" : "text-black"
-                } ${megaOpen ? "text-[#FFCC00]" : "hover:text-[#FFCC00]"}`}
+                } ${megaOpen ? "text-[#ffc914]" : "hover:text-[#ffc914]"}`}
                 style={{ fontFamily: "Michroma, sans-serif" }}
               >
                 <span>Products</span>
@@ -167,13 +167,13 @@ export default function Navbar() {
                 >
                   <polyline points="6 9 12 15 18 9" />
                 </svg>
-                <span className={`absolute -bottom-1 left-0 h-0.5 bg-[#FFCC00] transition-all duration-300 ${megaOpen ? "w-full" : "w-0 group-hover:w-full"}`} />
+                <span className={`absolute -bottom-1 left-0 h-0.5 bg-[#ffc914] transition-all duration-300 ${megaOpen ? "w-full" : "w-0 group-hover:w-full"}`} />
               </button>
             </div>
 
             <button
               onClick={() => scrollToSection("contact")}
-              className="ml-2 px-5 py-2 bg-[#FFCC00] text-black text-xs tracking-widest uppercase font-bold hover:bg-[#e6b800] transition-all duration-300"
+              className="ml-2 px-5 py-2 bg-[#ffc914] text-black text-xs tracking-widest uppercase font-bold hover:bg-[#e0b212] transition-all duration-300"
               style={{ fontFamily: "Michroma, sans-serif", transform: "skewX(-10deg)" }}
             >
               <span style={{ display: "inline-block", transform: "skewX(10deg)" }}>Get Quote</span>
@@ -183,15 +183,12 @@ export default function Navbar() {
           {/* ── Logo (right) ── */}
           <button
             onClick={() => { navigate("/"); window.scrollTo({ top: 0, behavior: "smooth" }); }}
-            className={`flex items-center gap-3 ml-auto rounded-md transition-all duration-500 ${isTransparent ? 'bg-white/90 backdrop-blur-sm px-3 py-1' : ''}`}
+            className="flex items-center gap-3 ml-auto"
           >
             <img
-              src={`${import.meta.env.BASE_URL}welkinrim-logo.svg`}
+              src={`${import.meta.env.BASE_URL}${isTransparent ? "welkinrim-logo-white.svg" : "welkinrim-logo.svg"}`}
               alt="Welkinrim Technologies"
-              className="h-12 w-auto"
-              style={{
-                mixBlendMode: 'multiply',
-              }}
+              className="h-12 w-auto transition-opacity duration-500"
             />
           </button>
 
@@ -212,14 +209,14 @@ export default function Navbar() {
             {[
               { label: "Home",       action: () => scrollToSection("home")       },
               { label: "Technology", action: () => scrollToSection("technology") },
-              { label: "Products",   action: goToProducts                         },
+              { label: "Products",   action: () => goToProducts()                 },
               { label: "About",      action: () => scrollToSection("about")      },
               { label: "Contact",    action: () => scrollToSection("contact")    },
             ].map(({ label, action }) => (
               <button
                 key={label}
                 onClick={action}
-                className="text-left text-xs tracking-widest uppercase font-medium text-black hover:text-[#FFCC00] transition-colors duration-200"
+                className="text-left text-xs tracking-widest uppercase font-medium text-black hover:text-[#ffc914] transition-colors duration-200"
                 style={{ fontFamily: "Michroma, sans-serif" }}
               >
                 {label}
@@ -227,7 +224,7 @@ export default function Navbar() {
             ))}
             <button
               onClick={() => scrollToSection("contact")}
-              className="px-5 py-2 bg-[#FFCC00] text-black text-xs tracking-widest uppercase font-bold hover:bg-[#e6b800] transition-all duration-300 text-left"
+              className="px-5 py-2 bg-[#ffc914] text-black text-xs tracking-widest uppercase font-bold hover:bg-[#e0b212] transition-all duration-300 text-left"
               style={{ fontFamily: "Michroma, sans-serif", transform: "skewX(-10deg)" }}
             >
               <span style={{ display: "inline-block", transform: "skewX(10deg)" }}>Get Quote</span>
@@ -259,10 +256,10 @@ export default function Navbar() {
                     onMouseEnter={() => setActiveCategory(cat.id)}
                     onClick={() => goToProducts(cat.id)}
                     className={`flex items-center gap-3 px-3 py-3 rounded-sm text-left transition-all duration-200 group ${
-                      activeCategory === cat.id ? "bg-[#FFCC00]/10 text-black" : "text-[#444] hover:bg-gray-50"
+                      activeCategory === cat.id ? "bg-[#ffc914]/10 text-black" : "text-[#444] hover:bg-gray-50"
                     }`}
                   >
-                    <span className={`transition-colors duration-200 ${activeCategory === cat.id ? "text-[#FFCC00]" : "text-[#808080] group-hover:text-black"}`}>
+                    <span className={`transition-colors duration-200 ${activeCategory === cat.id ? "text-[#ffc914]" : "text-[#808080] group-hover:text-black"}`}>
                       {cat.icon}
                     </span>
                     <div>
@@ -270,7 +267,7 @@ export default function Navbar() {
                       <p className="text-[10px] text-[#808080] mt-0.5" style={{ fontFamily: "Lexend, sans-serif" }}>{cat.tagline}</p>
                     </div>
                     {activeCategory === cat.id && (
-                      <svg className="ml-auto w-4 h-4 text-[#FFCC00]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <svg className="ml-auto w-4 h-4 text-[#ffc914]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                         <polyline points="9 18 15 12 9 6" />
                       </svg>
                     )}
@@ -290,7 +287,7 @@ export default function Navbar() {
                 </div>
                 <button
                   onClick={() => goToProducts(activeCategory)}
-                  className="text-[10px] text-[#FFCC00] hover:text-black tracking-widest uppercase transition-colors duration-200 flex items-center gap-1"
+                  className="text-[10px] text-[#ffc914] hover:text-black tracking-widest uppercase transition-colors duration-200 flex items-center gap-1"
                   style={{ fontFamily: "Michroma, sans-serif" }}
                 >
                   View All
@@ -303,15 +300,15 @@ export default function Navbar() {
                   <button
                     key={p.id}
                     onClick={() => goToProduct(p.id)}
-                    className="text-left border border-gray-100 hover:border-[#FFCC00] p-3 transition-all duration-200 group"
+                    className="text-left border border-gray-100 hover:border-[#ffc914] p-3 transition-all duration-200 group"
                   >
-                    <div className="w-full h-16 bg-gray-50 mb-2 flex items-center justify-center group-hover:bg-[#FFCC00]/5 transition-colors duration-200">
+                    <div className="w-full h-16 bg-gray-50 mb-2 flex items-center justify-center group-hover:bg-[#ffc914]/5 transition-colors duration-200">
                       <div className="flex flex-col items-center">
                         <span className="text-[7px] font-black text-[#b89600] leading-none" style={{ fontFamily: "Michroma, sans-serif" }}>WR</span>
                         <span className="text-[9px] font-black text-black/30 mt-0.5" style={{ fontFamily: "Michroma, sans-serif" }}>{p.name}</span>
                       </div>
                     </div>
-                    <p className="text-[8px] text-[#FFCC00] tracking-widest uppercase font-bold mb-0.5 truncate" style={{ fontFamily: "Michroma, sans-serif" }}>{p.tag}</p>
+                    <p className="text-[8px] text-[#ffc914] tracking-widest uppercase font-bold mb-0.5 truncate" style={{ fontFamily: "Michroma, sans-serif" }}>{p.tag}</p>
                     <p className="text-xs font-bold text-black truncate" style={{ fontFamily: "Michroma, sans-serif" }}>{p.model}</p>
                     <div className="flex flex-wrap gap-1 mt-1.5">
                       {p.keySpecs.map((s) => (
@@ -323,10 +320,10 @@ export default function Navbar() {
                 {activeCat.products.length > 4 && (
                   <button
                     onClick={() => goToProducts(activeCategory)}
-                    className="border border-dashed border-gray-200 hover:border-[#FFCC00] p-3 flex flex-col items-center justify-center gap-2 group transition-all duration-200"
+                    className="border border-dashed border-gray-200 hover:border-[#ffc914] p-3 flex flex-col items-center justify-center gap-2 group transition-all duration-200"
                   >
-                    <div className="w-8 h-8 rounded-full bg-gray-100 group-hover:bg-[#FFCC00]/10 flex items-center justify-center transition-colors duration-200">
-                      <span className="text-[#808080] group-hover:text-[#FFCC00] text-base font-bold leading-none">+</span>
+                    <div className="w-8 h-8 rounded-full bg-gray-100 group-hover:bg-[#ffc914]/10 flex items-center justify-center transition-colors duration-200">
+                      <span className="text-[#808080] group-hover:text-[#ffc914] text-base font-bold leading-none">+</span>
                     </div>
                     <p className="text-[9px] text-[#808080] group-hover:text-black text-center" style={{ fontFamily: "Michroma, sans-serif" }}>
                       +{activeCat.products.length - 4} more
@@ -341,7 +338,7 @@ export default function Navbar() {
                 </p>
                 <button
                   onClick={() => scrollToSection("contact")}
-                  className="px-4 py-1.5 bg-[#FFCC00] text-black text-[9px] tracking-widest uppercase font-bold hover:bg-[#e6b800] transition-colors duration-200"
+                  className="px-4 py-1.5 bg-[#ffc914] text-black text-[9px] tracking-widest uppercase font-bold hover:bg-[#e0b212] transition-colors duration-200"
                   style={{ fontFamily: "Michroma, sans-serif", transform: "skewX(-10deg)" }}
                 >
                   <span style={{ display: "inline-block", transform: "skewX(10deg)" }}>Request a Quote</span>

@@ -101,7 +101,7 @@ export default function Products() {
             <div className="flex items-center gap-3 mb-4">
               <button
                 onClick={() => navigate("/")}
-                className="text-[#FFCC00]/60 hover:text-[#FFCC00] text-[10px] tracking-widest uppercase transition-colors duration-200 flex items-center gap-1"
+                className="text-[#ffc914]/60 hover:text-[#ffc914] text-[10px] tracking-widest uppercase transition-colors duration-200 flex items-center gap-1"
                 style={{ fontFamily: "Michroma, sans-serif" }}
               >
                 <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -110,12 +110,12 @@ export default function Products() {
                 Home
               </button>
               <span className="text-white/20 text-[10px]">/</span>
-              <span className="text-[#FFCC00] text-[10px] tracking-widest uppercase" style={{ fontFamily: "Michroma, sans-serif" }}>
+              <span className="text-[#ffc914] text-[10px] tracking-widest uppercase" style={{ fontFamily: "Michroma, sans-serif" }}>
                 Products
               </span>
             </div>
             <h1 className="text-4xl md:text-6xl font-bold text-white leading-tight" style={{ fontFamily: "Michroma, sans-serif" }}>
-              Product <span className="text-[#FFCC00]">Catalogue</span>
+              Product <span className="text-[#ffc914]">Catalogue</span>
             </h1>
             <p className="text-white/40 text-sm mt-3 max-w-lg" style={{ fontFamily: "Lexend, sans-serif" }}>
               IIT Madras Incubated · 36+ variants · Haemng, Maelard, ESC, Flight Controller & Integrated Systems
@@ -134,7 +134,7 @@ export default function Products() {
                   onClick={() => { window.location.hash = tab.id; setSearch(""); }}
                   className={`flex items-center gap-2 px-5 py-2 text-[10px] tracking-widest uppercase font-bold whitespace-nowrap transition-all duration-200 border-b-2 ${
                     activeTab === tab.id
-                      ? "border-[#FFCC00] text-black"
+                      ? "border-[#ffc914] text-black"
                       : "border-transparent text-[#808080] hover:text-black hover:border-gray-200"
                   }`}
                   style={{ fontFamily: "Michroma, sans-serif", transform: "skewX(-10deg)" }}
@@ -142,7 +142,7 @@ export default function Products() {
                   <span className="inline-flex items-center gap-2" style={{ transform: "skewX(10deg)" }}>
                     {tab.label}
                     <span className={`text-[8px] px-1.5 py-0.5 rounded-sm font-medium ${
-                      activeTab === tab.id ? "bg-[#FFCC00] text-black" : "bg-gray-100 text-[#808080]"
+                      activeTab === tab.id ? "bg-[#ffc914] text-black" : "bg-gray-100 text-[#808080]"
                     }`}>
                       {tab.count}
                     </span>
@@ -157,7 +157,7 @@ export default function Products() {
                 placeholder="Search model, KV, application…"
                 value={search}
                 onChange={e => setSearch(e.target.value)}
-                className="text-[10px] border border-gray-200 px-3 py-2 w-64 focus:outline-none focus:border-[#FFCC00] transition-colors duration-200"
+                className="text-[10px] border border-gray-200 px-3 py-2 w-64 focus:outline-none focus:border-[#ffc914] transition-colors duration-200"
                 style={{ fontFamily: "Michroma, sans-serif", transform: "skewX(-10deg)" }}
               />
             </div>
@@ -197,7 +197,7 @@ export default function Products() {
         <div className="bg-black py-16">
           <div className="max-w-7xl mx-auto px-6 md:px-12 flex flex-col md:flex-row items-center justify-between gap-6">
             <div>
-              <p className="text-[10px] text-[#FFCC00] tracking-[0.3em] uppercase mb-1" style={{ fontFamily: "Michroma, sans-serif" }}>
+              <p className="text-[10px] text-[#ffc914] tracking-[0.3em] uppercase mb-1" style={{ fontFamily: "Michroma, sans-serif" }}>
                 Custom Requirements?
               </p>
               <h3 className="text-2xl font-bold text-white" style={{ fontFamily: "Michroma, sans-serif" }}>
@@ -207,7 +207,7 @@ export default function Products() {
             </div>
             <button
               onClick={() => navigate("/#contact")}
-              className="px-10 py-3 bg-[#FFCC00] text-black text-[10px] tracking-widest uppercase font-black hover:bg-[#e6b800] transition-colors duration-300 whitespace-nowrap flex-shrink-0"
+              className="px-10 py-3 bg-[#ffc914] text-black text-[10px] tracking-widest uppercase font-black hover:bg-[#e0b212] transition-colors duration-300 whitespace-nowrap flex-shrink-0"
               style={{ fontFamily: "Michroma, sans-serif", transform: "skewX(-10deg)" }}
             >
               <span style={{ display: "inline-block", transform: "skewX(10deg)" }}>Get in Touch</span>

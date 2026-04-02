@@ -62,7 +62,7 @@ export default function ProductDetail() {
           <p className="text-[#808080] mb-4" style={{ fontFamily: "Michroma, sans-serif" }}>Product not found</p>
           <button
             onClick={() => navigate("/products")}
-            className="px-6 py-2 bg-[#FFCC00] text-black text-[10px] tracking-widest uppercase font-bold"
+            className="px-6 py-2 bg-[#ffc914] text-black text-[10px] tracking-widest uppercase font-bold"
             style={{ fontFamily: "Michroma, sans-serif", transform: "skewX(-10deg)" }}
           >
             <span style={{ display: "inline-block", transform: "skewX(10deg)" }}>Back to Products</span>
@@ -297,7 +297,7 @@ export default function ProductDetail() {
         {/* ── Enquire CTA ── */}
         <div className="mt-16 bg-black p-10 flex flex-col md:flex-row items-center justify-between gap-6">
           <div>
-            <p className="text-[10px] text-[#FFCC00] tracking-[0.3em] uppercase mb-1"
+            <p className="text-[10px] text-[#ffc914] tracking-[0.3em] uppercase mb-1"
                style={{ fontFamily: "Michroma, sans-serif" }}>
               Ready to Order?
             </p>
@@ -308,7 +308,7 @@ export default function ProductDetail() {
           </div>
           <button
             onClick={() => navigate("/#contact")}
-            className="px-10 py-3 bg-[#FFCC00] text-black text-[10px] tracking-widest uppercase font-black hover:bg-[#e6b800] transition-colors duration-300 whitespace-nowrap flex-shrink-0"
+            className="px-10 py-3 bg-[#ffc914] text-black text-[10px] tracking-widest uppercase font-black hover:bg-[#e0b212] transition-colors duration-300 whitespace-nowrap flex-shrink-0"
             style={{ fontFamily: "Michroma, sans-serif", transform: "skewX(-10deg)" }}
           >
             <span style={{ display: "inline-block", transform: "skewX(10deg)" }}>Enquire Now</span>

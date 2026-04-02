@@ -20,7 +20,7 @@ export type Product = {
 };
 
 export const SERIES_CFG = {
-  haemng:  { label: "Haemng Series",                accent: "#FFCC00", textOnAccent: "#000" },
+  haemng:  { label: "Haemng Series",                accent: "#ffc914", textOnAccent: "#000" },
   maelard: { label: "Maelard Series",               accent: "#1a73e8", textOnAccent: "#fff" },
   esc:     { label: "Electronic Speed Controllers", accent: "#111",    textOnAccent: "#fff" },
   fc:      { label: "Flight Controller",            accent: "#0f9d58", textOnAccent: "#fff" },

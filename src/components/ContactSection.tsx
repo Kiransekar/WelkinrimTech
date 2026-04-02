@@ -32,7 +32,7 @@ export default function ContactSection() {
         {/* Header */}
         <div className="mb-8 lg:mb-12">
           <div className="flex items-center gap-3 mb-3">
-            <div className="h-px w-10 bg-[#FFCC00]" />
+            <div className="h-px w-10 bg-[#ffc914]" />
             <span className="text-[#808080] text-[10px] md:text-xs tracking-[0.3em] uppercase" style={{ fontFamily: 'Michroma, sans-serif' }}>
               Enquiry
             </span>
@@ -40,7 +40,7 @@ export default function ContactSection() {
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-black leading-tight" style={{ fontFamily: 'Michroma, sans-serif' }}>
             Start a Conversation
             <br />
-            <span className="text-[#FFCC00]">With Our Engineers</span>
+            <span className="text-[#ffc914]">With Our Engineers</span>
           </h2>
         </div>
 
@@ -84,8 +84,8 @@ export default function ContactSection() {
                   value: "Chennai Industrial Corridor, Tamil Nadu",
                 },
               ].map((item) => (
-                <div key={item.label} className="flex items-start gap-4 p-3 border border-gray-100 hover:border-[#FFCC00]/50 transition-colors duration-200" style={{ transform: 'skewX(-10deg)' }}>
-                  <div className="w-8 h-8 bg-[#FFCC00]/10 flex items-center justify-center flex-shrink-0 text-[#FFCC00]" style={{ transform: 'skewX(10deg)' }}>
+                <div key={item.label} className="flex items-start gap-4 p-3 border border-gray-100 hover:border-[#ffc914]/50 transition-colors duration-200" style={{ transform: 'skewX(-10deg)' }}>
+                  <div className="w-8 h-8 bg-[#ffc914]/10 flex items-center justify-center flex-shrink-0 text-[#ffc914]" style={{ transform: 'skewX(10deg)' }}>
                     {item.icon}
                   </div>
                   <div style={{ transform: 'skewX(10deg)' }}>
@@ -103,7 +103,7 @@ export default function ContactSection() {
                 {["UAV/eVTOL", "Marine", "Land", "Robotics"].map((ind) => (     
                   <span
                     key={ind}
-                    className="px-2 py-1 border border-[#FFCC00]/30 text-[9px] tracking-[0.15em] uppercase text-black"
+                    className="px-2 py-1 border border-[#ffc914]/30 text-[9px] tracking-[0.15em] uppercase text-black"
                     style={{ fontFamily: 'Michroma, sans-serif', transform: 'skewX(-10deg)' }}
                   >
                     <span style={{ display: 'inline-block', transform: 'skewX(10deg)' }}>{ind}</span>
@@ -116,8 +116,8 @@ export default function ContactSection() {
           {/* Right: Form */}
           <div className="lg:col-span-3">
             {submitted ? (
-              <div className="h-full flex flex-col items-center justify-center text-center py-16 border border-[#FFCC00]/30 bg-[#FFCC00]/5">
-                <div className="w-16 h-16 bg-[#FFCC00] rounded-full flex items-center justify-center mb-6">
+              <div className="h-full flex flex-col items-center justify-center text-center py-16 border border-[#ffc914]/30 bg-[#ffc914]/5">
+                <div className="w-16 h-16 bg-[#ffc914] rounded-full flex items-center justify-center mb-6">
                   <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="2.5">
                     <polyline points="20 6 9 17 4 12" />
                   </svg>
@@ -130,7 +130,7 @@ export default function ContactSection() {
                 </p>
                 <button
                   onClick={() => { setSubmitted(false); setForm({ name: "", company: "", email: "", phone: "", industry: "", message: "" }); }}
-                  className="mt-6 px-6 py-2.5 bg-black text-white text-xs tracking-widest uppercase hover:bg-[#FFCC00] hover:text-black transition-all duration-300"
+                  className="mt-6 px-6 py-2.5 bg-black text-white text-xs tracking-widest uppercase hover:bg-[#ffc914] hover:text-black transition-all duration-300"
                   style={{ fontFamily: 'Michroma, sans-serif', transform: 'skewX(-10deg)' }}
                 >
                   <span style={{ display: 'inline-block', transform: 'skewX(10deg)' }}>Send Another</span>
@@ -147,7 +147,7 @@ export default function ContactSection() {
                     value={form.name}
                     onChange={handleChange}
                     placeholder="John Smith"
-                    className="w-full border border-gray-200 px-3 py-2 text-sm text-black focus:outline-none focus:border-[#FFCC00] transition-colors duration-200 bg-white"
+                    className="w-full border border-gray-200 px-3 py-2 text-sm text-black focus:outline-none focus:border-[#ffc914] transition-colors duration-200 bg-white"
                     style={{ fontFamily: 'Lexend, sans-serif', transform: 'skewX(-10deg)' }}
                   />
                 </div>
@@ -160,7 +160,7 @@ export default function ContactSection() {
                     value={form.company}
                     onChange={handleChange}
                     placeholder="Acme Corporation"
-                    className="w-full border border-gray-200 px-3 py-2 text-sm text-black focus:outline-none focus:border-[#FFCC00] transition-colors duration-200 bg-white"
+                    className="w-full border border-gray-200 px-3 py-2 text-sm text-black focus:outline-none focus:border-[#ffc914] transition-colors duration-200 bg-white"
                     style={{ fontFamily: 'Lexend, sans-serif', transform: 'skewX(-10deg)' }}
                   />
                 </div>
@@ -175,7 +175,7 @@ export default function ContactSection() {
                     value={form.email}
                     onChange={handleChange}
                     placeholder="john@company.com"
-                    className="w-full border border-gray-200 px-3 py-2 text-sm text-black focus:outline-none focus:border-[#FFCC00] transition-colors duration-200 bg-white"
+                    className="w-full border border-gray-200 px-3 py-2 text-sm text-black focus:outline-none focus:border-[#ffc914] transition-colors duration-200 bg-white"
                     style={{ fontFamily: 'Lexend, sans-serif', transform: 'skewX(-10deg)' }}
                   />
                 </div>
@@ -189,7 +189,7 @@ export default function ContactSection() {
                     value={form.phone}
                     onChange={handleChange}
                     placeholder="+91 XXXXX XXXXX"
-                    className="w-full border border-gray-200 px-3 py-2 text-sm text-black focus:outline-none focus:border-[#FFCC00] transition-colors duration-200 bg-white"
+                    className="w-full border border-gray-200 px-3 py-2 text-sm text-black focus:outline-none focus:border-[#ffc914] transition-colors duration-200 bg-white"
                     style={{ fontFamily: 'Lexend, sans-serif', transform: 'skewX(-10deg)' }}
                   />
                 </div>
@@ -201,7 +201,7 @@ export default function ContactSection() {
                     name="industry"
                     value={form.industry}
                     onChange={handleChange}
-                    className="w-full border border-gray-200 px-3 py-2 text-sm text-black focus:outline-none focus:border-[#FFCC00] transition-colors duration-200 bg-white appearance-none"
+                    className="w-full border border-gray-200 px-3 py-2 text-sm text-black focus:outline-none focus:border-[#ffc914] transition-colors duration-200 bg-white appearance-none"
                     style={{ fontFamily: 'Lexend, sans-serif', transform: 'skewX(-10deg)' }}
                   >
                     <option value="">Select your industry...</option>
@@ -221,7 +221,7 @@ export default function ContactSection() {
                     onChange={handleChange}
                     rows={3}
                     placeholder="Tell us about your propulsion requirements, power needs, application environment..."
-                    className="w-full border border-gray-200 px-3 py-2 text-sm text-black focus:outline-none focus:border-[#FFCC00] transition-colors duration-200 bg-white resize-none"
+                    className="w-full border border-gray-200 px-3 py-2 text-sm text-black focus:outline-none focus:border-[#ffc914] transition-colors duration-200 bg-white resize-none"
                     style={{ fontFamily: 'Lexend, sans-serif', transform: 'skewX(-10deg)' }}
                   />
                 </div>
@@ -231,7 +231,7 @@ export default function ContactSection() {
                   <button
                     type="submit"
                     disabled={loading}
-                    className="w-full py-3 bg-[#FFCC00] text-black text-xs tracking-[0.2em] uppercase font-bold hover:bg-[#e6b800] transition-all duration-300 disabled:opacity-70 flex items-center justify-center gap-3"
+                    className="w-full py-3 bg-[#ffc914] text-black text-xs tracking-[0.2em] uppercase font-bold hover:bg-[#e0b212] transition-all duration-300 disabled:opacity-70 flex items-center justify-center gap-3"
                     style={{ fontFamily: 'Michroma, sans-serif', transform: 'skewX(-10deg)' }}
                   >
                     <span className="inline-flex items-center gap-3" style={{ transform: 'skewX(10deg)' }}>

@@ -924,7 +924,7 @@ const PRODUCTS: Product[] = [
    SERIES CONFIG
 ═══════════════════════════════════════════════════════════════════════════ */
 const SERIES_CFG = {
-  haemng:  { label: "Haemng Series",             accent: "#FFCC00", bg: "#fffbe6", dim: "100" },
+  haemng:  { label: "Haemng Series",             accent: "#ffc914", bg: "#fffbe6", dim: "100" },
   maelard: { label: "Maelard Series",             accent: "#1a73e8", bg: "#e8f0fe", dim: "100" },
   esc:     { label: "Electronic Speed Controllers", accent: "#222",   bg: "#f4f4f4", dim: "100" },
   fc:      { label: "Flight Controller",          accent: "#0f9d58", bg: "#e6f4ea", dim: "100" },
@@ -1168,7 +1168,7 @@ export default function ProductsSection() {
         <div className="mb-12 flex flex-col md:flex-row md:items-end md:justify-between gap-6">
           <div>
             <div className="flex items-center gap-3 mb-3">
-              <div className="h-px w-10 bg-[#FFCC00]" />
+              <div className="h-px w-10 bg-[#ffc914]" />
               <span className="text-[#808080] text-[10px] tracking-[0.3em] uppercase"
                     style={{ fontFamily: "Michroma, sans-serif" }}>
                 Product Catalogue
@@ -1176,7 +1176,7 @@ export default function ProductsSection() {
             </div>
             <h2 className="text-4xl md:text-5xl font-bold text-black leading-tight"
                 style={{ fontFamily: "Michroma, sans-serif" }}>
-              Engineered for<br /><span className="text-[#FFCC00]">Every Frontier</span>
+              Engineered for<br /><span className="text-[#ffc914]">Every Frontier</span>
             </h2>
           </div>
           <p className="text-[#808080] text-sm max-w-xs leading-relaxed" style={{ fontFamily: "Lexend, sans-serif" }}>
@@ -1193,7 +1193,7 @@ export default function ProductsSection() {
               onClick={() => { setActiveTab(tab.id); setExpanded(null); }}
               className={`flex items-center gap-2 px-4 py-2 text-[10px] tracking-widest uppercase font-bold transition-all duration-200 ${
                 activeTab === tab.id
-                  ? "bg-black text-[#FFCC00]"
+                  ? "bg-black text-[#ffc914]"
                   : "bg-gray-100 text-[#808080] hover:bg-gray-200 hover:text-black"
               }`}
               style={{ fontFamily: "Michroma, sans-serif", transform: "skewX(-10deg)" }}
@@ -1201,7 +1201,7 @@ export default function ProductsSection() {
               <span className="inline-flex items-center gap-2" style={{ transform: "skewX(10deg)" }}>
                 {tab.label}
                 <span className={`text-[8px] px-1.5 py-0.5 rounded-sm font-medium ${
-                  activeTab === tab.id ? "bg-[#FFCC00] text-black" : "bg-white text-[#808080]"
+                  activeTab === tab.id ? "bg-[#ffc914] text-black" : "bg-white text-[#808080]"
                 }`}>
                   {tab.count}
                 </span>
@@ -1264,7 +1264,7 @@ export default function ProductsSection() {
         {/* ── Bottom CTA ── */}
         <div className="mt-16 bg-black p-8 flex flex-col md:flex-row items-center justify-between gap-6">
           <div>
-            <p className="text-[10px] text-[#FFCC00] tracking-[0.3em] uppercase mb-1"
+            <p className="text-[10px] text-[#ffc914] tracking-[0.3em] uppercase mb-1"
                style={{ fontFamily: "Michroma, sans-serif" }}>
               IIT Madras Incubated
             </p>
@@ -1278,14 +1278,14 @@ export default function ProductsSection() {
           <div className="flex gap-4 flex-shrink-0">
             <button
               onClick={() => document.querySelector("#contact")?.scrollIntoView({ behavior: "smooth" })}
-              className="px-8 py-3 bg-[#FFCC00] text-black text-[10px] tracking-widest uppercase font-black hover:bg-[#e6b800] transition-all duration-300 whitespace-nowrap"
+              className="px-8 py-3 bg-[#ffc914] text-black text-[10px] tracking-widest uppercase font-black hover:bg-[#e0b212] transition-all duration-300 whitespace-nowrap"
               style={{ fontFamily: "Michroma, sans-serif", transform: "skewX(-10deg)" }}
             >
               <span style={{ display: "inline-block", transform: "skewX(10deg)" }}>Get in Touch</span>
             </button>
             <button
               onClick={() => document.querySelector("#contact")?.scrollIntoView({ behavior: "smooth" })}
-              className="px-8 py-3 border border-white/20 text-white text-[10px] tracking-widest uppercase hover:border-[#FFCC00] hover:text-[#FFCC00] transition-all duration-300 whitespace-nowrap"
+              className="px-8 py-3 border border-white/20 text-white text-[10px] tracking-widest uppercase hover:border-[#ffc914] hover:text-[#ffc914] transition-all duration-300 whitespace-nowrap"
               style={{ fontFamily: "Michroma, sans-serif", transform: "skewX(-10deg)" }}
             >
               <span style={{ display: "inline-block", transform: "skewX(10deg)" }}>Download Catalogue</span>
