@@ -2,18 +2,6 @@ import { useEffect, useRef, useState } from "react";
 import maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 
-// ─── Haversine distance (km) ─────────────────────────────────────────────────
-function haversine(lat1: number, lon1: number, lat2: number, lon2: number) {
-  const R = 6371;
-  const toRad = (d: number) => (d * Math.PI) / 180;
-  const dLat = toRad(lat2 - lat1);
-  const dLon = toRad(lon2 - lon1);
-  const a =
-    Math.sin(dLat / 2) ** 2 +
-    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
-  return R * 2 * Math.asin(Math.sqrt(a));
-}
-
 function fmtKm(km: number) {
   return km < 10 ? `${km.toFixed(1)} km` : `${Math.round(km)} km`;
 }
@@ -174,7 +162,6 @@ export default function LocationMap() {
         attributionControl: false,
         pitchWithRotate: false,
         dragRotate: false,
-        failIfMajorPerformanceCaveat: false,
       });
     } catch {
       setWebGlError(true);

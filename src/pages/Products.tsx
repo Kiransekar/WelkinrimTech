@@ -178,9 +178,9 @@ export default function Products() {
                 <div className="flex items-center gap-3 md:gap-4 mb-5 md:mb-7">
                   <div className="w-1 h-6 md:h-8 flex-shrink-0" style={{ background: cfg.accent }} />
                   <div>
-                    {cfg.useSvgLogo ? (
+                    {'useSvgLogo' in cfg && cfg.useSvgLogo ? (
                       <img
-                        src={`${import.meta.env.BASE_URL}${cfg.logoSrc}`}
+                        src={`${import.meta.env.BASE_URL}${(cfg as { logoSrc: string }).logoSrc}`}
                         alt={cfg.label}
                         className="h-6 md:h-8 w-auto"
                       />

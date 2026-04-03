@@ -72,11 +72,20 @@ const PRODUCT_CATEGORIES = [
   },
 ];
 
+const SEGMENTS = [
+  { id: "uav",      label: "UAV" },
+  { id: "marine",   label: "Marine" },
+  { id: "land",     label: "Land" },
+  { id: "robotics", label: "Robotics" },
+  { id: "other",    label: "Other Products" },
+];
+
 export default function Navbar() {
   const [scrolled, setScrolled]             = useState(false);
   const [menuOpen, setMenuOpen]             = useState(false);
   const [megaOpen, setMegaOpen]             = useState(false);
   const [activeCategory, setActiveCategory] = useState(PRODUCT_CATEGORIES[0].id);
+  const [activeSegment, setActiveSegment]   = useState("uav");
   const megaCloseTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [location, navigate]               = useLocation();
 
@@ -120,7 +129,7 @@ export default function Navbar() {
   };
 
   const openMega  = () => { if (megaCloseTimer.current) clearTimeout(megaCloseTimer.current); setMegaOpen(true); };
-  const closeMega = () => { megaCloseTimer.current = setTimeout(() => setMegaOpen(false), 140); };
+  const closeMega = () => { megaCloseTimer.current = setTimeout(() => { setMegaOpen(false); setActiveSegment("uav"); }, 140); };
 
   const activeCat = PRODUCT_CATEGORIES.find(c => c.id === activeCategory)!;
   const isTransparent = !scrolled && !megaOpen;
@@ -140,6 +149,7 @@ export default function Navbar() {
               { label: "Home",       action: () => scrollToSection("home")       },
               { label: "Technology", action: () => scrollToSection("technology") },
               { label: "About",      action: () => scrollToSection("about")      },
+              { label: "Calculators",action: () => { setMenuOpen(false); navigate("/calculators"); } },
               { label: "Contact",    action: () => scrollToSection("contact")    },
             ].map(({ label, action }) => (
               <button
@@ -211,11 +221,12 @@ export default function Navbar() {
         <div className={`md:hidden transition-all duration-300 overflow-hidden ${menuOpen ? "max-h-[500px] bg-white/97 backdrop-blur-md border-t border-gray-100" : "max-h-0"}`}>
           <div className="px-4 py-4 flex flex-col gap-4">
             {[
-              { label: "Home",       action: () => scrollToSection("home")       },
-              { label: "Technology", action: () => scrollToSection("technology") },
-              { label: "Products",   action: () => goToProducts()                 },
-              { label: "About",      action: () => scrollToSection("about")      },
-              { label: "Contact",    action: () => scrollToSection("contact")    },
+              { label: "Home",        action: () => scrollToSection("home")       },
+              { label: "Technology",  action: () => scrollToSection("technology") },
+              { label: "Products",    action: () => goToProducts()                },
+              { label: "Calculators", action: () => { setMenuOpen(false); navigate("/calculators"); } },
+              { label: "About",       action: () => scrollToSection("about")      },
+              { label: "Contact",     action: () => scrollToSection("contact")    },
             ].map(({ label, action }) => (
               <button
                 key={label}
@@ -246,6 +257,35 @@ export default function Navbar() {
         onMouseLeave={closeMega}
       >
         <div className="bg-white border-b border-gray-100 shadow-2xl overflow-y-auto max-h-[80vh] md:max-h-none">
+
+          {/* ── Segment tabs: UAV | Marine | Land | Robotics | Other ── */}
+          <div className="border-b border-gray-100">
+            <div className="max-w-7xl mx-auto px-4 md:px-6 flex items-center gap-0 overflow-x-auto scrollbar-hide">
+              {SEGMENTS.map(seg => (
+                <button
+                  key={seg.id}
+                  onMouseEnter={() => setActiveSegment(seg.id)}
+                  onClick={() => setActiveSegment(seg.id)}
+                  className={`flex items-center gap-1.5 px-5 py-2.5 text-[9px] tracking-[0.2em] uppercase font-bold whitespace-nowrap transition-all duration-200 border-b-2 flex-shrink-0 ${
+                    activeSegment === seg.id
+                      ? "border-[#ffc914] text-black"
+                      : "border-transparent text-[#808080] hover:text-black hover:border-gray-200"
+                  }`}
+                  style={{ fontFamily: "Michroma, sans-serif" }}
+                >
+                  {seg.label}
+                  {seg.id !== "uav" ? (
+                    <span className="text-[7px] bg-gray-100 text-[#aaa] px-1 py-0.5 rounded-sm">soon</span>
+                  ) : (
+                    activeSegment === "uav" && <span className="w-1.5 h-1.5 rounded-full bg-[#22c55e]" />
+                  )}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* ── UAV: existing product grid ── */}
+          {activeSegment === "uav" ? (
           <div className="max-w-7xl mx-auto px-4 md:px-6 py-6 md:py-8 grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-0">
 
             {/* Left: category list */}
@@ -271,7 +311,7 @@ export default function Navbar() {
                         <img
                           src={`${import.meta.env.BASE_URL}${cat.logoSrc}`}
                           alt={cat.label}
-                          className="h-6 md:h-8 w-auto"
+                          className="h-6 w-auto max-w-[90px] object-contain object-left"
                         />
                       ) : (
                         <p className="text-xs font-bold tracking-wide truncate" style={{ fontFamily: "Michroma, sans-serif" }}>{cat.label}</p>
@@ -358,6 +398,36 @@ export default function Navbar() {
               </div>
             </div>
           </div>
+          ) : (
+            /* ── Coming Soon panel for non-UAV segments ── */
+            <div className="max-w-7xl mx-auto px-4 md:px-6 py-10 md:py-12 flex flex-col items-center justify-center gap-4 text-center">
+              <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc914] mb-1"
+                 style={{ fontFamily: "Michroma, sans-serif" }}>
+                Coming Soon
+              </p>
+              <h3 className="text-xl md:text-2xl font-bold text-black"
+                  style={{ fontFamily: "Michroma, sans-serif" }}>
+                {SEGMENTS.find(s => s.id === activeSegment)?.label} Products
+              </h3>
+              <p className="text-sm text-[#808080] max-w-md"
+                 style={{ fontFamily: "Lexend, sans-serif" }}>
+                We're expanding our electric drive solutions to this segment.
+                Contact us for early access or custom requirements.
+              </p>
+              <div className="flex items-center gap-2 mt-1">
+                <div className="w-1.5 h-1.5 rounded-full bg-[#ffc914] animate-pulse" />
+                <p className="text-[10px] tracking-widest uppercase text-[#555]"
+                   style={{ fontFamily: "Michroma, sans-serif" }}>In development</p>
+              </div>
+              <button
+                onClick={() => { setMegaOpen(false); scrollToSection("contact"); }}
+                className="mt-1 px-6 py-2 bg-[#ffc914] text-black text-[9px] tracking-widest uppercase font-black hover:bg-[#e0b212] transition-colors duration-200"
+                style={{ fontFamily: "Michroma, sans-serif", transform: "skewX(-10deg)" }}
+              >
+                <span style={{ display: "inline-block", transform: "skewX(10deg)" }}>Contact Us</span>
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
