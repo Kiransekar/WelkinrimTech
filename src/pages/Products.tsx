@@ -96,9 +96,9 @@ export default function Products() {
     <>
       <div className="min-h-screen bg-white">
         {/* ── Page header ── */}
-        <div className="bg-black pt-28 pb-12">
-          <div className="max-w-7xl mx-auto px-6 md:px-12">
-            <div className="flex items-center gap-3 mb-4">
+        <div className="bg-black pt-24 md:pt-28 pb-8 md:pb-12">
+          <div className="max-w-7xl mx-auto px-4 md:px-12">
+            <div className="flex items-center gap-2 md:gap-3 mb-3 md:mb-4">
               <button
                 onClick={() => navigate("/")}
                 className="text-[#ffc914]/60 hover:text-[#ffc914] text-[10px] tracking-widest uppercase transition-colors duration-200 flex items-center gap-1"
@@ -114,7 +114,7 @@ export default function Products() {
                 Products
               </span>
             </div>
-            <h1 className="text-4xl md:text-6xl font-bold text-white leading-tight" style={{ fontFamily: "Michroma, sans-serif" }}>
+            <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold text-white leading-tight" style={{ fontFamily: "Michroma, sans-serif" }}>
               Product <span className="text-[#ffc914]">Catalogue</span>
             </h1>
             <p className="text-white/40 text-sm mt-3 max-w-lg" style={{ fontFamily: "Lexend, sans-serif" }}>
@@ -124,10 +124,10 @@ export default function Products() {
         </div>
 
         {/* ── Sticky filter bar ── */}
-        <div className="sticky top-[72px] z-30 bg-white border-b border-gray-100 shadow-sm">
-          <div className="max-w-7xl mx-auto px-6 md:px-12 flex items-center gap-4 py-3">
+        <div className="sticky top-[60px] md:top-[72px] z-30 bg-white border-b border-gray-100 shadow-sm">
+          <div className="max-w-7xl mx-auto px-4 md:px-12 flex items-center gap-2 md:gap-4 py-3">
             {/* Tabs - scrollable */}
-            <div className="flex items-center gap-0 overflow-x-auto flex-1 pb-2">
+            <div className="flex items-center gap-0 overflow-x-auto flex-1 pb-2 md:pb-2">
               {TABS.map(tab => (
                 <button
                   key={tab.id}
@@ -151,13 +151,13 @@ export default function Products() {
               ))}
             </div>
             {/* Search - fixed on right */}
-            <div className="flex-shrink-0">
+            <div className="flex-shrink-0 w-full sm:w-auto">
               <input
                 type="text"
-                placeholder="Search model, KV, application…"
+                placeholder="Search..."
                 value={search}
                 onChange={e => setSearch(e.target.value)}
-                className="text-[10px] border border-gray-200 px-3 py-2 w-64 focus:outline-none focus:border-[#ffc914] transition-colors duration-200"
+                className="text-[10px] border border-gray-200 px-3 py-2 w-full sm:w-48 md:w-64 focus:outline-none focus:border-[#ffc914] transition-colors duration-200"
                 style={{ fontFamily: "Michroma, sans-serif", transform: "skewX(-10deg)" }}
               />
             </div>
@@ -165,7 +165,7 @@ export default function Products() {
         </div>
 
         {/* ── Product grid ── */}
-        <div className="max-w-7xl mx-auto px-6 md:px-12 py-12">
+        <div className="max-w-7xl mx-auto px-4 md:px-12 py-8 md:py-12">
           {visible.length === 0 ? (
             <div className="py-24 text-center">
               <p className="text-[#808080] text-sm" style={{ fontFamily: "Michroma, sans-serif" }}>
@@ -174,22 +174,22 @@ export default function Products() {
             </div>
           ) : activeTab === "all" ? (
             grouped.map(({ key, cfg, items }) => (
-              <div key={key} className="mb-16">
-                <div className="flex items-center gap-4 mb-7">
-                  <div className="w-1 h-8 flex-shrink-0" style={{ background: cfg.accent }} />
+              <div key={key} className="mb-10 md:mb-16">
+                <div className="flex items-center gap-3 md:gap-4 mb-5 md:mb-7">
+                  <div className="w-1 h-6 md:h-8 flex-shrink-0" style={{ background: cfg.accent }} />
                   <div>
                     {cfg.useSvgLogo ? (
                       <img
                         src={`${import.meta.env.BASE_URL}${cfg.logoSrc}`}
                         alt={cfg.label}
-                        className="h-8 w-auto"
+                        className="h-6 md:h-8 w-auto"
                       />
                     ) : (
-                      <h2 className="text-xl font-bold text-black" style={{ fontFamily: "Michroma, sans-serif" }}>
+                      <h2 className="text-lg md:text-xl font-bold text-black" style={{ fontFamily: "Michroma, sans-serif" }}>
                         {cfg.label}
                       </h2>
                     )}
-                    <p className="text-[10px] text-[#808080] mt-0.5">{items.length} model{items.length > 1 ? "s" : ""}</p>
+                    <p className="text-[9px] md:text-[10px] text-[#808080] mt-0.5">{items.length} model{items.length > 1 ? "s" : ""}</p>
                   </div>
                   <div className="flex-1 h-px bg-gray-100" />
                 </div>
@@ -262,15 +262,15 @@ function ProductGrid({
             />
             <div className="relative z-10">
               {p.series === "haemng" ? (
-                <img src={`${import.meta.env.BASE_URL}haemng.svg`} alt="Haemng" className="h-14 w-auto" style={{ filter: "brightness(0) invert(1)", opacity: 0.7 }} />
+                <img src={`${import.meta.env.BASE_URL}haemng.svg`} alt="Haemng" className="h-10 md:h-14 w-auto" style={{ filter: "brightness(0) invert(1)", opacity: 0.7 }} />
               ) : p.series === "maelard" ? (
-                <img src={`${import.meta.env.BASE_URL}Maelard.svg`} alt="Maelard" className="h-10 w-auto" style={{ filter: "brightness(0) invert(1)", opacity: 0.7 }} />
+                <img src={`${import.meta.env.BASE_URL}Maelard.svg`} alt="Maelard" className="h-8 md:h-10 w-auto" style={{ filter: "brightness(0) invert(1)", opacity: 0.7 }} />
               ) : p.series === "esc" ? <EscIcon color={cfg.accent} />
                 : p.series === "fc" ? <FcIcon color={cfg.accent} />
                 : <MotorIcon color={cfg.accent} />}
             </div>
             {p.allSpecs.find(s => s.label === "Dimension") && (
-              <p className="relative z-10 text-[8px] tracking-widest text-white/30 uppercase mt-1"
+              <p className="relative z-10 text-[7px] md:text-[8px] tracking-widest text-white/30 uppercase mt-0.5 md:mt-1"
                  style={{ fontFamily: "Michroma, sans-serif" }}>
                 {p.allSpecs.find(s => s.label === "Dimension")?.value}
               </p>

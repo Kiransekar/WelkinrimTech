@@ -154,13 +154,13 @@ export default function EngineeringDepth() {
   };
 
   return (
-    <section id="technology" ref={sectionRef} className="w-full bg-white overflow-hidden scroll-mt-[72px]">
+    <section id="technology" ref={sectionRef} className="w-full bg-white overflow-hidden scroll-mt-[60px] md:scroll-mt-[72px]">
       <div className="relative flex flex-col lg:flex-row min-h-[100vh] lg:min-h-[calc(100vh-72px)]">
 
         {/* ══════════ LEFT WHITE PANEL ══════════ */}
         <div className="relative flex flex-col justify-center bg-white z-10
                         w-full lg:w-[45%] flex-shrink-0
-                        px-6 md:px-8 lg:pl-10 lg:pr-[180px] xl:pr-[200px] py-8 lg:py-10 gap-3">
+                        px-4 md:px-8 lg:pl-10 lg:pr-[180px] xl:pr-[200px] py-8 lg:py-10 gap-3">
 
           {/* Tag */}
           <p
@@ -173,13 +173,13 @@ export default function EngineeringDepth() {
           {/* Heading */}
           <div className="leading-[0.95]">
             <div
-              className="text-[32px] md:text-[40px] xl:text-[48px] font-black text-black uppercase tracking-tight"
+              className="text-[28px] md:text-[40px] xl:text-[48px] font-black text-black uppercase tracking-tight"
               style={{ fontFamily: "Michroma, sans-serif" }}
             >
               Engineering
             </div>
             <div
-              className="text-[32px] md:text-[40px] xl:text-[48px] font-black text-[#ffc914] uppercase tracking-tight"
+              className="text-[28px] md:text-[40px] xl:text-[48px] font-black text-[#ffc914] uppercase tracking-tight"
               style={{ fontFamily: "Michroma, sans-serif" }}
             >
               Depth
@@ -254,8 +254,8 @@ export default function EngineeringDepth() {
         </div>
 
         {/* Mobile motor image */}
-        <div className="lg:hidden flex justify-center -mt-4 mb-4 relative z-20">
-          <div className="w-[240px] h-[240px] rounded-full overflow-hidden border-4 border-white shadow-2xl bg-[#1a1a1a]">
+        <div className="lg:hidden flex justify-center -mt-2 md:-mt-4 mb-3 md:mb-4 relative z-20">
+          <div className="w-[180px] h-[180px] md:w-[220px] md:h-[220px] rounded-full overflow-hidden border-4 border-white shadow-2xl bg-[#1a1a1a]">
             <img
               key={`mobile-${activeIdx}`}
               src={`${import.meta.env.BASE_URL}motor-hero.png`}
@@ -276,9 +276,9 @@ export default function EngineeringDepth() {
           />
 
           {/* AIR/WATER label - on top of yellow and motor */}
-          <div className="relative z-40 px-4 lg:pl-[200px] xl:pl-[220px] lg:pr-8 xl:pr-10 pt-6 lg:pt-8">
+          <div className="relative z-40 px-4 md:px-6 lg:pl-[200px] xl:pl-[220px] lg:pr-8 xl:pr-10 pt-4 md:pt-6 lg:pt-8">
             <h3
-              className="text-[44px] md:text-[56px] xl:text-[72px] font-black text-black/30 uppercase leading-none"
+              className="text-[32px] md:text-[48px] lg:text-[56px] xl:text-[72px] font-black text-black/30 uppercase leading-none"
               style={{ fontFamily: "Michroma, sans-serif" }}
             >
               {active.label}
@@ -286,7 +286,7 @@ export default function EngineeringDepth() {
           </div>
 
           {/* Inner content - metrics grid on top of yellow */}
-          <div className="relative z-40 flex flex-col px-4 lg:pl-[200px] xl:pl-[220px] lg:pr-8 xl:pr-10 pb-6 lg:pb-8">
+          <div className="relative z-40 flex flex-col px-4 md:px-6 lg:pl-[200px] xl:pl-[220px] lg:pr-8 xl:pr-10 pb-4 md:pb-6 lg:pb-8">
             <p
               className="text-xs tracking-[0.25em] text-black/70 font-semibold uppercase mb-4"
               style={{ fontFamily: "Michroma, sans-serif" }}

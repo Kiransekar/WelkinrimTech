@@ -91,11 +91,11 @@ export default function HeroSection() {
       })}
 
       {/* Content */}
-      <div className="relative z-10 h-full flex flex-col justify-end pb-36 px-8 md:px-12 lg:px-16">
+      <div className="relative z-10 h-full flex flex-col justify-end pb-20 md:pb-28 lg:pb-36 px-4 md:px-12 lg:px-16">
         {/* Fixed headline */}
         <div className="mb-1">
           <p
-            className="text-xs tracking-widest uppercase transition-colors duration-700 text-white"
+            className="text-[10px] md:text-xs tracking-widest uppercase transition-colors duration-700 text-white"
             style={{ fontFamily: 'Michroma, sans-serif' }}
           >
             Precision Electric Propulsion For
@@ -103,7 +103,7 @@ export default function HeroSection() {
         </div>
 
         {/* Animated industry name */}
-        <div className="h-[70px] md:h-[100px] lg:h-[10vw] overflow-hidden relative">
+        <div className="h-[50px] md:h-[80px] lg:h-[100px] xl:h-[10vw] overflow-hidden relative">
           {industries.map((ind, i) => (
             <div
               key={ind.id}
@@ -115,7 +115,7 @@ export default function HeroSection() {
               style={{ top: 0 }}
             >
               <h1
-                className="text-[48px] md:text-[64px] lg:text-[7vw] font-bold text-[#ffc914] leading-[1.1] whitespace-nowrap"
+                className="text-[36px] md:text-[56px] lg:text-[72px] xl:text-[7vw] font-bold text-[#ffc914] leading-[1.1]"
                 style={{ fontFamily: 'Michroma, sans-serif' }}
               >
                 {ind.label}
@@ -146,12 +146,12 @@ export default function HeroSection() {
         </div>
 
         {/* CTA Buttons */}
-        <div className="mt-6 flex flex-wrap gap-3">
+        <div className="mt-4 md:mt-6 flex flex-wrap gap-3">
           <button
             onClick={() => {
               document.querySelector("#contact")?.scrollIntoView({ behavior: "smooth" });
             }}
-            className="px-8 py-3 bg-[#ffc914] text-black text-xs tracking-[0.2em] uppercase font-bold hover:bg-[#e0b212] transition-all duration-300 hover:shadow-lg hover:shadow-[#ffc914]/30"
+            className="px-6 md:px-8 py-2.5 md:py-3 bg-[#ffc914] text-black text-[10px] md:text-xs tracking-[0.2em] uppercase font-bold hover:bg-[#e0b212] transition-all duration-300 hover:shadow-lg hover:shadow-[#ffc914]/30"
             style={{ fontFamily: 'Michroma, sans-serif', transform: 'skewX(-10deg)' }}
           >
             <span style={{ display: 'inline-block', transform: 'skewX(10deg)' }}>Get in Touch</span>
@@ -160,7 +160,7 @@ export default function HeroSection() {
             onClick={() => {
               document.querySelector("#technology")?.scrollIntoView({ behavior: "smooth" });
             }}
-            className="px-8 py-3 border border-white/50 text-white text-xs tracking-[0.2em] uppercase font-medium transition-all duration-300 backdrop-blur-sm hover:border-[#ffc914] hover:text-[#ffc914]"
+            className="px-6 md:px-8 py-2.5 md:py-3 border border-white/50 text-white text-[10px] md:text-xs tracking-[0.2em] uppercase font-medium transition-all duration-300 backdrop-blur-sm hover:border-[#ffc914] hover:text-[#ffc914]"
             style={{ fontFamily: 'Michroma, sans-serif', transform: 'skewX(-10deg)' }}
           >
             <span style={{ display: 'inline-block', transform: 'skewX(10deg)' }}>Our Technology</span>
@@ -170,7 +170,7 @@ export default function HeroSection() {
 
       {/* Industry Selector — left-aligned tabs */}
       <div
-        className="absolute bottom-12 left-8 md:left-12 lg:left-16 z-20 flex items-center flex-wrap gap-y-2"
+        className="absolute bottom-16 md:bottom-20 left-4 md:left-12 lg:left-16 z-20 flex items-center flex-wrap gap-y-2"
         onMouseEnter={() => handleHoverArea(true)}
         onMouseLeave={() => handleHoverArea(false)}
       >
@@ -195,9 +195,9 @@ export default function HeroSection() {
       </div>
 
       {/* Scroll indicator */}
-      <div className="absolute bottom-8 right-10 z-10 flex flex-col items-center gap-2">
-        <div className="w-px h-12 bg-gradient-to-b from-transparent to-[#ffc914]" />
-        <span className="text-[10px] tracking-widest uppercase rotate-90 origin-center translate-y-6 text-white/40" style={{ fontFamily: 'Michroma, sans-serif' }}>Scroll</span>
+      <div className="absolute bottom-6 md:bottom-8 right-6 md:right-10 z-10 flex flex-col items-center gap-2">
+        <div className="w-px h-10 md:h-12 bg-gradient-to-b from-transparent to-[#ffc914]" />
+        <span className="text-[9px] md:text-[10px] tracking-widest uppercase rotate-90 origin-center translate-y-4 md:translate-y-6 text-white/40" style={{ fontFamily: 'Michroma, sans-serif' }}>Scroll</span>
       </div>
     </section>
   );

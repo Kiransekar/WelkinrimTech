@@ -132,7 +132,7 @@ export default function Navbar() {
           isTransparent ? "bg-transparent" : "bg-white/95 backdrop-blur-md shadow-sm"
         }`}
       >
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center">
+          <div className="max-w-7xl mx-auto px-4 md:px-6 py-3 md:py-4 flex items-center">
 
           {/* ── Desktop Nav (left) ── */}
           <div className="hidden md:flex items-center gap-8">
@@ -187,12 +187,12 @@ export default function Navbar() {
           {/* ── Logo (right) ── */}
           <button
             onClick={() => { navigate("/"); window.scrollTo({ top: 0, behavior: "smooth" }); }}
-            className="flex items-center gap-3 ml-auto"
+            className="flex items-center gap-2 md:gap-3 ml-auto"
           >
             <img
               src={`${import.meta.env.BASE_URL}${isTransparent ? "welkinrim-logo-white.svg" : "welkinrim-logo.svg"}`}
               alt="Welkinrim Technologies"
-              className="h-12 w-auto transition-opacity duration-500"
+              className="h-8 md:h-10 lg:h-12 w-auto transition-opacity duration-500"
             />
           </button>
 
@@ -208,8 +208,8 @@ export default function Navbar() {
         </div>
 
         {/* ── Mobile Menu ── */}
-        <div className={`md:hidden transition-all duration-300 overflow-hidden ${menuOpen ? "max-h-96 bg-white/97 backdrop-blur-md" : "max-h-0"}`}>
-          <div className="px-6 py-4 flex flex-col gap-4 border-t border-gray-100">
+        <div className={`md:hidden transition-all duration-300 overflow-hidden ${menuOpen ? "max-h-[500px] bg-white/97 backdrop-blur-md border-t border-gray-100" : "max-h-0"}`}>
+          <div className="px-4 py-4 flex flex-col gap-4">
             {[
               { label: "Home",       action: () => scrollToSection("home")       },
               { label: "Technology", action: () => scrollToSection("technology") },
@@ -239,47 +239,47 @@ export default function Navbar() {
 
       {/* ── Mega Menu Panel ── */}
       <div
-        className={`fixed top-[72px] left-0 right-0 z-40 transition-all duration-300 ${
+        className={`fixed top-[60px] md:top-[72px] left-0 right-0 z-40 transition-all duration-300 ${
           megaOpen ? "opacity-100 translate-y-0 pointer-events-auto" : "opacity-0 -translate-y-2 pointer-events-none"
         }`}
         onMouseEnter={openMega}
         onMouseLeave={closeMega}
       >
-        <div className="bg-white border-b border-gray-100 shadow-2xl">
-          <div className="max-w-7xl mx-auto px-6 py-8 grid grid-cols-12 gap-0">
+        <div className="bg-white border-b border-gray-100 shadow-2xl overflow-y-auto max-h-[80vh] md:max-h-none">
+          <div className="max-w-7xl mx-auto px-4 md:px-6 py-6 md:py-8 grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-0">
 
             {/* Left: category list */}
-            <div className="col-span-3 border-r border-gray-100 pr-8">
-              <p className="text-[9px] text-[#808080] tracking-[0.3em] uppercase mb-4" style={{ fontFamily: "Michroma, sans-serif" }}>
+            <div className="col-span-1 md:col-span-3 border-b md:border-b-0 md:border-r border-gray-100 pr-0 md:pr-4 pb-4 md:pb-0 mb-4 md:mb-0">
+              <p className="text-[9px] text-[#808080] tracking-[0.3em] uppercase mb-3 md:mb-4" style={{ fontFamily: "Michroma, sans-serif" }}>
                 Product Lines
               </p>
-              <div className="flex flex-col gap-1">
+              <div className="flex md:flex-col gap-1 overflow-x-auto md:overflow-visible pb-2 md:pb-0">
                 {PRODUCT_CATEGORIES.map((cat) => (
                   <button
                     key={cat.id}
                     onMouseEnter={() => setActiveCategory(cat.id)}
                     onClick={() => goToProducts(cat.id)}
-                    className={`flex items-center gap-3 px-3 py-3 rounded-sm text-left transition-all duration-200 group ${
+                    className={`flex items-center gap-2 md:gap-3 px-2 md:px-3 py-2 rounded-sm text-left transition-all duration-200 group flex-shrink-0 ${
                       activeCategory === cat.id ? "bg-[#ffc914]/10 text-black" : "text-[#444] hover:bg-gray-50"
                     }`}
                   >
-                    <span className={`transition-colors duration-200 ${activeCategory === cat.id ? "text-[#ffc914]" : "text-[#808080] group-hover:text-black"}`}>
+                    <span className={`transition-colors duration-200 flex-shrink-0 ${activeCategory === cat.id ? "text-[#ffc914]" : "text-[#808080] group-hover:text-black"}`}>
                       {cat.icon}
                     </span>
-                    <div>
+                    <div className="min-w-0">
                       {cat.useSvgLogo ? (
                         <img
                           src={`${import.meta.env.BASE_URL}${cat.logoSrc}`}
                           alt={cat.label}
-                          className="h-8 w-auto"
+                          className="h-6 md:h-8 w-auto"
                         />
                       ) : (
-                        <p className="text-xs font-bold tracking-wide" style={{ fontFamily: "Michroma, sans-serif" }}>{cat.label}</p>
+                        <p className="text-xs font-bold tracking-wide truncate" style={{ fontFamily: "Michroma, sans-serif" }}>{cat.label}</p>
                       )}
-                      <p className="text-[10px] text-[#808080] mt-0.5" style={{ fontFamily: "Lexend, sans-serif" }}>{cat.tagline}</p>
+                      <p className="text-[9px] md:text-[10px] text-[#808080] mt-0.5 hidden md:block" style={{ fontFamily: "Lexend, sans-serif" }}>{cat.tagline}</p>
                     </div>
                     {activeCategory === cat.id && (
-                      <svg className="ml-auto w-4 h-4 text-[#ffc914]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <svg className="ml-auto w-4 h-4 text-[#ffc914] flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                         <polyline points="9 18 15 12 9 6" />
                       </svg>
                     )}
@@ -289,7 +289,7 @@ export default function Navbar() {
             </div>
 
             {/* Right: products for active category */}
-            <div className="col-span-9 pl-8">
+            <div className="col-span-1 md:col-span-9 pl-0 md:pl-4 md:pl-8">
               <div className="flex items-start justify-between mb-4">
                 <div>
                   <p className="text-[9px] text-[#808080] tracking-[0.3em] uppercase" style={{ fontFamily: "Michroma, sans-serif" }}>
@@ -307,24 +307,24 @@ export default function Navbar() {
                 </button>
               </div>
 
-              <div className="grid grid-cols-4 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-3">
                 {activeCat.products.slice(0, 4).map((p) => (
                   <button
                     key={p.id}
                     onClick={() => goToProduct(p.id)}
-                    className="text-left border border-gray-100 hover:border-[#ffc914] p-3 transition-all duration-200 group"
+                    className="text-left border border-gray-100 hover:border-[#ffc914] p-2 md:p-3 transition-all duration-200 group"
                   >
-                    <div className="w-full h-16 bg-gray-50 mb-2 flex items-center justify-center group-hover:bg-[#ffc914]/5 transition-colors duration-200">
+                    <div className="w-full h-12 md:h-16 bg-gray-50 mb-1 md:mb-2 flex items-center justify-center group-hover:bg-[#ffc914]/5 transition-colors duration-200">
                       <div className="flex flex-col items-center">
-                        <span className="text-[7px] font-black text-[#b89600] leading-none" style={{ fontFamily: "Michroma, sans-serif" }}>WR</span>
-                        <span className="text-[9px] font-black text-black/30 mt-0.5" style={{ fontFamily: "Michroma, sans-serif" }}>{p.name}</span>
+                        <span className="text-[6px] md:text-[7px] font-black text-[#b89600] leading-none" style={{ fontFamily: "Michroma, sans-serif" }}>WR</span>
+                        <span className="text-[7px] md:text-[9px] font-black text-black/30 mt-0.5" style={{ fontFamily: "Michroma, sans-serif" }}>{p.name}</span>
                       </div>
                     </div>
-                    <p className="text-[8px] text-[#ffc914] tracking-widest uppercase font-bold mb-0.5 truncate" style={{ fontFamily: "Michroma, sans-serif" }}>{p.tag}</p>
+                    <p className="text-[7px] md:text-[8px] text-[#ffc914] tracking-widest uppercase font-bold mb-0.5 truncate" style={{ fontFamily: "Michroma, sans-serif" }}>{p.tag}</p>
                     <p className="text-xs font-bold text-black truncate" style={{ fontFamily: "Michroma, sans-serif" }}>{p.model}</p>
-                    <div className="flex flex-wrap gap-1 mt-1.5">
+                    <div className="flex flex-wrap gap-0.5 md:gap-1 mt-1 md:mt-1.5">
                       {p.keySpecs.map((s) => (
-                        <span key={s.label} className="text-[7px] bg-gray-100 text-[#444] px-1 py-0.5" style={{ fontFamily: "Lexend, sans-serif" }}>{s.value}</span>
+                        <span key={s.label} className="text-[6px] md:text-[7px] bg-gray-100 text-[#444] px-1 py-0.5" style={{ fontFamily: "Lexend, sans-serif" }}>{s.value}</span>
                       ))}
                     </div>
                   </button>
@@ -332,25 +332,25 @@ export default function Navbar() {
                 {activeCat.products.length > 4 && (
                   <button
                     onClick={() => goToProducts(activeCategory)}
-                    className="border border-dashed border-gray-200 hover:border-[#ffc914] p-3 flex flex-col items-center justify-center gap-2 group transition-all duration-200"
+                    className="border border-dashed border-gray-200 hover:border-[#ffc914] p-2 md:p-3 flex flex-col items-center justify-center gap-1 md:gap-2 group transition-all duration-200"
                   >
-                    <div className="w-8 h-8 rounded-full bg-gray-100 group-hover:bg-[#ffc914]/10 flex items-center justify-center transition-colors duration-200">
-                      <span className="text-[#808080] group-hover:text-[#ffc914] text-base font-bold leading-none">+</span>
+                    <div className="w-6 md:w-8 h-6 md:h-8 rounded-full bg-gray-100 group-hover:bg-[#ffc914]/10 flex items-center justify-center transition-colors duration-200">
+                      <span className="text-[#808080] group-hover:text-[#ffc914] text-sm md:text-base font-bold leading-none">+</span>
                     </div>
-                    <p className="text-[9px] text-[#808080] group-hover:text-black text-center" style={{ fontFamily: "Michroma, sans-serif" }}>
+                    <p className="text-[7px] md:text-[9px] text-[#808080] group-hover:text-black text-center" style={{ fontFamily: "Michroma, sans-serif" }}>
                       +{activeCat.products.length - 4} more
                     </p>
                   </button>
                 )}
               </div>
 
-              <div className="mt-6 pt-4 border-t border-gray-100 flex items-center justify-between">
-                <p className="text-[10px] text-[#808080]" style={{ fontFamily: "Lexend, sans-serif" }}>
+              <div className="mt-4 md:mt-6 pt-3 md:pt-4 border-t border-gray-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 md:gap-0">
+                <p className="text-[9px] md:text-[10px] text-[#808080]" style={{ fontFamily: "Lexend, sans-serif" }}>
                   36+ product variants across 5 lines
                 </p>
                 <button
                   onClick={() => scrollToSection("contact")}
-                  className="px-4 py-1.5 bg-[#ffc914] text-black text-[9px] tracking-widest uppercase font-bold hover:bg-[#e0b212] transition-colors duration-200"
+                  className="px-3 md:px-4 py-1 md:py-1.5 bg-[#ffc914] text-black text-[8px] md:text-[9px] tracking-widest uppercase font-bold hover:bg-[#e0b212] transition-colors duration-200"
                   style={{ fontFamily: "Michroma, sans-serif", transform: "skewX(-10deg)" }}
                 >
                   <span style={{ display: "inline-block", transform: "skewX(10deg)" }}>Request a Quote</span>

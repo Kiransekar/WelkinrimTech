@@ -27,17 +27,17 @@ export default function ContactSection() {
   };
 
   return (
-    <section id="contact" className="py-8 lg:py-12 bg-white scroll-mt-[72px] flex flex-col justify-center min-h-[100vh] lg:min-h-[calc(100vh-72px)]">
-      <div className="max-w-7xl mx-auto px-6 md:px-12 w-full my-auto">
+    <section id="contact" className="py-6 md:py-8 lg:py-12 bg-white scroll-mt-[60px] md:scroll-mt-[72px] flex flex-col justify-center min-h-[80vh] lg:min-h-[calc(100vh-72px)]">
+      <div className="max-w-7xl mx-auto px-4 md:px-12 w-full my-auto">
         {/* Header */}
-        <div className="mb-8 lg:mb-12">
-          <div className="flex items-center gap-3 mb-3">
-            <div className="h-px w-10 bg-[#ffc914]" />
-            <span className="text-[#808080] text-[10px] md:text-xs tracking-[0.3em] uppercase" style={{ fontFamily: 'Michroma, sans-serif' }}>
+        <div className="mb-6 md:mb-8 lg:mb-12">
+          <div className="flex items-center gap-3 mb-2 md:mb-3">
+            <div className="h-px w-8 md:w-10 bg-[#ffc914]" />
+            <span className="text-[9px] md:text-xs tracking-[0.3em] uppercase" style={{ fontFamily: 'Michroma, sans-serif' }}>
               Enquiry
             </span>
           </div>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-black leading-tight" style={{ fontFamily: 'Michroma, sans-serif' }}>
+          <h2 className="text-2xl md:text-4xl lg:text-5xl font-bold text-black leading-tight" style={{ fontFamily: 'Michroma, sans-serif' }}>
             Start a Conversation
             <br />
             <span className="text-[#ffc914]">With Our Engineers</span>
@@ -52,11 +52,11 @@ export default function ContactSection() {
             </p>
 
             {/* Contact cards */}
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-2 md:gap-3">
               {[
                 {
                   icon: (
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                       <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.8a19.79 19.79 0 01-3.07-8.67A2 2 0 012 .84h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 8.44a16 16 0 006.29 6.29l1.33-1.33a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 15.92z" />
                     </svg>
                   ),
@@ -65,7 +65,7 @@ export default function ContactSection() {
                 },
                 {
                   icon: (
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                       <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
                       <polyline points="22,6 12,13 2,6" />
                     </svg>
@@ -75,7 +75,7 @@ export default function ContactSection() {
                 },
                 {
                   icon: (
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                       <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" />
                       <circle cx="12" cy="10" r="3" />
                     </svg>
@@ -84,13 +84,13 @@ export default function ContactSection() {
                   value: "Chennai Industrial Corridor, Tamil Nadu",
                 },
               ].map((item) => (
-                <div key={item.label} className="flex items-start gap-4 p-3 border border-gray-100 hover:border-[#ffc914]/50 transition-colors duration-200" style={{ transform: 'skewX(-10deg)' }}>
-                  <div className="w-8 h-8 bg-[#ffc914]/10 flex items-center justify-center flex-shrink-0 text-[#ffc914]" style={{ transform: 'skewX(10deg)' }}>
+                <div key={item.label} className="flex items-start gap-3 md:gap-4 p-2 md:p-3 border border-gray-100 hover:border-[#ffc914]/50 transition-colors duration-200" style={{ transform: 'skewX(-10deg)' }}>
+                  <div className="w-7 md:w-8 h-7 md:h-8 bg-[#ffc914]/10 flex items-center justify-center flex-shrink-0 text-[#ffc914]" style={{ transform: 'skewX(10deg)' }}>
                     {item.icon}
                   </div>
                   <div style={{ transform: 'skewX(10deg)' }}>
-                    <div className="text-[10px] text-[#808080] uppercase tracking-widest mb-0.5" style={{ fontFamily: 'Michroma, sans-serif' }}>{item.label}</div>
-                    <div className="text-sm text-black font-medium" style={{ fontFamily: 'Lexend, sans-serif' }}>{item.value}</div>
+                    <div className="text-[9px] md:text-[10px] text-[#808080] uppercase tracking-widest mb-0.5" style={{ fontFamily: 'Michroma, sans-serif' }}>{item.label}</div>
+                    <div className="text-xs md:text-sm text-black font-medium" style={{ fontFamily: 'Lexend, sans-serif' }}>{item.value}</div>
                   </div>
                 </div>
               ))}

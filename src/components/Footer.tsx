@@ -17,14 +17,14 @@ export default function Footer() {
   return (
     <footer className="bg-black text-white">
       {/* Top section */}
-      <div className="max-w-7xl mx-auto px-6 md:px-12 py-16 grid grid-cols-1 md:grid-cols-4 gap-12">
+      <div className="max-w-7xl mx-auto px-4 md:px-12 py-10 md:py-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12">
         {/* Brand */}
         <div className="md:col-span-1">
-          <div className="inline-flex items-center gap-3 mb-6">
+          <div className="inline-flex items-center gap-2 md:gap-3 mb-4 md:mb-6">
             <img
               src={`${import.meta.env.BASE_URL}welkinrim-logo-white.svg`}
               alt="Welkinrim Technologies"
-              className="h-10 w-auto"
+              className="h-8 md:h-10 w-auto"
             />
           </div>
           <p className="text-[#808080] text-xs leading-relaxed mb-6" style={{ fontFamily: 'Lexend, sans-serif' }}>

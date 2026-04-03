@@ -998,10 +998,10 @@ function ProductCard({ p, expanded, onToggle }: {
   return (
     <div className={`flex flex-col border transition-all duration-300 ${
       expanded ? "border-gray-300 shadow-xl" : "border-gray-100 hover:border-gray-300 hover:shadow-md"
-    }`}>
+    }}>
 
       {/* ── Visual header ── */}
-      <div className="relative flex flex-col items-center justify-center h-44 overflow-hidden"
+      <div className="relative flex flex-col items-center justify-center h-32 md:h-44 overflow-hidden"
            style={{ background: `linear-gradient(135deg, #111 0%, #1a1a1a 100%)` }}>
 
         {/* faint grid overlay */}
@@ -1013,11 +1013,11 @@ function ProductCard({ p, expanded, onToggle }: {
              }} />
 
         {/* motor/esc/fc icon */}
-        <div className="relative z-10 mb-2">
+        <div className="relative z-10 mb-1 md:mb-2">
           {p.series === "haemng" ? (
-            <img src={`${import.meta.env.BASE_URL}haemng.svg`} alt="Haemng" className="h-14 w-auto" style={{ filter: "brightness(0) invert(1)", opacity: 0.7 }} />
+            <img src={`${import.meta.env.BASE_URL}haemng.svg`} alt="Haemng" className="h-10 md:h-14 w-auto" style={{ filter: "brightness(0) invert(1)", opacity: 0.7 }} />
           ) : p.series === "maelard" ? (
-            <img src={`${import.meta.env.BASE_URL}Maelard.svg`} alt="Maelard" className="h-10 w-auto" style={{ filter: "brightness(0) invert(1)", opacity: 0.7 }} />
+            <img src={`${import.meta.env.BASE_URL}Maelard.svg`} alt="Maelard" className="h-8 md:h-10 w-auto" style={{ filter: "brightness(0) invert(1)", opacity: 0.7 }} />
           ) : p.series === "esc" ? <EscIcon color={cfg.accent} />
             : p.series === "fc" ? <FcIcon color={cfg.accent} />
             : <MotorIcon color={cfg.accent} />}
@@ -1025,16 +1025,16 @@ function ProductCard({ p, expanded, onToggle }: {
 
         {/* dim badge */}
         {p.allSpecs.find(s => s.label === "Dimension") && (
-          <p className="relative z-10 text-[9px] tracking-widest text-white/40 uppercase"
+          <p className="relative z-10 text-[7px] md:text-[9px] tracking-widest text-white/40 uppercase"
              style={{ fontFamily: "Michroma, sans-serif" }}>
             {p.allSpecs.find(s => s.label === "Dimension")?.value}
           </p>
         )}
 
         {/* Series badge top-right */}
-        <div className="absolute top-3 right-3 px-2 py-0.5"
+        <div className="absolute top-2 md:top-3 right-2 md:right-3 px-1.5 md:px-2 py-0.5"
              style={{ background: cfg.accent, transform: "skewX(-10deg)" }}>
-          <span className="text-[8px] font-black tracking-widest uppercase"
+          <span className="text-[6px] md:text-[8px] font-black tracking-widest uppercase"
                 style={{ fontFamily: "Michroma, sans-serif",
                          color: p.series === "haemng" ? "#000" : "#fff",
                          display: "inline-block", transform: "skewX(10deg)" }}>
@@ -1043,8 +1043,8 @@ function ProductCard({ p, expanded, onToggle }: {
         </div>
 
         {/* tag bottom-left */}
-        <div className="absolute bottom-3 left-3">
-          <span className="text-[8px] tracking-widest uppercase text-white/60 border border-white/20 px-2 py-0.5"
+        <div className="absolute bottom-2 md:bottom-3 left-2 md:left-3">
+          <span className="text-[6px] md:text-[8px] tracking-widest uppercase text-white/60 border border-white/20 px-1.5 md:px-2 py-0.5"
                 style={{ fontFamily: "Michroma, sans-serif", transform: "skewX(-10deg)", display: "inline-block" }}>
             <span style={{ display: "inline-block", transform: "skewX(10deg)" }}>{p.tag}</span>
           </span>
@@ -1052,21 +1052,21 @@ function ProductCard({ p, expanded, onToggle }: {
       </div>
 
       {/* ── Card body ── */}
-      <div className="flex flex-col flex-1 p-5">
-        <p className="text-[9px] tracking-[0.25em] uppercase mb-0.5"
+      <div className="flex flex-col flex-1 p-3 md:p-5">
+        <p className="text-[8px] md:text-[9px] tracking-[0.25em] uppercase mb-0.5"
            style={{ fontFamily: "Michroma, sans-serif", color: cfg.accent }}>
           {p.model}
         </p>
         <h3 className="text-sm font-bold text-black mb-1" style={{ fontFamily: "Michroma, sans-serif" }}>
           {p.seriesLabel}
         </h3>
-        <p className="text-[10px] text-[#808080] mb-4 leading-relaxed" style={{ fontFamily: "Lexend, sans-serif" }}>{p.application}</p>
+        <p className="text-[9px] md:text-[10px] text-[#808080] mb-3 md:mb-4 leading-relaxed" style={{ fontFamily: "Lexend, sans-serif" }}>{p.application}</p>
 
         {/* Key 3 specs as badges */}
-        <div className="grid grid-cols-3 gap-px bg-gray-100 mb-4">
+        <div className="grid grid-cols-3 gap-px bg-gray-100 mb-3 md:mb-4">
           {p.keySpecs.map(s => (
-            <div key={s.label} className="bg-white px-2 py-2 text-center">
-              <p className="text-[10px] font-black text-black" style={{ fontFamily: "Michroma, sans-serif" }}>
+            <div key={s.label} className="bg-white px-1 md:px-2 py-1 md:py-2 text-center">
+              <p className="text-[8px] md:text-[10px] font-black text-black" style={{ fontFamily: "Michroma, sans-serif" }}>
                 {s.value}
               </p>
               <p className="text-[8px] text-[#808080] mt-0.5 leading-tight" style={{ fontFamily: "Lexend, sans-serif" }}>{s.label}</p>
