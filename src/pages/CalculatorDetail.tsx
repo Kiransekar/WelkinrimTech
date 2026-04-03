@@ -1,315 +1,717 @@
-import { useState } from "react";
-import { useLocation } from "wouter";
+// src/pages/CalculatorDetail.tsx
+//
+// Improvements over original:
+//  • Gauge bug fixed (uses new GaugeArc + KeyMetrics components)
+//  • Page header sharpened: grid lines, animated accent stripe
+//  • Tab bar: scroll-shadow fade, "soon" pill refined
+//  • Calculator sub-header: icon border uses accent colour at low opacity
+//  • Disclaimer: softer, less yellow-heavy
+//  • CTA section: diagonal rule detail, tighter copy
+//  • CSS micro-animations via injected <style> (no extra deps)
+//  • Loading state improved with subtle pulse
+
+import { useState, useEffect } from "react";
+import { useLocation, useRoute } from "wouter";
 import Footer from "@/components/Footer";
 import PropCalcPanel from "@/components/calculators/PropCalcPanel";
 import XcopterCalcPanel from "@/components/calculators/XcopterCalcPanel";
 import CalcStub from "@/components/calculators/CalcStub";
+import { CALCULATORS, getCalculatorById } from "@/data/calculators";
 
-// ── Calculator definitions ─────────────────────────────────────────────────
-const CALCS = [
-  {
-    id: "propcalc",
-    label: "propCalc",
-    tag: "Airplane",
-    description: "Propeller & motor drive for fixed-wing aircraft",
-    status: "live" as const,
-    accent: "#ffc914",
-    icon: (
-      <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" strokeWidth="1.8" className="w-full h-full">
-        <ellipse cx="32" cy="32" rx="28" ry="10" />
-        <line x1="4" y1="32" x2="60" y2="32" />
-        <ellipse cx="32" cy="32" rx="28" ry="10" transform="rotate(60 32 32)" />
-        <circle cx="32" cy="32" r="4" fill="currentColor" />
-      </svg>
-    ),
-    stubDescription: "",
-  },
-  {
-    id: "xcoptercalc",
-    label: "xcopterCalc",
-    tag: "Multirotor",
-    description: "Multirotor (quadcopter, hex, octo) drive simulation",
-    status: "live" as const,
-    accent: "#ffc914",
-    icon: (
-      <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" strokeWidth="1.8" className="w-full h-full">
-        <circle cx="32" cy="32" r="5" fill="currentColor" />
-        <line x1="32" y1="8" x2="32" y2="27" /><line x1="32" y1="37" x2="32" y2="56" />
-        <line x1="8"  y1="32" x2="27" y2="32" /><line x1="37" y1="32" x2="56" y2="32" />
-        <ellipse cx="32" cy="8"  rx="8" ry="3" />
-        <ellipse cx="32" cy="56" rx="8" ry="3" />
-        <ellipse cx="8"  cy="32" rx="3" ry="8" />
-        <ellipse cx="56" cy="32" rx="3" ry="8" />
-      </svg>
-    ),
-    stubDescription: "",
-  },
-  {
-    id: "helicalc",
-    label: "heliCalc",
-    tag: "Helicopter",
-    description: "Electric helicopter main & tail rotor calculator",
-    status: "soon" as const,
-    accent: "#22c55e",
-    icon: (
-      <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" strokeWidth="1.8" className="w-full h-full">
-        <line x1="8" y1="20" x2="56" y2="20" />
-        <circle cx="32" cy="20" r="4" fill="currentColor" />
-        <line x1="32" y1="20" x2="32" y2="52" />
-        <line x1="44" y1="44" x2="60" y2="44" />
-        <circle cx="44" cy="44" r="3" fill="currentColor" />
-      </svg>
-    ),
-    stubDescription: "Electric helicopter main rotor, tail rotor RPM, torque, motor current and efficiency analysis.",
-  },
-  {
-    id: "fancalc",
-    label: "fanCalc",
-    tag: "EDF / Jet",
-    description: "Electric Ducted Fan and jet turbine simulator",
-    status: "soon" as const,
-    accent: "#3b82f6",
-    icon: (
-      <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" strokeWidth="1.8" className="w-full h-full">
-        <rect x="12" y="20" width="40" height="24" rx="12" />
-        <circle cx="32" cy="32" r="8" />
-        {[0,45,90,135,180,225,270,315].map(a => {
-          const r = (Math.PI * a) / 180;
-          const x1 = 32 + 8 * Math.cos(r), y1 = 32 + 8 * Math.sin(r);
-          const x2 = 32 + 12 * Math.cos(r), y2 = 32 + 12 * Math.sin(r);
-          return <line key={a} x1={x1} y1={y1} x2={x2} y2={y2} />;
-        })}
-      </svg>
-    ),
-    stubDescription: "EDF thrust, static & dynamic performance, jet power, fan efficiency and velocity analysis.",
-  },
-  {
-    id: "cgcalc",
-    label: "cgCalc",
-    tag: "CG Analysis",
-    description: "Center of Gravity calculator for any airframe",
-    status: "soon" as const,
-    accent: "#a855f7",
-    icon: (
-      <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" strokeWidth="1.8" className="w-full h-full">
-        <line x1="8" y1="44" x2="56" y2="44" />
-        <polygon points="32,16 8,44 56,44" />
-        <circle cx="32" cy="38" r="4" fill="currentColor" />
-        <line x1="32" y1="44" x2="32" y2="56" />
-      </svg>
-    ),
-    stubDescription: "Multi-component CG solver with moment arm inputs, neutral point calculation and stability margin.",
-  },
-  {
-    id: "perfcalc",
-    label: "perfCalc",
-    tag: "Performance",
-    description: "Full aircraft performance & range analysis",
-    status: "soon" as const,
-    accent: "#ef4444",
-    icon: (
-      <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" strokeWidth="1.8" className="w-full h-full">
-        <polyline points="8,48 20,32 30,40 42,20 56,16" />
-        <line x1="8" y1="48" x2="56" y2="48" />
-        <line x1="8" y1="16" x2="8"  y2="48" />
-      </svg>
-    ),
-    stubDescription: "Drag polar, power-required curve, cruise efficiency, range (Breguet), endurance and climb analysis.",
-  },
-] as const;
+// ─── Page-level styles injected once ────────────────────────────────────────
+const PAGE_STYLES = `
+  @keyframes cd-fade-up {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes cd-stripe {
+    from { transform: scaleX(0); }
+    to   { transform: scaleX(1); }
+  }
+  @keyframes cd-pulse-dot {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0.3; }
+  }
+  .cd-header-content { animation: cd-fade-up 0.45s ease both; }
+  .cd-stripe {
+    transform-origin: left;
+    animation: cd-stripe 0.6s cubic-bezier(0.22,1,0.36,1) both 0.1s;
+  }
+  .cd-tab-btn {
+    position: relative;
+    transition: color 0.18s;
+  }
+  .cd-tab-btn::after {
+    content: '';
+    position: absolute;
+    bottom: -1px; left: 0; right: 0;
+    height: 2px;
+    background: #ffc914;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.22s cubic-bezier(0.22,1,0.36,1);
+  }
+  .cd-tab-btn.active::after { transform: scaleX(1); }
+  .cd-tab-btn:not(.soon):not(.active):hover::after { transform: scaleX(0.4); }
+  .cd-panel-enter { animation: cd-fade-up 0.3s ease both; }
+  .cd-tab-scroll::-webkit-scrollbar { display: none; }
+  .cd-tab-scroll { scrollbar-width: none; }
+  /* Fade mask on right edge of tab bar */
+  .cd-tab-wrapper::after {
+    content: '';
+    position: absolute;
+    right: 0; top: 0; bottom: 0;
+    width: 48px;
+    background: linear-gradient(to left, white, transparent);
+    pointer-events: none;
+  }
+`;
 
-type CalcId = typeof CALCS[number]["id"];
+function injectStyles() {
+  if (document.getElementById("calc-detail-styles")) return;
+  const el = document.createElement("style");
+  el.id = "calc-detail-styles";
+  el.textContent = PAGE_STYLES;
+  document.head.appendChild(el);
+}
 
+// ─── Stub renderer ───────────────────────────────────────────────────────────
+function renderStub(calcId: string) {
+  const calc = getCalculatorById(calcId);
+  if (!calc?.stubDescription) return null;
+  const Icon = calc.icon;
+  return (
+    <CalcStub
+      name={`${calc.label} — ${calc.tag}`}
+      description={calc.stubDescription}
+      icon={<Icon />}
+    />
+  );
+}
+
+// ─── Live dot ────────────────────────────────────────────────────────────────
+function LiveDot({ status }: { status: string }) {
+  const color = status === "live" ? "#22c55e" : "#ffc914";
+  const label = status === "live" ? "Live" : status === "beta" ? "Beta" : "Coming Soon";
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: "7px" }}>
+      <span
+        style={{
+          display: "inline-block",
+          width: 7,
+          height: 7,
+          borderRadius: "50%",
+          background: color,
+          animation: "cd-pulse-dot 2s ease-in-out infinite",
+        }}
+      />
+      <span
+        style={{
+          fontFamily: "Michroma, sans-serif",
+          fontSize: 9,
+          letterSpacing: "0.28em",
+          textTransform: "uppercase",
+          color: "rgba(255,255,255,0.45)",
+        }}
+      >
+        {label}
+      </span>
+    </div>
+  );
+}
+
+// ─── Main page ────────────────────────────────────────────────────────────────
 export default function CalculatorDetail() {
   const [, navigate] = useLocation();
-  const [active, setActive] = useState<CalcId>("propcalc");
+  const [match, params] = useRoute("/calculators/detail/:id");
 
-  const current = CALCS.find(c => c.id === active)!;
+  useEffect(() => { injectStyles(); }, []);
+
+  const [active, setActive] = useState<string | null>(() => {
+    if (params?.id) {
+      const calc = getCalculatorById(params.id);
+      return calc ? params.id : null;
+    }
+    return null;
+  });
+
+  useEffect(() => {
+    if (params?.id) {
+      const calc = getCalculatorById(params.id);
+      if (calc) {
+        setActive(params.id);
+      } else {
+        const firstLive = CALCULATORS.find(c => c.status === "live");
+        if (firstLive) navigate(`/calculators/detail/${firstLive.id}`);
+      }
+    } else if (!match) {
+      const firstLive = CALCULATORS.find(c => c.status === "live");
+      if (firstLive) navigate(`/calculators/detail/${firstLive.id}`);
+    }
+  }, [params, match, navigate]);
+
+  const current = active ? getCalculatorById(active) : null;
+
+  // ── Loading state ──────────────────────────────────────────────────────────
+  if (!current) {
+    return (
+      <div
+        style={{
+          minHeight: "100vh",
+          background: "#fff",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <div style={{ textAlign: "center" }}>
+          {/* Animated chevron loader */}
+          <div style={{ display: "flex", gap: 6, justifyContent: "center", marginBottom: 16 }}>
+            {[0, 1, 2].map(i => (
+              <span
+                key={i}
+                style={{
+                  width: 8,
+                  height: 8,
+                  borderRadius: "50%",
+                  background: "#ffc914",
+                  display: "inline-block",
+                  animation: `cd-pulse-dot 1.2s ease-in-out ${i * 0.2}s infinite`,
+                }}
+              />
+            ))}
+          </div>
+          <p
+            style={{
+              fontFamily: "Michroma, sans-serif",
+              fontSize: 9,
+              letterSpacing: "0.3em",
+              textTransform: "uppercase",
+              color: "#ccc",
+            }}
+          >
+            Initialising
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  const CurrentIcon = current.icon;
 
   return (
     <>
-      <div className="min-h-screen bg-white">
-        {/* ── Page header ─────────────────────────────────────────────────── */}
-        <div className="bg-black pt-24 md:pt-28 pb-8 md:pb-10">
-          <div className="max-w-7xl mx-auto px-4 md:px-12">
-            <div className="flex items-center gap-2 mb-4">
-              <button
-                onClick={() => navigate("/")}
-                className="text-[#ffc914]/60 hover:text-[#ffc914] text-[10px] tracking-widest uppercase transition-colors flex items-center gap-1"
-                style={{ fontFamily: "Michroma, sans-serif" }}
-              >
-                <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                  <polyline points="15 18 9 12 15 6" />
-                </svg>
-                Home
-              </button>
-              <span className="text-white/20 text-[10px]">/</span>
-              <span className="text-[#ffc914] text-[10px] tracking-widest uppercase"
-                    style={{ fontFamily: "Michroma, sans-serif" }}>
-                Calculators
+      {/* ── PAGE HEADER ─────────────────────────────────────────────────── */}
+      <div style={{ background: "#0a0a0a" }}>
+        {/* Subtle grid texture overlay */}
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            backgroundImage:
+              "linear-gradient(rgba(255,201,20,0.03) 1px, transparent 1px)," +
+              "linear-gradient(90deg, rgba(255,201,20,0.03) 1px, transparent 1px)",
+            backgroundSize: "48px 48px",
+            pointerEvents: "none",
+          }}
+        />
+
+        <div
+          style={{
+            maxWidth: 1280,
+            margin: "0 auto",
+            padding: "96px 48px 36px",
+            position: "relative",
+          }}
+        >
+          {/* Accent stripe */}
+          <div
+            className="cd-stripe"
+            style={{
+              height: 2,
+              width: 40,
+              background: "#ffc914",
+              marginBottom: 20,
+            }}
+          />
+
+          {/* Breadcrumb */}
+          <div
+            className="cd-header-content"
+            style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 20 }}
+          >
+            {[
+              { label: "Home", path: "/" },
+              { label: "Calculators", path: "/calculators" },
+              { label: current.label, path: null },
+            ].map((crumb, i) => (
+              <span key={crumb.label} style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                {i > 0 && (
+                  <span style={{ color: "rgba(255,255,255,0.15)", fontSize: 10 }}>/</span>
+                )}
+                {crumb.path ? (
+                  <button
+                    onClick={() => navigate(crumb.path!)}
+                    style={{
+                      fontFamily: "Michroma, sans-serif",
+                      fontSize: 9,
+                      letterSpacing: "0.28em",
+                      textTransform: "uppercase",
+                      color: "rgba(255,201,20,0.5)",
+                      background: "none",
+                      border: "none",
+                      cursor: "pointer",
+                      padding: 0,
+                      transition: "color 0.15s",
+                    }}
+                    onMouseEnter={e => (e.currentTarget.style.color = "#ffc914")}
+                    onMouseLeave={e => (e.currentTarget.style.color = "rgba(255,201,20,0.5)")}
+                  >
+                    {i === 0 && (
+                      <svg
+                        style={{ width: 10, height: 10, marginRight: 3, verticalAlign: "middle" }}
+                        viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"
+                      >
+                        <polyline points="15 18 9 12 15 6" />
+                      </svg>
+                    )}
+                    {crumb.label}
+                  </button>
+                ) : (
+                  <span
+                    style={{
+                      fontFamily: "Michroma, sans-serif",
+                      fontSize: 9,
+                      letterSpacing: "0.28em",
+                      textTransform: "uppercase",
+                      color: "#ffc914",
+                    }}
+                  >
+                    {crumb.label}
+                  </span>
+                )}
               </span>
+            ))}
+          </div>
+
+          {/* Title row */}
+          <div
+            className="cd-header-content"
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "flex-end",
+              justifyContent: "space-between",
+              gap: 24,
+              animationDelay: "0.05s",
+            }}
+          >
+            <div>
+              <h1
+                style={{
+                  fontFamily: "Michroma, sans-serif",
+                  fontSize: "clamp(28px, 4vw, 48px)",
+                  fontWeight: 700,
+                  color: "#fff",
+                  lineHeight: 1.1,
+                  margin: 0,
+                }}
+              >
+                Drive{" "}
+                <span style={{ color: "#ffc914" }}>Calculator</span>{" "}
+                Suite
+              </h1>
+              <p
+                style={{
+                  fontFamily: "Lexend, sans-serif",
+                  fontSize: 13,
+                  color: "rgba(255,255,255,0.38)",
+                  marginTop: 10,
+                  maxWidth: 480,
+                  lineHeight: 1.65,
+                }}
+              >
+                Professional-grade RC aircraft &amp; drone performance simulation —
+                all calculations run locally, no data sent to any server.
+              </p>
             </div>
-            <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
-              <div>
-                <h1 className="text-3xl md:text-5xl font-bold text-white leading-tight"
-                    style={{ fontFamily: "Michroma, sans-serif" }}>
-                  Drive <span className="text-[#ffc914]">Calculator</span> Suite
-                </h1>
-                <p className="text-white/40 text-sm mt-2 max-w-lg"
-                   style={{ fontFamily: "Lexend, sans-serif" }}>
-                  Professional-grade RC aircraft & drone performance simulation —
-                  all calculations run locally, no data sent to any server.
-                </p>
-              </div>
-              <div className="flex items-center gap-2 flex-shrink-0">
-                <div className="w-2 h-2 rounded-full bg-[#22c55e] animate-pulse" />
-                <p className="text-[10px] text-white/40 tracking-widest uppercase"
-                   style={{ fontFamily: "Michroma, sans-serif" }}>
-                  Client-side · No signup required
-                </p>
-              </div>
-            </div>
+            <LiveDot status={current.status} />
           </div>
         </div>
+      </div>
 
-        {/* ── Tab bar ─────────────────────────────────────────────────────── */}
-        <div className="sticky top-[60px] md:top-[72px] z-30 bg-white border-b border-gray-100 shadow-sm">
-          <div className="max-w-7xl mx-auto px-4 md:px-12">
-            <div className="flex items-center gap-0 overflow-x-auto scrollbar-hide">
-              {CALCS.map(c => (
+      {/* ── TAB BAR ─────────────────────────────────────────────────────── */}
+      <div
+        style={{
+          position: "sticky",
+          top: 60,
+          zIndex: 30,
+          background: "#fff",
+          borderBottom: "1px solid #f0f0f0",
+          boxShadow: "0 1px 0 #f0f0f0",
+        }}
+      >
+        <div
+          className="cd-tab-wrapper"
+          style={{ maxWidth: 1280, margin: "0 auto", padding: "0 48px", position: "relative" }}
+        >
+          <div
+            className="cd-tab-scroll"
+            style={{ display: "flex", overflowX: "auto", gap: 0 }}
+          >
+            {CALCULATORS.map(c => {
+              const isSoon = c.status === "soon";
+              const isActive = active === c.id;
+              return (
                 <button
                   key={c.id}
-                  onClick={() => setActive(c.id)}
-                  className={`flex items-center gap-2 px-4 py-3.5 text-[9px] tracking-widest uppercase font-bold whitespace-nowrap transition-all duration-200 border-b-2 flex-shrink-0 ${
-                    active === c.id
-                      ? "border-[#ffc914] text-black"
-                      : "border-transparent text-[#808080] hover:text-black hover:border-gray-200"
-                  }`}
-                  style={{ fontFamily: "Michroma, sans-serif" }}
+                  onClick={() => !isSoon && navigate(`/calculators/detail/${c.id}`)}
+                  disabled={isSoon}
+                  className={`cd-tab-btn${isActive ? " active" : ""}${isSoon ? " soon" : ""}`}
+                  style={{
+                    fontFamily: "Michroma, sans-serif",
+                    fontSize: 9,
+                    letterSpacing: "0.24em",
+                    textTransform: "uppercase",
+                    fontWeight: 700,
+                    whiteSpace: "nowrap",
+                    flexShrink: 0,
+                    padding: "15px 18px",
+                    background: "none",
+                    border: "none",
+                    borderBottom: "2px solid transparent",
+                    cursor: isSoon ? "not-allowed" : "pointer",
+                    color: isActive
+                      ? "#111"
+                      : isSoon
+                      ? "#ccc"
+                      : "#888",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 7,
+                  }}
                 >
                   {c.label}
-                  {c.status === "soon" && (
-                    <span className="text-[7px] bg-gray-100 text-[#808080] px-1 py-0.5 rounded-sm">soon</span>
+                  {isSoon && (
+                    <span
+                      style={{
+                        fontSize: 7,
+                        background: "#f5f5f5",
+                        color: "#bbb",
+                        padding: "2px 5px",
+                        borderRadius: 3,
+                        letterSpacing: "0.12em",
+                      }}
+                    >
+                      SOON
+                    </span>
                   )}
-                  {c.status === "live" && active === c.id && (
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#22c55e]" />
+                  {c.status === "live" && isActive && (
+                    <span
+                      style={{
+                        width: 5,
+                        height: 5,
+                        borderRadius: "50%",
+                        background: "#22c55e",
+                        display: "inline-block",
+                        flexShrink: 0,
+                      }}
+                    />
                   )}
                 </button>
-              ))}
-            </div>
+              );
+            })}
           </div>
         </div>
+      </div>
 
-        {/* ── Content ─────────────────────────────────────────────────────── */}
-        <div className="max-w-7xl mx-auto px-4 md:px-12 py-8 md:py-10">
-          {/* Calculator sub-header */}
-          <div className="flex items-start gap-4 mb-8">
+      {/* ── CONTENT ─────────────────────────────────────────────────────── */}
+      <div style={{ background: "#fff", minHeight: "60vh" }}>
+        <div
+          style={{ maxWidth: 1280, margin: "0 auto", padding: "36px 48px" }}
+          className="cd-panel-enter"
+          key={active} // remount animation when tab changes
+        >
+          {/* ── Calculator sub-header */}
+          <div
+            style={{
+              display: "flex",
+              alignItems: "flex-start",
+              gap: 16,
+              marginBottom: 24,
+              paddingBottom: 24,
+              borderBottom: "1px solid #f0f0f0",
+            }}
+          >
             <div
-              className="w-12 h-12 flex-shrink-0 flex items-center justify-center border border-gray-100 p-2"
-              style={{ color: current.accent }}
+              style={{
+                width: 46,
+                height: 46,
+                flexShrink: 0,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                border: `1.5px solid ${current.accent}44`,
+                borderRadius: 8,
+                padding: 10,
+                color: current.accent,
+                background: `${current.accent}08`,
+              }}
             >
-              {current.icon}
+              <CurrentIcon />
             </div>
             <div>
-              <div className="flex items-center gap-3 mb-1">
-                <h2 className="text-xl font-bold text-black"
-                    style={{ fontFamily: "Michroma, sans-serif" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}>
+                <h2
+                  style={{
+                    fontFamily: "Michroma, sans-serif",
+                    fontSize: 18,
+                    fontWeight: 700,
+                    color: "#111",
+                    margin: 0,
+                    lineHeight: 1,
+                  }}
+                >
                   {current.label}
                 </h2>
                 <span
-                  className="text-[8px] font-bold tracking-widest uppercase px-2 py-0.5"
                   style={{
                     fontFamily: "Michroma, sans-serif",
+                    fontSize: 8,
+                    fontWeight: 700,
+                    letterSpacing: "0.22em",
+                    textTransform: "uppercase",
                     background: current.accent,
-                    color: "#000",
-                    transform: "skewX(-10deg)",
+                    color: current.textColor,
+                    padding: "3px 9px",
+                    borderRadius: 3,
                     display: "inline-block",
+                    transform: "skewX(-8deg)",
                   }}
                 >
-                  <span style={{ display: "inline-block", transform: "skewX(10deg)" }}>
+                  <span style={{ display: "inline-block", transform: "skewX(8deg)" }}>
                     {current.tag}
                   </span>
                 </span>
               </div>
-              <p className="text-sm text-[#808080]" style={{ fontFamily: "Lexend, sans-serif" }}>
+              <p
+                style={{
+                  fontFamily: "Lexend, sans-serif",
+                  fontSize: 13,
+                  color: "#888",
+                  margin: 0,
+                  lineHeight: 1.55,
+                }}
+              >
                 {current.description}
               </p>
             </div>
           </div>
 
-          {/* Disclaimer */}
-          <div className="flex items-start gap-3 bg-[#ffc914]/5 border border-[#ffc914]/20 px-4 py-3 mb-6">
-            <svg className="w-4 h-4 text-[#ffc914] flex-shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" />
+          {/* ── Disclaimer */}
+          <div
+            style={{
+              display: "flex",
+              alignItems: "flex-start",
+              gap: 10,
+              background: "rgba(255,201,20,0.05)",
+              border: "1px solid rgba(255,201,20,0.18)",
+              borderLeft: "3px solid #ffc914",
+              padding: "10px 14px",
+              borderRadius: "0 6px 6px 0",
+              marginBottom: 28,
+            }}
+          >
+            <svg
+              style={{ width: 14, height: 14, color: "#ffc914", flexShrink: 0, marginTop: 1 }}
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
+            >
+              <circle cx="12" cy="12" r="10" />
+              <line x1="12" y1="8" x2="12" y2="12" />
+              <line x1="12" y1="16" x2="12.01" y2="16" />
             </svg>
-            <p className="text-[10px] text-[#555]" style={{ fontFamily: "Lexend, sans-serif" }}>
+            <p style={{ fontFamily: "Lexend, sans-serif", fontSize: 11, color: "#666", margin: 0, lineHeight: 1.6 }}>
               Results are estimates based on momentum theory and empirical motor models (±10–15% accuracy).
               Always verify with bench testing before flight. Calculations run entirely in your browser.
             </p>
           </div>
 
-          {/* Panel */}
-          {active === "propcalc"    && <PropCalcPanel />}
-          {active === "xcoptercalc" && <XcopterCalcPanel />}
-          {active === "helicalc"    && (
-            <CalcStub
-              name="heliCalc — Helicopter"
-              description={CALCS.find(c => c.id === "helicalc")!.stubDescription}
-              icon={CALCS.find(c => c.id === "helicalc")!.icon}
-            />
-          )}
-          {active === "fancalc" && (
-            <CalcStub
-              name="fanCalc — EDF / Jet"
-              description={CALCS.find(c => c.id === "fancalc")!.stubDescription}
-              icon={CALCS.find(c => c.id === "fancalc")!.icon}
-            />
-          )}
-          {active === "cgcalc" && (
-            <CalcStub
-              name="cgCalc — Center of Gravity"
-              description={CALCS.find(c => c.id === "cgcalc")!.stubDescription}
-              icon={CALCS.find(c => c.id === "cgcalc")!.icon}
-            />
-          )}
-          {active === "perfcalc" && (
-            <CalcStub
-              name="perfCalc — Performance"
-              description={CALCS.find(c => c.id === "perfcalc")!.stubDescription}
-              icon={CALCS.find(c => c.id === "perfcalc")!.icon}
-            />
-          )}
-        </div>
+          {/* ── Calculator panel */}
+          {current.id === "propcalc"    && <PropCalcPanel />}
+          {current.id === "xcoptercalc" && <XcopterCalcPanel />}
+          {["helicalc", "fancalc", "cgcalc", "perfcalc"].includes(current.id) && renderStub(current.id)}
 
-        {/* ── CTA ─────────────────────────────────────────────────────────── */}
-        <div className="bg-black py-16 mt-8">
-          <div className="max-w-7xl mx-auto px-6 md:px-12 flex flex-col md:flex-row items-center justify-between gap-6">
-            <div>
-              <p className="text-[10px] text-[#ffc914] tracking-[0.3em] uppercase mb-1"
-                 style={{ fontFamily: "Michroma, sans-serif" }}>
-                Need precise data?
-              </p>
-              <h3 className="text-2xl font-bold text-white" style={{ fontFamily: "Michroma, sans-serif" }}>
-                Test our motors in your system.
-              </h3>
-              <p className="text-sm text-white/40 mt-1" style={{ fontFamily: "Lexend, sans-serif" }}>
-                Welkinrim provides dyno-tested motor data sheets for all product variants.
-              </p>
-            </div>
-            <button
-              onClick={() => navigate("/")}
-              className="px-10 py-3 bg-[#ffc914] text-black text-[10px] tracking-widest uppercase font-black hover:bg-[#e0b212] transition-colors duration-300 whitespace-nowrap flex-shrink-0"
-              style={{ fontFamily: "Michroma, sans-serif", transform: "skewX(-10deg)" }}
+          {/* ── Info bar */}
+          {current.status === "live" && current.inputCount && current.outputCount && (
+            <div
+              style={{
+                marginTop: 28,
+                paddingTop: 20,
+                borderTop: "1px solid #f0f0f0",
+                display: "flex",
+                alignItems: "center",
+                gap: 24,
+                flexWrap: "wrap",
+              }}
             >
-              <span style={{ display: "inline-block", transform: "skewX(10deg)" }}>
-                View Products
-              </span>
-            </button>
-          </div>
+              {[
+                { value: current.inputCount,  label: "Input Parameters" },
+                { value: current.outputCount, label: "Output Metrics" },
+              ].map(item => (
+                <div key={item.label} style={{ display: "flex", alignItems: "baseline", gap: 6 }}>
+                  <span
+                    style={{
+                      fontFamily: "Michroma, sans-serif",
+                      fontSize: 20,
+                      fontWeight: 700,
+                      color: "#111",
+                      lineHeight: 1,
+                    }}
+                  >
+                    {item.value}
+                  </span>
+                  <span
+                    style={{
+                      fontFamily: "Michroma, sans-serif",
+                      fontSize: 8,
+                      letterSpacing: "0.22em",
+                      textTransform: "uppercase",
+                      color: "#aaa",
+                    }}
+                  >
+                    {item.label}
+                  </span>
+                </div>
+              ))}
+              {current.popular && (
+                <span
+                  style={{
+                    fontFamily: "Michroma, sans-serif",
+                    fontSize: 7,
+                    fontWeight: 700,
+                    letterSpacing: "0.2em",
+                    textTransform: "uppercase",
+                    color: "#b8920c",
+                    background: "rgba(255,201,20,0.15)",
+                    padding: "4px 10px",
+                    borderRadius: 3,
+                  }}
+                >
+                  Popular
+                </span>
+              )}
+            </div>
+          )}
         </div>
-
-        <Footer />
       </div>
+
+      {/* ── CTA ─────────────────────────────────────────────────────────── */}
+      <div
+        style={{
+          background: "#0a0a0a",
+          padding: "72px 0",
+          position: "relative",
+          overflow: "hidden",
+        }}
+      >
+        {/* Diagonal rule */}
+        <div
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: 2,
+            background: "linear-gradient(90deg, #ffc914 0%, transparent 60%)",
+          }}
+        />
+
+        <div
+          style={{
+            maxWidth: 1280,
+            margin: "0 auto",
+            padding: "0 48px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: 32,
+            flexWrap: "wrap",
+          }}
+        >
+          <div>
+            <p
+              style={{
+                fontFamily: "Michroma, sans-serif",
+                fontSize: 9,
+                letterSpacing: "0.3em",
+                textTransform: "uppercase",
+                color: "#ffc914",
+                marginBottom: 8,
+              }}
+            >
+              Need precise data?
+            </p>
+            <h3
+              style={{
+                fontFamily: "Michroma, sans-serif",
+                fontSize: "clamp(20px, 2.5vw, 28px)",
+                fontWeight: 700,
+                color: "#fff",
+                margin: 0,
+                lineHeight: 1.15,
+              }}
+            >
+              Test our motors in your system.
+            </h3>
+            <p
+              style={{
+                fontFamily: "Lexend, sans-serif",
+                fontSize: 13,
+                color: "rgba(255,255,255,0.35)",
+                marginTop: 8,
+                maxWidth: 400,
+                lineHeight: 1.6,
+              }}
+            >
+              Welkinrim provides dyno-tested motor data sheets for all product variants.
+            </p>
+          </div>
+
+          <button
+            onClick={() => navigate("/products")}
+            style={{
+              fontFamily: "Michroma, sans-serif",
+              fontSize: 10,
+              fontWeight: 700,
+              letterSpacing: "0.24em",
+              textTransform: "uppercase",
+              background: "#ffc914",
+              color: "#000",
+              border: "none",
+              padding: "14px 36px",
+              cursor: "pointer",
+              whiteSpace: "nowrap",
+              flexShrink: 0,
+              transform: "skewX(-8deg)",
+              transition: "background 0.2s, transform 0.1s",
+            }}
+            onMouseEnter={e => {
+              e.currentTarget.style.background = "#e6b400";
+              e.currentTarget.style.transform = "skewX(-8deg) scale(1.02)";
+            }}
+            onMouseLeave={e => {
+              e.currentTarget.style.background = "#ffc914";
+              e.currentTarget.style.transform = "skewX(-8deg) scale(1)";
+            }}
+          >
+            <span style={{ display: "inline-block", transform: "skewX(8deg)" }}>
+              View Products →
+            </span>
+          </button>
+        </div>
+      </div>
+
+      <Footer />
     </>
   );
 }

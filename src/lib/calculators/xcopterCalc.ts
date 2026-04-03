@@ -132,8 +132,8 @@ export function calcXcopter(p: XcopterCalcInput): XcopterCalcResult {
   const avgSpeedMs       = 10;
   const estRangeKm       = avgSpeedMs * (flightMixedMin / 60) * 3.6 * 0.8;
 
-  // ── Throttle curve for chart ──────────────────────────────────────────────
-  const throttleCurve = [0.25, 0.50, 0.75, 1.00].map(t => {
+  // ── Throttle curve for chart (8 points for smooth curve) ──────────────────
+  const throttleCurve = [0, 0.15, 0.30, 0.45, 0.60, 0.75, 0.85, 1.00].map(t => {
     const nRps   = (rpmMax * t) / 60;
     const thrust = p.ct  * rho * Math.pow(nRps, 2) * Math.pow(propDiamM, 4);
     const power  = p.cp  * rho * Math.pow(nRps, 3) * Math.pow(propDiamM, 5);

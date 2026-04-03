@@ -188,7 +188,7 @@ export function calcProp(p: PropCalcInput): PropCalcResult {
   };
 
   // ── Partial load tables ───────────────────────────────────────────────────
-  const throttlePoints = [0.25, 0.50, 0.75, 1.00];
+  const throttlePoints = [0, 0.15, 0.30, 0.45, 0.60, 0.75, 0.85, 1.00];
 
   const partialLoadStatic: PartialLoadRow[] = throttlePoints.map(t => {
     const thrustPartial  = thrustG * t;
