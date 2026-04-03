@@ -1,3 +1,14 @@
-<svg width="180" height="180" viewBox="0 0 180 180" fill="none" xmlns="http://www.w3.org/2000/svg">
-<rect width="180" height="180" rx="36" fill="#FF3C00"/>
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 24.1.3, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="635 234 604 508" style="enable-background:new 635 234 604 508;" xml:space="preserve">
+<style type="text/css">
+	.st0{fill:#FFC812;}
+</style>
+<polygon class="st0" points="635.82,663.83 726.42,347.72 1009.67,347.72 917.63,663.17 "/>
+<polygon points="718.93,411.01 660.91,611.87 928.93,611.65 987.19,411.88 928.45,411.88 886.12,561.76 838.56,561.76 881.6,411.66 
+	825.24,411.66 781.24,559.8 732.01,559.8 776.01,411.66 "/>
+<polygon class="st0" points="915.49,663.83 1040.34,234 1049.86,234 925.24,664.05 "/>
+<polygon points="966.74,607.95 1021.44,607.95 1064.96,462.42 1224.54,462.42 1238.8,411.23 1028.62,411.23 "/>
+<polygon class="st0" points="923.58,741.17 1019.42,411.55 1028.93,411.55 933.33,741.38 "/>
 </svg>

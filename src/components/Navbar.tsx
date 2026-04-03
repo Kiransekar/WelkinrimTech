@@ -258,176 +258,180 @@ export default function Navbar() {
       >
         <div className="bg-white border-b border-gray-100 shadow-2xl overflow-y-auto max-h-[80vh] md:max-h-none">
 
-          {/* ── Segment tabs: UAV | Marine | Land | Robotics | Other ── */}
-          <div className="border-b border-gray-100">
-            <div className="max-w-7xl mx-auto px-4 md:px-6 flex items-center gap-0 overflow-x-auto scrollbar-hide">
+
+
+          <div className="max-w-7xl mx-auto px-4 md:px-6 py-6 md:py-8">
+            {/* Segment pills */}
+            <div className="flex items-center gap-2 mb-6 overflow-x-auto scrollbar-hide">
               {SEGMENTS.map(seg => (
                 <button
                   key={seg.id}
                   onMouseEnter={() => setActiveSegment(seg.id)}
                   onClick={() => setActiveSegment(seg.id)}
-                  className={`flex items-center gap-1.5 px-5 py-2.5 text-[9px] tracking-[0.2em] uppercase font-bold whitespace-nowrap transition-all duration-200 border-b-2 flex-shrink-0 ${
+                  className={`flex items-center gap-2 px-6 py-1.5 text-[8px] tracking-[0.15em] uppercase font-bold transition-all duration-300 ${
                     activeSegment === seg.id
-                      ? "border-[#ffc914] text-black"
-                      : "border-transparent text-[#808080] hover:text-black hover:border-gray-200"
+                      ? "bg-[#ffc914] text-black shadow-sm"
+                      : "bg-gray-50 text-[#808080] hover:bg-gray-100 hover:text-black"
                   }`}
-                  style={{ fontFamily: "Michroma, sans-serif" }}
+                  style={{ fontFamily: "Michroma, sans-serif", transform: "skewX(-10deg)" }}
                 >
-                  {seg.label}
-                  {seg.id !== "uav" ? (
-                    <span className="text-[7px] bg-gray-100 text-[#aaa] px-1 py-0.5 rounded-sm">soon</span>
-                  ) : (
-                    activeSegment === "uav" && <span className="w-1.5 h-1.5 rounded-full bg-[#22c55e]" />
-                  )}
+                  <div className="flex items-center gap-2" style={{ transform: "skewX(10deg)" }}>
+                    {seg.label}
+                    {seg.id !== "uav" ? (
+                      <span className={`text-[6px] px-1.5 py-0.5 rounded-sm ${activeSegment === seg.id ? "bg-black/10 text-black/70" : "bg-gray-200/50 text-[#aaa]"}`}>soon</span>
+                    ) : (
+                      activeSegment === "uav" && <span className={`w-1 h-1 rounded-full ${activeSegment === seg.id ? "bg-black" : "bg-[#22c55e]"}`} />
+                    )}
+                  </div>
                 </button>
               ))}
             </div>
-          </div>
 
-          {/* ── UAV: existing product grid ── */}
-          {activeSegment === "uav" ? (
-          <div className="max-w-7xl mx-auto px-4 md:px-6 py-6 md:py-8 grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-0">
-
-            {/* Left: category list */}
-            <div className="col-span-1 md:col-span-3 border-b md:border-b-0 md:border-r border-gray-100 pr-0 md:pr-4 pb-4 md:pb-0 mb-4 md:mb-0">
-              <p className="text-[9px] text-[#808080] tracking-[0.3em] uppercase mb-3 md:mb-4" style={{ fontFamily: "Michroma, sans-serif" }}>
-                Product Lines
-              </p>
-              <div className="flex md:flex-col gap-1 overflow-x-auto md:overflow-visible pb-2 md:pb-0">
-                {PRODUCT_CATEGORIES.map((cat) => (
-                  <button
-                    key={cat.id}
-                    onMouseEnter={() => setActiveCategory(cat.id)}
-                    onClick={() => goToProducts(cat.id)}
-                    className={`flex items-center gap-2 md:gap-3 px-2 md:px-3 py-2 rounded-sm text-left transition-all duration-200 group flex-shrink-0 ${
-                      activeCategory === cat.id ? "bg-[#ffc914]/10 text-black" : "text-[#444] hover:bg-gray-50"
-                    }`}
-                  >
-                    <span className={`transition-colors duration-200 flex-shrink-0 ${activeCategory === cat.id ? "text-[#ffc914]" : "text-[#808080] group-hover:text-black"}`}>
-                      {cat.icon}
-                    </span>
-                    <div className="min-w-0">
-                      {cat.useSvgLogo ? (
-                        <img
-                          src={`${import.meta.env.BASE_URL}${cat.logoSrc}`}
-                          alt={cat.label}
-                          className="h-6 w-auto max-w-[90px] object-contain object-left"
-                        />
-                      ) : (
-                        <p className="text-xs font-bold tracking-wide truncate" style={{ fontFamily: "Michroma, sans-serif" }}>{cat.label}</p>
-                      )}
-                      <p className="text-[9px] md:text-[10px] text-[#808080] mt-0.5 hidden md:block" style={{ fontFamily: "Lexend, sans-serif" }}>{cat.tagline}</p>
-                    </div>
-                    {activeCategory === cat.id && (
-                      <svg className="ml-auto w-4 h-4 text-[#ffc914] flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <polyline points="9 18 15 12 9 6" />
-                      </svg>
-                    )}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Right: products for active category */}
-            <div className="col-span-1 md:col-span-9 pl-0 md:pl-4 md:pl-8">
-              <div className="flex items-start justify-between mb-4">
-                <div>
-                  <p className="text-[9px] text-[#808080] tracking-[0.3em] uppercase" style={{ fontFamily: "Michroma, sans-serif" }}>
-                    {activeCat.label}
+            {activeSegment === "uav" ? (
+              <div className="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-0">
+                {/* Left: category list */}
+                <div className="col-span-1 md:col-span-3 border-b md:border-b-0 md:border-r border-gray-100 pr-0 md:pr-4 pb-4 md:pb-0 mb-4 md:mb-0">
+                  <p className="text-[9px] text-[#808080] tracking-[0.3em] uppercase mb-3 md:mb-4" style={{ fontFamily: "Michroma, sans-serif" }}>
+                    Product Lines
                   </p>
-                  <p className="text-xs text-[#444] mt-0.5" style={{ fontFamily: "Lexend, sans-serif" }}>{activeCat.tagline}</p>
+                  <div className="flex md:flex-col gap-1 overflow-x-auto md:overflow-visible pb-2 md:pb-0">
+                    {PRODUCT_CATEGORIES.map((cat) => (
+                      <button
+                        key={cat.id}
+                        onMouseEnter={() => setActiveCategory(cat.id)}
+                        onClick={() => goToProducts(cat.id)}
+                        className={`flex items-center gap-2 md:gap-3 px-2 md:px-3 py-2 rounded-sm text-left transition-all duration-200 group flex-shrink-0 ${
+                          activeCategory === cat.id ? "bg-[#ffc914]/10 text-black" : "text-[#444] hover:bg-gray-50"
+                        }`}
+                      >
+                        <span className={`transition-colors duration-200 flex-shrink-0 ${activeCategory === cat.id ? "text-[#ffc914]" : "text-[#808080] group-hover:text-black"}`}>
+                          {cat.icon}
+                        </span>
+                        <div className="min-w-0 h-11 flex flex-col justify-center">
+                          <div className="h-7 flex items-center">
+                            {cat.useSvgLogo ? (
+                              <img
+                                src={`${import.meta.env.BASE_URL}${cat.logoSrc}`}
+                                alt={cat.label}
+                                className={`${cat.id === "maelard" ? "h-7" : "h-5.5"} w-auto max-w-[100px] object-contain object-left`}
+                              />
+                            ) : (
+                              <p className="text-xs font-bold tracking-wide truncate" style={{ fontFamily: "Michroma, sans-serif" }}>{cat.label}</p>
+                            )}
+                          </div>
+                          <p className="text-[9px] md:text-[10px] text-[#808080] mt-0.5 hidden md:block leading-tight lowercase" style={{ fontFamily: "Lexend, sans-serif" }}>{cat.tagline}</p>
+                        </div>
+                        {activeCategory === cat.id && (
+                          <svg className="ml-auto w-4 h-4 text-[#ffc914] flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <polyline points="9 18 15 12 9 6" />
+                          </svg>
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Right: products for active category */}
+                <div className="col-span-1 md:col-span-9 pl-0 md:pl-4 md:pl-8">
+                  <div className="flex items-start justify-between mb-4">
+                    <div>
+                      <p className="text-[9px] text-[#808080] tracking-[0.3em] uppercase" style={{ fontFamily: "Michroma, sans-serif" }}>
+                        {activeCat.label}
+                      </p>
+                      <p className="text-xs text-[#444] mt-0.5" style={{ fontFamily: "Lexend, sans-serif" }}>{activeCat.tagline}</p>
+                    </div>
+                    <button
+                      onClick={() => goToProducts(activeCategory)}
+                      className="text-[10px] text-[#ffc914] hover:text-black tracking-widest uppercase transition-colors duration-200 flex items-center gap-1"
+                      style={{ fontFamily: "Michroma, sans-serif" }}
+                    >
+                      View All
+                      <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="9 18 15 12 9 6" /></svg>
+                    </button>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-3">
+                    {activeCat.products.slice(0, 4).map((p) => (
+                      <button
+                        key={p.id}
+                        onClick={() => goToProduct(p.id)}
+                        className="text-left border border-gray-100 hover:border-[#ffc914] p-2 md:p-3 transition-all duration-200 group"
+                      >
+                        <div className="w-full h-12 md:h-16 bg-gray-50 mb-1 md:mb-2 flex items-center justify-center group-hover:bg-[#ffc914]/5 transition-colors duration-200">
+                          <div className="flex flex-col items-center">
+                            <span className="text-[6px] md:text-[7px] font-black text-[#b89600] leading-none" style={{ fontFamily: "Michroma, sans-serif" }}>WR</span>
+                            <span className="text-[7px] md:text-[9px] font-black text-black/30 mt-0.5" style={{ fontFamily: "Michroma, sans-serif" }}>{p.name}</span>
+                          </div>
+                        </div>
+                        <p className="text-[7px] md:text-[8px] text-[#ffc914] tracking-widest uppercase font-bold mb-0.5 truncate" style={{ fontFamily: "Michroma, sans-serif" }}>{p.tag}</p>
+                        <p className="text-xs font-bold text-black truncate" style={{ fontFamily: "Michroma, sans-serif" }}>{p.model}</p>
+                        <div className="flex flex-wrap gap-0.5 md:gap-1 mt-1 md:mt-1.5">
+                          {p.keySpecs.map((s) => (
+                            <span key={s.label} className="text-[6px] md:text-[7px] bg-gray-100 text-[#444] px-1 py-0.5" style={{ fontFamily: "Lexend, sans-serif" }}>{s.value}</span>
+                          ))}
+                        </div>
+                      </button>
+                    ))}
+                    {activeCat.products.length > 4 && (
+                      <button
+                        onClick={() => goToProducts(activeCategory)}
+                        className="border border-dashed border-gray-200 hover:border-[#ffc914] p-2 md:p-3 flex flex-col items-center justify-center gap-1 md:gap-2 group transition-all duration-200"
+                      >
+                        <div className="w-6 md:w-8 h-6 md:h-8 rounded-full bg-gray-100 group-hover:bg-[#ffc914]/10 flex items-center justify-center transition-colors duration-200">
+                          <span className="text-[#808080] group-hover:text-[#ffc914] text-sm md:text-base font-bold leading-none">+</span>
+                        </div>
+                        <p className="text-[7px] md:text-[9px] text-[#808080] group-hover:text-black text-center" style={{ fontFamily: "Michroma, sans-serif" }}>
+                          +{activeCat.products.length - 4} more
+                        </p>
+                      </button>
+                    )}
+                  </div>
+
+                  <div className="mt-4 md:mt-6 pt-3 md:pt-4 border-t border-gray-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 md:gap-0">
+                    <p className="text-[9px] md:text-[10px] text-[#808080]" style={{ fontFamily: "Lexend, sans-serif" }}>
+                      36+ product variants across 5 lines
+                    </p>
+                    <button
+                      onClick={() => scrollToSection("contact")}
+                      className="px-3 md:px-4 py-1 md:py-1.5 bg-[#ffc914] text-black text-[8px] md:text-[9px] tracking-widest uppercase font-bold hover:bg-[#e0b212] transition-colors duration-200"
+                      style={{ fontFamily: "Michroma, sans-serif", transform: "skewX(-10deg)" }}
+                    >
+                      <span style={{ display: "inline-block", transform: "skewX(10deg)" }}>Request a Quote</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              /* ── Coming Soon panel for non-UAV segments ── */
+              <div className="flex flex-col items-center justify-center gap-4 text-center py-12">
+                <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc914] mb-1"
+                   style={{ fontFamily: "Michroma, sans-serif" }}>
+                  Coming Soon
+                </p>
+                <h3 className="text-xl md:text-2xl font-bold text-black"
+                    style={{ fontFamily: "Michroma, sans-serif" }}>
+                  {SEGMENTS.find(s => s.id === activeSegment)?.label} Products
+                </h3>
+                <p className="text-sm text-[#808080] max-w-md"
+                   style={{ fontFamily: "Lexend, sans-serif" }}>
+                  We're expanding our electric drive solutions to this segment.
+                  Contact us for early access or custom requirements.
+                </p>
+                <div className="flex items-center gap-2 mt-1">
+                  <div className="w-1.5 h-1.5 rounded-full bg-[#ffc914] animate-pulse" />
+                  <p className="text-[10px] tracking-widest uppercase text-[#555]"
+                     style={{ fontFamily: "Michroma, sans-serif" }}>In development</p>
                 </div>
                 <button
-                  onClick={() => goToProducts(activeCategory)}
-                  className="text-[10px] text-[#ffc914] hover:text-black tracking-widest uppercase transition-colors duration-200 flex items-center gap-1"
-                  style={{ fontFamily: "Michroma, sans-serif" }}
-                >
-                  View All
-                  <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="9 18 15 12 9 6" /></svg>
-                </button>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-3">
-                {activeCat.products.slice(0, 4).map((p) => (
-                  <button
-                    key={p.id}
-                    onClick={() => goToProduct(p.id)}
-                    className="text-left border border-gray-100 hover:border-[#ffc914] p-2 md:p-3 transition-all duration-200 group"
-                  >
-                    <div className="w-full h-12 md:h-16 bg-gray-50 mb-1 md:mb-2 flex items-center justify-center group-hover:bg-[#ffc914]/5 transition-colors duration-200">
-                      <div className="flex flex-col items-center">
-                        <span className="text-[6px] md:text-[7px] font-black text-[#b89600] leading-none" style={{ fontFamily: "Michroma, sans-serif" }}>WR</span>
-                        <span className="text-[7px] md:text-[9px] font-black text-black/30 mt-0.5" style={{ fontFamily: "Michroma, sans-serif" }}>{p.name}</span>
-                      </div>
-                    </div>
-                    <p className="text-[7px] md:text-[8px] text-[#ffc914] tracking-widest uppercase font-bold mb-0.5 truncate" style={{ fontFamily: "Michroma, sans-serif" }}>{p.tag}</p>
-                    <p className="text-xs font-bold text-black truncate" style={{ fontFamily: "Michroma, sans-serif" }}>{p.model}</p>
-                    <div className="flex flex-wrap gap-0.5 md:gap-1 mt-1 md:mt-1.5">
-                      {p.keySpecs.map((s) => (
-                        <span key={s.label} className="text-[6px] md:text-[7px] bg-gray-100 text-[#444] px-1 py-0.5" style={{ fontFamily: "Lexend, sans-serif" }}>{s.value}</span>
-                      ))}
-                    </div>
-                  </button>
-                ))}
-                {activeCat.products.length > 4 && (
-                  <button
-                    onClick={() => goToProducts(activeCategory)}
-                    className="border border-dashed border-gray-200 hover:border-[#ffc914] p-2 md:p-3 flex flex-col items-center justify-center gap-1 md:gap-2 group transition-all duration-200"
-                  >
-                    <div className="w-6 md:w-8 h-6 md:h-8 rounded-full bg-gray-100 group-hover:bg-[#ffc914]/10 flex items-center justify-center transition-colors duration-200">
-                      <span className="text-[#808080] group-hover:text-[#ffc914] text-sm md:text-base font-bold leading-none">+</span>
-                    </div>
-                    <p className="text-[7px] md:text-[9px] text-[#808080] group-hover:text-black text-center" style={{ fontFamily: "Michroma, sans-serif" }}>
-                      +{activeCat.products.length - 4} more
-                    </p>
-                  </button>
-                )}
-              </div>
-
-              <div className="mt-4 md:mt-6 pt-3 md:pt-4 border-t border-gray-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 md:gap-0">
-                <p className="text-[9px] md:text-[10px] text-[#808080]" style={{ fontFamily: "Lexend, sans-serif" }}>
-                  36+ product variants across 5 lines
-                </p>
-                <button
-                  onClick={() => scrollToSection("contact")}
-                  className="px-3 md:px-4 py-1 md:py-1.5 bg-[#ffc914] text-black text-[8px] md:text-[9px] tracking-widest uppercase font-bold hover:bg-[#e0b212] transition-colors duration-200"
+                  onClick={() => { setMegaOpen(false); scrollToSection("contact"); }}
+                  className="mt-1 px-6 py-2 bg-[#ffc914] text-black text-[9px] tracking-widest uppercase font-black hover:bg-[#e0b212] transition-colors duration-200"
                   style={{ fontFamily: "Michroma, sans-serif", transform: "skewX(-10deg)" }}
                 >
-                  <span style={{ display: "inline-block", transform: "skewX(10deg)" }}>Request a Quote</span>
+                  <span style={{ display: "inline-block", transform: "skewX(10deg)" }}>Contact Us</span>
                 </button>
               </div>
-            </div>
+            )}
           </div>
-          ) : (
-            /* ── Coming Soon panel for non-UAV segments ── */
-            <div className="max-w-7xl mx-auto px-4 md:px-6 py-10 md:py-12 flex flex-col items-center justify-center gap-4 text-center">
-              <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc914] mb-1"
-                 style={{ fontFamily: "Michroma, sans-serif" }}>
-                Coming Soon
-              </p>
-              <h3 className="text-xl md:text-2xl font-bold text-black"
-                  style={{ fontFamily: "Michroma, sans-serif" }}>
-                {SEGMENTS.find(s => s.id === activeSegment)?.label} Products
-              </h3>
-              <p className="text-sm text-[#808080] max-w-md"
-                 style={{ fontFamily: "Lexend, sans-serif" }}>
-                We're expanding our electric drive solutions to this segment.
-                Contact us for early access or custom requirements.
-              </p>
-              <div className="flex items-center gap-2 mt-1">
-                <div className="w-1.5 h-1.5 rounded-full bg-[#ffc914] animate-pulse" />
-                <p className="text-[10px] tracking-widest uppercase text-[#555]"
-                   style={{ fontFamily: "Michroma, sans-serif" }}>In development</p>
-              </div>
-              <button
-                onClick={() => { setMegaOpen(false); scrollToSection("contact"); }}
-                className="mt-1 px-6 py-2 bg-[#ffc914] text-black text-[9px] tracking-widest uppercase font-black hover:bg-[#e0b212] transition-colors duration-200"
-                style={{ fontFamily: "Michroma, sans-serif", transform: "skewX(-10deg)" }}
-              >
-                <span style={{ display: "inline-block", transform: "skewX(10deg)" }}>Contact Us</span>
-              </button>
-            </div>
-          )}
         </div>
       </div>
 
