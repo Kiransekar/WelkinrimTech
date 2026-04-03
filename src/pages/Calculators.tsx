@@ -165,6 +165,8 @@ export default function Calculators() {
   const [, navigate] = useLocation();
   const [activeFilter, setActiveFilter] = useState<FilterTab>("all");
   const [searchQuery, setSearchQuery] = useState("");
+  const [showCompare, setShowCompare] = useState(false);
+  const [compareSelection, setCompareSelection] = useState<string[]>([]);
 
   // Calculate dynamic stats
   const liveCount = getLiveCalculators().length;
@@ -195,21 +197,49 @@ export default function Calculators() {
     }
 
     return matchesFilter && matchesSearch;
+  })
+  // Sort: live first, then coming soon, then alphabetically by label
+  .sort((a, b) => {
+    // Status priority: live = 0, beta = 1, soon = 2
+    const statusOrder = { live: 0, beta: 1, soon: 2 };
+    const aOrder = statusOrder[a.status] ?? 3;
+    const bOrder = statusOrder[b.status] ?? 3;
+    if (aOrder !== bOrder) return aOrder - bOrder;
+    // Secondary sort by popularity (popular first)
+    if (a.popular && !b.popular) return -1;
+    if (!a.popular && b.popular) return 1;
+    // Tertiary sort alphabetically
+    return a.label.localeCompare(b.label);
   });
 
   return (
     <>
       <div className="min-h-screen bg-white">
         {/* ── Page header ── */}
-        <div className="bg-black pt-24 md:pt-28 pb-12 md:pb-16">
-          <div className="max-w-7xl mx-auto px-4 md:px-12">
-            <div className="flex items-center gap-2 mb-4">
+        <div className="relative bg-black pt-24 md:pt-28 pb-14 md:pb-20 overflow-hidden">
+          {/* Subtle grid background */}
+          <div
+            className="absolute inset-0 opacity-[0.04]"
+            style={{
+              backgroundImage: `linear-gradient(#ffc914 1px, transparent 1px),
+                                linear-gradient(90deg, #ffc914 1px, transparent 1px)`,
+              backgroundSize: "40px 40px",
+            }}
+          />
+          {/* Gradient overlay */}
+          <div className="absolute inset-0 bg-gradient-to-br from-black via-black/95 to-black/90" />
+          
+          <div className="relative max-w-7xl mx-auto px-4 md:px-12">
+            {/* Accent stripe */}
+            <div className="w-12 h-0.5 bg-[#ffc914] mb-6" />
+            
+            <div className="flex items-center gap-2 mb-6">
               <button
                 onClick={() => navigate("/")}
-                className="text-[#ffc914]/60 hover:text-[#ffc914] text-[10px] tracking-widest uppercase transition-colors flex items-center gap-1"
+                className="text-[#ffc914]/60 hover:text-[#ffc914] text-[10px] tracking-widest uppercase transition-colors flex items-center gap-1 group"
                 style={{ fontFamily: "Michroma, sans-serif" }}
               >
-                <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <svg className="w-3 h-3 transition-transform group-hover:-translate-x-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                   <polyline points="15 18 9 12 15 6" />
                 </svg>
                 Home
@@ -223,24 +253,27 @@ export default function Calculators() {
                 style={{ fontFamily: "Michroma, sans-serif" }}>
               Drive <span className="text-[#ffc914]">Calculator</span> Suite
             </h1>
-            <p className="text-white/40 text-sm mt-3 max-w-xl" style={{ fontFamily: "Lexend, sans-serif" }}>
+            <p className="text-white/50 text-sm md:text-base mt-4 max-w-2xl leading-relaxed" style={{ fontFamily: "Lexend, sans-serif" }}>
               Professional-grade RC aircraft and drone performance simulation tools.
               All calculations run locally in your browser — no data sent anywhere.
             </p>
 
             {/* Stats strip - Dynamic */}
-            <div className="flex flex-wrap gap-6 mt-8 pt-8 border-t border-white/10">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-10 mt-10 pt-8 border-t border-white/10">
               {[
-                { v: CALCULATORS.length.toString(), l: "Calculator Modules" },
-                { v: liveCount.toString(), l: "Live Now" },
-                { v: "100%", l: "Client-side" },
-                { v: "±10%", l: "Accuracy (ISA model)" },
-              ].map(({ v, l }) => (
-                <div key={l}>
-                  <p className="text-xl md:text-2xl font-black text-[#ffc914]"
-                     style={{ fontFamily: "Michroma, sans-serif" }}>{v}</p>
-                  <p className="text-[9px] text-white/40 tracking-widest uppercase mt-0.5"
-                     style={{ fontFamily: "Michroma, sans-serif" }}>{l}</p>
+                { v: CALCULATORS.length.toString(), l: "Calculator Modules", icon: "📊" },
+                { v: liveCount.toString(), l: "Live Now", icon: "✓" },
+                { v: "100%", l: "Client-side", icon: "🔒" },
+                { v: "±10%", l: "Accuracy (ISA)", icon: "🎯" },
+              ].map(({ v, l, icon }) => (
+                <div key={l} className="flex items-start gap-3">
+                  <span className="text-lg opacity-60">{icon}</span>
+                  <div>
+                    <p className="text-2xl md:text-3xl font-black text-[#ffc914]"
+                       style={{ fontFamily: "Michroma, sans-serif" }}>{v}</p>
+                    <p className="text-[9px] text-white/40 tracking-widest uppercase mt-1"
+                       style={{ fontFamily: "Michroma, sans-serif" }}>{l}</p>
+                  </div>
                 </div>
               ))}
             </div>
@@ -248,28 +281,28 @@ export default function Calculators() {
         </div>
 
         {/* ── Search and Filter Bar ── */}
-        <div className="bg-white border-b border-gray-100 sticky top-[60px] md:top-[72px] z-20 shadow-sm">
-          <div className="max-w-7xl mx-auto px-4 md:px-12 py-4">
+        <div className="bg-white border-b border-gray-200 sticky top-[60px] md:top-[72px] z-20 shadow-md">
+          <div className="max-w-7xl mx-auto px-4 md:px-12 py-5">
             {/* Search box */}
-            <div className="flex items-center gap-3 mb-4">
-              <div className="relative flex-1 max-w-md">
-                <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#808080]"
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 mb-5">
+              <div className="relative flex-1 max-w-lg">
+                <svg className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#808080]"
                      viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <circle cx="11" cy="11" r="8" />
                   <line x1="21" y1="21" x2="16.65" y2="16.65" />
                 </svg>
                 <input
                   type="text"
-                  placeholder="Search calculators..."
+                  placeholder="Search calculators by name, category, or feature..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border border-gray-200 text-sm focus:outline-none focus:border-[#ffc914] transition-colors"
-                  style={{ fontFamily: "Michroma, sans-serif" }}
+                  className="w-full pl-11 pr-10 py-3 border-2 border-gray-200 text-sm focus:outline-none focus:border-[#ffc914] transition-colors rounded-sm"
+                  style={{ fontFamily: "Lexend, sans-serif" }}
                 />
                 {searchQuery && (
                   <button
                     onClick={() => setSearchQuery("")}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[#808080] hover:text-black"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[#808080] hover:text-black p-1 hover:bg-gray-100 rounded transition-colors"
                   >
                     <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                       <line x1="18" y1="6" x2="6" y2="18" />
@@ -278,39 +311,60 @@ export default function Calculators() {
                   </button>
                 )}
               </div>
-              <div className="text-[9px] text-[#808080]" style={{ fontFamily: "Michroma, sans-serif" }}>
-                {filteredCalculators.length} of {CALCULATORS.length} calculators
+              <div className="flex items-center gap-3">
+                <div className="text-[10px] text-[#808080] whitespace-nowrap" style={{ fontFamily: "Michroma, sans-serif" }}>
+                  <span className="font-bold text-black">{filteredCalculators.length}</span> of {CALCULATORS.length}
+                </div>
+                <button
+                  onClick={() => setShowCompare(true)}
+                  className="flex items-center gap-2 px-5 py-3 bg-black text-[#ffc914] text-[9px] tracking-widest uppercase font-bold hover:bg-[#222] transition-colors whitespace-nowrap"
+                  style={{ fontFamily: "Michroma, sans-serif" }}
+                >
+                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <line x1="12" y1="20" x2="12" y2="10" />
+                    <line x1="18" y1="20" x2="18" y2="4" />
+                    <line x1="6" y1="20" x2="6" y2="16" />
+                  </svg>
+                  Compare
+                </button>
               </div>
             </div>
 
             {/* Filter tabs */}
             <div className="flex flex-wrap gap-2">
               {FILTER_TABS.map(tab => {
-                // FIX: Count for "live"/"soon" uses status, otherwise use category match
                 const count =
                   tab.id === "live" ? liveCount :
                   tab.id === "soon" ? soonCount :
                   tab.id === "all" ? CALCULATORS.length :
                   CALCULATORS.filter(c => c.category === tab.id).length;
 
+                const isActive = activeFilter === tab.id;
+                const isStatus = tab.id === "live" || tab.id === "soon";
+
                 return (
                   <button
                     key={tab.id}
                     onClick={() => setActiveFilter(tab.id)}
-                    className={`flex items-center gap-2 px-4 py-2 text-[9px] tracking-widest uppercase font-bold transition-all duration-200 ${
-                      activeFilter === tab.id
-                        ? "bg-black text-[#ffc914]"
-                        : "bg-gray-100 text-[#808080] hover:bg-gray-200 hover:text-black"
+                    className={`group flex items-center gap-2 px-4 py-2.5 text-[9px] tracking-widest uppercase font-bold transition-all duration-200 border-2 ${
+                      isActive
+                        ? "bg-black text-[#ffc914] border-black"
+                        : "bg-white text-[#666] border-gray-200 hover:border-gray-400 hover:text-black"
                     }`}
-                    style={{ fontFamily: "Michroma, sans-serif", transform: "skewX(-10deg)" }}
+                    style={{ fontFamily: "Michroma, sans-serif" }}
                   >
-                    <span className="inline-flex items-center gap-2" style={{ transform: "skewX(10deg)" }}>
-                      {tab.label}
-                      <span className={`text-[7px] px-1.5 py-0.5 rounded-sm font-medium ${
-                        activeFilter === tab.id ? "bg-[#ffc914] text-black" : "bg-white text-[#808080]"
-                      }`}>
-                        {count}
-                      </span>
+                    {isStatus && (
+                      <span className={`w-2 h-2 rounded-full ${
+                        tab.id === "live" ? "bg-green-500" : "bg-amber-400"
+                      } ${isActive ? "" : "opacity-60"}`} />
+                    )}
+                    {tab.label}
+                    <span className={`text-[8px] px-2 py-0.5 font-bold transition-colors ${
+                      isActive 
+                        ? "bg-[#ffc914] text-black" 
+                        : "bg-gray-100 text-[#808080] group-hover:bg-gray-200"
+                    }`}>
+                      {count}
                     </span>
                   </button>
                 );
@@ -320,9 +374,35 @@ export default function Calculators() {
         </div>
 
         {/* ── Calculator grid ── */}
-        <div className="max-w-7xl mx-auto px-4 md:px-12 py-12 md:py-16">
+        <div className="max-w-7xl mx-auto px-4 md:px-12 py-10 md:py-14">
+          {/* Section header showing current filter */}
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h2 className="text-lg font-bold text-black" style={{ fontFamily: "Michroma, sans-serif" }}>
+                {activeFilter === "all" ? "All Calculators" :
+                 activeFilter === "live" ? "Live Calculators" :
+                 activeFilter === "soon" ? "Coming Soon" :
+                 FILTER_TABS.find(t => t.id === activeFilter)?.label + " Calculators"}
+              </h2>
+              <p className="text-xs text-[#808080] mt-1" style={{ fontFamily: "Lexend, sans-serif" }}>
+                {activeFilter === "all" 
+                  ? "Showing all available and upcoming calculators"
+                  : activeFilter === "live"
+                  ? "Ready to use — click any calculator to start"
+                  : activeFilter === "soon"
+                  ? "In development — check back soon!"
+                  : `Calculators for ${FILTER_TABS.find(t => t.id === activeFilter)?.label.toLowerCase()} applications`}
+              </p>
+            </div>
+            {filteredCalculators.length > 0 && (
+              <div className="hidden md:flex items-center gap-2 text-[9px] text-[#808080]" style={{ fontFamily: "Michroma, sans-serif" }}>
+                <span className="w-2 h-2 rounded-full bg-green-500" /> Live first
+              </div>
+            )}
+          </div>
+
           {filteredCalculators.length === 0 ? (
-            <div className="text-center py-20">
+            <div className="text-center py-20 border-2 border-dashed border-gray-200 rounded-lg">
               <svg className="w-16 h-16 text-[#ffc914]/30 mx-auto mb-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
                 <circle cx="11" cy="11" r="8" />
                 <line x1="21" y1="21" x2="16.65" y2="16.65" />
@@ -335,9 +415,16 @@ export default function Calculators() {
               <p className="text-sm text-[#666] mt-2" style={{ fontFamily: "Lexend, sans-serif" }}>
                 Try adjusting your search or filter
               </p>
+              <button
+                onClick={() => { setActiveFilter("all"); setSearchQuery(""); }}
+                className="mt-4 px-4 py-2 bg-black text-[#ffc914] text-[9px] tracking-widest uppercase font-bold hover:bg-[#222] transition-colors"
+                style={{ fontFamily: "Michroma, sans-serif" }}
+              >
+                Reset Filters
+              </button>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredCalculators.map(calc => (
                 <CalculatorCard key={calc.id} calc={calc} />
               ))}
@@ -358,6 +445,134 @@ export default function Calculators() {
             </p>
           </div>
         </div>
+
+        {/* ── Compare Modal ── */}
+        {showCompare && (
+          <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+            <div className="bg-white max-w-2xl w-full max-h-[80vh] overflow-y-auto">
+              <div className="bg-black px-4 py-3 flex items-center justify-between sticky top-0">
+                <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc914]"
+                   style={{ fontFamily: "Michroma, sans-serif" }}>
+                  Compare Calculators
+                </p>
+                <button
+                  onClick={() => { setShowCompare(false); setCompareSelection([]); }}
+                  className="text-white hover:text-[#ffc914] text-xl"
+                >
+                  ✕
+                </button>
+              </div>
+
+              <div className="p-6">
+                <p className="text-sm text-gray-600 mb-4" style={{ fontFamily: "Lexend, sans-serif" }}>
+                  Select 2 calculators to compare their features and capabilities:
+                </p>
+
+                <div className="grid grid-cols-2 gap-3 mb-6">
+                  {CALCULATORS.filter(c => c.status === "live").map(calc => {
+                    const isSelected = compareSelection.includes(calc.id);
+                    const isDisabled = !isSelected && compareSelection.length >= 2;
+
+                    return (
+                      <button
+                        key={calc.id}
+                        onClick={() => {
+                          if (isDisabled) return;
+                          if (isSelected) {
+                            setCompareSelection(compareSelection.filter(id => id !== calc.id));
+                          } else {
+                            setCompareSelection([...compareSelection, calc.id]);
+                          }
+                        }}
+                        disabled={isDisabled}
+                        className={`p-4 border-2 transition-all text-left ${
+                          isSelected
+                            ? "border-[#ffc914] bg-[#fffbe6]"
+                            : isDisabled
+                            ? "border-gray-100 opacity-50 cursor-not-allowed"
+                            : "border-gray-200 hover:border-gray-300"
+                        }`}
+                      >
+                        <div className="flex items-center gap-2 mb-2">
+                          <div className="w-6 h-6" style={{ color: calc.accent }}>
+                            <calc.icon />
+                          </div>
+                          <span className="text-sm font-bold" style={{ fontFamily: "Michroma, sans-serif" }}>
+                            {calc.label}
+                          </span>
+                        </div>
+                        <p className="text-[9px] text-gray-500" style={{ fontFamily: "Lexend, sans-serif" }}>
+                          {calc.tag}
+                        </p>
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {compareSelection.length === 2 && (() => {
+                  const calc1 = CALCULATORS.find(c => c.id === compareSelection[0])!;
+                  const calc2 = CALCULATORS.find(c => c.id === compareSelection[1])!;
+
+                  return (
+                    <div className="border-t pt-4">
+                      <table className="w-full text-sm" style={{ fontFamily: "Michroma, sans-serif" }}>
+                        <thead>
+                          <tr className="border-b">
+                            <th className="px-3 py-2 text-left text-gray-500 text-[9px] uppercase tracking-wider">Feature</th>
+                            <th className="px-3 py-2 text-right text-[9px] uppercase tracking-wider" style={{ color: calc1.accent }}>{calc1.label}</th>
+                            <th className="px-3 py-2 text-right text-[9px] uppercase tracking-wider" style={{ color: calc2.accent }}>{calc2.label}</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {[
+                            { key: "tag", label: "Category" },
+                            { key: "description", label: "Description", full: true },
+                            { key: "inputCount", label: "Input Parameters" },
+                            { key: "outputCount", label: "Output Metrics" },
+                            { key: "metrics", label: "Key Metrics", array: true },
+                          ].map(row => (
+                            <tr key={row.key} className="border-b border-gray-100">
+                              <td className="px-3 py-3 text-[9px] uppercase tracking-wider text-gray-500">{row.label}</td>
+                              <td className="px-3 py-3 text-right font-bold" style={{ color: calc1.accent }}>
+                                {row.array
+                                  ? (calc1[row.key as keyof typeof calc1] as string[])?.join(", ")
+                                  : row.full
+                                  ? calc1[row.key as keyof typeof calc1] as string
+                                  : (calc1[row.key as keyof typeof calc1] as number)?.toString() || "—"}
+                              </td>
+                              <td className="px-3 py-3 text-right font-bold" style={{ color: calc2.accent }}>
+                                {row.array
+                                  ? (calc2[row.key as keyof typeof calc2] as string[])?.join(", ")
+                                  : row.full
+                                  ? calc2[row.key as keyof typeof calc2] as string
+                                  : (calc2[row.key as keyof typeof calc2] as number)?.toString() || "—"}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  );
+                })()}
+
+                <div className="flex justify-between items-center mt-6 pt-4 border-t">
+                  <p className="text-sm text-gray-500">
+                    {compareSelection.length === 0 && "Select calculators to compare"}
+                    {compareSelection.length === 1 && "Select 1 more calculator"}
+                    {compareSelection.length === 2 && "Ready to compare!"}
+                  </p>
+                  <button
+                    onClick={() => { setShowCompare(false); setCompareSelection([]); }}
+                    className="px-6 py-2 bg-gray-100 text-gray-700 text-[9px] tracking-widest uppercase font-bold hover:bg-gray-200 transition-colors"
+                    style={{ fontFamily: "Michroma, sans-serif" }}
+                  >
+                    Close
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         <Footer />
       </div>

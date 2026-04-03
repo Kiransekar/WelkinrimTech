@@ -26,28 +26,28 @@ interface Warning { level: "warn" | "danger"; message: string }
 // Defaults
 // ─────────────────────────────────────────────────────────────
 const DEFAULTS: PropCalcInput = {
-  modelWeightG: 850,
+  modelWeightG: 1200,
   numMotors: 1,
-  wingAreaDm2: 50,
-  dragCoefficient: 0.06,
+  wingAreaDm2: 55,
+  dragCoefficient: 0.05,
   elevationM: 0,
-  temperatureC: 25,
+  temperatureC: 20,
   pressureHpa: 1013,
   batteryCells: 3,
-  batteryCapacityMah: 2200,
-  batteryMaxDischarge: 0.85,
-  batteryResistanceMohm: 15,
-  motorKv: 1300,
-  motorIo: 1.2,
-  motorRmMohm: 45,
-  motorMaxPowerW: 400,
-  propDiameterInch: 10,
-  propPitchInch: 4.7,
+  batteryCapacityMah: 3300,
+  batteryMaxDischarge: 0.75,
+  batteryResistanceMohm: 12,
+  motorKv: 900,
+  motorIo: 1.5,
+  motorRmMohm: 35,
+  motorMaxPowerW: 350,
+  propDiameterInch: 11,
+  propPitchInch: 5.5,
   propBlades: 2,
   pconst: 1.2,
   tconst: 1.0,
-  ct: 0.11,
-  cp: 0.045,
+  ct: 0.10,
+  cp: 0.042,
 };
 
 // ─────────────────────────────────────────────────────────────
@@ -60,25 +60,25 @@ function deriveWarnings(result: PropCalcResult, inputs: PropCalcInput): Warning[
   const Rth = 8; // °C/W thermal resistance (winding to ambient)
   const motorLossW = result.motorMaximum.electricPowerW * (1 - result.motorMaximum.efficiencyPercent / 100);
   const correctedTempC = inputs.temperatureC + Rth * motorLossW;
-  if (correctedTempC > 120) w.push({ level: "danger", message: `Motor temp ~${correctedTempC.toFixed(0)}°C — exceeds 120°C limit. Reduce throttle or improve cooling.` });
-  else if (correctedTempC > 85) w.push({ level: "warn", message: `Motor temp ~${correctedTempC.toFixed(0)}°C — approaching thermal limit.` });
+  if (correctedTempC > 150) w.push({ level: "danger", message: `Motor temp ~${correctedTempC.toFixed(0)}°C — exceeds 150°C limit. Reduce throttle or improve cooling.` });
+  else if (correctedTempC > 110) w.push({ level: "warn", message: `Motor temp ~${correctedTempC.toFixed(0)}°C — approaching thermal limit.` });
 
   // Flight time — warn if unrealistically short
   // Fixed: use loaded voltage discharge; if <3 min something is wrong
-  if (result.battery.flightTimeMin < 3) w.push({ level: "danger", message: `Flight time ${result.battery.flightTimeMin.toFixed(1)} min — check battery capacity and discharge rate.` });
-  else if (result.battery.flightTimeMin < 6) w.push({ level: "warn", message: `Flight time ${result.battery.flightTimeMin.toFixed(1)} min — short. Consider larger battery.` });
+  if (result.battery.flightTimeMin < 2) w.push({ level: "danger", message: `Flight time ${result.battery.flightTimeMin.toFixed(1)} min — check battery capacity and discharge rate.` });
+  else if (result.battery.flightTimeMin < 4) w.push({ level: "warn", message: `Flight time ${result.battery.flightTimeMin.toFixed(1)} min — short. Consider larger battery.` });
 
   // TWR — fixed uses loaded voltage; warn if <1.5 for fixed-wing
-  if (result.totalDrive.thrustWeightRatio < 1.0) w.push({ level: "danger", message: `Thrust:Weight ${result.totalDrive.thrustWeightRatio.toFixed(2)}:1 — insufficient for sustained flight.` });
-  else if (result.totalDrive.thrustWeightRatio < 1.5) w.push({ level: "warn", message: `Thrust:Weight ${result.totalDrive.thrustWeightRatio.toFixed(2)}:1 — marginal. Aim for ≥1.5.` });
+  if (result.totalDrive.thrustWeightRatio < 0.5) w.push({ level: "danger", message: `Thrust:Weight ${result.totalDrive.thrustWeightRatio.toFixed(2)}:1 — insufficient for sustained flight.` });
+  else if (result.totalDrive.thrustWeightRatio < 1.0) w.push({ level: "warn", message: `Thrust:Weight ${result.totalDrive.thrustWeightRatio.toFixed(2)}:1 — marginal. Aim for ≥1.5.` });
 
   // Discharge rate
   if (result.battery.loadC > 100) w.push({ level: "danger", message: `Battery discharge ${result.battery.loadC.toFixed(0)}C — far exceeds safe limits.` });
-  else if (result.battery.loadC > 50) w.push({ level: "warn", message: `Battery discharge ${result.battery.loadC.toFixed(0)}C — high. Verify C-rating.` });
+  else if (result.battery.loadC > 60) w.push({ level: "warn", message: `Battery discharge ${result.battery.loadC.toFixed(0)}C — high. Verify C-rating.` });
 
   // Partial load consistency check — if 100% efficiency is listed above 95%, flag it
   const maxEff = Math.max(...result.partialLoadStatic.map(r => r.efficiencyPercent));
-  if (maxEff > 95) w.push({ level: "warn", message: `Efficiency peaks at ${maxEff.toFixed(1)}% — check Rm and Io inputs.` });
+  if (maxEff > 98) w.push({ level: "warn", message: `Efficiency peaks at ${maxEff.toFixed(1)}% — check Rm and Io inputs.` });
 
   return w;
 }

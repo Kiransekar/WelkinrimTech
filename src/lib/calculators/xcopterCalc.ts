@@ -64,8 +64,13 @@ export interface XcopterCalcResult {
     estimatedHoverC: number;
     estimatedMaxC: number;
   };
+  environment: {
+    airDensityKgm3: number;
+    elevationM: number;
+    temperatureC: number;
+  };
   // For chart
-  throttleCurve: { throttle: number; thrustG: number; powerW: number; currentA: number }[];
+  throttleCurve: { throttle: number; thrustG: number; powerW: number; currentA: number; rpm: number }[];
 }
 
 export function calcXcopter(p: XcopterCalcInput): XcopterCalcResult {
@@ -134,7 +139,8 @@ export function calcXcopter(p: XcopterCalcInput): XcopterCalcResult {
 
   // ── Throttle curve for chart (8 points for smooth curve) ──────────────────
   const throttleCurve = [0, 0.15, 0.30, 0.45, 0.60, 0.75, 0.85, 1.00].map(t => {
-    const nRps   = (rpmMax * t) / 60;
+    const rpmAtThrottle = rpmMax * t;
+    const nRps   = rpmAtThrottle / 60;
     const thrust = p.ct  * rho * Math.pow(nRps, 2) * Math.pow(propDiamM, 4);
     const power  = p.cp  * rho * Math.pow(nRps, 3) * Math.pow(propDiamM, 5);
     const cur    = power / battVolt + p.motorIo;
@@ -143,6 +149,7 @@ export function calcXcopter(p: XcopterCalcInput): XcopterCalcResult {
       thrustG:  (thrust / G) * 1000,
       powerW:   power,
       currentA: cur,
+      rpm:      rpmAtThrottle,
     };
   });
 
@@ -183,6 +190,11 @@ export function calcXcopter(p: XcopterCalcInput): XcopterCalcResult {
     temperature: {
       estimatedHoverC: estTempHoverC,
       estimatedMaxC:   estTempMaxC,
+    },
+    environment: {
+      airDensityKgm3: rho,
+      elevationM:     p.elevationM,
+      temperatureC:   p.temperatureC,
     },
     throttleCurve,
   };

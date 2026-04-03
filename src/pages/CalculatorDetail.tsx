@@ -15,6 +15,13 @@ import { useLocation, useRoute } from "wouter";
 import Footer from "@/components/Footer";
 import PropCalcPanel from "@/components/calculators/PropCalcPanel";
 import XcopterCalcPanel from "@/components/calculators/XcopterCalcPanel";
+import SetupFinder from "@/components/calculators/SetupFinder";
+import CgCalc from "@/components/calculators/CgCalc";
+import WbCalc from "@/components/calculators/WbCalc";
+import BladeCalc from "@/components/calculators/BladeCalc";
+import FanCalcPanel from "@/components/calculators/FanCalc";
+import HeliCalcPanel from "@/components/calculators/HeliCalc";
+import PerfCalcPanel from "@/components/calculators/PerfCalc";
 import CalcStub from "@/components/calculators/CalcStub";
 import { CALCULATORS, getCalculatorById } from "@/data/calculators";
 
@@ -141,12 +148,12 @@ export default function CalculatorDetail() {
       if (calc) {
         setActive(params.id);
       } else {
-        const firstLive = CALCULATORS.find(c => c.status === "live");
-        if (firstLive) navigate(`/calculators/detail/${firstLive.id}`);
+        // Invalid calculator ID - redirect to calculators list instead of first live
+        navigate("/calculators", { replace: true });
       }
     } else if (!match) {
-      const firstLive = CALCULATORS.find(c => c.status === "live");
-      if (firstLive) navigate(`/calculators/detail/${firstLive.id}`);
+      // No ID provided - redirect to calculators list
+      navigate("/calculators", { replace: true });
     }
   }, [params, match, navigate]);
 
@@ -537,9 +544,15 @@ export default function CalculatorDetail() {
           </div>
 
           {/* ── Calculator panel */}
-          {current.id === "propcalc"    && <PropCalcPanel />}
-          {current.id === "xcoptercalc" && <XcopterCalcPanel />}
-          {["helicalc", "fancalc", "cgcalc", "perfcalc"].includes(current.id) && renderStub(current.id)}
+          {current.id === "propcalc"      && <PropCalcPanel />}
+          {current.id === "xcoptercalc"   && <XcopterCalcPanel />}
+          {current.id === "setupfinder"   && <SetupFinder />}
+          {current.id === "cgcalc"        && <CgCalc />}
+          {current.id === "wbcalc"        && <WbCalc />}
+          {current.id === "bladecalc"     && <BladeCalc />}
+          {current.id === "fancalc"       && <FanCalcPanel />}
+          {current.id === "helicalc"      && <HeliCalcPanel />}
+          {current.id === "perfcalc"      && <PerfCalcPanel />}
 
           {/* ── Info bar */}
           {current.status === "live" && current.inputCount && current.outputCount && (

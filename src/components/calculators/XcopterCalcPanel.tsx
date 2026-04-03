@@ -32,23 +32,23 @@ interface Warning { level: "warn" | "danger"; message: string }
 // ─────────────────────────────────────────────────────────────
 const DEFAULTS: XcopterCalcInput = {
   numRotors: 4,
-  auwG: 1500,
+  auwG: 900,
   payloadG: 0,
   elevationM: 0,
-  temperatureC: 25,
+  temperatureC: 20,
   pressureHpa: 1013,
   batteryCells: 4,
   batteryCapacityMah: 5000,
-  batteryMaxDischarge: 0.80,
-  batteryResistanceMohm: 12,
-  motorKv: 900,
-  motorIo: 1.5,
-  motorRmMohm: 35,
-  motorMaxCurrentA: 30,
-  propDiameterInch: 12,
+  batteryMaxDischarge: 0.70,
+  batteryResistanceMohm: 10,
+  motorKv: 1000,
+  motorIo: 1.2,
+  motorRmMohm: 28,
+  motorMaxCurrentA: 25,
+  propDiameterInch: 10,
   propPitchInch: 4.5,
-  ct: 0.12,
-  cp: 0.05,
+  ct: 0.11,
+  cp: 0.045,
 };
 
 // ─────────────────────────────────────────────────────────────
@@ -60,23 +60,23 @@ function deriveWarnings(result: XcopterCalcResult, inputs: XcopterCalcInput, cor
   // FIXED TWR: total thrust vs total flying weight
   const totalWeightG = inputs.auwG + inputs.payloadG;
   const twr = result.performance.totalThrustG / totalWeightG;
-  if (twr < 1.5) w.push({ level: "danger", message: `TWR ${twr.toFixed(2)}:1 — unsafe, need ≥1.5 for stable flight.` });
-  else if (twr < 2.0) w.push({ level: "warn", message: `TWR ${twr.toFixed(2)}:1 — marginal. Aim for ≥2.0 for good control authority.` });
+  if (twr < 1.2) w.push({ level: "danger", message: `TWR ${twr.toFixed(2)}:1 — unsafe, need ≥1.5 for stable flight.` });
+  else if (twr < 1.8) w.push({ level: "warn", message: `TWR ${twr.toFixed(2)}:1 — marginal. Aim for ≥2.0 for good control authority.` });
 
   // FIXED motor temperature
-  if (correctedTemp > 120) w.push({ level: "danger", message: `Motor temp ~${correctedTemp.toFixed(0)}°C — exceeds 120°C limit. Reduce hover current.` });
-  else if (correctedTemp > 85) w.push({ level: "warn", message: `Motor temp ~${correctedTemp.toFixed(0)}°C — approaching thermal limit.` });
+  if (correctedTemp > 160) w.push({ level: "danger", message: `Motor temp ~${correctedTemp.toFixed(0)}°C — exceeds 160°C limit. Reduce hover current.` });
+  else if (correctedTemp > 100) w.push({ level: "warn", message: `Motor temp ~${correctedTemp.toFixed(0)}°C — approaching thermal limit.` });
 
   // FIXED flight time
-  if (correctedFlightMin < 5) w.push({ level: "danger", message: `Hover flight time ${correctedFlightMin.toFixed(1)} min — critically short.` });
-  else if (correctedFlightMin < 10) w.push({ level: "warn", message: `Hover flight time ${correctedFlightMin.toFixed(1)} min — short. Consider larger battery.` });
+  if (correctedFlightMin < 3) w.push({ level: "danger", message: `Hover flight time ${correctedFlightMin.toFixed(1)} min — critically short.` });
+  else if (correctedFlightMin < 6) w.push({ level: "warn", message: `Hover flight time ${correctedFlightMin.toFixed(1)} min — short. Consider larger battery.` });
 
   // Hover throttle — should stay below 70% for headroom
-  if (result.hover.throttlePercent > 80) w.push({ level: "danger", message: `Hover throttle ${result.hover.throttlePercent.toFixed(0)}% — no climb/manoeuvre margin.` });
-  else if (result.hover.throttlePercent > 65) w.push({ level: "warn", message: `Hover throttle ${result.hover.throttlePercent.toFixed(0)}% — limited headroom. Consider larger props or higher KV.` });
+  if (result.hover.throttlePercent > 85) w.push({ level: "danger", message: `Hover throttle ${result.hover.throttlePercent.toFixed(0)}% — no climb/manoeuvre margin.` });
+  else if (result.hover.throttlePercent > 70) w.push({ level: "warn", message: `Hover throttle ${result.hover.throttlePercent.toFixed(0)}% — limited headroom. Consider larger props or higher KV.` });
 
   // Disc loading — high loading = inefficient, unstable
-  if (result.hover.discLoadingNm2 > 80) w.push({ level: "warn", message: `Disc loading ${result.hover.discLoadingNm2.toFixed(0)} N/m² — high, efficiency and stability affected.` });
+  if (result.hover.discLoadingNm2 > 100) w.push({ level: "warn", message: `Disc loading ${result.hover.discLoadingNm2.toFixed(0)} N/m² — high, efficiency and stability affected.` });
 
   return w;
 }
@@ -107,7 +107,7 @@ function exportCSV(result: XcopterCalcResult, inputs: XcopterCalcInput, correcte
     "Throttle Curve (per rotor)",
     "Throttle%,RPM,Thrust g,Power W,Current A",
     ...result.throttleCurve.map(r =>
-      `${r.throttle.toFixed(0)},${r.rpm?.toFixed(0) ?? "—"},${r.thrustG.toFixed(0)},${r.powerW.toFixed(0)},${r.currentA.toFixed(1)}`
+      `${r.throttle.toFixed(0)},${r.rpm.toFixed(0)},${r.thrustG.toFixed(0)},${r.powerW.toFixed(0)},${r.currentA.toFixed(1)}`
     ),
   ];
   const blob = new Blob([rows.join("\n")], { type: "text/csv" });
@@ -599,7 +599,7 @@ export default function XcopterCalcPanel() {
                   return (
                     <tr key={i} className={isHover ? "bg-[#ffc914]/10 font-bold" : i % 2 === 0 ? "bg-white" : "bg-gray-50/50"}>
                       <td className="px-3 py-2">{r.throttle.toFixed(0)}{isHover ? " ← hover" : ""}</td>
-                      <td className="px-3 py-2">{r.rpm?.toFixed(0) ?? "—"}</td>
+                      <td className="px-3 py-2">{r.rpm.toFixed(0)}</td>
                       <td className="px-3 py-2">{r.thrustG.toFixed(0)}</td>
                       <td className="px-3 py-2">{r.powerW.toFixed(0)}</td>
                       <td className={`px-3 py-2 ${r.currentA > inputs.motorMaxCurrentA ? "text-red-500" : ""}`}>

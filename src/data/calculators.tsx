@@ -91,6 +91,32 @@ export const CalculatorIcons = {
       <line x1="8" y1="16" x2="8" y2="48" />
     </svg>
   ),
+  setupfinder: () => (
+    <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" strokeWidth="1.8" className="w-full h-full">
+      <circle cx="32" cy="32" r="24" />
+      <circle cx="32" cy="32" r="8" fill="currentColor" />
+      <line x1="32" y1="8" x2="32" y2="20" />
+      <line x1="32" y1="44" x2="32" y2="56" />
+      <line x1="8" y1="32" x2="20" y2="32" />
+      <line x1="44" y1="32" x2="56" y2="32" />
+    </svg>
+  ),
+  bladecalc: () => (
+    <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" strokeWidth="1.8" className="w-full h-full">
+      <ellipse cx="32" cy="32" rx="26" ry="8" />
+      <path d="M32 8 Q48 24 48 32 Q48 40 32 56" />
+      <path d="M32 8 Q16 24 16 32 Q16 40 32 56" />
+      <circle cx="32" cy="32" r="3" fill="currentColor" />
+    </svg>
+  ),
+  wbcalc: () => (
+    <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" strokeWidth="1.8" className="w-full h-full">
+      <rect x="12" y="16" width="40" height="32" rx="4" />
+      <line x1="32" y1="16" x2="32" y2="48" />
+      <line x1="12" y1="32" x2="52" y2="32" />
+      <circle cx="32" cy="32" r="6" fill="currentColor" />
+    </svg>
+  ),
 };
 
 export type CalculatorIconName = keyof typeof CalculatorIcons;
@@ -132,7 +158,7 @@ export const CALCULATORS: CalculatorConfig[] = [
     label: "heliCalc",
     tag: "Helicopter",
     description: "Electric helicopter main & tail rotor RPM, torque, motor current, efficiency and collective pitch analysis.",
-    status: "soon",
+    status: "live",
     accent: "#22c55e",
     textColor: "#fff",
     category: "helicopter",
@@ -140,29 +166,27 @@ export const CALCULATORS: CalculatorConfig[] = [
     icon: CalculatorIcons.helicalc,
     inputCount: 18,
     outputCount: 16,
-    stubDescription: "Electric helicopter main rotor, tail rotor RPM, torque, motor current and efficiency analysis.",
   },
   {
     id: "fancalc",
     label: "fanCalc",
     tag: "EDF / Jet",
     description: "Ducted fan thrust, power and efficiency. Static and dynamic performance curves for EDF-powered jets.",
-    status: "soon",
+    status: "live",
     accent: "#3b82f6",
     textColor: "#fff",
     category: "edf-jet",
     metrics: ["Fan Thrust", "Fan RPM", "Efficiency", "Jet Velocity"],
     icon: CalculatorIcons.fancalc,
-    inputCount: 14,
-    outputCount: 12,
-    stubDescription: "EDF thrust, static & dynamic performance, jet power, fan efficiency and velocity analysis.",
+    inputCount: 20,
+    outputCount: 15,
   },
   {
     id: "cgcalc",
     label: "cgCalc",
     tag: "CG / Stability",
     description: "Multi-component CG solver with moment arm inputs, neutral point and static stability margin analysis.",
-    status: "soon",
+    status: "live",
     accent: "#a855f7",
     textColor: "#fff",
     category: "analysis",
@@ -170,22 +194,64 @@ export const CALCULATORS: CalculatorConfig[] = [
     icon: CalculatorIcons.cgcalc,
     inputCount: 12,
     outputCount: 8,
-    stubDescription: "Multi-component CG solver with moment arm inputs, neutral point calculation and stability margin.",
+    popular: true,
+  },
+  {
+    id: "setupfinder",
+    label: "setupFinder",
+    tag: "Prop Matcher",
+    description: "Find optimal propeller for your motor and aircraft. Tests multiple props and ranks by thrust, efficiency and flight time.",
+    status: "live",
+    accent: "#22c55e",
+    textColor: "#fff",
+    category: "airplane",
+    metrics: ["Best Prop", "Thrust Match", "Efficiency", "Score"],
+    icon: CalculatorIcons.setupfinder,
+    inputCount: 18,
+    outputCount: 15,
+    popular: true,
+  },
+  {
+    id: "bladecalc",
+    label: "bladeCalc",
+    tag: "Prop Analysis",
+    description: "Advanced propeller blade element analysis. Compare multiple propellers and view detailed performance maps.",
+    status: "live",
+    accent: "#06b6d4",
+    textColor: "#fff",
+    category: "analysis",
+    metrics: ["Blade Load", "P-Factor", "Efficiency Map"],
+    icon: CalculatorIcons.bladecalc,
+    inputCount: 10,
+    outputCount: 12,
+  },
+  {
+    id: "wbcalc",
+    label: "w&bCalc",
+    tag: "Weight & Balance",
+    description: "Aircraft weight and balance calculator with station-based component loading and CG envelope visualization.",
+    status: "live",
+    accent: "#f97316",
+    textColor: "#fff",
+    category: "analysis",
+    metrics: ["Total Weight", "CG Arm", "Moment", "Envelope"],
+    icon: CalculatorIcons.wbcalc,
+    inputCount: 12,
+    outputCount: 10,
   },
   {
     id: "perfcalc",
     label: "perfCalc",
     tag: "Performance",
     description: "Full aircraft performance analysis: power required, drag polar, range (Breguet), endurance and climb curves.",
-    status: "soon",
+    status: "live",
     accent: "#ef4444",
     textColor: "#fff",
     category: "performance",
     metrics: ["Range", "Endurance", "V-best", "Climb Rate"],
     icon: CalculatorIcons.perfcalc,
     inputCount: 16,
-    outputCount: 14,
-    stubDescription: "Drag polar, power-required curve, cruise efficiency, range (Breguet), endurance and climb analysis.",
+    outputCount: 18,
   },
 ];
 
