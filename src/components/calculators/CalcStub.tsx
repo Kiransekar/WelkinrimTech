@@ -7,9 +7,9 @@ interface CalcStubProps {
 export default function CalcStub({ name, description, icon }: CalcStubProps) {
   return (
     <div className="flex flex-col items-center justify-center min-h-[400px] gap-6 border border-dashed border-gray-200 py-16">
-      <div className="text-[#ffc914]/25 w-20 h-20">{icon}</div>
+      <div className="text-[#ffc812]/25 w-20 h-20">{icon}</div>
       <div className="text-center">
-        <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc914] mb-2"
+        <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812] mb-2"
            style={{ fontFamily: "Michroma, sans-serif" }}>
           Coming Soon
         </p>
@@ -22,8 +22,8 @@ export default function CalcStub({ name, description, icon }: CalcStubProps) {
           {description}
         </p>
       </div>
-      <div className="flex items-center gap-2 bg-[#ffc914]/5 border border-[#ffc914]/20 px-5 py-3">
-        <div className="w-1.5 h-1.5 rounded-full bg-[#ffc914] animate-pulse" />
+      <div className="flex items-center gap-2 bg-[#ffc812]/5 border border-[#ffc812]/20 px-5 py-3">
+        <div className="w-1.5 h-1.5 rounded-full bg-[#ffc812] animate-pulse" />
         <p className="text-[10px] tracking-widest uppercase text-[#555]"
            style={{ fontFamily: "Michroma, sans-serif" }}>
           Under development — request early access

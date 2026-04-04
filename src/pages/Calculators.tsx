@@ -45,21 +45,20 @@ function CalculatorCard({ calc }: CalculatorCardProps) {
     >
       {/* Card header */}
       <div
-        className="relative flex flex-col items-center justify-center h-36 overflow-hidden"
-        style={{ background: "linear-gradient(135deg, #0f0f0f 0%, #1c1c1c 100%)" }}
+        className="relative flex flex-col items-center justify-center h-36 overflow-hidden bg-white border-b border-gray-100"
       >
         {/* Subtle grid */}
         <div
-          className="absolute inset-0 opacity-[0.07]"
+          className="absolute inset-0 opacity-[0.05]"
           style={{
-            backgroundImage: `linear-gradient(${calc.accent}88 1px, transparent 1px),
-                              linear-gradient(90deg, ${calc.accent}88 1px, transparent 1px)`,
+            backgroundImage: `linear-gradient(#000 1px, transparent 1px),
+                              linear-gradient(90deg, #000 1px, transparent 1px)`,
             backgroundSize: "20px 20px",
           }}
         />
 
         {/* Icon — FIX: render as JSX component, not interpolated ReactNode */}
-        <div className="relative z-10 w-10 h-10" style={{ color: calc.accent }}>
+        <div className="relative z-10 w-16 h-16">
           <Icon />
         </div>
 
@@ -85,7 +84,7 @@ function CalculatorCard({ calc }: CalculatorCardProps) {
         {isLive && (
           <div className="absolute bottom-3 left-3 flex items-center gap-1.5">
             <div className="w-1.5 h-1.5 rounded-full bg-[#22c55e] animate-pulse" />
-            <span className="text-[7px] text-white/50 tracking-widest uppercase"
+            <span className="text-[7px] text-gray-400 tracking-widest uppercase"
                   style={{ fontFamily: "Michroma, sans-serif" }}>Live</span>
           </div>
         )}
@@ -93,7 +92,7 @@ function CalculatorCard({ calc }: CalculatorCardProps) {
         {/* Popular badge */}
         {calc.popular && (
           <div className="absolute bottom-3 right-3">
-            <span className="text-[6px] bg-[#ffc914] text-black px-1.5 py-0.5 font-bold tracking-wider uppercase"
+            <span className="text-[6px] bg-[#ffc812] text-black px-1.5 py-0.5 font-bold tracking-wider uppercase"
                   style={{ fontFamily: "Michroma, sans-serif" }}>
               Popular
             </span>
@@ -104,10 +103,10 @@ function CalculatorCard({ calc }: CalculatorCardProps) {
         {isLive && (
           <div
             className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-            style={{ background: `${calc.accent}18` }}
+            style={{ background: "rgba(255, 200, 18, 0.05)" }}
           >
-            <div className="border border-white/20 px-4 py-1.5" style={{ transform: "skewX(-10deg)" }}>
-              <span className="text-[9px] text-white tracking-widest uppercase"
+            <div className="border border-black/10 px-4 py-1.5" style={{ transform: "skewX(-10deg)" }}>
+              <span className="text-[9px] text-black tracking-widest uppercase"
                     style={{ fontFamily: "Michroma, sans-serif", display: "inline-block", transform: "skewX(10deg)" }}>
                 Open Calculator →
               </span>
@@ -221,8 +220,8 @@ export default function Calculators() {
           <div
             className="absolute inset-0 opacity-[0.04]"
             style={{
-              backgroundImage: `linear-gradient(#ffc914 1px, transparent 1px),
-                                linear-gradient(90deg, #ffc914 1px, transparent 1px)`,
+              backgroundImage: `linear-gradient(#ffc812 1px, transparent 1px),
+                                linear-gradient(90deg, #ffc812 1px, transparent 1px)`,
               backgroundSize: "40px 40px",
             }}
           />
@@ -231,12 +230,12 @@ export default function Calculators() {
           
           <div className="relative max-w-7xl mx-auto px-4 md:px-12">
             {/* Accent stripe */}
-            <div className="w-12 h-0.5 bg-[#ffc914] mb-6" />
+            <div className="w-12 h-0.5 bg-[#ffc812] mb-6" />
             
             <div className="flex items-center gap-2 mb-6">
               <button
                 onClick={() => navigate("/")}
-                className="text-[#ffc914]/60 hover:text-[#ffc914] text-[10px] tracking-widest uppercase transition-colors flex items-center gap-1 group"
+                className="text-[#ffc812]/60 hover:text-[#ffc812] text-[10px] tracking-widest uppercase transition-colors flex items-center gap-1 group"
                 style={{ fontFamily: "Michroma, sans-serif" }}
               >
                 <svg className="w-3 h-3 transition-transform group-hover:-translate-x-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -245,13 +244,13 @@ export default function Calculators() {
                 Home
               </button>
               <span className="text-white/20 text-[10px]">/</span>
-              <span className="text-[#ffc914] text-[10px] tracking-widest uppercase"
+              <span className="text-[#ffc812] text-[10px] tracking-widest uppercase"
                     style={{ fontFamily: "Michroma, sans-serif" }}>Calculators</span>
             </div>
 
             <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold text-white leading-tight"
                 style={{ fontFamily: "Michroma, sans-serif" }}>
-              Drive <span className="text-[#ffc914]">Calculator</span> Suite
+              Drive <span className="text-[#ffc812]">Calculator</span> Suite
             </h1>
             <p className="text-white/50 text-sm md:text-base mt-4 max-w-2xl leading-relaxed" style={{ fontFamily: "Lexend, sans-serif" }}>
               Professional-grade RC aircraft and drone performance simulation tools.
@@ -261,15 +260,14 @@ export default function Calculators() {
             {/* Stats strip - Dynamic */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-10 mt-10 pt-8 border-t border-white/10">
               {[
-                { v: CALCULATORS.length.toString(), l: "Calculator Modules", icon: "📊" },
-                { v: liveCount.toString(), l: "Live Now", icon: "✓" },
-                { v: "100%", l: "Client-side", icon: "🔒" },
-                { v: "±10%", l: "Accuracy (ISA)", icon: "🎯" },
-              ].map(({ v, l, icon }) => (
+                { v: CALCULATORS.length.toString(), l: "Calculator Modules" },
+                { v: liveCount.toString(), l: "Live Now" },
+                { v: "100%", l: "Client-side" },
+                { v: "±10%", l: "Accuracy (ISA)" },
+              ].map(({ v, l }) => (
                 <div key={l} className="flex items-start gap-3">
-                  <span className="text-lg opacity-60">{icon}</span>
                   <div>
-                    <p className="text-2xl md:text-3xl font-black text-[#ffc914]"
+                    <p className="text-2xl md:text-3xl font-black text-[#ffc812]"
                        style={{ fontFamily: "Michroma, sans-serif" }}>{v}</p>
                     <p className="text-[9px] text-white/40 tracking-widest uppercase mt-1"
                        style={{ fontFamily: "Michroma, sans-serif" }}>{l}</p>
@@ -296,7 +294,7 @@ export default function Calculators() {
                   placeholder="Search calculators by name, category, or feature..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-11 pr-10 py-3 border-2 border-gray-200 text-sm focus:outline-none focus:border-[#ffc914] transition-colors rounded-sm"
+                  className="w-full pl-11 pr-10 py-3 border-2 border-gray-200 text-sm focus:outline-none focus:border-[#ffc812] transition-colors rounded-sm"
                   style={{ fontFamily: "Lexend, sans-serif" }}
                 />
                 {searchQuery && (
@@ -317,7 +315,7 @@ export default function Calculators() {
                 </div>
                 <button
                   onClick={() => setShowCompare(true)}
-                  className="flex items-center gap-2 px-5 py-3 bg-black text-[#ffc914] text-[9px] tracking-widest uppercase font-bold hover:bg-[#222] transition-colors whitespace-nowrap"
+                  className="flex items-center gap-2 px-5 py-3 bg-black text-[#ffc812] text-[9px] tracking-widest uppercase font-bold hover:bg-[#222] transition-colors whitespace-nowrap"
                   style={{ fontFamily: "Michroma, sans-serif" }}
                 >
                   <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -348,7 +346,7 @@ export default function Calculators() {
                     onClick={() => setActiveFilter(tab.id)}
                     className={`group flex items-center gap-2 px-4 py-2.5 text-[9px] tracking-widest uppercase font-bold transition-all duration-200 border-2 ${
                       isActive
-                        ? "bg-black text-[#ffc914] border-black"
+                        ? "bg-black text-[#ffc812] border-black"
                         : "bg-white text-[#666] border-gray-200 hover:border-gray-400 hover:text-black"
                     }`}
                     style={{ fontFamily: "Michroma, sans-serif" }}
@@ -361,7 +359,7 @@ export default function Calculators() {
                     {tab.label}
                     <span className={`text-[8px] px-2 py-0.5 font-bold transition-colors ${
                       isActive 
-                        ? "bg-[#ffc914] text-black" 
+                        ? "bg-[#ffc812] text-black" 
                         : "bg-gray-100 text-[#808080] group-hover:bg-gray-200"
                     }`}>
                       {count}
@@ -403,7 +401,7 @@ export default function Calculators() {
 
           {filteredCalculators.length === 0 ? (
             <div className="text-center py-20 border-2 border-dashed border-gray-200 rounded-lg">
-              <svg className="w-16 h-16 text-[#ffc914]/30 mx-auto mb-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+              <svg className="w-16 h-16 text-[#ffc812]/30 mx-auto mb-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
                 <circle cx="11" cy="11" r="8" />
                 <line x1="21" y1="21" x2="16.65" y2="16.65" />
                 <line x1="8" y1="11" x2="14" y2="11" />
@@ -417,7 +415,7 @@ export default function Calculators() {
               </p>
               <button
                 onClick={() => { setActiveFilter("all"); setSearchQuery(""); }}
-                className="mt-4 px-4 py-2 bg-black text-[#ffc914] text-[9px] tracking-widest uppercase font-bold hover:bg-[#222] transition-colors"
+                className="mt-4 px-4 py-2 bg-black text-[#ffc812] text-[9px] tracking-widest uppercase font-bold hover:bg-[#222] transition-colors"
                 style={{ fontFamily: "Michroma, sans-serif" }}
               >
                 Reset Filters
@@ -434,8 +432,8 @@ export default function Calculators() {
 
         {/* ── Disclaimer ── */}
         <div className="max-w-7xl mx-auto px-4 md:px-12 pb-12">
-          <div className="flex items-start gap-3 bg-[#ffc914]/5 border border-[#ffc914]/20 px-4 py-3">
-            <svg className="w-4 h-4 text-[#ffc914] flex-shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <div className="flex items-start gap-3 bg-[#ffc812]/5 border border-[#ffc812]/20 px-4 py-3">
+            <svg className="w-4 h-4 text-[#ffc812] flex-shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" />
             </svg>
             <p className="text-[10px] text-[#555]" style={{ fontFamily: "Lexend, sans-serif" }}>
@@ -451,13 +449,13 @@ export default function Calculators() {
           <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
             <div className="bg-white max-w-2xl w-full max-h-[80vh] overflow-y-auto">
               <div className="bg-black px-4 py-3 flex items-center justify-between sticky top-0">
-                <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc914]"
+                <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812]"
                    style={{ fontFamily: "Michroma, sans-serif" }}>
                   Compare Calculators
                 </p>
                 <button
                   onClick={() => { setShowCompare(false); setCompareSelection([]); }}
-                  className="text-white hover:text-[#ffc914] text-xl"
+                  className="text-white hover:text-[#ffc812] text-xl"
                 >
                   ✕
                 </button>
@@ -487,7 +485,7 @@ export default function Calculators() {
                         disabled={isDisabled}
                         className={`p-4 border-2 transition-all text-left ${
                           isSelected
-                            ? "border-[#ffc914] bg-[#fffbe6]"
+                            ? "border-[#ffc812] bg-[#fffbe6]"
                             : isDisabled
                             ? "border-gray-100 opacity-50 cursor-not-allowed"
                             : "border-gray-200 hover:border-gray-300"

@@ -171,7 +171,7 @@ export default function EngineeringDepth() {
               Engineering
             </div>
             <div
-              className="text-[28px] md:text-[40px] xl:text-[48px] font-black text-[#ffc914] uppercase tracking-tight"
+              className="text-[28px] md:text-[40px] xl:text-[48px] font-black text-[#ffc812] uppercase tracking-tight"
               style={{ fontFamily: "Michroma, sans-serif" }}
             >
               Depth
@@ -186,7 +186,7 @@ export default function EngineeringDepth() {
                   onClick={() => handleTab(i)}
                   className={`text-xs tracking-[0.15em] uppercase font-bold pb-1 transition-all duration-200 ${
                     i === activeIdx
-                      ? "text-black border-b-2 border-[#ffc914]"
+                      ? "text-black border-b-2 border-[#ffc812]"
                       : "text-[#aaa] border-b-2 border-transparent hover:text-black"
                   }`}
                   style={{ fontFamily: "Michroma, sans-serif" }}
@@ -205,7 +205,7 @@ export default function EngineeringDepth() {
             onClick={() =>
               document.querySelector("#contact")?.scrollIntoView({ behavior: "smooth" })
             }
-            className="self-start inline-flex items-center gap-2 px-6 py-3 bg-[#ffc914] text-black text-xs tracking-[0.22em] uppercase font-bold hover:bg-[#e0b212] transition-all duration-300 mt-2"
+            className="self-start inline-flex items-center gap-2 px-6 py-3 bg-[#ffc812] text-black text-xs tracking-[0.22em] uppercase font-bold hover:bg-[#e0b212] transition-all duration-300 mt-2"
             style={{ fontFamily: "Michroma, sans-serif", transform: "skewX(-10deg)" }}
           >
             <span className="inline-flex items-center gap-2" style={{ transform: "skewX(10deg)" }}>
@@ -261,7 +261,7 @@ export default function EngineeringDepth() {
         <div className="flex-1 relative flex flex-col justify-center z-20">
           {/* Parallelogram shape using clip-path */}
           <div
-            className="absolute inset-0 bg-[#ffc914]"
+            className="absolute inset-0 bg-[#ffc812]"
             style={{
               clipPath: "polygon(15% 0, 100% 0, 100% 100%, 0% 100%)",
             }}

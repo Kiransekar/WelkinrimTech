@@ -48,10 +48,10 @@ function Field({
 }) {
   const [showHint, setShowHint] = useState(false);
   return (
-    <div className={`flex flex-col gap-0.5 relative ${className}`}>
-      <div className="flex items-center gap-1">
-        <label className="text-[9px] tracking-widest uppercase text-[#808080]"
-               style={{ fontFamily: "Michroma, sans-serif" }} htmlFor={id}>
+    <div className={`flex flex-row items-center gap-2 w-full py-1 relative ${className}`}>
+      <div className="flex items-center gap-1 flex-1 min-w-0">
+        <label className="text-[9px] tracking-widest uppercase text-[#ffc812] truncate"
+               style={{ fontFamily: "Michroma, sans-serif" }} htmlFor={id} title={label}>
           {label}
         </label>
         {hint && (
@@ -59,22 +59,24 @@ function Field({
             type="button"
             onMouseEnter={() => setShowHint(true)}
             onMouseLeave={() => setShowHint(false)}
-            className="w-3 h-3 rounded-full bg-gray-200 text-[7px] text-gray-500 flex items-center justify-center flex-shrink-0 hover:bg-[#ffc914] hover:text-black transition-colors"
+            className="w-3 h-3 rounded-full bg-gray-200 text-[7px] text-gray-500 flex items-center justify-center flex-shrink-0 hover:bg-[#ffc812] hover:text-black transition-colors"
           >?</button>
         )}
       </div>
       {showHint && hint && (
-        <div className="absolute top-5 left-0 z-50 bg-black text-[#ffc914] text-[9px] px-2 py-1.5 w-48 leading-relaxed"
+        <div className="absolute top-full left-0 mt-1 z-50 bg-black text-[#ffc812] text-[9px] px-2 py-1.5 w-48 leading-relaxed"
              style={{ fontFamily: "Lexend, sans-serif" }}>
           {hint}
         </div>
       )}
-      <input
-        id={id} type="number" step={step} value={value}
-        onChange={e => onChange(parseFloat(e.target.value) || 0)}
-        className="border border-gray-200 text-[11px] px-2 py-1.5 focus:outline-none focus:border-[#ffc914] transition-colors bg-white"
-        style={{ fontFamily: "Michroma, sans-serif" }}
-      />
+      <div className="w-24 flex-shrink-0">
+        <input
+          id={id} type="number" step={step} value={value}
+          onChange={e => onChange(parseFloat(e.target.value) || 0)}
+          className="w-full min-w-0 border border-gray-200 text-[11px] px-2 py-1 focus:outline-none focus:border-[#ffc812] transition-colors bg-white"
+          style={{ fontFamily: "Michroma, sans-serif" }}
+        />
+      </div>
     </div>
   );
 }
@@ -83,7 +85,7 @@ function Section({ title, children, action }: { title: string; children: React.R
   return (
     <div className="border border-gray-100 mb-3">
       <div className="bg-black px-3 py-1.5 flex items-center justify-between">
-        <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc914]"
+        <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812]"
            style={{ fontFamily: "Michroma, sans-serif" }}>{title}</p>
         {action}
       </div>
@@ -197,10 +199,10 @@ export default function WbCalc() {
   };
 
   const getStatusIcon = () => {
-    if (currentWandB.weightOverMax) return { icon: "⛔", text: "Over Max Gross Weight" };
-    if (currentWandB.cgTooForward) return { icon: "⚠️", text: "CG Too Forward" };
-    if (currentWandB.cgTooAft) return { icon: "⚠️", text: "CG Too Aft" };
-    return { icon: "✓", text: "Within Envelope" };
+    if (currentWandB.weightOverMax) return { icon: "", text: "Over Max Gross Weight" };
+    if (currentWandB.cgTooForward) return { icon: "", text: "CG Too Forward" };
+    if (currentWandB.cgTooAft) return { icon: "", text: "CG Too Aft" };
+    return { icon: "", text: "Within Envelope" };
   };
 
   const status = getStatusIcon();
@@ -230,9 +232,9 @@ export default function WbCalc() {
         {/* Stations */}
         <div className="border border-gray-100 mb-3">
           <div className="bg-black px-3 py-1.5 flex items-center justify-between">
-            <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc914]"
+            <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812]"
                style={{ fontFamily: "Michroma, sans-serif" }}>Loading Stations</p>
-            <button onClick={addStation} className="text-[9px] bg-[#ffc914] text-black px-2 py-0.5 font-bold"
+            <button onClick={addStation} className="text-[9px] bg-[#ffc812] text-black px-2 py-0.5 font-bold"
                     style={{ fontFamily: "Michroma, sans-serif" }}>+ Add</button>
           </div>
 
@@ -275,7 +277,7 @@ export default function WbCalc() {
                   max={station.maxWeightG}
                   value={station.currentWeightG}
                   onChange={e => updateStation(station.id, "currentWeightG", parseFloat(e.target.value))}
-                  className="w-full accent-[#ffc914]"
+                  className="w-full accent-[#ffc812]"
                 />
                 <div className="flex justify-between text-[8px] text-gray-400">
                   <span>{station.minWeightG}g</span>
@@ -331,7 +333,7 @@ export default function WbCalc() {
         {/* CG Envelope Chart */}
         <div className="border border-gray-100 mb-5">
           <div className="bg-black px-3 py-1.5">
-            <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc914]"
+            <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812]"
                style={{ fontFamily: "Michroma, sans-serif" }}>CG Envelope</p>
           </div>
           <div className="p-4">
@@ -360,7 +362,7 @@ export default function WbCalc() {
                 <ReferenceLine y={maxGrossWeightG} stroke="#ef4444" strokeWidth={2} label={{ value: "MAX WEIGHT", position: "insideTopRight", fontSize: 8, fill: "#ef4444" }} />
 
                 {/* Flight conditions */}
-                <Scatter name="Conditions" data={flightConditions} fill="#ffc914">
+                <Scatter name="Conditions" data={flightConditions} fill="#ffc812">
                   {flightConditions.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={entry.inEnvelope ? "#22c55e" : "#ef4444"} />
                   ))}
@@ -380,7 +382,7 @@ export default function WbCalc() {
         {/* Flight Conditions Table */}
         <div className="border border-gray-100 mb-5">
           <div className="bg-black px-3 py-1.5">
-            <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc914]"
+            <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812]"
                style={{ fontFamily: "Michroma, sans-serif" }}>Flight Conditions Summary</p>
           </div>
           <div className="overflow-x-auto">
@@ -405,9 +407,9 @@ export default function WbCalc() {
                     </td>
                     <td className="px-3 py-2 text-right">
                       {fc.inEnvelope ? (
-                        <span className="text-green-500 font-bold">✓ OK</span>
+                        <span className="text-green-500 font-bold">OK</span>
                       ) : (
-                        <span className="text-red-500 font-bold">⚠ OUT</span>
+                        <span className="text-red-500 font-bold">OUT</span>
                       )}
                     </td>
                   </tr>
@@ -420,7 +422,7 @@ export default function WbCalc() {
         {/* Station Breakdown */}
         <div className="border border-gray-100">
           <div className="bg-black px-3 py-1.5">
-            <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc914]"
+            <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812]"
                style={{ fontFamily: "Michroma, sans-serif" }}>Station Loading Detail</p>
           </div>
           <div className="overflow-x-auto">
@@ -440,7 +442,7 @@ export default function WbCalc() {
               <tbody>
                 {/* Empty aircraft row */}
                 <tr className="bg-gray-100 font-bold">
-                  <td className="px-3 py-2">🛩️ Empty Aircraft</td>
+                  <td className="px-3 py-2">Empty Aircraft</td>
                   <td className="px-3 py-2 text-right">—</td>
                   <td className="px-3 py-2 text-right">{emptyCgCm.toFixed(1)}</td>
                   <td className="px-3 py-2 text-right">{emptyWeightG.toFixed(0)}</td>
@@ -452,8 +454,7 @@ export default function WbCalc() {
                 {stationBreakdown.map((station, i) => (
                   <tr key={station.id} className={i % 2 === 0 ? "bg-white" : "bg-gray-50/50"}>
                     <td className="px-3 py-2">
-                      {station.type === "fuel" ? "⛽" : station.type === "payload" ? "📦" : station.type === "structure" ? "🏗️" : "⚙️"}
-                      {station.name}
+                        {station.name}
                     </td>
                     <td className="px-3 py-2 text-right capitalize">{station.type}</td>
                     <td className="px-3 py-2 text-right">{station.armCm.toFixed(1)}</td>
@@ -463,7 +464,7 @@ export default function WbCalc() {
                     <td className="px-3 py-2 text-right">
                       <div className="flex items-center justify-end gap-1">
                         <div className="w-16 h-2 bg-gray-200 rounded-full overflow-hidden">
-                          <div className="h-full bg-[#ffc914]" style={{ width: `${station.percentMax}%` }} />
+                          <div className="h-full bg-[#ffc812]" style={{ width: `${station.percentMax}%` }} />
                         </div>
                         <span className="text-[8px] text-gray-500 w-8">{station.percentMax.toFixed(0)}%</span>
                       </div>
@@ -472,7 +473,7 @@ export default function WbCalc() {
                   </tr>
                 ))}
                 {/* Total row */}
-                <tr className="bg-black text-[#ffc914] font-bold">
+                <tr className="bg-black text-[#ffc812] font-bold">
                   <td className="px-3 py-2">TOTAL</td>
                   <td className="px-3 py-2 text-right">—</td>
                   <td className="px-3 py-2 text-right">{currentWandB.cgArm.toFixed(1)}</td>

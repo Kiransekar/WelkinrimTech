@@ -101,7 +101,7 @@ export default function CompareResults({ data1, data2 }: { data1: CompareData; d
     <div className="space-y-6">
       {/* Summary Banner */}
       <div className={`border-2 p-4 ${
-        score1 > score2 ? "border-[#ffc914] bg-[#fffbe6]" :
+        score1 > score2 ? "border-[#ffc812] bg-[#fffbe6]" :
         score2 > score1 ? "border-blue-400 bg-blue-50" :
         "border-gray-300 bg-gray-50"
       }`}>
@@ -137,7 +137,7 @@ export default function CompareResults({ data1, data2 }: { data1: CompareData; d
       {/* Comparison Table */}
       <div className="border border-gray-100">
         <div className="bg-black px-3 py-1.5">
-          <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc914]"
+          <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812]"
              style={{ fontFamily: "Michroma, sans-serif" }}>
             Detailed Comparison
           </p>
@@ -189,7 +189,7 @@ export default function CompareResults({ data1, data2 }: { data1: CompareData; d
       <div className="grid md:grid-cols-2 gap-6">
         <div className="border border-gray-100">
           <div className="bg-black px-3 py-1.5">
-            <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc914]"
+            <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812]"
                style={{ fontFamily: "Michroma, sans-serif" }}>
               Metric Comparison
             </p>
@@ -212,7 +212,7 @@ export default function CompareResults({ data1, data2 }: { data1: CompareData; d
         {/* Radar Chart */}
         <div className="border border-gray-100">
           <div className="bg-black px-3 py-1.5">
-            <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc914]"
+            <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812]"
                style={{ fontFamily: "Michroma, sans-serif" }}>
               Performance Radar
             </p>

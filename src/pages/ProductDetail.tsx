@@ -53,6 +53,13 @@ export default function ProductDetail() {
 
   const product = PRODUCTS.find(p => p.id === params.id);
 
+  const handleEnquire = () => {
+    navigate("/");
+    setTimeout(() => {
+      document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" });
+    }, 100);
+  };
+
   useEffect(() => { window.scrollTo(0, 0); }, [params.id]);
 
   if (!product) {
@@ -62,7 +69,7 @@ export default function ProductDetail() {
           <p className="text-[#808080] mb-4" style={{ fontFamily: "Michroma, sans-serif" }}>Product not found</p>
           <button
             onClick={() => navigate("/products")}
-            className="px-6 py-2 bg-[#ffc914] text-black text-[10px] tracking-widest uppercase font-bold"
+            className="px-6 py-2 bg-[#ffc812] text-black text-[10px] tracking-widest uppercase font-bold"
             style={{ fontFamily: "Michroma, sans-serif", transform: "skewX(-10deg)" }}
           >
             <span style={{ display: "inline-block", transform: "skewX(10deg)" }}>Back to Products</span>
@@ -90,22 +97,6 @@ export default function ProductDetail() {
         />
 
         <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10">
-          {/* Breadcrumb */}
-          <div className="flex items-center gap-2 mb-8 flex-wrap">
-            <button onClick={() => navigate("/")}
-              className="text-white/30 hover:text-white text-[10px] tracking-widest uppercase transition-colors"
-              style={{ fontFamily: "Michroma, sans-serif" }}>Home</button>
-            <span className="text-white/20 text-[10px]">/</span>
-            <button onClick={() => navigate("/products")}
-              className="text-white/30 hover:text-white text-[10px] tracking-widest uppercase transition-colors"
-              style={{ fontFamily: "Michroma, sans-serif" }}>Products</button>
-            <span className="text-white/20 text-[10px]">/</span>
-            <span className="text-[10px] tracking-widest uppercase"
-                  style={{ fontFamily: "Michroma, sans-serif", color: cfg.accent }}>
-              {product.seriesLabel}
-            </span>
-          </div>
-
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-end pb-12">
             {/* Left */}
             <div>
@@ -138,7 +129,7 @@ export default function ProductDetail() {
 
               <div className="flex gap-4 mt-8 flex-wrap">
                 <button
-                  onClick={() => navigate("/#contact")}
+                  onClick={handleEnquire}
                   className="px-8 py-3 text-[10px] tracking-widest uppercase font-black transition-colors duration-300 hover:opacity-90"
                   style={{ fontFamily: "Michroma, sans-serif", background: cfg.accent, color: cfg.textOnAccent, transform: "skewX(-10deg)" }}
                 >
@@ -178,7 +169,7 @@ export default function ProductDetail() {
 
       {/* ── Content ── */}
       <div className="max-w-7xl mx-auto px-6 md:px-12 py-16">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+        <div className="flex flex-col gap-14">
 
           {/* Specifications */}
           <div>
@@ -188,14 +179,14 @@ export default function ProductDetail() {
                 Specifications
               </h2>
             </div>
-            <div className="border border-gray-100 divide-y divide-gray-50">
-              {product.allSpecs.map((s, i) => (
+            <div className="grid grid-cols-1 md:grid-cols-2 border-t border-l border-gray-100">
+              {product.allSpecs.map((s) => (
                 <div key={s.label}
-                     className={`flex items-center justify-between px-5 py-3 ${i % 2 === 0 ? "bg-white" : "bg-gray-50/50"}`}>
-                  <span className="text-[11px] text-[#808080]" style={{ fontFamily: "Lexend, sans-serif" }}>
+                     className="flex items-center justify-between px-5 py-3 border-b border-r border-gray-100 gap-4">
+                  <span className="text-[11px] font-bold text-black" style={{ fontFamily: "Lexend, sans-serif" }}>
                     {s.label}
                   </span>
-                  <span className="text-[11px] font-bold text-black" style={{ fontFamily: "Michroma, sans-serif" }}>
+                  <span className="text-[11px] text-[#808080]" style={{ fontFamily: "Michroma, sans-serif" }}>
                     {s.value}
                   </span>
                 </div>
@@ -280,15 +271,15 @@ export default function ProductDetail() {
               </div>
             </div>
           ) : (
-            <div className="flex items-center justify-center">
-              <div className="text-center p-12 border border-gray-100">
+            <div className="flex items-center justify-center mt-2 max-w-4xl mx-auto w-full">
+              <div className="text-center p-12 border border-gray-100 w-full bg-gray-50/30">
                 <p className="text-[10px] text-[#808080] tracking-widest uppercase"
                    style={{ fontFamily: "Michroma, sans-serif" }}>
                   Contact us for detailed performance data
                 </p>
                 <button
-                  onClick={() => navigate("/#contact")}
-                  className="mt-4 px-6 py-2 text-[9px] tracking-widest uppercase font-black"
+                  onClick={handleEnquire}
+                  className="mt-6 px-8 py-3 text-[9px] tracking-widest uppercase font-black hover:opacity-90 transition-opacity duration-300"
                   style={{ fontFamily: "Michroma, sans-serif", background: cfg.accent, color: cfg.textOnAccent, transform: "skewX(-10deg)" }}
                 >
                   <span style={{ display: "inline-block", transform: "skewX(10deg)" }}>Get in Touch</span>
@@ -301,7 +292,7 @@ export default function ProductDetail() {
         {/* ── Enquire CTA ── */}
         <div className="mt-16 bg-black p-10 flex flex-col md:flex-row items-center justify-between gap-6">
           <div>
-            <p className="text-[10px] text-[#ffc914] tracking-[0.3em] uppercase mb-1"
+            <p className="text-[10px] text-[#ffc812] tracking-[0.3em] uppercase mb-1"
                style={{ fontFamily: "Michroma, sans-serif" }}>
               Ready to Order?
             </p>
@@ -311,8 +302,8 @@ export default function ProductDetail() {
             <p className="text-sm text-white/40 mt-1">Custom specs · Volume pricing · OEM available</p>
           </div>
           <button
-            onClick={() => navigate("/#contact")}
-            className="px-10 py-3 bg-[#ffc914] text-black text-[10px] tracking-widest uppercase font-black hover:bg-[#e0b212] transition-colors duration-300 whitespace-nowrap flex-shrink-0"
+            onClick={handleEnquire}
+            className="px-10 py-3 bg-[#ffc812] text-black text-[10px] tracking-widest uppercase font-black hover:bg-[#e0b212] transition-colors duration-300 whitespace-nowrap flex-shrink-0"
             style={{ fontFamily: "Michroma, sans-serif", transform: "skewX(-10deg)" }}
           >
             <span style={{ display: "inline-block", transform: "skewX(10deg)" }}>Enquire Now</span>

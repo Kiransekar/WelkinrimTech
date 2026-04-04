@@ -25,7 +25,7 @@ const COMPANIES = [
 // ─── Custom SVG pin HTML ──────────────────────────────────────────────────────
 function pinSvg(big: boolean) {
   const w = big ? 38 : 26, h = big ? 50 : 36;
-  const color = big ? "#ffc914" : "#000000";
+  const color = big ? "#ffc812" : "#000000";
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">
     <filter id="sh${big ? "b" : "s"}" x="-40%" y="-20%" width="180%" height="160%">
       <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="rgba(0,0,0,0.5)"/>
@@ -34,7 +34,7 @@ function pinSvg(big: boolean) {
              a${w/2-2} ${w/2-2} 0 1 1 ${w-4} 0
              C${w-2} ${w*0.55} ${w/2} ${h-2} ${w/2} ${h-2}Z"
           fill="${color}" filter="url(#sh${big ? "b" : "s"})"/>
-    <circle cx="${w/2}" cy="${w*0.45}" r="${big ? 8 : 5}" fill="${big ? "#111" : "#ffc914"}" opacity="0.9"/>
+    <circle cx="${w/2}" cy="${w*0.45}" r="${big ? 8 : 5}" fill="${big ? "#111" : "#ffc812"}" opacity="0.9"/>
   </svg>`;
 }
 
@@ -101,17 +101,17 @@ const MAP_STYLE: maplibregl.StyleSpecification = {
     { id: "road-motorway", type: "line", source: "osm", "source-layer": "transportation",
       filter: ["==", ["get", "class"], "motorway"],
       layout: { "line-cap": "round", "line-join": "round" },
-      paint: { "line-color": "#ffc914",
+      paint: { "line-color": "#ffc812",
                "line-width": ["interpolate", ["linear"], ["zoom"], 8, 2, 12, 4, 16, 7] } },
     { id: "road-trunk", type: "line", source: "osm", "source-layer": "transportation",
       filter: ["==", ["get", "class"], "trunk"],
       layout: { "line-cap": "round", "line-join": "round" },
-      paint: { "line-color": "#ffc914",
+      paint: { "line-color": "#ffc812",
                "line-width": ["interpolate", ["linear"], ["zoom"], 8, 1.5, 12, 3, 16, 6] } },
     { id: "road-primary", type: "line", source: "osm", "source-layer": "transportation",
       filter: ["==", ["get", "class"], "primary"],
       layout: { "line-cap": "round", "line-join": "round" },
-      paint: { "line-color": "#ffc914",
+      paint: { "line-color": "#ffc812",
                "line-width": ["interpolate", ["linear"], ["zoom"], 8, 1, 12, 2.5, 16, 5] } },
     { id: "road-secondary", type: "line", source: "osm", "source-layer": "transportation",
       filter: ["in", ["get", "class"], ["literal", ["secondary", "tertiary"]]],
@@ -188,9 +188,9 @@ export default function LocationMap() {
         .setPopup(
           new maplibregl.Popup({ closeButton: false, offset: 30, className: "wr-popup" })
             .setHTML(`
-              <div style="font-family:Michroma,sans-serif;background:#0d1b2a;border:1px solid #ffc914;
+              <div style="font-family:Michroma,sans-serif;background:#0d1b2a;border:1px solid #ffc812;
                           padding:10px 14px;color:#fff;min-width:160px;border-radius:2px">
-                <div style="color:#ffc914;font-size:10px;letter-spacing:0.2em;margin-bottom:4px">OUR FACILITY</div>
+                <div style="color:#ffc812;font-size:10px;letter-spacing:0.2em;margin-bottom:4px">OUR FACILITY</div>
                 <div style="font-weight:bold;font-size:13px">Welkinrim Technologies</div>
                 <div style="font-size:10px;color:#888;margin-top:2px">Oragadam, Chennai</div>
               </div>`)
@@ -208,9 +208,9 @@ export default function LocationMap() {
           .setPopup(
             new maplibregl.Popup({ closeButton: false, offset: 22, className: "wr-popup" })
               .setHTML(`
-                <div style="font-family:Michroma,sans-serif;background:#0d1b2a;border:1px solid #ffc914;
+                <div style="font-family:Michroma,sans-serif;background:#0d1b2a;border:1px solid #ffc812;
                             padding:10px 14px;color:#fff;min-width:160px;border-radius:2px">
-                  <div style="color:#ffc914;font-size:10px;letter-spacing:0.2em;margin-bottom:4px">
+                  <div style="color:#ffc812;font-size:10px;letter-spacing:0.2em;margin-bottom:4px">
                     ${co.sector.toUpperCase()}
                   </div>
                   <div style="font-weight:bold;font-size:13px">${co.name}</div>
@@ -255,7 +255,7 @@ export default function LocationMap() {
         <div className="mb-4 lg:mb-4 shrink-0 flex flex-col md:flex-row md:items-end md:justify-between gap-4">
           <div>
             <div className="flex items-center gap-3 mb-3">
-              <div className="h-px w-10 bg-[#ffc914]" />
+              <div className="h-px w-10 bg-[#ffc812]" />
               <span className="text-[#808080] text-xs tracking-[0.3em] uppercase"
                     style={{ fontFamily: "Michroma, sans-serif" }}>
                 Strategic Location
@@ -263,7 +263,7 @@ export default function LocationMap() {
             </div>
             <h2 className="text-4xl md:text-5xl font-bold text-black leading-tight"
                 style={{ fontFamily: "Michroma, sans-serif" }}>
-              At the Heart of<br /><span className="text-[#ffc914]">Industry Giants</span>
+              At the Heart of<br /><span className="text-[#ffc812]">Industry Giants</span>
             </h2>
           </div>
 
@@ -278,7 +278,7 @@ export default function LocationMap() {
             {/* WebGL fallback */}
             {webGlError && (
               <div className="absolute inset-0 bg-[#0d1b2a] flex flex-col items-center justify-center gap-4">
-                <div className="text-[#ffc914] text-5xl font-black" style={{ fontFamily: "Michroma, sans-serif" }}>WR</div>
+                <div className="text-[#ffc812] text-5xl font-black" style={{ fontFamily: "Michroma, sans-serif" }}>WR</div>
                 <p className="text-white/60 text-xs text-center max-w-xs" style={{ fontFamily: "Michroma, sans-serif" }}>
                   Welkinrim Technologies<br />
                   <span className="text-white/30">#23, Sujatha nagar, kandigai village, Panruti, Sripermabadur, TN - 631604</span>
@@ -287,7 +287,7 @@ export default function LocationMap() {
                   href="https://maps.app.goo.gl/Sd8XkUyzC64aq9pd7"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mt-2 px-6 py-2 border border-[#ffc914] text-[#ffc914] text-[9px] tracking-widest uppercase hover:bg-[#ffc914] hover:text-black transition-colors"
+                  className="mt-2 px-6 py-2 border border-[#ffc812] text-[#ffc812] text-[9px] tracking-widest uppercase hover:bg-[#ffc812] hover:text-black transition-colors"
                   style={{ fontFamily: "Michroma, sans-serif" }}
                 >
                   View on Google Maps ↗
@@ -300,7 +300,7 @@ export default function LocationMap() {
               className="absolute bottom-0 left-0 right-0 z-10 flex flex-col items-center pb-5 pt-8 pointer-events-none"
               style={{ background: "linear-gradient(to top, rgba(13,27,42,0.92) 0%, transparent 100%)" }}
             >
-              <p className="text-[#ffc914] text-xl md:text-2xl font-black tracking-[0.5em] uppercase"
+              <p className="text-[#ffc812] text-xl md:text-2xl font-black tracking-[0.5em] uppercase"
                  style={{ fontFamily: "Michroma, sans-serif" }}>
                 ORAGADAM
               </p>
@@ -315,7 +315,7 @@ export default function LocationMap() {
             {/* Reset */}
             <button
               onClick={reset}
-              className="absolute top-3 right-3 z-10 px-3 py-1.5 bg-[#ffc914] text-black text-[10px] tracking-widest uppercase font-bold shadow hover:bg-[#e0b212] transition-colors"
+              className="absolute top-3 right-3 z-10 px-3 py-1.5 bg-[#ffc812] text-black text-[10px] tracking-widest uppercase font-bold shadow hover:bg-[#e0b212] transition-colors"
               style={{ fontFamily: "Michroma, sans-serif", transform: "skewX(-10deg)" }}
             >
               <span style={{ display: "inline-block", transform: "skewX(10deg)" }}>← Reset View</span>
@@ -328,10 +328,10 @@ export default function LocationMap() {
             {/* Our facility header */}
             <div className="px-5 py-4 border-b border-white/5">
               <div className="flex items-center gap-2 mb-1">
-                <div className="w-3 h-3 rounded-full bg-[#ffc914] relative">
-                  <span className="absolute inset-0 rounded-full bg-[#ffc914] animate-ping opacity-60" />
+                <div className="w-3 h-3 rounded-full bg-[#ffc812] relative">
+                  <span className="absolute inset-0 rounded-full bg-[#ffc812] animate-ping opacity-60" />
                 </div>
-                <span className="text-[#ffc914] text-[10px] tracking-[0.3em] uppercase"
+                <span className="text-[#ffc812] text-[10px] tracking-[0.3em] uppercase"
                       style={{ fontFamily: "Michroma, sans-serif" }}>
                   Our Facility
                 </span>
@@ -352,18 +352,18 @@ export default function LocationMap() {
                   onClick={() => flyTo(co)}
                   className={`text-left px-5 py-3.5 transition-all duration-200 group border-l-2 ${
                     active === co.name
-                      ? "bg-[#ffc914]/10 border-[#ffc914]"
+                      ? "bg-[#ffc812]/10 border-[#ffc812]"
                       : "border-transparent hover:bg-white/5"
                   }`}
                 >
                   <div className="flex items-center justify-between gap-2">
                     <div className="flex items-center gap-2.5 min-w-0">
                       <div className={`w-2 h-2 rounded-full flex-shrink-0 transition-colors ${
-                        active === co.name ? "bg-[#ffc914]" : "bg-white/20 group-hover:bg-[#ffc914]/60"
+                        active === co.name ? "bg-[#ffc812]" : "bg-white/20 group-hover:bg-[#ffc812]/60"
                       }`} />
                       <div className="min-w-0">
                         <p className={`text-xs font-bold truncate transition-colors ${
-                          active === co.name ? "text-[#ffc914]" : "text-white/80 group-hover:text-white"
+                          active === co.name ? "text-[#ffc812]" : "text-white/80 group-hover:text-white"
                         }`} style={{ fontFamily: "Michroma, sans-serif" }}>
                           {co.name}
                         </p>
@@ -374,7 +374,7 @@ export default function LocationMap() {
                       </div>
                     </div>
                     <span className={`text-[10px] font-bold flex-shrink-0 transition-colors ${
-                      active === co.name ? "text-[#ffc914]" : "text-white/40 group-hover:text-[#ffc914]/80"
+                      active === co.name ? "text-[#ffc812]" : "text-white/40 group-hover:text-[#ffc812]/80"
                     }`} style={{ fontFamily: "Michroma, sans-serif" }}>
                       {fmtKm(co.km)}
                     </span>
@@ -389,7 +389,7 @@ export default function LocationMap() {
                 href="https://maps.app.goo.gl/Sd8XkUyzC64aq9pd7"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-2 text-[10px] text-[#ffc914] hover:text-white transition-colors uppercase tracking-widest"
+                className="flex items-center gap-2 text-[10px] text-[#ffc812] hover:text-white transition-colors uppercase tracking-widest"
                 style={{ fontFamily: "Michroma, sans-serif" }}
               >
                 Open in Google Maps
@@ -417,11 +417,11 @@ export default function LocationMap() {
         }
         .maplibregl-ctrl-zoom-in,
         .maplibregl-ctrl-zoom-out {
-          border-color: #ffc914 !important;
+          border-color: #ffc812 !important;
         }
         .maplibregl-ctrl-zoom-in:hover,
         .maplibregl-ctrl-zoom-out:hover {
-          background-color: #ffc914 !important;
+          background-color: #ffc812 !important;
         }
         .maplibregl-canvas { background: #fff !important; }
       `}</style>

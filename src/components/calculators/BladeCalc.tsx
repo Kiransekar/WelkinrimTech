@@ -23,7 +23,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
   return (
     <div className="border border-gray-100 mb-3">
       <div className="bg-black px-3 py-1.5">
-        <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc914]"
+        <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812]"
            style={{ fontFamily: "Michroma, sans-serif" }}>{title}</p>
       </div>
       <div className="p-3 grid grid-cols-2 gap-2">{children}</div>
@@ -32,17 +32,17 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 }
 
 function Field({
-  label, id, value, onChange, step = "any", hint,
+  label, id, value, onChange, step = "any", hint, className = "",
 }: {
   label: string; id: string; value: number;
-  onChange: (v: number) => void; step?: string; hint?: string;
+  onChange: (v: number) => void; step?: string; hint?: string; className?: string;
 }) {
   const [showHint, setShowHint] = useState(false);
   return (
-    <div className="flex flex-col gap-0.5 relative">
-      <div className="flex items-center gap-1">
-        <label className="text-[9px] tracking-widest uppercase text-[#808080]"
-               style={{ fontFamily: "Michroma, sans-serif" }} htmlFor={id}>
+    <div className={`flex flex-row items-center gap-2 w-full py-1 relative ${className}`}>
+      <div className="flex items-center gap-1 flex-1 min-w-0">
+        <label className="text-[9px] tracking-widest uppercase text-[#ffc812] truncate"
+               style={{ fontFamily: "Michroma, sans-serif" }} htmlFor={id} title={label}>
           {label}
         </label>
         {hint && (
@@ -50,22 +50,24 @@ function Field({
             type="button"
             onMouseEnter={() => setShowHint(true)}
             onMouseLeave={() => setShowHint(false)}
-            className="w-3 h-3 rounded-full bg-gray-200 text-[7px] text-gray-500 flex items-center justify-center flex-shrink-0 hover:bg-[#ffc914] hover:text-black transition-colors"
+            className="w-3 h-3 rounded-full bg-gray-200 text-[7px] text-gray-500 flex items-center justify-center flex-shrink-0 hover:bg-[#ffc812] hover:text-black transition-colors"
           >?</button>
         )}
       </div>
       {showHint && hint && (
-        <div className="absolute top-5 left-0 z-50 bg-black text-[#ffc914] text-[9px] px-2 py-1.5 w-48 leading-relaxed"
+        <div className="absolute top-full left-0 mt-1 z-50 bg-black text-[#ffc812] text-[9px] px-2 py-1.5 w-48 leading-relaxed"
              style={{ fontFamily: "Lexend, sans-serif" }}>
           {hint}
         </div>
       )}
-      <input
-        id={id} type="number" step={step} value={value}
-        onChange={e => onChange(parseFloat(e.target.value) || 0)}
-        className="border border-gray-200 text-[11px] px-2 py-1.5 focus:outline-none focus:border-[#ffc914] transition-colors bg-white"
-        style={{ fontFamily: "Michroma, sans-serif" }}
-      />
+      <div className="w-24 flex-shrink-0">
+        <input
+          id={id} type="number" step={step} value={value}
+          onChange={e => onChange(parseFloat(e.target.value) || 0)}
+          className="w-full min-w-0 border border-gray-200 text-[11px] px-2 py-1 focus:outline-none focus:border-[#ffc812] transition-colors bg-white"
+          style={{ fontFamily: "Michroma, sans-serif" }}
+        />
+      </div>
     </div>
   );
 }
@@ -89,48 +91,67 @@ export default function BladeCalc() {
     for (let i = 1; i <= numElements; i++) {
       const station = i / numElements; // 0.05 to 1.0
       
-      // Prop1 calculations with prop1's diameter
-      const radiusM1 = (prop1.diameterInch * 0.0254 / 2) * station;
-      const chordCm1 = 2.5 * (1 - station * 0.4); // Tapering chord
-      const twistDeg1 = 25 * (1 - station); // Twist from 25° at root to 0° at tip
+      // Prop1 BET integration
+      const r_tip1 = prop1.diameterInch * 0.0254 / 2;
+      const radiusM1 = r_tip1 * station;
+      const dr1 = r_tip1 / numElements;
+      const chordM1 = (r_tip1 * 0.2) * (1 - station * 0.3); // Tapering
+      
+      const theta1 = Math.atan2(prop1.pitchInch * 0.0254, 2 * Math.PI * radiusM1);
       const localSpeed1 = (rpm / 60) * 2 * Math.PI * radiusM1;
-      const aoa1 = twistDeg1 * Math.PI / 180;
-      const liftCoeff1 = 2 * Math.PI * aoa1; // Thin airfoil theory
-      const dragCoeff1 = 0.01 + liftCoeff1 * liftCoeff1 / (Math.PI * 6); // Parabolic drag polar
-      const dynamicPressure1 = 0.5 * airDensity * localSpeed1 * localSpeed1;
-      const localThrust1 = dynamicPressure1 * chordCm1 * 0.01 * liftCoeff1 * 2; // 2 blades
-      const localPower1 = localThrust1 * localSpeed1 / (prop1.efficiency || 0.7);
+      const V_axial = 0; // Static hover analysis
+      const phi1 = Math.atan2(V_axial, localSpeed1);
+      const aoa1 = theta1 - phi1;
+      
+      const liftCoeff1 = 2 * Math.PI * aoa1;
+      const dragCoeff1 = 0.01 + 0.05 * Math.pow(liftCoeff1, 2);
+      
+      const dL1 = 0.5 * airDensity * Math.pow(localSpeed1, 2) * chordM1 * liftCoeff1 * dr1;
+      const dD1 = 0.5 * airDensity * Math.pow(localSpeed1, 2) * chordM1 * dragCoeff1 * dr1;
+      
+      const dT1 = prop1.blades * (dL1 * Math.cos(phi1) - dD1 * Math.sin(phi1));
+      const dQ1 = prop1.blades * radiusM1 * (dL1 * Math.sin(phi1) + dD1 * Math.cos(phi1));
+      const localPower1 = dQ1 * (rpm / 60 * 2 * Math.PI);
 
       elements1.push({
         station,
-        chordCm: chordCm1 * (prop1.diameterInch / 10),
-        twistDeg: twistDeg1 * (prop1.pitchInch / 5),
+        chordCm: chordM1 * 100,
+        twistDeg: theta1 * 180 / Math.PI,
         liftCoeff: liftCoeff1,
         dragCoeff: dragCoeff1,
-        localThrust: localThrust1 * (prop1.ct / 0.11),
-        localPower: localPower1 * (prop1.cp / 0.045),
+        localThrust: dT1 * 101.97, // g
+        localPower: localPower1,
       });
 
-      // Prop2 calculations with prop2's diameter (FIXED: use prop2's dimensions)
-      const radiusM2 = (prop2.diameterInch * 0.0254 / 2) * station;
-      const chordCm2 = 2.5 * (1 - station * 0.4);
-      const twistDeg2 = 25 * (1 - station);
+      // Prop2 BET integration
+      const r_tip2 = prop2.diameterInch * 0.0254 / 2;
+      const radiusM2 = r_tip2 * station;
+      const dr2 = r_tip2 / numElements;
+      const chordM2 = (r_tip2 * 0.2) * (1 - station * 0.3);
+      
+      const theta2 = Math.atan2(prop2.pitchInch * 0.0254, 2 * Math.PI * radiusM2);
       const localSpeed2 = (rpm / 60) * 2 * Math.PI * radiusM2;
-      const aoa2 = twistDeg2 * Math.PI / 180;
+      const phi2 = Math.atan2(V_axial, localSpeed2);
+      const aoa2 = theta2 - phi2;
+      
       const liftCoeff2 = 2 * Math.PI * aoa2;
-      const dragCoeff2 = 0.01 + liftCoeff2 * liftCoeff2 / (Math.PI * 6);
-      const dynamicPressure2 = 0.5 * airDensity * localSpeed2 * localSpeed2;
-      const localThrust2 = dynamicPressure2 * chordCm2 * 0.01 * liftCoeff2 * 2;
-      const localPower2 = localThrust2 * localSpeed2 / (prop2.efficiency || 0.7);
+      const dragCoeff2 = 0.01 + 0.05 * Math.pow(liftCoeff2, 2);
+      
+      const dL2 = 0.5 * airDensity * Math.pow(localSpeed2, 2) * chordM2 * liftCoeff2 * dr2;
+      const dD2 = 0.5 * airDensity * Math.pow(localSpeed2, 2) * chordM2 * dragCoeff2 * dr2;
+      
+      const dT2 = prop2.blades * (dL2 * Math.cos(phi2) - dD2 * Math.sin(phi2));
+      const dQ2 = prop2.blades * radiusM2 * (dL2 * Math.sin(phi2) + dD2 * Math.cos(phi2));
+      const localPower2 = dQ2 * (rpm / 60 * 2 * Math.PI);
 
       elements2.push({
         station,
-        chordCm: chordCm2 * (prop2.diameterInch / 10),
-        twistDeg: twistDeg2 * (prop2.pitchInch / 5),
+        chordCm: chordM2 * 100,
+        twistDeg: theta2 * 180 / Math.PI,
         liftCoeff: liftCoeff2,
         dragCoeff: dragCoeff2,
-        localThrust: localThrust2 * (prop2.ct / 0.11),
-        localPower: localPower2 * (prop2.cp / 0.045),
+        localThrust: dT2 * 101.97, // g
+        localPower: localPower2,
       });
     }
 
@@ -193,7 +214,7 @@ export default function BladeCalc() {
             <select
               value={selectedProp1}
               onChange={e => setSelectedProp1(e.target.value)}
-              className="w-full border border-gray-200 text-[11px] px-2 py-1.5 focus:outline-none focus:border-[#ffc914] transition-colors bg-white"
+              className="w-full border border-gray-200 text-[11px] px-2 py-1.5 focus:outline-none focus:border-[#ffc812] transition-colors bg-white"
               style={{ fontFamily: "Michroma, sans-serif" }}
             >
               {PROPELLERS.filter(p => p.application === "airplane" || p.application === "both").map(p => (
@@ -210,7 +231,7 @@ export default function BladeCalc() {
             <select
               value={selectedProp2}
               onChange={e => setSelectedProp2(e.target.value)}
-              className="w-full border border-gray-200 text-[11px] px-2 py-1.5 focus:outline-none focus:border-[#ffc914] transition-colors bg-white"
+              className="w-full border border-gray-200 text-[11px] px-2 py-1.5 focus:outline-none focus:border-[#ffc812] transition-colors bg-white"
               style={{ fontFamily: "Michroma, sans-serif" }}
             >
               {PROPELLERS.filter(p => p.application === "airplane" || p.application === "both").map(p => (
@@ -284,7 +305,7 @@ export default function BladeCalc() {
         {calcBladeElements && (
           <div className="border border-gray-100 mb-5">
             <div className="bg-black px-3 py-1.5">
-              <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc914]"
+              <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812]"
                  style={{ fontFamily: "Michroma, sans-serif" }}>
                 Thrust Distribution Along Blade
               </p>
@@ -297,7 +318,7 @@ export default function BladeCalc() {
                   <YAxis tick={{ fontSize: 9, fontFamily: "Michroma, sans-serif" }} unit=" N" />
                   <Tooltip contentStyle={{ fontSize: 10, fontFamily: "Michroma, sans-serif" }} />
                   <Legend wrapperStyle={{ fontSize: 9, fontFamily: "Michroma, sans-serif" }} />
-                  <Bar dataKey={`${calcBladeElements.prop1.brand} ${calcBladeElements.prop1.model}`} fill="#ffc914" radius={[2, 2, 0, 0]} />
+                  <Bar dataKey={`${calcBladeElements.prop1.brand} ${calcBladeElements.prop1.model}`} fill="#ffc812" radius={[2, 2, 0, 0]} />
                   <Bar dataKey={`${calcBladeElements.prop2.brand} ${calcBladeElements.prop2.model}`} fill="#22c55e" radius={[2, 2, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
@@ -309,7 +330,7 @@ export default function BladeCalc() {
         {calcBladeElements && (
           <div className="border border-gray-100">
             <div className="bg-black px-3 py-1.5">
-              <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc914]"
+              <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812]"
                  style={{ fontFamily: "Michroma, sans-serif" }}>
                 Power Distribution Along Blade
               </p>
@@ -322,7 +343,7 @@ export default function BladeCalc() {
                   <YAxis tick={{ fontSize: 9, fontFamily: "Michroma, sans-serif" }} unit=" W" />
                   <Tooltip contentStyle={{ fontSize: 10, fontFamily: "Michroma, sans-serif" }} />
                   <Legend wrapperStyle={{ fontSize: 9, fontFamily: "Michroma, sans-serif" }} />
-                  <Bar dataKey={`${calcBladeElements.prop1.brand} ${calcBladeElements.prop1.model}`} fill="#ffc914" radius={[2, 2, 0, 0]} />
+                  <Bar dataKey={`${calcBladeElements.prop1.brand} ${calcBladeElements.prop1.model}`} fill="#ffc812" radius={[2, 2, 0, 0]} />
                   <Bar dataKey={`${calcBladeElements.prop2.brand} ${calcBladeElements.prop2.model}`} fill="#3b82f6" radius={[2, 2, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>

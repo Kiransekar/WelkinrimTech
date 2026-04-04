@@ -143,10 +143,10 @@ interface FieldProps {
 function Field({ label, id, value, onChange, step = "any", hint, className = "", warn }: FieldProps) {
   const [showHint, setShowHint] = useState(false);
   return (
-    <div className={`flex flex-col gap-0.5 relative ${className}`}>
-      <div className="flex items-center gap-1">
-        <label className={`text-[9px] tracking-widest uppercase ${warn ? "text-amber-500" : "text-[#808080]"}`}
-               style={{ fontFamily: "Michroma, sans-serif" }} htmlFor={id}>
+    <div className={`flex flex-row items-center gap-2 w-full py-1 relative ${className}`}>
+      <div className="flex items-center gap-1 flex-1 min-w-0">
+        <label className={`text-[9px] tracking-widest uppercase truncate ${warn ? "text-amber-500" : "text-[#ffc812]"}`}
+               style={{ fontFamily: "Michroma, sans-serif" }} htmlFor={id} title={label}>
           {label}
         </label>
         {hint && (
@@ -154,24 +154,26 @@ function Field({ label, id, value, onChange, step = "any", hint, className = "",
             type="button"
             onMouseEnter={() => setShowHint(true)}
             onMouseLeave={() => setShowHint(false)}
-            className="w-3 h-3 rounded-full bg-gray-200 text-[7px] text-gray-500 flex items-center justify-center flex-shrink-0 hover:bg-[#ffc914] hover:text-black transition-colors"
+            className="w-3 h-3 rounded-full bg-gray-200 text-[7px] text-gray-500 flex items-center justify-center flex-shrink-0 hover:bg-[#ffc812] hover:text-black transition-colors"
           >?</button>
         )}
       </div>
       {showHint && hint && (
-        <div className="absolute top-5 left-0 z-50 bg-black text-[#ffc914] text-[9px] px-2 py-1.5 w-48 leading-relaxed"
+        <div className="absolute top-full left-0 mt-1 z-50 bg-black text-[#ffc812] text-[9px] px-2 py-1.5 w-48 leading-relaxed"
              style={{ fontFamily: "Lexend, sans-serif" }}>
           {hint}
         </div>
       )}
-      <input
-        id={id} type="number" step={step} value={value}
-        onChange={e => onChange(parseFloat(e.target.value) || 0)}
-        className={`border text-[11px] px-2 py-1.5 focus:outline-none transition-colors bg-white ${
-          warn ? "border-amber-400 focus:border-amber-500" : "border-gray-200 focus:border-[#ffc914]"
-        }`}
-        style={{ fontFamily: "Michroma, sans-serif" }}
-      />
+      <div className="w-24 flex-shrink-0">
+        <input
+          id={id} type="number" step={step} value={value}
+          onChange={e => onChange(parseFloat(e.target.value) || 0)}
+          className={`border w-full min-w-0 text-[11px] px-2 py-1 focus:outline-none transition-colors bg-white ${
+            warn ? "border-amber-400 focus:border-amber-500" : "border-gray-200 focus:border-[#ffc812]"
+          }`}
+          style={{ fontFamily: "Michroma, sans-serif" }}
+        />
+      </div>
     </div>
   );
 }
@@ -187,11 +189,11 @@ function CollapsibleSection({
         onClick={() => setOpen(o => !o)}
         className="w-full bg-black px-3 py-2 flex items-center justify-between group"
       >
-        <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc914]"
+        <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812]"
            style={{ fontFamily: "Michroma, sans-serif" }}>
           {title}
         </p>
-        <span className={`text-[#ffc914] text-[10px] transition-transform ${open ? "rotate-180" : ""}`}>▾</span>
+        <span className={`text-[#ffc812] text-[10px] transition-transform ${open ? "rotate-180" : ""}`}>▾</span>
       </button>
       {open && <div className="p-3 grid grid-cols-2 gap-2">{children}</div>}
     </div>
@@ -201,7 +203,7 @@ function CollapsibleSection({
 function Row({ label, value, warn }: { label: string; value: string; warn?: boolean }) {
   return (
     <tr className="border-b border-gray-50">
-      <td className="py-1.5 pr-3 text-[10px] text-[#808080]" style={{ fontFamily: "Lexend, sans-serif" }}>{label}</td>
+      <td className="py-1.5 pr-3 text-[10px] text-[#ffc812]" style={{ fontFamily: "Lexend, sans-serif" }}>{label}</td>
       <td className={`py-1.5 text-[11px] font-bold text-right ${warn ? "text-amber-500" : "text-black"}`}
           style={{ fontFamily: "Michroma, sans-serif" }}>{value}</td>
     </tr>
@@ -328,15 +330,15 @@ export default function PropCalcPanel() {
       {/* ── INPUTS COLUMN ──────────────────────────────────────── */}
       <div className="lg:w-80 xl:w-88 flex-shrink-0">
         {/* Motor Preset — kept outside collapsible for prominence */}
-        <div className="border border-[#ffc914]/30 bg-[#fffbe6] px-3 py-2.5 mb-2">
-          <label className="text-[9px] tracking-widest uppercase text-[#ffc914] font-bold block mb-1.5"
+        <div className="border border-[#ffc812]/30 bg-[#fffbe6] px-3 py-2.5 mb-2">
+          <label className="text-[9px] tracking-widest uppercase text-[#ffc812] font-bold block mb-1.5"
                  style={{ fontFamily: "Michroma, sans-serif" }}>
             ⚡ Motor Preset (Haemng Series)
           </label>
           <select
             value={selectedPreset}
             onChange={e => applyPreset(e.target.value)}
-            className="w-full border border-[#ffc914]/40 text-[11px] px-2.5 py-1.5 focus:outline-none focus:border-[#ffc914] bg-white"
+            className="w-full border border-[#ffc812]/40 text-[11px] px-2.5 py-1.5 focus:outline-none focus:border-[#ffc812] bg-white"
             style={{ fontFamily: "Michroma, sans-serif" }}
           >
             <option value="">— Select Motor —</option>
@@ -415,7 +417,7 @@ export default function PropCalcPanel() {
           </p>
           <button
             onClick={() => exportCSV(result, inputs)}
-            className="flex items-center gap-1.5 border border-gray-200 px-3 py-1.5 text-[9px] tracking-widest uppercase hover:bg-black hover:text-[#ffc914] hover:border-black transition-colors"
+            className="flex items-center gap-1.5 border border-gray-200 px-3 py-1.5 text-[9px] tracking-widest uppercase hover:bg-black hover:text-[#ffc812] hover:border-black transition-colors"
             style={{ fontFamily: "Michroma, sans-serif" }}
           >
             ↓ Export CSV
@@ -427,7 +429,7 @@ export default function PropCalcPanel() {
 
         {/* Gauges */}
         <div className="border border-gray-100 p-4 mb-4">
-          <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc914] mb-4"
+          <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812] mb-4"
              style={{ fontFamily: "Michroma, sans-serif" }}>Key Metrics</p>
           <div className="grid grid-cols-3 md:grid-cols-6 gap-3 justify-items-center">
             <GaugeMeter value={result.battery.loadC} max={150} label="Load" unit="C" yellowAt={0.33} redAt={0.67} />
@@ -458,7 +460,7 @@ export default function PropCalcPanel() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
           <div className="border border-gray-100">
             <div className="bg-black px-3 py-1.5">
-              <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc914]"
+              <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812]"
                  style={{ fontFamily: "Michroma, sans-serif" }}>Motor — Optimum (70%)</p>
             </div>
             <div className="p-3">
@@ -476,7 +478,7 @@ export default function PropCalcPanel() {
 
           <div className="border border-gray-100">
             <div className="bg-black px-3 py-1.5">
-              <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc914]"
+              <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812]"
                  style={{ fontFamily: "Michroma, sans-serif" }}>Motor — Maximum</p>
             </div>
             <div className="p-3">
@@ -497,7 +499,7 @@ export default function PropCalcPanel() {
 
           <div className="border border-gray-100">
             <div className="bg-black px-3 py-1.5">
-              <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc914]"
+              <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812]"
                  style={{ fontFamily: "Michroma, sans-serif" }}>Propeller</p>
             </div>
             <div className="p-3">
@@ -514,7 +516,7 @@ export default function PropCalcPanel() {
 
           <div className="border border-gray-100">
             <div className="bg-black px-3 py-1.5">
-              <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc914]"
+              <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812]"
                  style={{ fontFamily: "Michroma, sans-serif" }}>Aircraft Performance</p>
             </div>
             <div className="p-3">
@@ -534,13 +536,13 @@ export default function PropCalcPanel() {
         {/* Chart tabs */}
         <div className="border border-gray-100 mb-4">
           <div className="bg-black px-3 py-1.5 flex items-center gap-4">
-            <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc914]"
+            <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812]"
                style={{ fontFamily: "Michroma, sans-serif" }}>Performance Charts</p>
             <div className="flex gap-1 ml-auto">
               {(["static", "dynamic", "efficiency"] as const).map(t => (
                 <button key={t} onClick={() => setActiveTab(t)}
                   className={`text-[8px] tracking-widest uppercase px-2 py-0.5 transition-colors ${
-                    activeTab === t ? "bg-[#ffc914] text-black" : "text-white/50 hover:text-white"
+                    activeTab === t ? "bg-[#ffc812] text-black" : "text-white/50 hover:text-white"
                   }`}
                   style={{ fontFamily: "Michroma, sans-serif" }}>{t}</button>
               ))}
@@ -555,7 +557,7 @@ export default function PropCalcPanel() {
                   <YAxis tick={{ fontSize: 9, fontFamily: "Michroma, sans-serif" }} />
                   <Tooltip contentStyle={TOOLTIP_STYLE} />
                   <Legend wrapperStyle={{ fontSize: 9, fontFamily: "Michroma, sans-serif" }} />
-                  <Line type="monotone" dataKey="Power (W)" stroke="#ffc914" strokeWidth={2} dot={{ r: 3 }} />
+                  <Line type="monotone" dataKey="Power (W)" stroke="#ffc812" strokeWidth={2} dot={{ r: 3 }} />
                   <Line type="monotone" dataKey="Thrust (g)" stroke="#111" strokeWidth={2} dot={{ r: 3 }} />
                   <Line type="monotone" dataKey="Eff (%)" stroke="#22c55e" strokeWidth={2} dot={{ r: 3 }} />
                 </LineChart>
@@ -567,7 +569,7 @@ export default function PropCalcPanel() {
                   <Tooltip contentStyle={TOOLTIP_STYLE} />
                   <Legend wrapperStyle={{ fontSize: 9, fontFamily: "Michroma, sans-serif" }} />
                   <Line type="monotone" dataKey="Speed (km/h)" stroke="#3b82f6" strokeWidth={2} dot={{ r: 3 }} />
-                  <Line type="monotone" dataKey="Power (W)" stroke="#ffc914" strokeWidth={2} dot={{ r: 3 }} />
+                  <Line type="monotone" dataKey="Power (W)" stroke="#ffc812" strokeWidth={2} dot={{ r: 3 }} />
                   <Line type="monotone" dataKey="Thrust (g)" stroke="#111" strokeWidth={2} dot={{ r: 3 }} />
                 </LineChart>
               ) : (
@@ -581,7 +583,7 @@ export default function PropCalcPanel() {
                     contentStyle={TOOLTIP_STYLE}
                     formatter={(value: number, name: string) => [value, name]}
                   />
-                  <Scatter name="Eff %" data={effMapData} fill="#ffc914" opacity={0.85} />
+                  <Scatter name="Eff %" data={effMapData} fill="#ffc812" opacity={0.85} />
                 </ScatterChart>
               )}
             </ResponsiveContainer>
@@ -596,7 +598,7 @@ export default function PropCalcPanel() {
         {/* Partial Load Table */}
         <div className="border border-gray-100">
           <div className="bg-black px-3 py-1.5">
-            <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc914]"
+            <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812]"
                style={{ fontFamily: "Michroma, sans-serif" }}>
               Partial Load — {activeTab === "dynamic" ? "Dynamic" : "Static"}
             </p>
@@ -656,8 +658,8 @@ export default function PropCalcPanel() {
         </div>
 
         {/* Environment Info Bar */}
-        <div className="mt-4 flex items-center gap-3 bg-[#ffc914]/5 border border-[#ffc914]/20 px-4 py-2.5">
-          <div className="w-1 h-8 bg-[#ffc914] flex-shrink-0" />
+        <div className="mt-4 flex items-center gap-3 bg-[#ffc812]/5 border border-[#ffc812]/20 px-4 py-2.5">
+          <div className="w-1 h-8 bg-[#ffc812] flex-shrink-0" />
           <p className="text-[10px] text-[#555]" style={{ fontFamily: "Lexend, sans-serif" }}>
             Air density at {result.environment.elevationM} m / {result.environment.temperatureC}°C:{" "}
             <strong className="text-black">{result.environment.airDensityKgm3.toFixed(4)} kg/m³</strong>

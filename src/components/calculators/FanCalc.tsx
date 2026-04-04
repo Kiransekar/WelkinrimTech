@@ -5,7 +5,7 @@
 import { useState, useMemo } from "react";
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
-  BarChart, Bar, ReferenceLine,
+  ReferenceLine,
 } from "recharts";
 
 interface Warning { level: "warn" | "danger"; message: string; }
@@ -133,73 +133,66 @@ function calculateFan(input: FanCalcInput): FanCalcResult {
   const P = input.pressureHpa * 100;
   const rho = P / (287.05 * T); // kg/m³
 
-  // Battery voltage
   const nominalCellV = 3.7;
   const batteryVoltage = input.batteryCells * nominalCellV;
-  const batteryLoadedV = batteryVoltage - (input.motorMaxCurrent * input.batteryResistanceMohm / 1000);
 
-  // Motor calculations
-  const voltageAtMotor = batteryLoadedV;
-  const noLoadRpm = input.motorKv * voltageAtMotor;
+  const D_fan = input.fanDiameterMm / 1000;
+  const pitch_ratio = input.fanPitchMm / input.fanDiameterMm;
 
-  // Estimate loaded RPM (simplified)
-  const loadFactor = 0.82; // typical for EDF
-  const motorRpm = noLoadRpm * loadFactor;
+  // Approximate EDF coefficients based on blades and pitch
+  const C_T_EDF = 0.05 * input.fanBlades * pitch_ratio * input.ductEfficiency;
+  const C_P_EDF = 0.05 * input.fanBlades * Math.pow(pitch_ratio, 1.2) / input.fanEfficiency;
 
-  // Motor current (simplified model)
-  const torqueConstant = 60 / (2 * Math.PI * input.motorKv);
-  const fanRadius = input.fanDiameterMm / 2 / 1000;
-  const fanArea = Math.PI * fanRadius * fanRadius;
+  let currentA = input.motorMaxCurrent * 0.5;
+  let rpm = 0;
+  let motorVoltage = batteryVoltage;
+  let fanPowerW = 0;
 
-  // Estimate current from power demand
-  const motorCurrent = Math.min(
-    input.motorMaxCurrent,
-    (input.motorMaxPowerW / voltageAtMotor) + input.motorIo
-  );
+  // Iterative solver for motor RPM and Power matching Fan load
+  for (let iter = 0; iter < 15; iter++) {
+    motorVoltage = batteryVoltage - currentA * (input.batteryResistanceMohm / 1000);
+    rpm = input.motorKv * (motorVoltage - (currentA - input.motorIo) * (input.motorRmMohm / 1000));
+    if (rpm < 0) rpm = 0;
+    const n = rpm / 60;
+    fanPowerW = C_P_EDF * rho * Math.pow(n, 3) * Math.pow(D_fan, 5);
+    
+    // Mechanical power required = fanPowerW
+    // P_mech = (V - I*R)*I - V*I0 => approximation for iterative step
+    const i_new = (fanPowerW / Math.max(1, motorVoltage)) + input.motorIo;
+    currentA += 0.3 * (i_new - currentA); // damped update
+  }
 
-  // Motor power
-  const motorPowerW = voltageAtMotor * motorCurrent;
-  const motorLossW = motorCurrent * motorCurrent * (input.motorRmMohm / 1000);
+  const motorCurrent = currentA;
+  const motorRpm = rpm;
+  const motorPowerW = motorVoltage * motorCurrent;
+  const motorLossW = (motorCurrent * motorCurrent * (input.motorRmMohm / 1000)) + (motorVoltage * input.motorIo);
   const motorEfficiency = ((motorPowerW - motorLossW) / motorPowerW) * 100;
 
-  // Fan power (after motor efficiency)
-  const fanPowerW = motorPowerW * (motorEfficiency / 100);
-
-  // Fan tip speed
+  // Fan calculations
   const fanTipSpeed = (Math.PI * input.fanDiameterMm * motorRpm) / 60000; // m/s
-
-  // Mass flow rate through fan
-  const exitArea = fanArea * input.fvr;
-  const massFlowRate = rho * exitArea * fanTipSpeed * input.fanEfficiency;
-
-  // Jet velocity
-  const jetVelocity = fanTipSpeed * input.ductEfficiency * input.fanEfficiency;
-
-  // Static thrust (momentum theory)
-  const staticThrustN = massFlowRate * jetVelocity;
+  const n = motorRpm / 60;
+  const staticThrustN = C_T_EDF * rho * Math.pow(n, 2) * Math.pow(D_fan, 4);
   const staticThrustG = staticThrustN * 101.97;
 
-  // Dynamic thrust at cruise (simplified)
-  const cruiseSpeedMs = 25; // assume 90 km/h cruise
-  const dynamicThrustN = staticThrustN * (1 - cruiseSpeedMs / jetVelocity) * 0.85;
-  const dynamicThrustG = dynamicThrustN * 101.97;
-
-  // Drag calculation for max speed
-  const wingAreaM2 = input.wingAreaDm2 / 100;
-  const dragAt100Kph = 0.5 * rho * (27.78 * 27.78) * wingAreaM2 * input.dragCoefficient;
+  // Mass flow rate & jet velocity derived back
+  const fanArea = Math.PI * Math.pow(D_fan / 2, 2);
+  const massFlowRate = rho * fanArea * input.fvr * fanTipSpeed * input.fanEfficiency;
+  const jetVelocity = massFlowRate > 0 ? staticThrustN / massFlowRate : 0;
 
   // Max speed where thrust = drag
+  const cruiseSpeedMs = 25;
+  const dynamicThrustN = staticThrustN * (1 - cruiseSpeedMs / Math.max(1, jetVelocity));
+  const dynamicThrustG = dynamicThrustN * 101.97;
+
+  const wingAreaM2 = input.wingAreaDm2 / 100;
+  const dragAt100Kph = 0.5 * rho * (27.78 * 27.78) * wingAreaM2 * input.dragCoefficient;
   const maxSpeedMs = Math.sqrt((2 * dynamicThrustN) / (rho * wingAreaM2 * input.dragCoefficient));
   const maxSpeedKph = maxSpeedMs * 3.6;
-
-  // Cruise speed (70% of max)
   const cruiseSpeedKph = maxSpeedKph * 0.7;
 
-  // Climb rate
   const excessPowerW = fanPowerW - (dragAt100Kph * cruiseSpeedMs);
   const climbRateMs = excessPowerW / (input.modelWeightG / 1000 * 9.81);
 
-  // Battery flight time
   const usableCapacityMah = input.batteryCapacityMah * input.batteryMaxDischarge;
   const loadC = (motorCurrent * 1000) / input.batteryCapacityMah;
   const flightTimeMin = (usableCapacityMah / (motorCurrent * 1000)) * 60;
@@ -225,7 +218,6 @@ function calculateFan(input: FanCalcInput): FanCalcResult {
 
 export default function FanCalcPanel() {
   const [inputs, setInputs] = useState<FanCalcInput>(DEFAULTS);
-  const [showChart, setShowChart] = useState("thrust");
 
   const result = useMemo(() => calculateFan(inputs), [inputs]);
   const warnings = useMemo(() => deriveWarnings(result, inputs), [result, inputs]);
@@ -257,9 +249,9 @@ export default function FanCalcPanel() {
   };
 
   const Field = ({ label, value, onChange, step = 1, min, max, unit, hint }: any) => (
-    <div className="flex flex-col gap-1">
-      <label className="text-[9px] uppercase text-gray-500 tracking-wider">{label}</label>
-      <div className="flex items-center gap-2">
+    <div className="flex flex-row items-center gap-2 w-full py-1">
+      <label className="text-[9px] uppercase text-[#ffc812] tracking-wider flex-1 truncate" title={hint || label}>{label}</label>
+      <div className="flex items-center gap-1 w-24">
         <input
           type="number"
           value={value}
@@ -267,29 +259,28 @@ export default function FanCalcPanel() {
           step={step}
           min={min}
           max={max}
-          className="flex-1 border border-gray-200 px-2 py-1.5 text-sm focus:outline-none focus:border-[#ffc914]"
+          className="flex-1 w-full min-w-0 border border-gray-200 px-2 py-1 text-[11px] focus:outline-none focus:border-[#ffc812]"
           style={{ fontFamily: "Michroma, sans-serif" }}
         />
-        <span className="text-xs text-gray-400 w-8">{unit}</span>
+        {unit && <span className="text-[10px] text-gray-400 w-6">{unit}</span>}
       </div>
-      {hint && <p className="text-[9px] text-gray-400">{hint}</p>}
     </div>
   );
 
   const Section = ({ title, children }: any) => (
     <div className="border border-gray-100 mb-4">
       <div className="bg-black px-3 py-1.5">
-        <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc914]" style={{ fontFamily: "Michroma, sans-serif" }}>
+        <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812]" style={{ fontFamily: "Michroma, sans-serif" }}>
           {title}
         </p>
       </div>
-      <div className="p-4 grid grid-cols-2 gap-3">{children}</div>
+      <div className="p-3 grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-1">{children}</div>
     </div>
   );
 
   const StatCard = ({ label, value, unit, sub, warn }: any) => (
     <div className={`border p-3 ${warn ? "border-amber-300 bg-amber-50" : "border-gray-100"}`}>
-      <p className="text-[8px] uppercase text-gray-500 tracking-wider">{label}</p>
+      <p className="text-[8px] uppercase text-[#ffc812] tracking-wider">{label}</p>
       <p className="text-xl font-black" style={{ fontFamily: "Michroma, sans-serif" }}>
         {value} <span className="text-sm font-medium text-gray-400">{unit}</span>
       </p>
@@ -357,7 +348,7 @@ export default function FanCalcPanel() {
           {/* Thrust/Speed Curve */}
           <div className="border border-gray-100 mb-4">
             <div className="bg-black px-3 py-1.5 flex items-center justify-between">
-              <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc914]" style={{ fontFamily: "Michroma, sans-serif" }}>
+              <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812]" style={{ fontFamily: "Michroma, sans-serif" }}>
                 Thrust & Drag vs Speed
               </p>
             </div>
@@ -372,7 +363,7 @@ export default function FanCalcPanel() {
                   <Line type="monotone" dataKey="thrust" stroke="#22c55e" strokeWidth={2} name="Thrust" />
                   <Line type="monotone" dataKey="drag" stroke="#ef4444" strokeWidth={2} name="Drag" />
                   <Line type="monotone" dataKey="excess" stroke="#3b82f6" strokeWidth={2} name="Excess" />
-                  <ReferenceLine x={result.cruiseSpeedKph} stroke="#ffc914" strokeDasharray="3 3" label="Cruise" />
+                  <ReferenceLine x={result.cruiseSpeedKph} stroke="#ffc812" strokeDasharray="3 3" label="Cruise" />
                 </LineChart>
               </ResponsiveContainer>
             </div>
@@ -382,7 +373,7 @@ export default function FanCalcPanel() {
           <div className="grid grid-cols-2 gap-4">
             <div className="border border-gray-100">
               <div className="bg-black px-3 py-1.5">
-                <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc914]" style={{ fontFamily: "Michroma, sans-serif" }}>
+                <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812]" style={{ fontFamily: "Michroma, sans-serif" }}>
                   Motor Performance
                 </p>
               </div>
@@ -408,7 +399,7 @@ export default function FanCalcPanel() {
 
             <div className="border border-gray-100">
               <div className="bg-black px-3 py-1.5">
-                <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc914]" style={{ fontFamily: "Michroma, sans-serif" }}>
+                <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812]" style={{ fontFamily: "Michroma, sans-serif" }}>
                   Flight Performance
                 </p>
               </div>

@@ -137,10 +137,10 @@ function Field({
 }) {
   const [showHint, setShowHint] = useState(false);
   return (
-    <div className={`flex flex-col gap-0.5 relative ${className}`}>
-      <div className="flex items-center gap-1">
-        <label className={`text-[9px] tracking-widest uppercase ${warn ? "text-amber-500" : "text-[#808080]"}`}
-               style={{ fontFamily: "Michroma, sans-serif" }} htmlFor={id}>
+    <div className={`flex flex-row items-center gap-2 w-full py-1 relative ${className}`}>
+      <div className="flex items-center gap-1 flex-1 min-w-0">
+        <label className={`text-[9px] tracking-widest uppercase truncate ${warn ? "text-amber-500" : "text-[#ffc812]"}`}
+               style={{ fontFamily: "Michroma, sans-serif" }} htmlFor={id} title={label}>
           {label}
         </label>
         {hint && (
@@ -148,24 +148,26 @@ function Field({
             type="button"
             onMouseEnter={() => setShowHint(true)}
             onMouseLeave={() => setShowHint(false)}
-            className="w-3 h-3 rounded-full bg-gray-200 text-[7px] text-gray-500 flex items-center justify-center flex-shrink-0 hover:bg-[#ffc914] hover:text-black transition-colors"
+            className="w-3 h-3 rounded-full bg-gray-200 text-[7px] text-gray-500 flex items-center justify-center flex-shrink-0 hover:bg-[#ffc812] hover:text-black transition-colors"
           >?</button>
         )}
       </div>
       {showHint && hint && (
-        <div className="absolute top-5 left-0 z-50 bg-black text-[#ffc914] text-[9px] px-2 py-1.5 w-48 leading-relaxed"
+        <div className="absolute top-full left-0 mt-1 z-50 bg-black text-[#ffc812] text-[9px] px-2 py-1.5 w-48 leading-relaxed"
              style={{ fontFamily: "Lexend, sans-serif" }}>
           {hint}
         </div>
       )}
-      <input
-        id={id} type="number" step={step} value={value}
-        onChange={e => onChange(parseFloat(e.target.value) || 0)}
-        className={`border text-[11px] px-2 py-1.5 focus:outline-none transition-colors bg-white ${
-          warn ? "border-amber-400 focus:border-amber-500" : "border-gray-200 focus:border-[#ffc914]"
-        }`}
-        style={{ fontFamily: "Michroma, sans-serif" }}
-      />
+      <div className="w-24 flex-shrink-0">
+        <input
+          id={id} type="number" step={step} value={value}
+          onChange={e => onChange(parseFloat(e.target.value) || 0)}
+          className={`border w-full min-w-0 text-[11px] px-2 py-1 focus:outline-none transition-colors bg-white ${
+            warn ? "border-amber-400 focus:border-amber-500" : "border-gray-200 focus:border-[#ffc812]"
+          }`}
+          style={{ fontFamily: "Michroma, sans-serif" }}
+        />
+      </div>
     </div>
   );
 }
@@ -181,9 +183,9 @@ function CollapsibleSection({
         onClick={() => setOpen(o => !o)}
         className="w-full bg-black px-3 py-2 flex items-center justify-between"
       >
-        <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc914]"
+        <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812]"
            style={{ fontFamily: "Michroma, sans-serif" }}>{title}</p>
-        <span className={`text-[#ffc914] text-[10px] transition-transform ${open ? "rotate-180" : ""}`}>▾</span>
+        <span className={`text-[#ffc812] text-[10px] transition-transform ${open ? "rotate-180" : ""}`}>▾</span>
       </button>
       {open && <div className="p-3 grid grid-cols-2 gap-2">{children}</div>}
     </div>
@@ -193,7 +195,7 @@ function CollapsibleSection({
 function Row({ label, value, warn }: { label: string; value: string; warn?: boolean }) {
   return (
     <tr className="border-b border-gray-50">
-      <td className="py-1.5 pr-3 text-[10px] text-[#808080]" style={{ fontFamily: "Lexend, sans-serif" }}>{label}</td>
+      <td className="py-1.5 pr-3 text-[10px] text-[#ffc812]" style={{ fontFamily: "Lexend, sans-serif" }}>{label}</td>
       <td className={`py-1.5 text-[11px] font-bold text-right ${warn ? "text-amber-500" : "text-black"}`}
           style={{ fontFamily: "Michroma, sans-serif" }}>{value}</td>
     </tr>
@@ -344,15 +346,15 @@ export default function XcopterCalcPanel() {
       {/* ── INPUTS COLUMN ──────────────────────────────────────── */}
       <div className="lg:w-80 xl:w-88 flex-shrink-0">
         {/* Motor preset */}
-        <div className="border border-[#ffc914]/30 bg-[#fffbe6] px-3 py-2.5 mb-2">
-          <label className="text-[9px] tracking-widest uppercase text-[#ffc914] font-bold block mb-1.5"
+        <div className="border border-[#ffc812]/30 bg-[#fffbe6] px-3 py-2.5 mb-2">
+          <label className="text-[9px] tracking-widest uppercase text-[#ffc812] font-bold block mb-1.5"
                  style={{ fontFamily: "Michroma, sans-serif" }}>
             ⚡ Motor Preset (Haemng Series)
           </label>
           <select
             value={selectedPreset}
             onChange={e => applyPreset(e.target.value)}
-            className="w-full border border-[#ffc914]/40 text-[11px] px-2.5 py-1.5 focus:outline-none focus:border-[#ffc914] bg-white"
+            className="w-full border border-[#ffc812]/40 text-[11px] px-2.5 py-1.5 focus:outline-none focus:border-[#ffc812] bg-white"
             style={{ fontFamily: "Michroma, sans-serif" }}
           >
             <option value="">— Select Motor —</option>
@@ -428,7 +430,7 @@ export default function XcopterCalcPanel() {
           </p>
           <button
             onClick={() => exportCSV(result, inputs, correctedHoverFlightMin)}
-            className="flex items-center gap-1.5 border border-gray-200 px-3 py-1.5 text-[9px] tracking-widest uppercase hover:bg-black hover:text-[#ffc914] hover:border-black transition-colors"
+            className="flex items-center gap-1.5 border border-gray-200 px-3 py-1.5 text-[9px] tracking-widest uppercase hover:bg-black hover:text-[#ffc812] hover:border-black transition-colors"
             style={{ fontFamily: "Michroma, sans-serif" }}
           >
             ↓ Export CSV
@@ -440,7 +442,7 @@ export default function XcopterCalcPanel() {
 
         {/* Gauges */}
         <div className="border border-gray-100 p-4 mb-4">
-          <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc914] mb-4"
+          <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812] mb-4"
              style={{ fontFamily: "Michroma, sans-serif" }}>Key Metrics</p>
           <div className="grid grid-cols-3 md:grid-cols-6 gap-3 justify-items-center">
             <GaugeMeter value={result.hover.rpm} max={20000} label="Hover RPM" unit="rpm" yellowAt={0.60} redAt={0.80} />
@@ -474,7 +476,7 @@ export default function XcopterCalcPanel() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
           <div className="border border-gray-100">
             <div className="bg-black px-3 py-1.5">
-              <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc914]"
+              <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812]"
                  style={{ fontFamily: "Michroma, sans-serif" }}>Hover Point</p>
             </div>
             <div className="p-3">
@@ -496,7 +498,7 @@ export default function XcopterCalcPanel() {
 
           <div className="border border-gray-100">
             <div className="bg-black px-3 py-1.5">
-              <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc914]"
+              <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812]"
                  style={{ fontFamily: "Michroma, sans-serif" }}>Maximum</p>
             </div>
             <div className="p-3">
@@ -521,13 +523,13 @@ export default function XcopterCalcPanel() {
         {/* Charts */}
         <div className="border border-gray-100 mb-4">
           <div className="bg-black px-3 py-1.5 flex items-center gap-4">
-            <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc914]"
+            <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812]"
                style={{ fontFamily: "Michroma, sans-serif" }}>Performance Charts</p>
             <div className="flex gap-1 ml-auto">
               {(["throttle", "flighttime", "efficiency"] as const).map(t => (
                 <button key={t} onClick={() => setActiveChart(t)}
                   className={`text-[8px] tracking-widest uppercase px-2 py-0.5 transition-colors ${
-                    activeChart === t ? "bg-[#ffc914] text-black" : "text-white/50 hover:text-white"
+                    activeChart === t ? "bg-[#ffc812] text-black" : "text-white/50 hover:text-white"
                   }`}
                   style={{ fontFamily: "Michroma, sans-serif" }}>
                   {t === "flighttime" ? "flight time" : t}
@@ -544,7 +546,7 @@ export default function XcopterCalcPanel() {
                   <YAxis tick={{ fontSize: 9, fontFamily: "Michroma, sans-serif" }} />
                   <Tooltip contentStyle={TOOLTIP_STYLE} />
                   <Legend wrapperStyle={{ fontSize: 9, fontFamily: "Michroma, sans-serif" }} />
-                  <Line type="monotone" dataKey="Thrust (g)" stroke="#ffc914" strokeWidth={2} dot={{ r: 3 }} />
+                  <Line type="monotone" dataKey="Thrust (g)" stroke="#ffc812" strokeWidth={2} dot={{ r: 3 }} />
                   <Line type="monotone" dataKey="Power (W)" stroke="#111" strokeWidth={2} dot={{ r: 3 }} />
                   <Line type="monotone" dataKey="Current (A)" stroke="#22c55e" strokeWidth={2} dot={{ r: 3 }} />
                 </LineChart>
@@ -554,7 +556,7 @@ export default function XcopterCalcPanel() {
                   <XAxis dataKey="mode" tick={{ fontSize: 9, fontFamily: "Michroma, sans-serif" }} />
                   <YAxis tick={{ fontSize: 9, fontFamily: "Michroma, sans-serif" }} unit=" min" />
                   <Tooltip contentStyle={TOOLTIP_STYLE} />
-                  <Bar dataKey="minutes" fill="#ffc914" radius={[2, 2, 0, 0]} label={{ position: "top", fontSize: 9, fontFamily: "Michroma, sans-serif" }} />
+                  <Bar dataKey="minutes" fill="#ffc812" radius={[2, 2, 0, 0]} label={{ position: "top", fontSize: 9, fontFamily: "Michroma, sans-serif" }} />
                 </BarChart>
               ) : (
                 <ScatterChart margin={{ top: 4, right: 20, left: 0, bottom: 4 }}>
@@ -565,7 +567,7 @@ export default function XcopterCalcPanel() {
                          label={{ value: "W", angle: -90, position: "insideLeft", fontSize: 9 }} />
                   <ZAxis dataKey="eff" range={[30, 400]} name="Efficiency %" />
                   <Tooltip contentStyle={TOOLTIP_STYLE} formatter={(v: number, n: string) => [v, n]} />
-                  <Scatter name="Eff %" data={effMapData} fill="#ffc914" opacity={0.85} />
+                  <Scatter name="Eff %" data={effMapData} fill="#ffc812" opacity={0.85} />
                 </ScatterChart>
               )}
             </ResponsiveContainer>
@@ -580,7 +582,7 @@ export default function XcopterCalcPanel() {
         {/* Throttle curve table */}
         <div className="border border-gray-100">
           <div className="bg-black px-3 py-1.5">
-            <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc914]"
+            <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812]"
                style={{ fontFamily: "Michroma, sans-serif" }}>Throttle Curve (per rotor)</p>
           </div>
           <div className="overflow-x-auto">
@@ -597,7 +599,7 @@ export default function XcopterCalcPanel() {
                   const gW = r.powerW > 0 ? r.thrustG / r.powerW : 0;
                   const isHover = Math.abs(r.throttle - result.hover.throttlePercent) < 5;
                   return (
-                    <tr key={i} className={isHover ? "bg-[#ffc914]/10 font-bold" : i % 2 === 0 ? "bg-white" : "bg-gray-50/50"}>
+                    <tr key={i} className={isHover ? "bg-[#ffc812]/10 font-bold" : i % 2 === 0 ? "bg-white" : "bg-gray-50/50"}>
                       <td className="px-3 py-2">{r.throttle.toFixed(0)}{isHover ? " ← hover" : ""}</td>
                       <td className="px-3 py-2">{r.rpm.toFixed(0)}</td>
                       <td className="px-3 py-2">{r.thrustG.toFixed(0)}</td>
@@ -617,8 +619,8 @@ export default function XcopterCalcPanel() {
         </div>
 
         {/* Environment / summary bar */}
-        <div className="mt-4 flex items-center gap-3 bg-[#ffc914]/5 border border-[#ffc914]/20 px-4 py-2.5">
-          <div className="w-1 h-8 bg-[#ffc914] flex-shrink-0" />
+        <div className="mt-4 flex items-center gap-3 bg-[#ffc812]/5 border border-[#ffc812]/20 px-4 py-2.5">
+          <div className="w-1 h-8 bg-[#ffc812] flex-shrink-0" />
           <p className="text-[10px] text-[#555]" style={{ fontFamily: "Lexend, sans-serif" }}>
             Air density: <strong className="text-black">{result.environment?.airDensityKgm3?.toFixed(4) ?? "—"} kg/m³</strong>
             {" "}· Loaded V: <strong className="text-black">{loadedVoltageV.toFixed(2)} V</strong>

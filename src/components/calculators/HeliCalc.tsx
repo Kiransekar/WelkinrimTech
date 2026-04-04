@@ -5,7 +5,7 @@
 import { useState, useMemo } from "react";
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
-  BarChart, Bar, ReferenceLine,
+  ReferenceLine,
 } from "recharts";
 
 interface Warning { level: "warn" | "danger"; message: string; }
@@ -125,6 +125,11 @@ function deriveWarnings(result: HeliCalcResult, inputs: HeliCalcInput): Warning[
   if (result.flightTimeMin < 3) w.push({ level: "danger", message: `Flight time ${result.flightTimeMin.toFixed(1)} min — extremely short.` });
   else if (result.flightTimeMin < 5) w.push({ level: "warn", message: `Flight time ${result.flightTimeMin.toFixed(1)} min — short.` });
 
+  // Headspeed and governor limits
+  const maxHeadSpeedRpm = (inputs.mainMotorKv * inputs.batteryCells * 3.7) / inputs.gearRatio;
+  if (inputs.headSpeedRpm > maxHeadSpeedRpm) w.push({ level: "danger", message: `Head speed unachievable. Max is ~${maxHeadSpeedRpm.toFixed(0)} RPM.` });
+  else if (inputs.headSpeedRpm > maxHeadSpeedRpm * 0.9) w.push({ level: "warn", message: `Head speed requires >90% throttle. No governor overhead.` });
+
   return w;
 }
 
@@ -139,14 +144,6 @@ function calculateHeli(input: HeliCalcInput): HeliCalcResult {
   const mainChord = input.mainRotorChordMm / 1000; // m
   const mainArea = Math.PI * mainRadius * mainRadius;
   const mainBladeArea = input.mainRotorBlades * mainChord * mainRadius;
-  const mainSolidity = mainBladeArea / mainArea;
-
-  // Tail rotor geometry
-  const tailRadius = input.tailRotorDiameterMm / 2000;
-  const tailChord = input.tailRotorChordMm / 1000;
-  const tailArea = Math.PI * tailRadius * tailRadius;
-  const tailBladeArea = input.tailRotorBlades * tailChord * tailRadius;
-  const tailSolidity = tailBladeArea / tailArea;
 
   // Disc loading
   const discLoading = input.heliWeightG / (mainArea * 100); // g/dm²
@@ -160,16 +157,18 @@ function calculateHeli(input: HeliCalcInput): HeliCalcResult {
   const tailRpm = mainRpm * input.gearRatio / input.tailGearRatio;
   const tailTipSpeed = (Math.PI * input.tailRotorDiameterMm * tailRpm) / 60000;
 
-  // Hover power (momentum theory + induced power factor)
+  // Induced power factor (1.15)
   const weightN = input.heliWeightG / 1000 * 9.81;
-  const inducedPowerFactor = 1.15; // typical for helicopters
-  const hoverPowerW = inducedPowerFactor * weightN * Math.sqrt(weightN / (2 * rho * mainArea));
+  const inducedPowerFactor = 1.15;
+  const inducedPowerW = inducedPowerFactor * weightN * Math.sqrt(weightN / (2 * rho * mainArea));
 
-  // Profile power (blade drag)
-  const profilePowerW = 0.5 * rho * mainSolidity * mainArea * Math.pow(mainTipSpeed, 3) * 0.012; // Cd ~0.012
+  // Profile power: N_blades * (rho / 8) * Cd0 * c * (wR)^3 * R
+  const cd0 = 0.012;
+  const profilePowerW = input.mainRotorBlades * (rho / 8) * cd0 * mainChord * Math.pow(mainTipSpeed, 3) * mainRadius;
 
   // Total main rotor power
-  const mainPowerW = hoverPowerW + profilePowerW;
+  const hoverPowerW = inducedPowerW + profilePowerW;
+  const mainPowerW = hoverPowerW;
 
   // Tail rotor power (approx 10-15% of main for torque compensation)
   const tailTorqueFraction = 0.12;
@@ -177,8 +176,6 @@ function calculateHeli(input: HeliCalcInput): HeliCalcResult {
 
   // Main motor calculations
   const batteryVoltage = input.batteryCells * 3.7;
-  const mainMotorRpmNoLoad = input.mainMotorKv * batteryVoltage;
-  const mainMotorRpmLoaded = mainRpm * input.gearRatio;
 
   // Estimate main motor current
   const mainTorque = mainPowerW / (mainRpm * 2 * Math.PI / 60);
@@ -187,7 +184,6 @@ function calculateHeli(input: HeliCalcInput): HeliCalcResult {
   const mainMotorEfficiency = ((mainPowerW + mainMotorLossW) / batteryVoltage / mainMotorCurrent) * 100;
 
   // Tail motor calculations
-  const tailMotorRpmNoLoad = input.tailMotorKv * batteryVoltage;
   const tailTorque = tailPowerW / (tailRpm * 2 * Math.PI / 60);
   const tailMotorCurrent = (tailPowerW / batteryVoltage) + input.tailMotorIo;
   const tailMotorLossW = tailMotorCurrent * tailMotorCurrent * (input.tailMotorRmMohm / 1000);
@@ -227,7 +223,6 @@ function calculateHeli(input: HeliCalcInput): HeliCalcResult {
 
 export default function HeliCalcPanel() {
   const [inputs, setInputs] = useState<HeliCalcInput>(DEFAULTS);
-  const [showChart, setShowChart] = useState("power");
 
   const result = useMemo(() => calculateHeli(inputs), [inputs]);
   const warnings = useMemo(() => deriveWarnings(result, inputs), [result, inputs]);
@@ -256,9 +251,9 @@ export default function HeliCalcPanel() {
   };
 
   const Field = ({ label, value, onChange, step = 1, min, max, unit, hint }: any) => (
-    <div className="flex flex-col gap-1">
-      <label className="text-[9px] uppercase text-gray-500 tracking-wider">{label}</label>
-      <div className="flex items-center gap-2">
+    <div className="flex flex-row items-center gap-2 w-full py-1">
+      <label className="text-[9px] uppercase text-[#ffc812] tracking-wider flex-1 truncate" title={hint || label}>{label}</label>
+      <div className="flex items-center gap-1 w-24">
         <input
           type="number"
           value={value}
@@ -266,29 +261,28 @@ export default function HeliCalcPanel() {
           step={step}
           min={min}
           max={max}
-          className="flex-1 border border-gray-200 px-2 py-1.5 text-sm focus:outline-none focus:border-[#ffc914]"
+          className="flex-1 w-full min-w-0 border border-gray-200 px-2 py-1 text-[11px] focus:outline-none focus:border-[#ffc812]"
           style={{ fontFamily: "Michroma, sans-serif" }}
         />
-        <span className="text-xs text-gray-400 w-10">{unit}</span>
+        {unit && <span className="text-[10px] text-gray-400 w-6">{unit}</span>}
       </div>
-      {hint && <p className="text-[9px] text-gray-400">{hint}</p>}
     </div>
   );
 
   const Section = ({ title, children }: any) => (
     <div className="border border-gray-100 mb-4">
       <div className="bg-black px-3 py-1.5">
-        <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc914]" style={{ fontFamily: "Michroma, sans-serif" }}>
+        <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812]" style={{ fontFamily: "Michroma, sans-serif" }}>
           {title}
         </p>
       </div>
-      <div className="p-4 grid grid-cols-2 gap-3">{children}</div>
+      <div className="p-3 grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-1">{children}</div>
     </div>
   );
 
   const StatCard = ({ label, value, unit, sub, warn }: any) => (
     <div className={`border p-3 ${warn ? "border-amber-300 bg-amber-50" : "border-gray-100"}`}>
-      <p className="text-[8px] uppercase text-gray-500 tracking-wider">{label}</p>
+      <p className="text-[8px] uppercase text-[#ffc812] tracking-wider">{label}</p>
       <p className="text-lg font-black" style={{ fontFamily: "Michroma, sans-serif" }}>
         {value} <span className="text-sm font-medium text-gray-400">{unit}</span>
       </p>
@@ -363,7 +357,7 @@ export default function HeliCalcPanel() {
           {/* Power curve */}
           <div className="border border-gray-100 mb-4">
             <div className="bg-black px-3 py-1.5 flex items-center justify-between">
-              <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc914]" style={{ fontFamily: "Michroma, sans-serif" }}>
+              <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812]" style={{ fontFamily: "Michroma, sans-serif" }}>
                 Power & Current vs Collective Pitch
               </p>
             </div>
@@ -378,7 +372,7 @@ export default function HeliCalcPanel() {
                   <Legend wrapperStyle={{ fontSize: 9 }} />
                   <Line yAxisId="left" type="monotone" dataKey="power" stroke="#ef4444" strokeWidth={2} name="Power" />
                   <Line yAxisId="right" type="monotone" dataKey="current" stroke="#3b82f6" strokeWidth={2} name="Current" />
-                  <ReferenceLine x={inputs.collectivePitchDeg} stroke="#ffc914" strokeDasharray="3 3" label="Current" yAxisId="left" />
+                  <ReferenceLine x={inputs.collectivePitchDeg} stroke="#ffc812" strokeDasharray="3 3" label="Current" yAxisId="left" />
                 </LineChart>
               </ResponsiveContainer>
             </div>
@@ -388,7 +382,7 @@ export default function HeliCalcPanel() {
           <div className="grid grid-cols-2 gap-4">
             <div className="border border-gray-100">
               <div className="bg-black px-3 py-1.5">
-                <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc914]" style={{ fontFamily: "Michroma, sans-serif" }}>
+                <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812]" style={{ fontFamily: "Michroma, sans-serif" }}>
                   Main Rotor
                 </p>
               </div>
@@ -418,7 +412,7 @@ export default function HeliCalcPanel() {
 
             <div className="border border-gray-100">
               <div className="bg-black px-3 py-1.5">
-                <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc914]" style={{ fontFamily: "Michroma, sans-serif" }}>
+                <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812]" style={{ fontFamily: "Michroma, sans-serif" }}>
                   Tail Rotor
                 </p>
               </div>

@@ -29,7 +29,7 @@ export default function GaugeMeter({
   const valueColor = actualFraction < yellowAt
     ? "#22c55e"
     : actualFraction < redAt
-      ? "#ffc914"
+      ? "#ffc812"
       : "#ef4444";
 
   // Format the actual value for display

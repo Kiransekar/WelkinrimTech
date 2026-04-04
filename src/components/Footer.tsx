@@ -35,7 +35,7 @@ export default function Footer() {
               href="https://www.linkedin.com/company/welkinrimtechnologies/posts/?feedView=all"
               target="_blank"
               rel="noopener noreferrer"
-              className="w-8 h-8 border border-white/10 hover:border-[#ffc914] hover:text-[#ffc914] flex items-center justify-center text-white/50 transition-all duration-200 group"
+              className="w-8 h-8 border border-white/10 hover:border-[#ffc812] hover:text-[#ffc812] flex items-center justify-center text-white/50 transition-all duration-200 group"
             >
               <svg 
                 width="14" 
@@ -46,7 +46,7 @@ export default function Footer() {
                 strokeWidth="2" 
                 strokeLinecap="round" 
                 strokeLinejoin="round"
-                className="group-hover:stroke-[#ffc914]"
+                className="group-hover:stroke-[#ffc812]"
               >
                 <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
                 <rect x="2" y="9" width="4" height="12"></rect>
@@ -58,7 +58,7 @@ export default function Footer() {
 
         {/* Navigation */}
         <div>
-          <div className="text-[10px] tracking-[0.3em] uppercase text-[#ffc914] mb-3 md:mb-4" style={{ fontFamily: 'Michroma, sans-serif' }}>
+          <div className="text-[10px] tracking-[0.3em] uppercase text-[#ffc812] mb-3 md:mb-4" style={{ fontFamily: 'Michroma, sans-serif' }}>
             Navigation
           </div>
           <nav className="flex flex-col gap-2">
@@ -66,7 +66,7 @@ export default function Footer() {
               <button
                 key={link.label}
                 onClick={() => handleNav(link.href)}
-                className="text-left text-xs text-white/60 hover:text-[#ffc914] transition-colors duration-200 uppercase tracking-widest"
+                className="text-left text-xs text-white/60 hover:text-[#ffc812] transition-colors duration-200 uppercase tracking-widest"
                 style={{ fontFamily: 'Michroma, sans-serif' }}
               >
                 {link.label}
@@ -77,7 +77,7 @@ export default function Footer() {
 
         {/* Industries */}
         <div>
-          <div className="text-[10px] tracking-[0.3em] uppercase text-[#ffc914] mb-3 md:mb-4" style={{ fontFamily: 'Michroma, sans-serif' }}>
+          <div className="text-[10px] tracking-[0.3em] uppercase text-[#ffc812] mb-3 md:mb-4" style={{ fontFamily: 'Michroma, sans-serif' }}>
             Industries
           </div>
           <div className="flex flex-col gap-2">
@@ -91,7 +91,7 @@ export default function Footer() {
 
         {/* Contact */}
         <div>
-          <div className="text-[10px] tracking-[0.3em] uppercase text-[#ffc914] mb-3 md:mb-4" style={{ fontFamily: 'Michroma, sans-serif' }}>
+          <div className="text-[10px] tracking-[0.3em] uppercase text-[#ffc812] mb-3 md:mb-4" style={{ fontFamily: 'Michroma, sans-serif' }}>
             Contact
           </div>
           <div className="flex flex-col gap-3 text-xs text-white/60" style={{ fontFamily: 'Lexend, sans-serif' }}>
@@ -114,11 +114,11 @@ export default function Footer() {
             © {new Date().getFullYear()} Welkinrim Technologies Pvt. Ltd. All rights reserved.
           </div>
           <div className="flex items-center gap-1">
-            <div className="h-px w-8 bg-[#ffc914]/40" />
-            <span className="text-[10px] text-[#ffc914]/60 uppercase tracking-widest px-2" style={{ fontFamily: 'Michroma, sans-serif' }}>
+            <div className="h-px w-8 bg-[#ffc812]/40" />
+            <span className="text-[10px] text-[#ffc812]/60 uppercase tracking-widest px-2" style={{ fontFamily: 'Michroma, sans-serif' }}>
               Precision Electric Propulsion
             </span>
-            <div className="h-px w-8 bg-[#ffc914]/40" />
+            <div className="h-px w-8 bg-[#ffc812]/40" />
           </div>
         </div>
       </div>

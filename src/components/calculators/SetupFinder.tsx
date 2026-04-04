@@ -26,7 +26,8 @@ const DEFAULTS = {
   motorIo: 1.2,
   motorRmMohm: 35,
   motorMaxPowerW: 800,
-  targetThrustG: 2500,
+  mission: "sport" as "sport" | "racer" | "aerobatic" | "3d" | "scale" | "glider" | "glider_tow",
+  gliderTowWeightG: 1000, // Only used if mission === "glider_tow"
   minFlightTimeMin: 10,
   maxThrottleHover: 55,
 };
@@ -39,10 +40,10 @@ function Field({
 }) {
   const [showHint, setShowHint] = useState(false);
   return (
-    <div className={`flex flex-col gap-0.5 relative ${className}`}>
-      <div className="flex items-center gap-1">
-        <label className="text-[9px] tracking-widest uppercase text-[#808080]"
-               style={{ fontFamily: "Michroma, sans-serif" }} htmlFor={id}>
+    <div className={`flex flex-row items-center gap-2 w-full py-1 relative ${className}`}>
+      <div className="flex items-center gap-1 flex-1 min-w-0">
+        <label className="text-[9px] tracking-widest uppercase text-[#ffc812] truncate"
+               style={{ fontFamily: "Michroma, sans-serif" }} htmlFor={id} title={label}>
           {label}
         </label>
         {hint && (
@@ -50,22 +51,24 @@ function Field({
             type="button"
             onMouseEnter={() => setShowHint(true)}
             onMouseLeave={() => setShowHint(false)}
-            className="w-3 h-3 rounded-full bg-gray-200 text-[7px] text-gray-500 flex items-center justify-center flex-shrink-0 hover:bg-[#ffc914] hover:text-black transition-colors"
+            className="w-3 h-3 rounded-full bg-gray-200 text-[7px] text-gray-500 flex items-center justify-center flex-shrink-0 hover:bg-[#ffc812] hover:text-black transition-colors"
           >?</button>
         )}
       </div>
       {showHint && hint && (
-        <div className="absolute top-5 left-0 z-50 bg-black text-[#ffc914] text-[9px] px-2 py-1.5 w-48 leading-relaxed"
+        <div className="absolute top-full left-0 mt-1 z-50 bg-black text-[#ffc812] text-[9px] px-2 py-1.5 w-48 leading-relaxed"
              style={{ fontFamily: "Lexend, sans-serif" }}>
           {hint}
         </div>
       )}
-      <input
-        id={id} type="number" step={step} value={value}
-        onChange={e => onChange(parseFloat(e.target.value) || 0)}
-        className="border border-gray-200 text-[11px] px-2 py-1.5 focus:outline-none focus:border-[#ffc914] transition-colors bg-white"
-        style={{ fontFamily: "Michroma, sans-serif" }}
-      />
+      <div className="w-24 flex-shrink-0">
+        <input
+          id={id} type="number" step={step} value={value}
+          onChange={e => onChange(parseFloat(e.target.value) || 0)}
+          className="w-full min-w-0 border border-gray-200 text-[11px] px-2 py-1 focus:outline-none focus:border-[#ffc812] transition-colors bg-white"
+          style={{ fontFamily: "Michroma, sans-serif" }}
+        />
+      </div>
     </div>
   );
 }
@@ -74,7 +77,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
   return (
     <div className="border border-gray-100 mb-3">
       <div className="bg-black px-3 py-1.5">
-        <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc914]"
+        <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812]"
            style={{ fontFamily: "Michroma, sans-serif" }}>{title}</p>
       </div>
       <div className="p-3 grid grid-cols-2 gap-2">{children}</div>
@@ -189,11 +192,31 @@ export default function SetupFinder() {
         score -= dangerCount * 30;
         score -= warnings.filter(w => w.level === "warn").length * 10;
 
-        // Thrust target bonus
-        const thrustRatio = result.propeller.staticThrustG / inputs.targetThrustG;
-        if (thrustRatio >= 0.9 && thrustRatio <= 1.5) score += 20;
-        else if (thrustRatio < 0.9) score -= (0.9 - thrustRatio) * 50;
-        else score -= 10;
+        // Mission-based rules (Section 8.1)
+        const totalWeight = inputs.mission === "glider_tow" ? inputs.modelWeightG + inputs.gliderTowWeightG : inputs.modelWeightG;
+        const thrustRatio = result.propeller.staticThrustG / totalWeight;
+        const pitchSpeed = result.propeller.pitchSpeedKmh;
+        
+        let requiredThrustRatio = 0.5;
+        let requiredPitchSpeed = 60; // Approximate minimums based on 30km/h stall
+        
+        switch (inputs.mission) {
+          case "sport": requiredThrustRatio = 0.5; requiredPitchSpeed = 70; break;
+          case "racer": requiredThrustRatio = 0.8; requiredPitchSpeed = 150; break;
+          case "aerobatic": requiredThrustRatio = 1.0; requiredPitchSpeed = 80; break;
+          case "3d": requiredThrustRatio = 1.5; requiredPitchSpeed = 50; break;
+          case "scale": requiredThrustRatio = 0.8; requiredPitchSpeed = 65; break;
+          case "glider": requiredThrustRatio = 0.5; requiredPitchSpeed = 45; break;
+          case "glider_tow": requiredThrustRatio = 0.8; requiredPitchSpeed = 70; break;
+        }
+
+        // Thrust scoring
+        if (thrustRatio >= requiredThrustRatio) score += 20;
+        else score -= (requiredThrustRatio - thrustRatio) * 100;
+        
+        // Pitch speed scoring
+        if (pitchSpeed >= requiredPitchSpeed) score += 15;
+        else score -= (requiredPitchSpeed - pitchSpeed) * 2;
 
         // Flight time bonus
         if (result.battery.flightTimeMin >= inputs.minFlightTimeMin) score += 15;
@@ -245,7 +268,7 @@ export default function SetupFinder() {
             <select
               value={selectedPreset}
               onChange={e => applyPreset(e.target.value)}
-              className="w-full border-2 border-[#ffc914]/40 text-[12px] px-3 py-2 focus:outline-none focus:border-[#ffc914] transition-colors bg-[#fffbe6] font-medium"
+              className="w-full border-2 border-[#ffc812]/40 text-[12px] px-3 py-2 focus:outline-none focus:border-[#ffc812] transition-colors bg-[#fffbe6] font-medium"
               style={{ fontFamily: "Michroma, sans-serif" }}
             >
               <option value="">-- Select Haemng Motor --</option>
@@ -260,6 +283,28 @@ export default function SetupFinder() {
           <Field label="Weight (g)" id="mw" value={inputs.modelWeightG} onChange={set("modelWeightG")}
                  hint="Total aircraft weight including battery" />
           <Field label="# Motors" id="nm" value={inputs.numMotors} onChange={set("numMotors")} step="1" />
+          <div className="col-span-2 mt-1 relative">
+            <label className="text-[9px] tracking-widest uppercase text-[#808080] mb-1 block" style={{ fontFamily: "Michroma, sans-serif" }}>
+              Mission (Factors)
+            </label>
+            <select
+              value={inputs.mission}
+              onChange={(e) => setInputs(prev => ({ ...prev, mission: e.target.value as any }))}
+              className="w-full border border-gray-200 text-[11px] px-2 py-1.5 focus:outline-none focus:border-[#ffc812] bg-white transition-colors"
+              style={{ fontFamily: "Michroma, sans-serif" }}
+            >
+              <option value="sport">Trainer / Sport</option>
+              <option value="racer">Racer</option>
+              <option value="aerobatic">Aerobatic</option>
+              <option value="3d">3D / Hover</option>
+              <option value="scale">Scale</option>
+              <option value="glider">Glider</option>
+              <option value="glider_tow">Glider Tow</option>
+            </select>
+          </div>
+          {inputs.mission === "glider_tow" && (
+            <Field label="Tow Glider Weight (g)" id="towWeight" value={inputs.gliderTowWeightG} onChange={set("gliderTowWeightG")} className="col-span-2" />
+          )}
         </Section>
 
         <Section title="Environment">
@@ -283,8 +328,6 @@ export default function SetupFinder() {
         </Section>
 
         <Section title="Targets">
-          <Field label="Target Thrust (g)" id="tt" value={inputs.targetThrustG} onChange={set("targetThrustG")}
-                 hint="Desired static thrust for your aircraft" />
           <Field label="Min Flight Time (min)" id="mft" value={inputs.minFlightTimeMin} onChange={set("minFlightTimeMin")} />
           <Field label="Max Hover Throttle (%)" id="mht" value={inputs.maxThrottleHover} onChange={set("maxThrottleHover")}
                  hint="Maximum throttle for stable hover" />
@@ -296,7 +339,7 @@ export default function SetupFinder() {
       {/* Results */}
       <div className="flex-1 min-w-0">
         <div className="border border-gray-100 p-4 mb-5">
-          <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc914] mb-4"
+          <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812] mb-4"
              style={{ fontFamily: "Michroma, sans-serif" }}>
             Top Propeller Matches ({propResults.length} tested)
           </p>
@@ -306,10 +349,10 @@ export default function SetupFinder() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
               {propResults.slice(0, 9).map((r, i) => (
-                <div key={r.prop.id} className={`border-2 rounded-lg p-3 ${i === 0 ? 'border-[#ffc914] bg-[#fffbe6]' : 'border-gray-200'}`}>
+                <div key={r.prop.id} className={`border-2 rounded-lg p-3 ${i === 0 ? 'border-[#ffc812] bg-[#fffbe6]' : 'border-gray-200'}`}>
                   {i === 0 && (
-                    <div className="text-[8px] tracking-widest uppercase text-[#ffc914] mb-1 font-bold"
-                         style={{ fontFamily: "Michroma, sans-serif" }}>★ Best Match</div>
+                    <div className="text-[8px] tracking-widest uppercase text-[#ffc812] mb-1 font-bold"
+                         style={{ fontFamily: "Michroma, sans-serif" }}>Best Match</div>
                   )}
                   <p className="text-sm font-bold" style={{ fontFamily: "Michroma, sans-serif" }}>
                     {r.prop.brand} {r.prop.model}
@@ -332,14 +375,14 @@ export default function SetupFinder() {
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-500">Score:</span>
-                      <span className="font-bold text-[#ffc914]">{r.score.toFixed(0)}</span>
+                      <span className="font-bold text-[#ffc812]">{r.score.toFixed(0)}</span>
                     </div>
                   </div>
                   {r.warnings.length > 0 && (
                     <div className="mt-2 space-y-0.5">
                       {r.warnings.slice(0, 2).map((w, wi) => (
                         <p key={wi} className={`text-[9px] ${w.level === "danger" ? "text-red-500" : "text-amber-500"}`}
-                           style={{ fontFamily: "Lexend, sans-serif" }}>⚠ {w.message}</p>
+                           style={{ fontFamily: "Lexend, sans-serif" }}>{w.message}</p>
                       ))}
                     </div>
                   )}
@@ -353,7 +396,7 @@ export default function SetupFinder() {
         {propResults.length > 0 && (
           <div className="border border-gray-100 mb-5">
             <div className="bg-black px-3 py-1.5">
-              <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc914]"
+              <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812]"
                  style={{ fontFamily: "Michroma, sans-serif" }}>
                 Propeller Performance Map
               </p>
@@ -371,7 +414,7 @@ export default function SetupFinder() {
                            cursor={{ strokeDasharray: "3 3" }}
                            itemStyle={{ fontFamily: "Michroma, sans-serif", fontSize: 9 }} />
                   <Legend wrapperStyle={{ fontSize: 9, fontFamily: "Michroma, sans-serif" }} />
-                  <Scatter name="Props" data={scatterData} fill="#ffc914" line={{ strokeWidth: 0 }} />
+                  <Scatter name="Props" data={scatterData} fill="#ffc812" line={{ strokeWidth: 0 }} />
                 </ScatterChart>
               </ResponsiveContainer>
             </div>
@@ -382,7 +425,7 @@ export default function SetupFinder() {
         {propResults.length > 0 && (
           <div className="border border-gray-100">
             <div className="bg-black px-3 py-1.5">
-              <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc914]"
+              <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812]"
                  style={{ fontFamily: "Michroma, sans-serif" }}>
                 All Propeller Results
               </p>
@@ -406,11 +449,11 @@ export default function SetupFinder() {
                       <td className="px-3 py-2 text-right">{r.thrustG.toFixed(0)}</td>
                       <td className="px-3 py-2 text-right">{r.flightTimeMin.toFixed(1)}</td>
                       <td className="px-3 py-2 text-right">{r.efficiency.toFixed(1)}</td>
-                      <td className="px-3 py-2 text-right font-bold text-[#ffc914]">{r.score.toFixed(0)}</td>
+                      <td className="px-3 py-2 text-right font-bold text-[#ffc812]">{r.score.toFixed(0)}</td>
                       <td className="px-3 py-2">
                         {r.warnings.map((w, wi) => (
                           <span key={wi} className={`mr-2 ${w.level === "danger" ? "text-red-500" : "text-amber-500"}`}>
-                            {w.level === "danger" ? "⛔" : "⚠"}
+                            {w.level === "danger" ? "ERROR" : "WARN"}
                           </span>
                         ))}
                       </td>

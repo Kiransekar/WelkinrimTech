@@ -115,7 +115,7 @@ export default function HeroSection() {
               style={{ top: 0 }}
             >
               <h1
-                className="text-[36px] md:text-[56px] lg:text-[72px] xl:text-[7vw] font-bold text-[#ffc914] leading-[1.1]"
+                className="text-[36px] md:text-[56px] lg:text-[72px] xl:text-[7vw] font-bold text-[#ffc812] leading-[1.1]"
                 style={{ fontFamily: 'Michroma, sans-serif' }}
               >
                 {ind.label}
@@ -151,7 +151,7 @@ export default function HeroSection() {
             onClick={() => {
               document.querySelector("#contact")?.scrollIntoView({ behavior: "smooth" });
             }}
-            className="px-6 md:px-8 py-2.5 md:py-3 bg-[#ffc914] text-black text-[10px] md:text-xs tracking-[0.2em] uppercase font-bold hover:bg-[#e0b212] transition-all duration-300 hover:shadow-lg hover:shadow-[#ffc914]/30"
+            className="px-6 md:px-8 py-2.5 md:py-3 bg-[#ffc812] text-black text-[10px] md:text-xs tracking-[0.2em] uppercase font-bold hover:bg-[#e0b212] transition-all duration-300 hover:shadow-lg hover:shadow-[#ffc812]/30"
             style={{ fontFamily: 'Michroma, sans-serif', transform: 'skewX(-10deg)' }}
           >
             <span style={{ display: 'inline-block', transform: 'skewX(10deg)' }}>Get in Touch</span>
@@ -160,7 +160,7 @@ export default function HeroSection() {
             onClick={() => {
               document.querySelector("#technology")?.scrollIntoView({ behavior: "smooth" });
             }}
-            className="px-6 md:px-8 py-2.5 md:py-3 border border-white/50 text-white text-[10px] md:text-xs tracking-[0.2em] uppercase font-medium transition-all duration-300 backdrop-blur-sm hover:border-[#ffc914] hover:text-[#ffc914]"
+            className="px-6 md:px-8 py-2.5 md:py-3 border border-white/50 text-white text-[10px] md:text-xs tracking-[0.2em] uppercase font-medium transition-all duration-300 backdrop-blur-sm hover:border-[#ffc812] hover:text-[#ffc812]"
             style={{ fontFamily: 'Michroma, sans-serif', transform: 'skewX(-10deg)' }}
           >
             <span style={{ display: 'inline-block', transform: 'skewX(10deg)' }}>Our Technology</span>
@@ -180,7 +180,7 @@ export default function HeroSection() {
               onClick={() => goTo(i)}
               className={`text-xs tracking-[0.15em] uppercase font-bold pb-1 transition-all duration-200 ${
                 i === activeIdx
-                  ? "text-white border-b-2 border-[#ffc914]"
+                  ? "text-white border-b-2 border-[#ffc812]"
                   : "text-white/50 hover:text-white border-b-2 border-transparent"
               }`}
               style={{ fontFamily: 'Michroma, sans-serif' }}
@@ -196,7 +196,7 @@ export default function HeroSection() {
 
       {/* Scroll indicator */}
       <div className="absolute bottom-6 md:bottom-8 right-6 md:right-10 z-10 flex flex-col items-center gap-2">
-        <div className="w-px h-10 md:h-12 bg-gradient-to-b from-transparent to-[#ffc914]" />
+        <div className="w-px h-10 md:h-12 bg-gradient-to-b from-transparent to-[#ffc812]" />
         <span className="text-[9px] md:text-[10px] tracking-widest uppercase rotate-90 origin-center translate-y-4 md:translate-y-6 text-white/40" style={{ fontFamily: 'Michroma, sans-serif' }}>Scroll</span>
       </div>
     </section>

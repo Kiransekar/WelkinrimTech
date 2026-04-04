@@ -103,7 +103,7 @@ function ProductCard({ p, expanded, onToggle }: {
              style={{ background: cfg.accent, transform: "skewX(-10deg)" }}>
           <span className="text-[6px] md:text-[8px] font-black tracking-widest uppercase"
                 style={{ fontFamily: "Michroma, sans-serif",
-                         color: p.series === "haemng" ? "#000" : "#fff",
+                         color: cfg.textOnAccent,
                          display: "inline-block", transform: "skewX(10deg)" }}>
             {p.series === "ips" ? "IPS" : p.series === "fc" ? "FC" : p.series.toUpperCase()}
           </span>
@@ -148,11 +148,11 @@ function ProductCard({ p, expanded, onToggle }: {
                style={{ fontFamily: "Michroma, sans-serif" }}>
               Full Specifications
             </p>
-            <div className="border border-gray-100 divide-y divide-gray-50">
+            <div className="grid grid-cols-1 md:grid-cols-2 border-t border-l border-gray-100">
               {p.allSpecs.map(s => (
-                <div key={s.label} className="flex items-center justify-between px-3 py-1.5">
-                  <span className="text-[9px] text-[#808080]" style={{ fontFamily: "Lexend, sans-serif" }}>{s.label}</span>
-                  <span className="text-[9px] font-bold text-black" style={{ fontFamily: "Lexend, sans-serif" }}>{s.value}</span>
+                <div key={s.label} className="flex items-center justify-between px-3 py-1.5 border-b border-r border-gray-100 gap-3">
+                  <span className="text-[9px] font-medium text-black" style={{ fontFamily: "Lexend, sans-serif" }}>{s.label}</span>
+                  <span className="text-[9px] text-[#808080]" style={{ fontFamily: "Lexend, sans-serif" }}>{s.value}</span>
                 </div>
               ))}
             </div>
@@ -168,7 +168,7 @@ function ProductCard({ p, expanded, onToggle }: {
                   <table className="w-full text-[8px]">
                     <thead>
                       <tr className="bg-gray-50">
-                        {["Throttle","Voltage","Power","Thrust","Current"].map(h => (
+                        {["Throttle", "Voltage", "Current", "Power", "Thrust", ...(p.perf[0].speed ? ["Speed"] : []), ...(p.perf[0].efficiency ? ["Efficiency"] : [])].map(h => (
                           <th key={h} className="px-2 py-1.5 text-left text-[#808080] font-medium whitespace-nowrap">{h}</th>
                         ))}
                       </tr>
@@ -178,9 +178,11 @@ function ProductCard({ p, expanded, onToggle }: {
                         <tr key={r.throttle} className="hover:bg-gray-50">
                           <td className="px-2 py-1.5 font-bold text-black">{r.throttle}</td>
                           <td className="px-2 py-1.5 text-[#444]">{r.voltage}</td>
+                          <td className="px-2 py-1.5 text-[#444]">{r.current}</td>
                           <td className="px-2 py-1.5 text-[#444]">{r.power}</td>
                           <td className="px-2 py-1.5 font-bold" style={{ color: cfg.accent }}>{r.thrust}</td>
-                          <td className="px-2 py-1.5 text-[#444]">{r.current}</td>
+                          {r.speed && <td className="px-2 py-1.5 text-[#444]">{r.speed}</td>}
+                          {r.efficiency && <td className="px-2 py-1.5 text-[#444]">{r.efficiency}</td>}
                         </tr>
                       ))}
                     </tbody>
@@ -208,7 +210,7 @@ function ProductCard({ p, expanded, onToggle }: {
             className="flex-1 py-2 text-[9px] tracking-widest uppercase font-black transition-all duration-200"
             style={{ fontFamily: "Michroma, sans-serif",
                      background: cfg.accent,
-                     color: p.series === "haemng" ? "#000" : "#fff",
+                     color: cfg.textOnAccent,
                      transform: "skewX(-10deg)" }}
           >
             <span style={{ display: "inline-block", transform: "skewX(10deg)" }}>Enquire</span>
@@ -237,7 +239,7 @@ export default function ProductsSection() {
         <div className="mb-12 flex flex-col md:flex-row md:items-end md:justify-between gap-6">
           <div>
             <div className="flex items-center gap-3 mb-3">
-              <div className="h-px w-10 bg-[#ffc914]" />
+              <div className="h-px w-10 bg-[#ffc812]" />
               <span className="text-[#808080] text-[10px] tracking-[0.3em] uppercase"
                     style={{ fontFamily: "Michroma, sans-serif" }}>
                 Product Catalogue
@@ -245,7 +247,7 @@ export default function ProductsSection() {
             </div>
             <h2 className="text-4xl md:text-5xl font-bold text-black leading-tight"
                 style={{ fontFamily: "Michroma, sans-serif" }}>
-              Engineered for<br /><span className="text-[#ffc914]">Every Frontier</span>
+              Engineered for<br /><span className="text-[#ffc812]">Every Frontier</span>
             </h2>
           </div>
           <p className="text-[#808080] text-sm max-w-xs leading-relaxed" style={{ fontFamily: "Lexend, sans-serif" }}>
@@ -262,7 +264,7 @@ export default function ProductsSection() {
               onClick={() => { setActiveTab(tab.id); setExpanded(null); }}
               className={`flex items-center gap-2 px-4 py-2 text-[10px] tracking-widest uppercase font-bold transition-all duration-200 ${
                 activeTab === tab.id
-                  ? "bg-black text-[#ffc914]"
+                  ? "bg-black text-[#ffc812]"
                   : "bg-gray-100 text-[#808080] hover:bg-gray-200 hover:text-black"
               }`}
               style={{ fontFamily: "Michroma, sans-serif", transform: "skewX(-10deg)" }}
@@ -270,7 +272,7 @@ export default function ProductsSection() {
               <span className="inline-flex items-center gap-2" style={{ transform: "skewX(10deg)" }}>
                 {tab.label}
                 <span className={`text-[8px] px-1.5 py-0.5 rounded-sm font-medium ${
-                  activeTab === tab.id ? "bg-[#ffc914] text-black" : "bg-white text-[#808080]"
+                  activeTab === tab.id ? "bg-[#ffc812] text-black" : "bg-white text-[#808080]"
                 }`}>
                   {tab.count}
                 </span>
@@ -341,7 +343,7 @@ export default function ProductsSection() {
         {/* Bottom CTA */}
         <div className="mt-16 bg-black p-8 flex flex-col md:flex-row items-center justify-between gap-6">
           <div>
-            <p className="text-[10px] text-[#ffc914] tracking-[0.3em] uppercase mb-1"
+            <p className="text-[10px] text-[#ffc812] tracking-[0.3em] uppercase mb-1"
                style={{ fontFamily: "Michroma, sans-serif" }}>
               IIT Madras Incubated
             </p>
@@ -355,14 +357,14 @@ export default function ProductsSection() {
           <div className="flex gap-4 flex-shrink-0">
             <button
               onClick={() => document.querySelector("#contact")?.scrollIntoView({ behavior: "smooth" })}
-              className="px-8 py-3 bg-[#ffc914] text-black text-[10px] tracking-widest uppercase font-black hover:bg-[#e0b212] transition-all duration-300 whitespace-nowrap"
+              className="px-8 py-3 bg-[#ffc812] text-black text-[10px] tracking-widest uppercase font-black hover:bg-[#e0b212] transition-all duration-300 whitespace-nowrap"
               style={{ fontFamily: "Michroma, sans-serif", transform: "skewX(-10deg)" }}
             >
               <span style={{ display: "inline-block", transform: "skewX(10deg)" }}>Get in Touch</span>
             </button>
             <button
               onClick={() => document.querySelector("#contact")?.scrollIntoView({ behavior: "smooth" })}
-              className="px-8 py-3 border border-white/20 text-white text-[10px] tracking-widest uppercase hover:border-[#ffc914] hover:text-[#ffc914] transition-all duration-300 whitespace-nowrap"
+              className="px-8 py-3 border border-white/20 text-white text-[10px] tracking-widest uppercase hover:border-[#ffc812] hover:text-[#ffc812] transition-all duration-300 whitespace-nowrap"
               style={{ fontFamily: "Michroma, sans-serif", transform: "skewX(-10deg)" }}
             >
               <span style={{ display: "inline-block", transform: "skewX(10deg)" }}>Download Catalogue</span>

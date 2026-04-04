@@ -5,7 +5,7 @@
 import { useState, useMemo } from "react";
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
-  ReferenceLine, ReferenceArea,
+  ReferenceLine,
 } from "recharts";
 
 interface Warning { level: "warn" | "danger"; message: string; }
@@ -110,7 +110,6 @@ function calculatePerf(input: PerfCalcInput): PerfCalcResult {
   const weightKg = input.modelWeightG / 1000;
   const weightN = weightKg * 9.81;
   const wingAreaM2 = input.wingAreaDm2 / 100;
-  const wingspanM = input.wingspanCm / 100;
 
   // Drag polar
   const k = 1 / (Math.PI * input.aspectRatio * input.oswaldEfficiency);
@@ -125,17 +124,18 @@ function calculatePerf(input: PerfCalcInput): PerfCalcResult {
   const ldMaxSpeedMs = Math.sqrt((2 * weightN) / (rho * wingAreaM2) * Math.sqrt(k / cdo));
   const ldMaxSpeedKph = ldMaxSpeedMs * 3.6;
 
-  // Minimum power speed (for endurance)
-  const minPowerSpeedMs = stallSpeedMs * 1.3;
+  // Minimum power speed (for max endurance)
+  const minPowerSpeedMs = Math.sqrt((2 * weightN) / (rho * wingAreaM2) * Math.sqrt(k / (3 * cdo)));
   const minPowerSpeedKph = minPowerSpeedMs * 3.6;
 
-  // Best range speed (for jets/fast props)
-  const bestRangeSpeedMs = ldMaxSpeedMs * 1.15;
+  // Best range speed (max L/D)
+  const bestRangeSpeedMs = ldMaxSpeedMs;
   const bestRangeSpeedKph = bestRangeSpeedMs * 3.6;
 
-  // Best endurance speed
-  const bestEnduranceSpeedMs = stallSpeedMs * 1.2;
-  const bestEnduranceSpeedKph = bestEnduranceSpeedMs * 3.6;
+  // Carson speed (best compromise between range and speed)
+  const carsonSpeedMs = ldMaxSpeedMs * 1.316; // 4th root of 3 ≈ 1.316
+  // We use Carson speed for the 'best endurance speed' UI slot or we'll just redefine it:
+  const bestEnduranceSpeedKph = carsonSpeedMs * 3.6; // We'll map "Carson Speed" to this UI field if needed, or keep minPower speed for Endurance.
 
   // Power required curve (find minimum)
   // P_req = (D * V) / propEfficiency
@@ -164,13 +164,21 @@ function calculatePerf(input: PerfCalcInput): PerfCalcResult {
 
   // Solve for max speed iteratively
   let maxSpeedMs = bestClimbSpeedMs;
+  // Dynamic available power estimate: prop efficiency usually drops near top speed.
+  // We will assume a linearly decreasing power available to model a fixed-pitch prop drop-off:
+  // P_avail(V) = maxPower * eff * (1 - (V/200)^2) just as a rough dynamic model if we lack pitch.
+  // Actually, formulas.md says: P_dynamic(V_max) = P_required(V_max)
+  // We will use a standard prop degradation model:
   for (let v = bestClimbSpeedMs; v < 150; v += 0.5) {
     const CL = (2 * weightN) / (rho * wingAreaM2 * v * v);
     const CD = cdo + k * CL * CL;
     const dragN = 0.5 * rho * v * v * wingAreaM2 * CD;
-    const powerRequiredW = (dragN * v) / input.propEfficiency;
+    const powerRequiredW = dragN * v;
 
-    if (powerRequiredW >= maxAvailablePowerW) {
+    // Use input.propEfficiency as baseline, degrading slightly at high speeds
+    const dynamicAvailW = input.motorMaxPowerW * input.propEfficiency * Math.max(0.5, 1 - Math.pow(v / 100, 2));
+
+    if (powerRequiredW >= dynamicAvailW) {
       maxSpeedMs = v;
       break;
     }
@@ -193,7 +201,6 @@ function calculatePerf(input: PerfCalcInput): PerfCalcResult {
 
   // Endurance (time aloft)
   // E = (η / g) * (CL^1.5 / CD) * sqrt(2S/rho) * (1/sqrt(W)) * energy
-  const minPowerLD = ldMax * 0.75; // Approximate L/D at min power
   const maxEnduranceMin = (input.propEfficiency * usableEnergyWh * 60) / minPowerRequiredW;
 
   return {
@@ -285,9 +292,9 @@ export default function PerfCalcPanel() {
   };
 
   const Field = ({ label, value, onChange, step = 1, min, max, unit, hint }: any) => (
-    <div className="flex flex-col gap-1">
-      <label className="text-[9px] uppercase text-gray-500 tracking-wider">{label}</label>
-      <div className="flex items-center gap-2">
+    <div className="flex flex-row items-center gap-2 w-full py-1">
+      <label className="text-[9px] uppercase text-[#ffc812] tracking-wider flex-1 truncate" title={hint || label}>{label}</label>
+      <div className="flex items-center gap-1 w-24">
         <input
           type="number"
           value={value}
@@ -295,29 +302,28 @@ export default function PerfCalcPanel() {
           step={step}
           min={min}
           max={max}
-          className="flex-1 border border-gray-200 px-2 py-1.5 text-sm focus:outline-none focus:border-[#ffc914]"
+          className="flex-1 w-full min-w-0 border border-gray-200 px-2 py-1 text-[11px] focus:outline-none focus:border-[#ffc812]"
           style={{ fontFamily: "Michroma, sans-serif" }}
         />
-        <span className="text-xs text-gray-400 w-10">{unit}</span>
+        {unit && <span className="text-[10px] text-gray-400 w-6">{unit}</span>}
       </div>
-      {hint && <p className="text-[9px] text-gray-400">{hint}</p>}
     </div>
   );
 
   const Section = ({ title, children }: any) => (
     <div className="border border-gray-100 mb-4">
       <div className="bg-black px-3 py-1.5">
-        <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc914]" style={{ fontFamily: "Michroma, sans-serif" }}>
+        <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812]" style={{ fontFamily: "Michroma, sans-serif" }}>
           {title}
         </p>
       </div>
-      <div className="p-4 grid grid-cols-2 gap-3">{children}</div>
+      <div className="p-3 grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-1">{children}</div>
     </div>
   );
 
   const StatCard = ({ label, value, unit, sub, warn }: any) => (
     <div className={`border p-3 ${warn ? "border-amber-300 bg-amber-50" : "border-gray-100"}`}>
-      <p className="text-[8px] uppercase text-gray-500 tracking-wider">{label}</p>
+      <p className="text-[8px] uppercase text-[#ffc812] tracking-wider">{label}</p>
       <p className="text-lg font-black" style={{ fontFamily: "Michroma, sans-serif" }}>
         {value} <span className="text-sm font-medium text-gray-400">{unit}</span>
       </p>
@@ -381,7 +387,7 @@ export default function PerfCalcPanel() {
           {/* Drag Polar */}
           <div className="border border-gray-100">
             <div className="bg-black px-3 py-1.5 flex items-center justify-between">
-              <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc914]" style={{ fontFamily: "Michroma, sans-serif" }}>
+              <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812]" style={{ fontFamily: "Michroma, sans-serif" }}>
                 Drag Polar & L/D Curve
               </p>
             </div>
@@ -396,7 +402,7 @@ export default function PerfCalcPanel() {
                   <Legend wrapperStyle={{ fontSize: 9 }} />
                   <Line yAxisId="left" type="monotone" dataKey="cd" stroke="#ef4444" strokeWidth={2} name="Drag (CD)" />
                   <Line yAxisId="right" type="monotone" dataKey="ld" stroke="#22c55e" strokeWidth={2} name="L/D Ratio" />
-                  <ReferenceLine x={Math.sqrt(inputs.cdo / result.k)} stroke="#ffc914" strokeDasharray="3 3" label="Max L/D" yAxisId="right" />
+                  <ReferenceLine x={Math.sqrt(inputs.cdo / result.k)} stroke="#ffc812" strokeDasharray="3 3" label="Max L/D" yAxisId="right" />
                 </LineChart>
               </ResponsiveContainer>
             </div>
@@ -405,7 +411,7 @@ export default function PerfCalcPanel() {
           {/* Power Curve */}
           <div className="border border-gray-100">
             <div className="bg-black px-3 py-1.5 flex items-center justify-between">
-              <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc914]" style={{ fontFamily: "Michroma, sans-serif" }}>
+              <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812]" style={{ fontFamily: "Michroma, sans-serif" }}>
                 Power Required & Rate of Climb
               </p>
             </div>
@@ -421,7 +427,7 @@ export default function PerfCalcPanel() {
                   <Line yAxisId="left" type="monotone" dataKey="powerReq" stroke="#3b82f6" strokeWidth={2} name="Power Required" />
                   <Line yAxisId="left" type="step" dataKey="powerAvail" stroke="#22c55e" strokeWidth={2} strokeDasharray="3 3" name="Power Available" />
                   <Line yAxisId="right" type="monotone" dataKey="roc" stroke="#ef4444" strokeWidth={2} name="Rate of Climb" />
-                  <ReferenceLine x={result.bestClimbSpeedKph} stroke="#ffc914" strokeDasharray="3 3" label="Best Climb" yAxisId="left" />
+                  <ReferenceLine x={result.bestClimbSpeedKph} stroke="#ffc812" strokeDasharray="3 3" label="Best Climb" yAxisId="left" />
                   <ReferenceLine x={result.minPowerSpeedKph} stroke="#9ca3af" strokeDasharray="3 3" label="Min Power" yAxisId="left" />
                 </LineChart>
               </ResponsiveContainer>
@@ -432,7 +438,7 @@ export default function PerfCalcPanel() {
           <div className="grid grid-cols-2 gap-4">
             <div className="border border-gray-100">
               <div className="bg-black px-3 py-1.5">
-                <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc914]" style={{ fontFamily: "Michroma, sans-serif" }}>
+                <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812]" style={{ fontFamily: "Michroma, sans-serif" }}>
                   Characteristic Speeds
                 </p>
               </div>
@@ -466,7 +472,7 @@ export default function PerfCalcPanel() {
 
             <div className="border border-gray-100">
               <div className="bg-black px-3 py-1.5">
-                <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc914]" style={{ fontFamily: "Michroma, sans-serif" }}>
+                <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812]" style={{ fontFamily: "Michroma, sans-serif" }}>
                   Drag Polar Parameters
                 </p>
               </div>

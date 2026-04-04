@@ -44,10 +44,10 @@ function Field({
 }) {
   const [showHint, setShowHint] = useState(false);
   return (
-    <div className={`flex flex-col gap-0.5 relative ${className}`}>
-      <div className="flex items-center gap-1">
-        <label className="text-[9px] tracking-widest uppercase text-[#808080]"
-               style={{ fontFamily: "Michroma, sans-serif" }} htmlFor={id}>
+    <div className={`flex flex-row items-center gap-2 w-full py-1 relative ${className}`}>
+      <div className="flex items-center gap-1 flex-1 min-w-0">
+        <label className="text-[9px] tracking-widest uppercase text-[#ffc812] truncate"
+               style={{ fontFamily: "Michroma, sans-serif" }} htmlFor={id} title={label}>
           {label}
         </label>
         {hint && (
@@ -55,22 +55,24 @@ function Field({
             type="button"
             onMouseEnter={() => setShowHint(true)}
             onMouseLeave={() => setShowHint(false)}
-            className="w-3 h-3 rounded-full bg-gray-200 text-[7px] text-gray-500 flex items-center justify-center flex-shrink-0 hover:bg-[#ffc914] hover:text-black transition-colors"
+            className="w-3 h-3 rounded-full bg-gray-200 text-[7px] text-gray-500 flex items-center justify-center flex-shrink-0 hover:bg-[#ffc812] hover:text-black transition-colors"
           >?</button>
         )}
       </div>
       {showHint && hint && (
-        <div className="absolute top-5 left-0 z-50 bg-black text-[#ffc914] text-[9px] px-2 py-1.5 w-48 leading-relaxed"
+        <div className="absolute top-full left-0 mt-1 z-50 bg-black text-[#ffc812] text-[9px] px-2 py-1.5 w-48 leading-relaxed"
              style={{ fontFamily: "Lexend, sans-serif" }}>
           {hint}
         </div>
       )}
-      <input
-        id={id} type="number" step={step} value={value}
-        onChange={e => onChange(parseFloat(e.target.value) || 0)}
-        className="border border-gray-200 text-[11px] px-2 py-1.5 focus:outline-none focus:border-[#ffc914] transition-colors bg-white"
-        style={{ fontFamily: "Michroma, sans-serif" }}
-      />
+      <div className="w-24 flex-shrink-0">
+        <input
+          id={id} type="number" step={step} value={value}
+          onChange={e => onChange(parseFloat(e.target.value) || 0)}
+          className="w-full min-w-0 border border-gray-200 text-[11px] px-2 py-1 focus:outline-none focus:border-[#ffc812] transition-colors bg-white"
+          style={{ fontFamily: "Michroma, sans-serif" }}
+        />
+      </div>
     </div>
   );
 }
@@ -79,7 +81,7 @@ function Section({ title, children, action }: { title: string; children: React.R
   return (
     <div className="border border-gray-100 mb-3">
       <div className="bg-black px-3 py-1.5 flex items-center justify-between">
-        <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc914]"
+        <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812]"
            style={{ fontFamily: "Michroma, sans-serif" }}>{title}</p>
         {action}
       </div>
@@ -231,9 +233,9 @@ export default function CgCalc() {
         {/* Wing Panels */}
         <div className="border border-gray-100 mb-3">
           <div className="bg-black px-3 py-1.5 flex items-center justify-between">
-            <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc914]"
+            <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812]"
                style={{ fontFamily: "Michroma, sans-serif" }}>Wing Panels</p>
-            <button onClick={addWingPanel} className="text-[9px] bg-[#ffc914] text-black px-2 py-0.5 font-bold"
+            <button onClick={addWingPanel} className="text-[9px] bg-[#ffc812] text-black px-2 py-0.5 font-bold"
                     style={{ fontFamily: "Michroma, sans-serif" }}>+ Add</button>
           </div>
           {wingPanels.map((panel, idx) => (
@@ -276,9 +278,9 @@ export default function CgCalc() {
         {/* Components */}
         <div className="border border-gray-100 mb-3">
           <div className="bg-black px-3 py-1.5 flex items-center justify-between">
-            <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc914]"
+            <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812]"
                style={{ fontFamily: "Michroma, sans-serif" }}>Components</p>
-            <button onClick={addComponent} className="text-[9px] bg-[#ffc914] text-black px-2 py-0.5 font-bold"
+            <button onClick={addComponent} className="text-[9px] bg-[#ffc812] text-black px-2 py-0.5 font-bold"
                     style={{ fontFamily: "Michroma, sans-serif" }}>+ Add</button>
           </div>
           {components.map((comp, idx) => (
@@ -332,23 +334,23 @@ export default function CgCalc() {
         {/* Wing Geometry */}
         <div className="border border-gray-100 mb-5">
           <div className="bg-black px-3 py-1.5">
-            <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc914]" style={{ fontFamily: "Michroma, sans-serif" }}>Wing Geometry</p>
+            <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812]" style={{ fontFamily: "Michroma, sans-serif" }}>Wing Geometry</p>
           </div>
           <div className="p-4 grid grid-cols-2 md:grid-cols-4 gap-4">
             <div>
-              <p className="text-[9px] uppercase text-gray-400" style={{ fontFamily: "Michroma, sans-serif" }}>Wing Area</p>
+              <p className="text-[9px] uppercase text-[#ffc812]" style={{ fontFamily: "Michroma, sans-serif" }}>Wing Area</p>
               <p className="text-lg font-bold" style={{ fontFamily: "Michroma, sans-serif" }}>{wingGeometry.wingAreaDm2.toFixed(1)} dm²</p>
             </div>
             <div>
-              <p className="text-[9px] uppercase text-gray-400" style={{ fontFamily: "Michroma, sans-serif" }}>Mean Aero Chord</p>
+              <p className="text-[9px] uppercase text-[#ffc812]" style={{ fontFamily: "Michroma, sans-serif" }}>Mean Aero Chord</p>
               <p className="text-lg font-bold" style={{ fontFamily: "Michroma, sans-serif" }}>{wingGeometry.mac.toFixed(1)} cm</p>
             </div>
             <div>
-              <p className="text-[9px] uppercase text-gray-400" style={{ fontFamily: "Michroma, sans-serif" }}>Aerodynamic Center</p>
+              <p className="text-[9px] uppercase text-[#ffc812]" style={{ fontFamily: "Michroma, sans-serif" }}>Aerodynamic Center</p>
               <p className="text-lg font-bold" style={{ fontFamily: "Michroma, sans-serif" }}>{wingGeometry.acX.toFixed(1)} cm</p>
             </div>
             <div>
-              <p className="text-[9px] uppercase text-gray-400" style={{ fontFamily: "Michroma, sans-serif" }}>Tail Volume</p>
+              <p className="text-[9px] uppercase text-[#ffc812]" style={{ fontFamily: "Michroma, sans-serif" }}>Tail Volume</p>
               <p className="text-lg font-bold" style={{ fontFamily: "Michroma, sans-serif" }}>{neutralPoint.tailVolume.toFixed(2)}</p>
             </div>
           </div>
@@ -378,7 +380,7 @@ export default function CgCalc() {
         {/* CG Envelope Chart */}
         <div className="border border-gray-100 mb-5">
           <div className="bg-black px-3 py-1.5">
-            <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc914]" style={{ fontFamily: "Michroma, sans-serif" }}>CG Envelope</p>
+            <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812]" style={{ fontFamily: "Michroma, sans-serif" }}>CG Envelope</p>
           </div>
           <div className="p-4">
             <ResponsiveContainer width="100%" height={200}>
@@ -388,8 +390,8 @@ export default function CgCalc() {
                 <YAxis dataKey="name" type="category" tick={{ fontSize: 9, fontFamily: "Michroma, sans-serif" }} width={100} />
                 <Tooltip contentStyle={{ fontSize: 10, fontFamily: "Michroma, sans-serif" }} />
                 <ReferenceLine x={neutralPoint.staticMarginPercent} stroke="#22c55e" strokeWidth={2} label="Current CG" />
-                <ReferenceLine x={10} stroke="#ffc914" strokeWidth={1} strokeDasharray="3 3" />
-                <ReferenceLine x={25} stroke="#ffc914" strokeWidth={1} strokeDasharray="3 3" />
+                <ReferenceLine x={10} stroke="#ffc812" strokeWidth={1} strokeDasharray="3 3" />
+                <ReferenceLine x={25} stroke="#ffc812" strokeWidth={1} strokeDasharray="3 3" />
                 <Bar dataKey="cg" fill="#e5e7eb" radius={[2, 2, 2, 2]} />
               </BarChart>
             </ResponsiveContainer>
@@ -402,7 +404,7 @@ export default function CgCalc() {
         {/* Component Breakdown */}
         <div className="border border-gray-100">
           <div className="bg-black px-3 py-1.5">
-            <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc914]" style={{ fontFamily: "Michroma, sans-serif" }}>Weight Breakdown</p>
+            <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812]" style={{ fontFamily: "Michroma, sans-serif" }}>Weight Breakdown</p>
           </div>
           <table className="w-full text-[10px]" style={{ fontFamily: "Michroma, sans-serif" }}>
             <thead>
@@ -417,7 +419,7 @@ export default function CgCalc() {
             <tbody>
               {wingPanels.map((panel, i) => (
                 <tr key={panel.id} className={i % 2 === 0 ? "bg-white" : "bg-gray-50/50"}>
-                  <td className="px-3 py-2">🛩️ {panel.name}</td>
+                  <td className="px-3 py-2">{panel.name}</td>
                   <td className="px-3 py-2 text-right">{panel.weightG.toFixed(0)}</td>
                   <td className="px-3 py-2 text-right">—</td>
                   <td className="px-3 py-2 text-right">—</td>
@@ -426,14 +428,14 @@ export default function CgCalc() {
               ))}
               {components.map((comp, i) => (
                 <tr key={comp.id} className={i % 2 === 0 ? "bg-white" : "bg-gray-50/50"}>
-                  <td className="px-3 py-2">{comp.type === "motor" ? "⚡" : comp.type === "battery" ? "🔋" : "📦"} {comp.name}</td>
+                  <td className="px-3 py-2">{comp.name}</td>
                   <td className="px-3 py-2 text-right">{comp.weightG.toFixed(0)}</td>
                   <td className="px-3 py-2 text-right">{comp.armCm.toFixed(1)}</td>
                   <td className="px-3 py-2 text-right">{(comp.weightG * comp.armCm).toFixed(0)}</td>
                   <td className="px-3 py-2 text-right">{((comp.weightG / cgCalculation.totalWeight) * 100).toFixed(1)}%</td>
                 </tr>
               ))}
-              <tr className="bg-black text-[#ffc914] font-bold">
+              <tr className="bg-black text-[#ffc812] font-bold">
                 <td className="px-3 py-2">TOTAL</td>
                 <td className="px-3 py-2 text-right">{cgCalculation.totalWeight.toFixed(0)}</td>
                 <td className="px-3 py-2 text-right">—</td>

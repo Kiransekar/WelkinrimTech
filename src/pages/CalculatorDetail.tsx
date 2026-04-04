@@ -22,7 +22,9 @@ import BladeCalc from "@/components/calculators/BladeCalc";
 import FanCalcPanel from "@/components/calculators/FanCalc";
 import HeliCalcPanel from "@/components/calculators/HeliCalc";
 import PerfCalcPanel from "@/components/calculators/PerfCalc";
-import CalcStub from "@/components/calculators/CalcStub";
+import TorqueCalc from "@/components/calculators/TorqueCalc";
+import CarCalc from "@/components/calculators/CarCalc";
+import EvCalc from "@/components/calculators/EvCalc";
 import { CALCULATORS, getCalculatorById } from "@/data/calculators";
 
 // ─── Page-level styles injected once ────────────────────────────────────────
@@ -53,7 +55,7 @@ const PAGE_STYLES = `
     position: absolute;
     bottom: -1px; left: 0; right: 0;
     height: 2px;
-    background: #ffc914;
+    background: #ffc812;
     transform: scaleX(0);
     transform-origin: left;
     transition: transform 0.22s cubic-bezier(0.22,1,0.36,1);
@@ -82,23 +84,9 @@ function injectStyles() {
   document.head.appendChild(el);
 }
 
-// ─── Stub renderer ───────────────────────────────────────────────────────────
-function renderStub(calcId: string) {
-  const calc = getCalculatorById(calcId);
-  if (!calc?.stubDescription) return null;
-  const Icon = calc.icon;
-  return (
-    <CalcStub
-      name={`${calc.label} — ${calc.tag}`}
-      description={calc.stubDescription}
-      icon={<Icon />}
-    />
-  );
-}
-
 // ─── Live dot ────────────────────────────────────────────────────────────────
 function LiveDot({ status }: { status: string }) {
-  const color = status === "live" ? "#22c55e" : "#ffc914";
+  const color = status === "live" ? "#22c55e" : "#ffc812";
   const label = status === "live" ? "Live" : status === "beta" ? "Beta" : "Coming Soon";
   return (
     <div style={{ display: "flex", alignItems: "center", gap: "7px" }}>
@@ -181,7 +169,7 @@ export default function CalculatorDetail() {
                   width: 8,
                   height: 8,
                   borderRadius: "50%",
-                  background: "#ffc914",
+                  background: "#ffc812",
                   display: "inline-block",
                   animation: `cd-pulse-dot 1.2s ease-in-out ${i * 0.2}s infinite`,
                 }}
@@ -237,7 +225,7 @@ export default function CalculatorDetail() {
             style={{
               height: 2,
               width: 40,
-              background: "#ffc914",
+              background: "#ffc812",
               marginBottom: 20,
             }}
           />
@@ -271,7 +259,7 @@ export default function CalculatorDetail() {
                       padding: 0,
                       transition: "color 0.15s",
                     }}
-                    onMouseEnter={e => (e.currentTarget.style.color = "#ffc914")}
+                    onMouseEnter={e => (e.currentTarget.style.color = "#ffc812")}
                     onMouseLeave={e => (e.currentTarget.style.color = "rgba(255,201,20,0.5)")}
                   >
                     {i === 0 && (
@@ -291,7 +279,7 @@ export default function CalculatorDetail() {
                       fontSize: 9,
                       letterSpacing: "0.28em",
                       textTransform: "uppercase",
-                      color: "#ffc914",
+                      color: "#ffc812",
                     }}
                   >
                     {crumb.label}
@@ -325,7 +313,7 @@ export default function CalculatorDetail() {
                 }}
               >
                 Drive{" "}
-                <span style={{ color: "#ffc914" }}>Calculator</span>{" "}
+                <span style={{ color: "#ffc812" }}>Calculator</span>{" "}
                 Suite
               </h1>
               <p
@@ -523,14 +511,14 @@ export default function CalculatorDetail() {
               gap: 10,
               background: "rgba(255,201,20,0.05)",
               border: "1px solid rgba(255,201,20,0.18)",
-              borderLeft: "3px solid #ffc914",
+              borderLeft: "3px solid #ffc812",
               padding: "10px 14px",
               borderRadius: "0 6px 6px 0",
               marginBottom: 28,
             }}
           >
             <svg
-              style={{ width: 14, height: 14, color: "#ffc914", flexShrink: 0, marginTop: 1 }}
+              style={{ width: 14, height: 14, color: "#ffc812", flexShrink: 0, marginTop: 1 }}
               viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
             >
               <circle cx="12" cy="12" r="10" />
@@ -553,6 +541,9 @@ export default function CalculatorDetail() {
           {current.id === "fancalc"       && <FanCalcPanel />}
           {current.id === "helicalc"      && <HeliCalcPanel />}
           {current.id === "perfcalc"      && <PerfCalcPanel />}
+          {current.id === "torquecalc"    && <TorqueCalc />}
+          {current.id === "carcalc"       && <CarCalc />}
+          {current.id === "evcalc"        && <EvCalc />}
 
           {/* ── Info bar */}
           {current.status === "live" && current.inputCount && current.outputCount && (
@@ -635,7 +626,7 @@ export default function CalculatorDetail() {
             left: 0,
             width: "100%",
             height: 2,
-            background: "linear-gradient(90deg, #ffc914 0%, transparent 60%)",
+            background: "linear-gradient(90deg, #ffc812 0%, transparent 60%)",
           }}
         />
 
@@ -658,7 +649,7 @@ export default function CalculatorDetail() {
                 fontSize: 9,
                 letterSpacing: "0.3em",
                 textTransform: "uppercase",
-                color: "#ffc914",
+                color: "#ffc812",
                 marginBottom: 8,
               }}
             >
@@ -698,7 +689,7 @@ export default function CalculatorDetail() {
               fontWeight: 700,
               letterSpacing: "0.24em",
               textTransform: "uppercase",
-              background: "#ffc914",
+              background: "#ffc812",
               color: "#000",
               border: "none",
               padding: "14px 36px",
@@ -713,7 +704,7 @@ export default function CalculatorDetail() {
               e.currentTarget.style.transform = "skewX(-8deg) scale(1.02)";
             }}
             onMouseLeave={e => {
-              e.currentTarget.style.background = "#ffc914";
+              e.currentTarget.style.background = "#ffc812";
               e.currentTarget.style.transform = "skewX(-8deg) scale(1)";
             }}
           >
