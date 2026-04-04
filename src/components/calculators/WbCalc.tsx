@@ -216,7 +216,7 @@ export default function WbCalc() {
           <Field label="Empty CG (cm)" id="ecg" value={emptyCgCm} onChange={setEmptyCgCm}
                  hint="CG location at empty weight" />
           <Field label="Max Gross Weight (g)" id="mgw" value={maxGrossWeightG} onChange={setMaxGrossWeightG}
-                 hint="Maximum certified takeoff weight" />
+                 hint="Maximum tested takeoff weight" />
         </Section>
 
         {/* CG Limits */}

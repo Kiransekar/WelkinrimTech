@@ -11,18 +11,21 @@ const WR = { lat: 12.8365, lng: 79.9212 };
 
 // ─── Neighbour companies (verified Oragadam Industrial Corridor) ──────────────
 const COMPANIES = [
-  { name: "Indospace",      sector: "Industrial Park",      lat: 12.8377241, lng: 79.91005,   km: 1.3 },
-  { name: "Danfoss",        sector: "Power Electronics",    lat: 12.8417965, lng: 79.9164545, km: 2.5 },
-  { name: "Royal Enfield",  sector: "Mobility OEM",         lat: 12.8459775, lng: 79.915967,  km: 2.7 },
-  { name: "Nokia",          sector: "Telecom / 5G",         lat: 12.8506846, lng: 79.9182688, km: 3.6 },
-  { name: "Renault Nissan", sector: "Vehicle Manufacturer", lat: 12.8438592, lng: 79.9215379, km: 3.9 },
-  { name: "Apollo Tyres",   sector: "Auto Components",      lat: 12.8467016, lng: 79.9267561, km: 5.5 },
-  { name: "Daimler India",  sector: "Commercial Vehicles",  lat: 12.8470985, lng: 79.9286826, km: 6.5 },
+  { name: "Indospace",      sector: "Industrial Park",      lat: 12.8377226, lng: 79.9148144, km: 0.7 },
+  { name: "Danfoss",        sector: "Power Electronics",    lat: 12.8462873, lng: 79.9330221, km: 1.7 },
+  { name: "Royal Enfield",  sector: "Mobility OEM",         lat: 12.8459732, lng: 79.9350244, km: 1.8 },
+  { name: "Nokia",          sector: "Telecom / 5G",         lat: 12.8506847, lng: 79.9255661, km: 1.6 },
+  { name: "Renault Nissan", sector: "Vehicle Manufacturer", lat: 12.8457222, lng: 79.9435009, km: 2.6 },
+  { name: "Apollo Tyres",   sector: "Auto Components",      lat: 12.8527308, lng: 79.9449241, km: 3.1 },
+  { name: "Daimler India",  sector: "Commercial Vehicles",  lat: 12.8388173, lng: 79.9476815, km: 2.9 },
+  { name: "XIME Chennai",   sector: "Business School",      lat: 12.8462991, lng: 79.9361221, km: 1.9 },
+  { name: "Komatsu",        sector: "Machinery OEM",        lat: 12.8451262, lng: 79.9297637, km: 1.3 },
 ];
 
 // ─── Custom SVG pin HTML ──────────────────────────────────────────────────────
 function pinSvg(big: boolean) {
   const w = big ? 38 : 26, h = big ? 50 : 36;
+  const color = big ? "#ffc914" : "#000000";
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">
     <filter id="sh${big ? "b" : "s"}" x="-40%" y="-20%" width="180%" height="160%">
       <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="rgba(0,0,0,0.5)"/>
@@ -30,8 +33,8 @@ function pinSvg(big: boolean) {
     <path d="M${w/2} ${h-2} C${w/2} ${h-2} 2 ${h*0.55} 2 ${w*0.45}
              a${w/2-2} ${w/2-2} 0 1 1 ${w-4} 0
              C${w-2} ${w*0.55} ${w/2} ${h-2} ${w/2} ${h-2}Z"
-          fill="#ffc914" filter="url(#sh${big ? "b" : "s"})"/>
-    <circle cx="${w/2}" cy="${w*0.45}" r="${big ? 8 : 5}" fill="#111" opacity="0.9"/>
+          fill="${color}" filter="url(#sh${big ? "b" : "s"})"/>
+    <circle cx="${w/2}" cy="${w*0.45}" r="${big ? 8 : 5}" fill="${big ? "#111" : "#ffc914"}" opacity="0.9"/>
   </svg>`;
 }
 
@@ -263,11 +266,7 @@ export default function LocationMap() {
               At the Heart of<br /><span className="text-[#ffc914]">Industry Giants</span>
             </h2>
           </div>
-          <p className="text-[#808080] text-sm max-w-xs leading-relaxed"
-             style={{ fontFamily: "Lexend, sans-serif" }}>
-            Our facility sits in the Oragadam Industrial Corridor — surrounded by global
-            automotive and technology leaders within a 20 km radius.
-          </p>
+
         </div>
 
         {/* Map block */}
@@ -282,7 +281,7 @@ export default function LocationMap() {
                 <div className="text-[#ffc914] text-5xl font-black" style={{ fontFamily: "Michroma, sans-serif" }}>WR</div>
                 <p className="text-white/60 text-xs text-center max-w-xs" style={{ fontFamily: "Michroma, sans-serif" }}>
                   Welkinrim Technologies<br />
-                  <span className="text-white/30">Oragadam Industrial Corridor, Chennai</span>
+                  <span className="text-white/30">#23, Sujatha nagar, kandigai village, Panruti, Sripermabadur, TN - 631604</span>
                 </p>
                 <a
                   href="https://maps.app.goo.gl/Sd8XkUyzC64aq9pd7"
@@ -305,8 +304,8 @@ export default function LocationMap() {
                  style={{ fontFamily: "Michroma, sans-serif" }}>
                 ORAGADAM
               </p>
-              <p className="text-white/50 text-xs tracking-[0.3em] uppercase mt-0.5"
-                 style={{ fontFamily: "Michroma, sans-serif" }}>India</p>
+              <p className="text-white/50 text-[10px] tracking-[0.3em] uppercase mt-0.5"
+                 style={{ fontFamily: "Michroma, sans-serif" }}>Tamilnadu | India</p>
               <p className="text-white/30 text-[10px] tracking-widest mt-0.5"
                  style={{ fontFamily: "Michroma, sans-serif" }}>
                 12.8365° N &nbsp;/&nbsp; 79.9212° E
@@ -314,15 +313,13 @@ export default function LocationMap() {
             </div>
 
             {/* Reset */}
-            {active && (
-              <button
-                onClick={reset}
-                className="absolute top-3 right-3 z-10 px-3 py-1.5 bg-[#ffc914] text-black text-[10px] tracking-widest uppercase font-bold shadow hover:bg-[#e0b212] transition-colors"
-                style={{ fontFamily: "Michroma, sans-serif", transform: "skewX(-10deg)" }}
-              >
-                <span style={{ display: "inline-block", transform: "skewX(10deg)" }}>← Reset View</span>
-              </button>
-            )}
+            <button
+              onClick={reset}
+              className="absolute top-3 right-3 z-10 px-3 py-1.5 bg-[#ffc914] text-black text-[10px] tracking-widest uppercase font-bold shadow hover:bg-[#e0b212] transition-colors"
+              style={{ fontFamily: "Michroma, sans-serif", transform: "skewX(-10deg)" }}
+            >
+              <span style={{ display: "inline-block", transform: "skewX(10deg)" }}>← Reset View</span>
+            </button>
           </div>
 
           {/* ── Sidebar ── */}

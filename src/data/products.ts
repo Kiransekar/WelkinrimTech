@@ -140,7 +140,7 @@ export const PRODUCTS: Product[] = [
   {
     id: "h-7010",
     series: "haemng", seriesLabel: "Haemng Series",
-    model: "Haemng 7010", name: "7010", tag: "Industrial", application: "UAV / eVTOL",
+    model: "Haemng 7010", name: "7010", tag: "Industrial", application: "UAV/eVTOL",
     keySpecs: [
       { label: "KV Rating",   value: "150 KV"   },
       { label: "Peak Thrust", value: "13 kg"    },
@@ -829,7 +829,7 @@ export const PRODUCTS: Product[] = [
   {
     id: "ips-1",
     series: "ips", seriesLabel: "Integrated Power Systems",
-    model: "Haemng 7010 + F60 12S", name: "IPS-H7010", tag: "12S Integrated", application: "UAV / eVTOL",
+    model: "Haemng 7010 + F60 12S", name: "IPS-H7010", tag: "12S Integrated", application: "UAV/eVTOL",
     keySpecs: [
       { label: "KV Rating",   value: "150 KV"   },
       { label: "Peak Thrust", value: "13 kg"    },

@@ -262,7 +262,7 @@ export default function Navbar() {
 
           <div className="max-w-7xl mx-auto px-4 md:px-6 py-6 md:py-8">
             {/* Segment pills */}
-            <div className="flex items-center gap-2 mb-6 overflow-x-auto scrollbar-hide">
+            <div className="flex items-center gap-2 mb-5 py-1 px-1 overflow-x-auto scrollbar-hide">
               {SEGMENTS.map(seg => (
                 <button
                   key={seg.id}
@@ -313,7 +313,7 @@ export default function Navbar() {
                               <img
                                 src={`${import.meta.env.BASE_URL}${cat.logoSrc}`}
                                 alt={cat.label}
-                                className={`${cat.id === "maelard" ? "h-7" : "h-5.5"} w-auto max-w-[100px] object-contain object-left`}
+                                className={`${cat.id === "maelard" ? "h-4" : "h-7"} w-auto max-w-[120px] object-contain object-left`}
                               />
                             ) : (
                               <p className="text-xs font-bold tracking-wide truncate" style={{ fontFamily: "Michroma, sans-serif" }}>{cat.label}</p>

@@ -3,7 +3,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 const industries = [
   {
     id: "uav",
-    label: "UAV / eVTOL",
+    label: "UAV/eVTOL",
     bg: "/hero-uav-bg.jpeg",
     accent: "Autonomous Aerial Systems",
   },

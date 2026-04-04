@@ -3,11 +3,11 @@ import { useState, useEffect, useRef } from "react";
 const industries = [
   {
     id: "air",
-    label: "UAV / eVTOL",
-    tabLabel: "UAV / eVTOL",
-    fullLabel: "UAV / eVTOL",
+    label: "UAV/eVTOL",
+    tabLabel: "UAV/eVTOL",
+    fullLabel: "UAV/eVTOL",
     tags: ["FLUX DENSITY", "THERMAL", "EFFICIENCY", "STRESS", "COGGING", "FOC"],
-    certification: "JSS 55555 and MIL STD 810 G Certified",
+    testedStatus: "JSS 55555 and MIL STD 810 G Tested",
     metrics: [
       { label: "POWER",           display: "100W to 30kW" },
       { label: "TORQUE",          display: "1 Nm to 100 Nm" },
@@ -15,9 +15,7 @@ const industries = [
       { label: "WEIGHT",          display: "50g to 5kg" },
       { label: "DIAMETER",        display: "30 to 300mm" },
       { label: "TORQUE DENSITY",  display: "20 to 30 Nm/kg" },
-      { label: "PEAK EFFICIENCY", display: "Upto 97%" },
-      { label: "TEMPERATURE",     display: "\u221245\u00B0C to 70\u00B0C" },
-      { label: "POWER DENSITY",   display: "10 to 15 kW/kg" },
+
     ],
   },
   {
@@ -26,7 +24,7 @@ const industries = [
     tabLabel: "MARINE",
     fullLabel: "Marine",
     tags: ["WATERPROOFING", "CORROSION", "EFFICIENCY", "TORQUE", "THERMAL", "SEAL"],
-    certification: "JSS 55555 and MIL STD 810 G to be Certified",
+    testedStatus: "JSS 55555 and MIL STD 810 G to be Tested",
     metrics: [
       { label: "POWER",           display: "100W to 2.5kW" },
       { label: "TORQUE",          display: "1 Nm to 10 Nm" },
@@ -34,9 +32,7 @@ const industries = [
       { label: "WEIGHT",          display: "150g to 5kg" },
       { label: "DIAMETER",        display: "50mm to 300mm" },
       { label: "TORQUE DENSITY",  display: "20 to 30 Nm/kg" },
-      { label: "PEAK EFFICIENCY", display: "Upto 97%" },
-      { label: "TEMPERATURE",     display: "5\u00B0C to 55\u00B0C" },
-      { label: "POWER DENSITY",   display: "10 to 15 kW/kg" },
+
     ],
   },
   {
@@ -45,7 +41,7 @@ const industries = [
     tabLabel: "LAND",
     fullLabel: "Land Vehicles",
     tags: ["TORQUE DENSITY", "THERMAL", "RESPONSE", "VOLTAGE", "RELIABILITY", "VECTOR"],
-    certification: "JSS 55555 and MIL STD 810 G to be Certified",
+    testedStatus: "JSS 55555 and MIL STD 810 G to be Tested",
     metrics: [
       { label: "POWER",           display: "50W to 15kW" },
       { label: "TORQUE",          display: "Upto 60 Nm" },
@@ -53,9 +49,7 @@ const industries = [
       { label: "WEIGHT",          display: "2kg to 20kg" },
       { label: "DIAMETER",        display: "150mm to 300mm" },
       { label: "TORQUE DENSITY",  display: "4 to 8 Nm/kg" },
-      { label: "PEAK EFFICIENCY", display: "Upto 97%" },
-      { label: "TEMPERATURE",     display: "\u221220\u00B0C to 55\u00B0C" },
-      { label: "POWER DENSITY",   display: "8 to 10 kW/kg" },
+
     ],
   },
   {
@@ -64,7 +58,7 @@ const industries = [
     tabLabel: "ROBOTICS",
     fullLabel: "Robotics",
     tags: ["PRECISION", "BACKDRIVABILITY", "BANDWIDTH", "COMPLIANCE", "STIFFNESS", "FOC"],
-    certification: "JSS 55555 and MIL STD 810 G to be Certified",
+    testedStatus: "JSS 55555 and MIL STD 810 G to be Tested",
     metrics: [
       { label: "POWER",           display: "100W to 30kW" },
       { label: "TORQUE",          display: "1 Nm to 100 Nm" },
@@ -72,9 +66,7 @@ const industries = [
       { label: "WEIGHT",          display: "50g to 5kg" },
       { label: "DIAMETER",        display: "30 to 300mm" },
       { label: "TORQUE DENSITY",  display: "20 to 30 Nm/kg" },
-      { label: "PEAK EFFICIENCY", display: "Upto 97%" },
-      { label: "TEMPERATURE",     display: "\u221210\u00B0C to 55\u00B0C" },
-      { label: "POWER DENSITY",   display: "10 to 15 kW/kg" },
+
     ],
   },
 ];
@@ -98,12 +90,12 @@ function MetricCell({
 
   const row = Math.floor(idx / 3);
   const col = idx % 3;
-  const isLastRow = row === 2;
+  const isLastRow = row === 1;
   const isLastCol = col === 2;
 
   return (
     <div
-      className={`flex flex-col justify-center py-1 px-1.5 ${
+      className={`flex flex-col justify-center py-4 px-2 lg:py-6 lg:px-4 ${
         !isLastRow ? "border-b border-black/10" : ""
       } ${!isLastCol ? "border-r border-black/10" : ""}`}
     >
@@ -278,7 +270,7 @@ export default function EngineeringDepth() {
           {/* AIR/WATER label - on top of yellow and motor */}
           <div className="relative z-40 px-4 md:px-6 lg:pl-[200px] xl:pl-[220px] lg:pr-8 xl:pr-10 pt-4 md:pt-6 lg:pt-8">
             <h3
-              className="text-[32px] md:text-[48px] lg:text-[56px] xl:text-[72px] font-black text-black/30 uppercase leading-none"
+              className="text-[32px] md:text-[48px] lg:text-[56px] xl:text-[72px] font-black text-black/30 uppercase leading-none whitespace-nowrap"
               style={{ fontFamily: "Michroma, sans-serif" }}
             >
               {active.label}
@@ -288,16 +280,16 @@ export default function EngineeringDepth() {
           {/* Inner content - metrics grid on top of yellow */}
           <div className="relative z-40 flex flex-col px-4 md:px-6 lg:pl-[200px] xl:pl-[220px] lg:pr-8 xl:pr-10 pb-4 md:pb-6 lg:pb-8">
             <p
-              className="text-xs tracking-[0.25em] text-black/70 font-semibold uppercase mb-4"
+              className="text-xs tracking-[0.25em] text-black/70 font-semibold uppercase mb-4 ml-[2px]"
               style={{ fontFamily: "Michroma, sans-serif" }}
             >
               Product Range
             </p>
 
-            {/* 3×3 Metric grid - smaller cells */}
+            {/* 2×3 Metric grid - larger cells */}
             <div
               key={resetKey}
-              className="grid grid-cols-3 gap-1"
+              className="grid grid-cols-3 gap-2 lg:gap-4"
             >
               {active.metrics.map((metric, i) => (
                 <MetricCell
@@ -315,7 +307,7 @@ export default function EngineeringDepth() {
                 className="text-xs tracking-[0.2em] text-black/30 uppercase text-right"
                 style={{ fontFamily: "Michroma, sans-serif" }}
               >
-                {active.certification}
+                {active.testedStatus}
               </p>
             </div>
           </div>

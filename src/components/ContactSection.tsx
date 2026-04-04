@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-const industries = ["UAV / eVTOL", "Marine", "Land", "Robotics", "Multiple"];
+const industries = ["UAV/eVTOL", "Marine", "Land", "Robotics", "Multiple"];
 
 export default function ContactSection() {
   const [form, setForm] = useState({
@@ -57,21 +57,12 @@ export default function ContactSection() {
                 {
                   icon: (
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.8a19.79 19.79 0 01-3.07-8.67A2 2 0 012 .84h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 8.44a16 16 0 006.29 6.29l1.33-1.33a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 15.92z" />
-                    </svg>
-                  ),
-                  label: "Call Us",
-                  value: "+91 44 XXXX XXXX",
-                },
-                {
-                  icon: (
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                       <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
                       <polyline points="22,6 12,13 2,6" />
                     </svg>
                   ),
                   label: "Email",
-                  value: "info@electroprop.in",
+                  value: "contact@welkinrim.com",
                 },
                 {
                   icon: (
@@ -81,7 +72,7 @@ export default function ContactSection() {
                     </svg>
                   ),
                   label: "Location",
-                  value: "Chennai Industrial Corridor, Tamil Nadu",
+                  value: "#23, Sujatha nagar, kandigai village, Panruti, Sripermabadur, TN - 631604",
                 },
               ].map((item) => (
                 <div key={item.label} className="flex items-start gap-3 md:gap-4 p-2 md:p-3 border border-gray-100 hover:border-[#ffc914]/50 transition-colors duration-200" style={{ transform: 'skewX(-10deg)' }}>
