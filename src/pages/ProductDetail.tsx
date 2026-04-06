@@ -213,6 +213,15 @@ export default function ProductDetail() {
             )}
           </div>
 
+          {/* Motor Wireframe */}
+          <div className="flex items-center justify-center py-4">
+            <img
+              src={`${import.meta.env.BASE_URL}motor-wireframe-${(PRODUCTS.findIndex(p => p.id === product.id) % 3) + 1}.svg`}
+              alt="Motor Wireframe"
+              className="w-full max-w-3xl h-auto opacity-90"
+            />
+          </div>
+
           {/* Performance */}
           {product.perf && product.perf.length > 0 ? (
             <div>
