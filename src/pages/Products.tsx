@@ -1,7 +1,23 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
-import { PRODUCTS, SERIES_CFG } from "@/data/products";
+import { SERIES_CFG } from "@/data/products";
+import { fetchProducts } from "@/lib/supabase";
 import Footer from "@/components/Footer";
+
+type Product = {
+  id: string;
+  series: "haemng" | "maelard" | "esc" | "fc" | "ips";
+  seriesLabel: string;
+  model: string;
+  name: string;
+  tag: string;
+  application: string;
+  keySpecs: { label: string; value: string }[];
+  allSpecs: { label: string; value: string }[];
+  perf?: any[];
+  thumbnailUrl?: string | null;
+  iconUrl?: string | null;
+};
 
 // Hook to get current hash and subscribe to hash changes
 function useHash() {
@@ -16,14 +32,7 @@ function useHash() {
   return hash;
 }
 
-const TABS = [
-  { id: "all",     label: "All",                        count: PRODUCTS.length },
-  { id: "haemng",  label: "Haemng Series",              count: PRODUCTS.filter(p => p.series === "haemng").length },
-  { id: "maelard", label: "Maelard Series",             count: PRODUCTS.filter(p => p.series === "maelard").length },
-  { id: "esc",     label: "ESCs",                       count: PRODUCTS.filter(p => p.series === "esc").length },
-  { id: "fc",      label: "Flight Controller",          count: 1 },
-  { id: "ips",     label: "Integrated Power Systems",   count: PRODUCTS.filter(p => p.series === "ips").length },
-];
+const USE_DATABASE = true; // Set to true to fetch from Supabase
 
 function MotorIcon({ color }: { color: string }) {
   return (
@@ -71,6 +80,34 @@ export default function Products() {
   const [, navigate] = useLocation();
   const hash = useHash();
   const [search, setSearch] = useState("");
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch products from database or use static data
+  useEffect(() => {
+    const loadProducts = async () => {
+      if (USE_DATABASE) {
+        const dbProducts = await fetchProducts();
+        if (dbProducts && dbProducts.length > 0) {
+          setProducts(dbProducts);
+          setLoading(false);
+        } else {
+          // Fallback to static data
+          import('@/data/products').then(mod => {
+            setProducts(mod.PRODUCTS);
+            setLoading(false);
+          });
+        }
+      } else {
+        // Use static data
+        import('@/data/products').then(mod => {
+          setProducts(mod.PRODUCTS);
+          setLoading(false);
+        });
+      }
+    };
+    loadProducts();
+  }, []);
 
   const handleEnquire = () => {
     navigate("/");
@@ -79,10 +116,20 @@ export default function Products() {
     }, 100);
   };
 
-  // Derive activeTab directly from hash - no separate state needed
+  // Generate tabs dynamically from products
+  const TABS = [
+    { id: "all", label: "All", count: products.length },
+    { id: "haemng", label: "Haemng Series", count: products.filter(p => p.series === "haemng").length },
+    { id: "maelard", label: "Maelard Series", count: products.filter(p => p.series === "maelard").length },
+    { id: "esc", label: "ESCs", count: products.filter(p => p.series === "esc").length },
+    { id: "fc", label: "Flight Controller", count: products.filter(p => p.series === "fc").length },
+    { id: "ips", label: "Integrated Power Systems", count: products.filter(p => p.series === "ips").length },
+  ];
+
+  // Derive activeTab directly from hash
   const activeTab = (hash && TABS.some(t => t.id === hash)) ? hash : "all";
 
-  const visible = PRODUCTS.filter(p => {
+  const visible = products.filter(p => {
     const matchTab = activeTab === "all" || p.series === activeTab;
     const q = search.toLowerCase();
     const matchSearch = !q ||
@@ -157,7 +204,13 @@ export default function Products() {
 
         {/* ── Product grid ── */}
         <div className="max-w-7xl mx-auto px-4 md:px-12 py-8 md:py-12">
-          {visible.length === 0 ? (
+          {loading ? (
+            <div className="py-24 text-center">
+              <p className="text-[#808080] text-sm" style={{ fontFamily: "Michroma, sans-serif" }}>
+                Loading products...
+              </p>
+            </div>
+          ) : visible.length === 0 ? (
             <div className="py-24 text-center">
               <p className="text-[#808080] text-sm" style={{ fontFamily: "Michroma, sans-serif" }}>
                 No products match "{search}"
@@ -241,7 +294,7 @@ function ProductGrid({
           {/* Visual header */}
           <div
             className="relative flex flex-col items-center justify-center h-40 overflow-hidden"
-            style={{ background: "linear-gradient(135deg, #111 0%, #1c1c1c 100%)" }}
+            style={{ background: p.thumbnailBgColor || "linear-gradient(135deg, #111 0%, #1c1c1c 100%)" }}
           >
             <div
               className="absolute inset-0 opacity-10"
@@ -251,15 +304,27 @@ function ProductGrid({
                 backgroundSize: "20px 20px",
               }}
             />
-            <div className="relative z-10">
-              {p.series === "haemng" ? (
-                <img src={`${import.meta.env.BASE_URL}haemng.svg`} alt="Haemng" className="h-10 md:h-14 w-auto" style={{ filter: "brightness(0) invert(1)", opacity: 0.7 }} />
-              ) : p.series === "maelard" ? (
-                <img src={`${import.meta.env.BASE_URL}Maelard.svg`} alt="Maelard" className="h-8 md:h-10 w-auto" style={{ filter: "brightness(0) invert(1)", opacity: 0.7 }} />
-              ) : p.series === "esc" ? <EscIcon color={cfg.accent} />
-                : p.series === "fc" ? <FcIcon color={cfg.accent} />
-                : <MotorIcon color={cfg.accent} />}
-            </div>
+            {/* Thumbnail image if available */}
+            {p.thumbnailUrl ? (
+              <div className="relative z-10 w-full h-full flex items-center justify-center p-4">
+                <img 
+                  src={p.thumbnailUrl} 
+                  alt={p.model}
+                  className="max-w-full max-h-full object-contain"
+                  style={{ filter: "drop-shadow(0 4px 12px rgba(0,0,0,0.3))" }}
+                />
+              </div>
+            ) : (
+              <div className="relative z-10">
+                {p.series === "haemng" ? (
+                  <img src={`${import.meta.env.BASE_URL}haemng.svg`} alt="Haemng" className="h-10 md:h-14 w-auto" style={{ filter: "brightness(0) invert(1)", opacity: 0.7 }} />
+                ) : p.series === "maelard" ? (
+                  <img src={`${import.meta.env.BASE_URL}Maelard.svg`} alt="Maelard" className="h-8 md:h-10 w-auto" style={{ filter: "brightness(0) invert(1)", opacity: 0.7 }} />
+                ) : p.series === "esc" ? <EscIcon color={cfg.accent} />
+                  : p.series === "fc" ? <FcIcon color={cfg.accent} />
+                  : <MotorIcon color={cfg.accent} />}
+              </div>
+            )}
             {p.allSpecs.find(s => s.label === "Dimension") && (
               <p className="relative z-10 text-[7px] md:text-[8px] tracking-widest text-white/30 uppercase mt-0.5 md:mt-1"
                  style={{ fontFamily: "Michroma, sans-serif" }}>
