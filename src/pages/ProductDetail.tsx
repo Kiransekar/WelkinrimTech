@@ -147,17 +147,30 @@ export default function ProductDetail() {
 
             {/* Right: illustration */}
             <div className="flex items-center justify-center py-6">
-              <div className="relative">
-                <div className="absolute inset-0 blur-3xl opacity-20 scale-75"
-                     style={{ background: cfg.accent }} />
-                <div className="relative z-10">
-                  {product.series === "haemng" ? (
-                    <img src={`${import.meta.env.BASE_URL}haemng.svg`} alt="Haemng" className="h-32 w-auto" style={{ filter: "brightness(0) invert(1)", opacity: 0.8 }} />
-                  ) : product.series === "maelard" ? (
-                    <img src={`${import.meta.env.BASE_URL}Maelard.svg`} alt="Maelard" className="h-24 w-auto" style={{ filter: "brightness(0) invert(1)", opacity: 0.8 }} />
-                  ) : product.series === "esc" ? <EscIcon color={cfg.accent} size={220} />
-                    : product.series === "fc" ? <FcIcon color={cfg.accent} size={200} />
-                    : <MotorIcon color={cfg.accent} size={220} />}
+              <div className="relative flex flex-col items-center gap-4">
+                {/* Motor image with shadow — scaled up visually without affecting layout */}
+                <div className="relative" style={{ transform: "scale(2.5)", transformOrigin: "center center" }}>
+                  <div className="absolute inset-0 blur-3xl opacity-30 scale-90"
+                       style={{ background: cfg.accent }} />
+                  <img 
+                    src={`${import.meta.env.BASE_URL}Mai.svg`} 
+                    alt="Motor" 
+                    className="h-32 w-auto relative z-10" 
+                  />
+                </div>
+                {/* Logo with shadow */}
+                <div className="relative">
+                  <div className="absolute inset-0 blur-3xl opacity-20 scale-75"
+                       style={{ background: cfg.accent }} />
+                  <div className="relative z-10">
+                    {product.series === "haemng" ? (
+                      <img src={`${import.meta.env.BASE_URL}haemng.svg`} alt="Haemng" className="h-32 w-auto" style={{ filter: "brightness(0) invert(1)", opacity: 0.8 }} />
+                    ) : product.series === "maelard" ? (
+                      <img src={`${import.meta.env.BASE_URL}Maelard.svg`} alt="Maelard" className="h-24 w-auto" style={{ filter: "brightness(0) invert(1)", opacity: 0.8 }} />
+                    ) : product.series === "esc" ? <EscIcon color={cfg.accent} size={220} />
+                      : product.series === "fc" ? <FcIcon color={cfg.accent} size={200} />
+                      : <MotorIcon color={cfg.accent} size={220} />}
+                  </div>
                 </div>
               </div>
             </div>

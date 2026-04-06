@@ -62,7 +62,7 @@ export default function ContactSection() {
                     </svg>
                   ),
                   label: "Email",
-                  value: "contact@welkinrim.com",
+                  value: "connect@welkinrim.com",
                 },
                 {
                   icon: (

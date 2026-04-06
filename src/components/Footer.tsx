@@ -105,7 +105,7 @@ export default function Footer() {
             </div>
             <div>
               <div className="text-[#808080] text-[10px] uppercase tracking-widest mb-1" style={{ fontFamily: 'Michroma, sans-serif' }}>Email</div>
-              contact@welkinrim.com
+              connect@welkinrim.com
             </div>
           </div>
         </div>
