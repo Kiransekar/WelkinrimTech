@@ -308,33 +308,17 @@ export default function Navbar() {
                           {cat.icon}
                         </span>
                         <div className="min-w-0 h-11 flex flex-col justify-center">
-                          <div className="h-7 flex items-center">
+                          <div className="flex items-center">
                             {cat.useSvgLogo ? (
-                              cat.id === "haemng" ? (
-                                <div className="flex items-center gap-1.5 h-full">
-                                  <img 
-                                    src={`${import.meta.env.BASE_URL}haemng-bird.svg`}
-                                    alt="Haemng bird"
-                                    className="h-6 w-auto object-contain object-left" 
-                                  />
-                                  <img 
-                                    src={`${import.meta.env.BASE_URL}haemng-text.svg`}
-                                    alt="Haemng text"
-                                    className="h-[7px] w-auto object-contain object-left translate-y-1" 
-                                  />
-                                </div>
-                              ) : (
-                                <img
-                                  src={`${import.meta.env.BASE_URL}${cat.logoSrc}`}
-                                  alt={cat.label}
-                                  className={`${cat.id === "maelard" ? "h-4" : "h-7"} w-auto max-w-[120px] object-contain object-left`}
-                                />
-                              )
+                              <img
+                                src={`${import.meta.env.BASE_URL}${cat.id === "haemng" ? "haemng-text.svg" : "maelard-text.svg"}`}
+                                alt={cat.label}
+                                className="h-[10px] w-auto max-w-[120px] object-contain object-left"
+                              />
                             ) : (
-                              <p className="text-xs font-bold tracking-wide truncate" style={{ fontFamily: "Michroma, sans-serif" }}>{cat.label}</p>
+                              <p className="text-xs font-bold tracking-wide truncate mt-1" style={{ fontFamily: "Michroma, sans-serif" }}>{cat.label}</p>
                             )}
                           </div>
-                          <p className="text-[9px] md:text-[10px] text-[#808080] mt-0.5 hidden md:block leading-tight lowercase" style={{ fontFamily: "Lexend, sans-serif" }}>{cat.tagline}</p>
                         </div>
                         {activeCategory === cat.id && (
                           <svg className="ml-auto w-4 h-4 text-[#ffc812] flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -374,8 +358,8 @@ export default function Navbar() {
                       >
                         <div className="w-full h-12 md:h-16 bg-gray-50 mb-1 md:mb-2 flex items-center justify-center group-hover:bg-[#ffc812]/5 transition-colors duration-200">
                           <div className="flex flex-col items-center">
-                            <span className="text-[6px] md:text-[7px] font-black text-[#b89600] leading-none" style={{ fontFamily: "Michroma, sans-serif" }}>WR</span>
-                            <span className="text-[7px] md:text-[9px] font-black text-black/30 mt-0.5" style={{ fontFamily: "Michroma, sans-serif" }}>{p.name}</span>
+                            <img src={`${import.meta.env.BASE_URL}favicon.svg`} alt="favicon" className="h-[10px] md:h-[12px] w-auto opacity-70 mb-0.5" />
+                            <span className="text-[7px] md:text-[9px] font-black text-black/30" style={{ fontFamily: "Michroma, sans-serif" }}>{p.name}</span>
                           </div>
                         </div>
                         <p className="text-[7px] md:text-[8px] text-[#ffc812] tracking-widest uppercase font-bold mb-0.5 truncate" style={{ fontFamily: "Michroma, sans-serif" }}>{p.tag}</p>

@@ -137,7 +137,6 @@ export default function ContactSection() {
                     name="name"
                     value={form.name}
                     onChange={handleChange}
-                    placeholder="John Smith"
                     className="w-full border border-gray-200 px-3 py-2 text-sm text-black focus:outline-none focus:border-[#ffc812] transition-colors duration-200 bg-white"
                     style={{ fontFamily: 'Lexend, sans-serif', transform: 'skewX(-10deg)' }}
                   />
@@ -150,7 +149,6 @@ export default function ContactSection() {
                     name="company"
                     value={form.company}
                     onChange={handleChange}
-                    placeholder="Acme Corporation"
                     className="w-full border border-gray-200 px-3 py-2 text-sm text-black focus:outline-none focus:border-[#ffc812] transition-colors duration-200 bg-white"
                     style={{ fontFamily: 'Lexend, sans-serif', transform: 'skewX(-10deg)' }}
                   />
@@ -165,7 +163,6 @@ export default function ContactSection() {
                     name="email"
                     value={form.email}
                     onChange={handleChange}
-                    placeholder="john@company.com"
                     className="w-full border border-gray-200 px-3 py-2 text-sm text-black focus:outline-none focus:border-[#ffc812] transition-colors duration-200 bg-white"
                     style={{ fontFamily: 'Lexend, sans-serif', transform: 'skewX(-10deg)' }}
                   />
@@ -179,7 +176,6 @@ export default function ContactSection() {
                     name="phone"
                     value={form.phone}
                     onChange={handleChange}
-                    placeholder="+91 XXXXX XXXXX"
                     className="w-full border border-gray-200 px-3 py-2 text-sm text-black focus:outline-none focus:border-[#ffc812] transition-colors duration-200 bg-white"
                     style={{ fontFamily: 'Lexend, sans-serif', transform: 'skewX(-10deg)' }}
                   />
@@ -195,7 +191,7 @@ export default function ContactSection() {
                     className="w-full border border-gray-200 px-3 py-2 text-sm text-black focus:outline-none focus:border-[#ffc812] transition-colors duration-200 bg-white appearance-none"
                     style={{ fontFamily: 'Lexend, sans-serif', transform: 'skewX(-10deg)' }}
                   >
-                    <option value="">Select your industry...</option>
+                    <option value=""></option>
                     {industries.map((ind) => (
                       <option key={ind} value={ind}>{ind}</option>
                     ))}
@@ -211,7 +207,6 @@ export default function ContactSection() {
                     value={form.message}
                     onChange={handleChange}
                     rows={3}
-                    placeholder="Tell us about your propulsion requirements, power needs, application environment..."
                     className="w-full border border-gray-200 px-3 py-2 text-sm text-black focus:outline-none focus:border-[#ffc812] transition-colors duration-200 bg-white resize-none"
                     style={{ fontFamily: 'Lexend, sans-serif', transform: 'skewX(-10deg)' }}
                   />

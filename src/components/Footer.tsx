@@ -96,7 +96,11 @@ export default function Footer() {
           </div>
           <div className="flex flex-col gap-3 text-xs text-white/60" style={{ fontFamily: 'Lexend, sans-serif' }}>
             <div>
-              <div className="text-[#808080] text-[10px] uppercase tracking-widest mb-1" style={{ fontFamily: 'Michroma, sans-serif' }}>Address</div>
+              <div className="text-[#808080] text-[10px] uppercase tracking-widest mb-1" style={{ fontFamily: 'Michroma, sans-serif' }}>Registered Address</div>
+              #5, Chokkanathar Street, MMDA Nagar<br />Chitalapakam, Chennai 600064
+            </div>
+            <div>
+              <div className="text-[#808080] text-[10px] uppercase tracking-widest mb-1" style={{ fontFamily: 'Michroma, sans-serif' }}>Factory Address</div>
               #23, Sujatha nagar, kandigai village,<br />Panruti, Sripermabadur, TN - 631604
             </div>
             <div>
