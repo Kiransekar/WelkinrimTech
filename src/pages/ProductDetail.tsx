@@ -97,7 +97,7 @@ export default function ProductDetail() {
         />
 
         <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-end pb-12">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center pb-20">
             {/* Left */}
             <div>
               <div className="inline-flex items-center gap-2 mb-4 px-3 py-1" style={{ background: cfg.accent, transform: "skewX(-10deg)" }}>
@@ -127,7 +127,7 @@ export default function ProductDetail() {
                 ))}
               </div>
 
-              <div className="flex gap-4 mt-8 flex-wrap">
+              <div className="flex gap-4 mt-10 flex-wrap">
                 <button
                   onClick={handleEnquire}
                   className="px-8 py-3 text-[10px] tracking-widest uppercase font-black transition-colors duration-300 hover:opacity-90"
@@ -146,31 +146,32 @@ export default function ProductDetail() {
             </div>
 
             {/* Right: illustration */}
-            <div className="flex items-center justify-center py-6">
-              <div className="relative flex flex-col items-center gap-4">
-                {/* Motor image with shadow — scaled up visually without affecting layout */}
-                <div className="relative" style={{ transform: "scale(2.5)", transformOrigin: "center center" }}>
-                  <div className="absolute inset-0 blur-3xl opacity-30 scale-90"
+            <div className="flex items-center justify-center min-h-[400px]">
+              <div className="relative flex flex-col items-center">
+                {/* Motor image with shadow — scaled up visually with a safer container to avoid cropping */}
+                <div className="relative group transition-transform duration-500 hover:scale-105" 
+                     style={{ 
+                       transform: "scale(2.2)", 
+                       transformOrigin: "center center",
+                       filter: "drop-shadow(0 25px 35px rgba(0,0,0,0.15))"
+                     }}>
+                  <div className="absolute inset-0 blur-3xl opacity-20 scale-110"
                        style={{ background: cfg.accent }} />
-                  <img 
-                    src={`${import.meta.env.BASE_URL}Mai.svg`} 
-                    alt="Motor" 
-                    className="h-32 w-auto relative z-10" 
-                  />
-                </div>
-                {/* Logo with shadow */}
-                <div className="relative">
-                  <div className="absolute inset-0 blur-3xl opacity-20 scale-75"
-                       style={{ background: cfg.accent }} />
-                  <div className="relative z-10">
-                    {product.series === "haemng" ? (
-                      <img src={`${import.meta.env.BASE_URL}haemng.svg`} alt="Haemng" className="h-32 w-auto" style={{ filter: "brightness(0) invert(1)", opacity: 0.8 }} />
-                    ) : product.series === "maelard" ? (
-                      <img src={`${import.meta.env.BASE_URL}Maelard.svg`} alt="Maelard" className="h-24 w-auto" style={{ filter: "brightness(0) invert(1)", opacity: 0.8 }} />
-                    ) : product.series === "esc" ? <EscIcon color={cfg.accent} size={220} />
-                      : product.series === "fc" ? <FcIcon color={cfg.accent} size={200} />
-                      : <MotorIcon color={cfg.accent} size={220} />}
-                  </div>
+                  {product.thumbnailUrl ? (
+                    <img 
+                      src={product.thumbnailUrl} 
+                      alt={product.model} 
+                      className="h-48 w-auto relative z-10" 
+                    />
+                  ) : (
+                    <div className="relative z-10 flex items-center justify-center">
+                      {product.series === "haemng" ? <MotorIcon color={cfg.accent} size={180} />
+                        : product.series === "maelard" ? <MotorIcon color={cfg.accent} size={160} />
+                        : product.series === "esc" ? <EscIcon color={cfg.accent} size={200} />
+                        : product.series === "fc" ? <FcIcon color={cfg.accent} size={180} />
+                        : <MotorIcon color={cfg.accent} size={180} />}
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -185,42 +186,52 @@ export default function ProductDetail() {
         <div className="flex flex-col gap-14">
 
           {/* Specifications */}
-          <div>
+          <section id="specifications" className="relative z-20">
             <div className="flex items-center gap-3 mb-6">
               <div className="w-1 h-6" style={{ background: cfg.accent }} />
               <h2 className="text-lg font-bold text-black" style={{ fontFamily: "Michroma, sans-serif" }}>
                 Specifications
               </h2>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 border-t border-l border-gray-100">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 border-t border-l border-gray-100 shadow-sm">
               {product.allSpecs.map((s) => (
                 <div key={s.label}
-                     className="flex items-center justify-between px-5 py-3 border-b border-r border-gray-100 gap-4">
-                  <span className="text-[11px] font-bold text-black" style={{ fontFamily: "Lexend, sans-serif" }}>
+                     className="flex flex-col px-5 py-5 border-b border-r border-gray-100 bg-white hover:bg-gray-50/50 transition-colors min-h-[85px]">
+                  <span className="text-[9px] font-bold text-[#808080] uppercase tracking-wider mb-1.5" style={{ fontFamily: "Michroma, sans-serif" }}>
                     {s.label}
                   </span>
-                  <span className="text-[11px] text-[#808080]" style={{ fontFamily: "Michroma, sans-serif" }}>
+                  <span className="text-[13px] font-black text-black leading-tight" style={{ fontFamily: "Lexend, sans-serif" }}>
                     {s.value}
                   </span>
                 </div>
               ))}
             </div>
             {product.perf && (
-              <p className="text-[9px] text-[#aaa] mt-4 leading-relaxed">
+              <p className="text-[9px] text-[#aaa] mt-5 leading-relaxed bg-gray-50/50 p-3 italic">
                 * Bench test data is for reference only, tested at ambient temperature at MSL.
                 Actual results may vary by field conditions.
               </p>
             )}
-          </div>
+          </section>
 
-          {/* Motor Wireframe */}
-          <div className="flex items-center justify-center py-4">
-            <img
-              src={`${import.meta.env.BASE_URL}motor-wireframe-${(PRODUCTS.findIndex(p => p.id === product.id) % 3) + 1}.svg`}
-              alt="Motor Wireframe"
-              className="w-full max-w-3xl h-auto opacity-90"
-            />
-          </div>
+          {/* Product Wireframe */}
+          <section id="dimensions" className="relative z-10 scroll-mt-20">
+            <div className="flex flex-col items-center justify-center py-20 bg-white border border-gray-100 px-4 md:px-12 shadow-[0_4px_20px_-5px_theme(colors.gray.100)] rounded-sm overflow-hidden">
+              <p className="text-[10px] tracking-[0.5em] uppercase text-[#999] mb-16 font-bold text-center" style={{ fontFamily: "Michroma, sans-serif" }}>
+                Technical Dimensions (mm)
+              </p>
+              <div className="relative w-full max-w-5xl group flex justify-center">
+                <div className="absolute inset-0 bg-transparent z-20" />
+                <img
+                  src={product.wireframeUrl || `${import.meta.env.BASE_URL}wireframes/${product.id}.png`}
+                  alt={`${product.name} Technical Drawing`}
+                  className="w-full max-w-4xl h-auto relative z-10 transition-all duration-700 group-hover:scale-[1.01]"
+                  style={{ filter: "contrast(1.05)" }}
+                />
+                <div className="absolute inset-x-0 -bottom-10 h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent opacity-40" />
+              </div>
+            </div>
+          </section>
 
           {/* Performance */}
           {product.perf && product.perf.length > 0 ? (
@@ -236,7 +247,15 @@ export default function ProductDetail() {
                 <table className="w-full">
                   <thead>
                     <tr style={{ background: cfg.accent }}>
-                      {["Throttle", "Voltage", "Power", "Thrust", "Speed / Current"].map(h => (
+                      {[
+                        "Throttle", 
+                        "Voltage(V)", 
+                        "Current(A)", 
+                        "Power(W)", 
+                        "Thrust(g)", 
+                        "Speed(RPM)", 
+                        "Efficiency(g/W)"
+                      ].map(h => (
                         <th key={h}
                             className="px-3 py-3 text-left text-[8px] tracking-widest uppercase font-black"
                             style={{ fontFamily: "Michroma, sans-serif", color: cfg.textOnAccent }}>
@@ -252,9 +271,11 @@ export default function ProductDetail() {
                         <td className="px-3 py-3 text-[11px] font-black text-black"
                             style={{ fontFamily: "Michroma, sans-serif" }}>{row.throttle}</td>
                         <td className="px-3 py-3 text-[11px] text-[#555]">{row.voltage}</td>
+                        <td className="px-3 py-3 text-[11px] text-[#555]">{row.current}</td>
                         <td className="px-3 py-3 text-[11px] text-[#555]">{row.power}</td>
                         <td className="px-3 py-3 text-[11px] font-bold" style={{ color: cfg.accent }}>{row.thrust}</td>
-                        <td className="px-3 py-3 text-[11px] text-[#555]">{row.current}</td>
+                        <td className="px-3 py-3 text-[11px] text-[#555]">{row.speed || "-"}</td>
+                        <td className="px-3 py-3 text-[11px] text-[#555]">{row.efficiency || "-"}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -360,13 +381,13 @@ export default function ProductDetail() {
                     className="h-24 flex items-center justify-center"
                     style={{ background: "linear-gradient(135deg, #111 0%, #1c1c1c 100%)" }}
                   >
-                    {p.series === "haemng" ? (
-                      <img src={`${import.meta.env.BASE_URL}haemng.svg`} alt="Haemng" className="h-10 w-auto" style={{ filter: "brightness(0) invert(1)", opacity: 0.7 }} />
-                    ) : p.series === "maelard" ? (
-                      <img src={`${import.meta.env.BASE_URL}Maelard.svg`} alt="Maelard" className="h-7 w-auto" style={{ filter: "brightness(0) invert(1)", opacity: 0.7 }} />
-                    ) : p.series === "esc" ? <EscIcon color={cfg.accent} size={60} />
-                      : p.series === "fc" ? <FcIcon color={cfg.accent} size={55} />
-                      : <MotorIcon color={cfg.accent} size={55} />}
+                    <div className="scale-75">
+                      {p.series === "haemng" ? <MotorIcon color={cfg.accent} size={60} />
+                        : p.series === "maelard" ? <MotorIcon color={cfg.accent} size={55} />
+                        : p.series === "esc" ? <EscIcon color={cfg.accent} size={60} />
+                        : p.series === "fc" ? <FcIcon color={cfg.accent} size={55} />
+                        : <MotorIcon color={cfg.accent} size={55} />}
+                    </div>
                   </div>
                   <div className="p-3">
                     <p className="text-[8px] tracking-widest uppercase mb-0.5"

@@ -63,7 +63,7 @@ export const PRODUCTS: Product[] = [
       },
       {
             "label": "Dimension",
-            "value": "46 x 20 mm"
+            "value": "Φ46x20 mm"
       },
       {
             "label": "Weight",
@@ -82,8 +82,8 @@ export const PRODUCTS: Product[] = [
       { throttle:"70%", voltage:"24.61 V", power:"63.99 W", thrust:"631 g", current:"2.60 A", speed:"4,903 RPM", efficiency:"9.86 g/W" },
       { throttle:"75%", voltage:"24.56 V", power:"75.89 W", thrust:"708 g", current:"3.09 A", speed:"5,154 RPM", efficiency:"9.33 g/W" },
       { throttle:"80%", voltage:"24.51 V", power:"90.93 W", thrust:"781 g", current:"3.71 A", speed:"5,440 RPM", efficiency:"8.59 g/W" },
-      { throttle:"90%", voltage:"24.36 V", power:"129.60 W", thrust:"1,003 kg", current:"5.32 A", speed:"6,064 RPM", efficiency:"7.74 g/W" },
-      { throttle:"100%", voltage:"24.18 V", power:"203.60 W", thrust:"1,204 kg", current:"8.42 A", speed:"6,624 RPM", efficiency:"5.91 g/W" },
+      { throttle:"90%", voltage:"24.36 V", power:"129.60 W", thrust:"1,003 g", current:"5.32 A", speed:"6,064 RPM", efficiency:"7.74 g/W" },
+      { throttle:"100%", voltage:"24.18 V", power:"203.60 W", thrust:"1,204 g", current:"8.42 A", speed:"6,624 RPM", efficiency:"5.91 g/W" },
     ],
   },
   {
@@ -119,7 +119,7 @@ export const PRODUCTS: Product[] = [
       },
       {
             "label": "Dimension",
-            "value": "46 x 20 mm"
+            "value": "Φ46x20 mm"
       },
       {
             "label": "Weight",
@@ -136,10 +136,10 @@ export const PRODUCTS: Product[] = [
       { throttle:"60%", voltage:"24.60 V", power:"78.23 W", thrust:"751 g", current:"3.18 A", speed:"3,860 RPM", efficiency:"9.60 g/W" },
       { throttle:"65%", voltage:"24.53 V", power:"94.93 W", thrust:"823 g", current:"3.87 A", speed:"4,111 RPM", efficiency:"8.67 g/W" },
       { throttle:"70%", voltage:"24.45 V", power:"115.89 W", thrust:"951 g", current:"4.74 A", speed:"4,351 RPM", efficiency:"8.21 g/W" },
-      { throttle:"75%", voltage:"24.34 V", power:"143.61 W", thrust:"1,085 kg", current:"5.90 A", speed:"4,627 RPM", efficiency:"7.56 g/W" },
-      { throttle:"80%", voltage:"24.24 V", power:"169.92 W", thrust:"1,204 kg", current:"7.01 A", speed:"4,937 RPM", efficiency:"7.09 g/W" },
-      { throttle:"90%", voltage:"23.97 V", power:"231.79 W", thrust:"1,484 kg", current:"9.67 A", speed:"5,424 RPM", efficiency:"6.40 g/W" },
-      { throttle:"100%", voltage:"23.73 V", power:"377.54 W", thrust:"1,650 kg", current:"15.91 A", speed:"5,734 RPM", efficiency:"4.37 g/W" },
+      { throttle:"75%", voltage:"24.34 V", power:"143.61 W", thrust:"1,085 g", current:"5.90 A", speed:"4,627 RPM", efficiency:"7.56 g/W" },
+      { throttle:"80%", voltage:"24.24 V", power:"169.92 W", thrust:"1,204 g", current:"7.01 A", speed:"4,937 RPM", efficiency:"7.09 g/W" },
+      { throttle:"90%", voltage:"23.97 V", power:"231.79 W", thrust:"1,484 g", current:"9.67 A", speed:"5,424 RPM", efficiency:"6.40 g/W" },
+      { throttle:"100%", voltage:"23.73 V", power:"377.54 W", thrust:"1,650 g", current:"15.91 A", speed:"5,734 RPM", efficiency:"4.37 g/W" },
     ],
   },
   {
@@ -175,7 +175,7 @@ export const PRODUCTS: Product[] = [
       },
       {
             "label": "Dimension",
-            "value": "99 x 33 mm"
+            "value": "Φ99x33 mm"
       },
       {
             "label": "Weight",
@@ -231,7 +231,7 @@ export const PRODUCTS: Product[] = [
       },
       {
             "label": "Dimension",
-            "value": "99 x 33 mm"
+            "value": "Φ99x33 mm"
       },
       {
             "label": "Weight",
@@ -287,7 +287,7 @@ export const PRODUCTS: Product[] = [
       },
       {
             "label": "Dimension",
-            "value": "81 x 21.5 mm"
+            "value": "Φ81x21.5 mm"
       },
       {
             "label": "Weight",
@@ -297,17 +297,17 @@ export const PRODUCTS: Product[] = [
     perf: [
       { throttle:"30%", voltage:"24.67 V", power:"46.13 W", thrust:"762 g", current:"1.87 A", speed:"1,503 RPM", efficiency:"16.52 g/W" },
       { throttle:"35%", voltage:"24.57 V", power:"62.16 W", thrust:"938 g", current:"2.53 A", speed:"1,643 RPM", efficiency:"15.09 g/W" },
-      { throttle:"40%", voltage:"24.52 V", power:"78.71 W", thrust:"1,042 kg", current:"3.21 A", speed:"1,778 RPM", efficiency:"13.24 g/W" },
-      { throttle:"45%", voltage:"24.44 V", power:"95.56 W", thrust:"1,223 kg", current:"3.91 A", speed:"1,915 RPM", efficiency:"12.80 g/W" },
-      { throttle:"50%", voltage:"24.31 V", power:"109.64 W", thrust:"1,429 kg", current:"4.51 A", speed:"2,062 RPM", efficiency:"13.03 g/W" },
-      { throttle:"55%", voltage:"24.21 V", power:"138.00 W", thrust:"1,618 kg", current:"5.70 A", speed:"2,186 RPM", efficiency:"11.72 g/W" },
-      { throttle:"60%", voltage:"24.10 V", power:"166.05 W", thrust:"1,800 kg", current:"6.89 A", speed:"2,313 RPM", efficiency:"10.84 g/W" },
-      { throttle:"65%", voltage:"23.98 V", power:"189.20 W", thrust:"1,962 kg", current:"7.89 A", speed:"2,452 RPM", efficiency:"10.37 g/W" },
-      { throttle:"70%", voltage:"23.83 V", power:"231.39 W", thrust:"2,268 kg", current:"9.71 A", speed:"2,603 RPM", efficiency:"9.80 g/W" },
-      { throttle:"75%", voltage:"23.73 V", power:"270.52 W", thrust:"2,473 kg", current:"11.40 A", speed:"2,723 RPM", efficiency:"9.14 g/W" },
-      { throttle:"80%", voltage:"23.60 V", power:"318.60 W", thrust:"2,753 kg", current:"13.50 A", speed:"2,859 RPM", efficiency:"8.64 g/W" },
-      { throttle:"90%", voltage:"23.28 V", power:"430.68 W", thrust:"3,345 kg", current:"18.50 A", speed:"3,146 RPM", efficiency:"7.77 g/W" },
-      { throttle:"100%", voltage:"22.99 V", power:"542.56 W", thrust:"3,693 kg", current:"23.60 A", speed:"3,321 RPM", efficiency:"6.81 g/W" },
+      { throttle:"40%", voltage:"24.52 V", power:"78.71 W", thrust:"1,042 g", current:"3.21 A", speed:"1,778 RPM", efficiency:"13.24 g/W" },
+      { throttle:"45%", voltage:"24.44 V", power:"95.56 W", thrust:"1,223 g", current:"3.91 A", speed:"1,915 RPM", efficiency:"12.80 g/W" },
+      { throttle:"50%", voltage:"24.31 V", power:"109.64 W", thrust:"1,429 g", current:"4.51 A", speed:"2,062 RPM", efficiency:"13.03 g/W" },
+      { throttle:"55%", voltage:"24.21 V", power:"138.00 W", thrust:"1,618 g", current:"5.70 A", speed:"2,186 RPM", efficiency:"11.72 g/W" },
+      { throttle:"60%", voltage:"24.10 V", power:"166.05 W", thrust:"1,800 g", current:"6.89 A", speed:"2,313 RPM", efficiency:"10.84 g/W" },
+      { throttle:"65%", voltage:"23.98 V", power:"189.20 W", thrust:"1,962 g", current:"7.89 A", speed:"2,452 RPM", efficiency:"10.37 g/W" },
+      { throttle:"70%", voltage:"23.83 V", power:"231.39 W", thrust:"2,268 g", current:"9.71 A", speed:"2,603 RPM", efficiency:"9.80 g/W" },
+      { throttle:"75%", voltage:"23.73 V", power:"270.52 W", thrust:"2,473 g", current:"11.40 A", speed:"2,723 RPM", efficiency:"9.14 g/W" },
+      { throttle:"80%", voltage:"23.60 V", power:"318.60 W", thrust:"2,753 g", current:"13.50 A", speed:"2,859 RPM", efficiency:"8.64 g/W" },
+      { throttle:"90%", voltage:"23.28 V", power:"430.68 W", thrust:"3,345 g", current:"18.50 A", speed:"3,146 RPM", efficiency:"7.77 g/W" },
+      { throttle:"100%", voltage:"22.99 V", power:"542.56 W", thrust:"3,693 g", current:"23.60 A", speed:"3,321 RPM", efficiency:"6.81 g/W" },
     ],
   },
   {
@@ -343,7 +343,7 @@ export const PRODUCTS: Product[] = [
       },
       {
             "label": "Dimension",
-            "value": "70 x 39.3 mm"
+            "value": "Φ70x39.3 mm"
       },
       {
             "label": "Weight",
@@ -399,7 +399,7 @@ export const PRODUCTS: Product[] = [
       },
       {
             "label": "Dimension",
-            "value": "145 x 47 mm"
+            "value": "Φ145x47 mm"
       },
       {
             "label": "Weight",
@@ -455,7 +455,7 @@ export const PRODUCTS: Product[] = [
       },
       {
             "label": "Dimension",
-            "value": "145 x 60 mm"
+            "value": "Φ145x60 mm"
       },
       {
             "label": "Weight",
@@ -511,7 +511,7 @@ export const PRODUCTS: Product[] = [
       },
       {
             "label": "Dimension",
-            "value": "105 x 39 mm"
+            "value": "Φ105x39 mm"
       },
       {
             "label": "Weight",
@@ -567,7 +567,7 @@ export const PRODUCTS: Product[] = [
       },
       {
             "label": "Dimension",
-            "value": "105 x 39 mm"
+            "value": "Φ105x39 mm"
       },
       {
             "label": "Weight",
@@ -622,7 +622,7 @@ export const PRODUCTS: Product[] = [
       },
       {
             "label": "Dimension",
-            "value": "120 x 43 mm"
+            "value": "Φ120x43 mm"
       },
       {
             "label": "Weight",
@@ -739,7 +739,7 @@ export const PRODUCTS: Product[] = [
       },
       {
             "label": "Dimension",
-            "value": "122 x 70 x 65.5 mm"
+            "value": "Φ122x70x65.5 mm"
       },
       {
             "label": "Weight (with wires)",
@@ -780,7 +780,7 @@ export const PRODUCTS: Product[] = [
       },
       {
             "label": "Dimension",
-            "value": "110 x 105 x 86.1 mm"
+            "value": "Φ110x105x86.1 mm"
       },
       {
             "label": "Weight (with wires)",
@@ -821,7 +821,7 @@ export const PRODUCTS: Product[] = [
       },
       {
             "label": "Dimension",
-            "value": "140 x 105 x 119.6 mm"
+            "value": "Φ140x105x119.6 mm"
       },
       {
             "label": "Weight",
@@ -862,7 +862,7 @@ export const PRODUCTS: Product[] = [
       },
       {
             "label": "Dimension",
-            "value": "225 x 120 x 158 mm"
+            "value": "Φ225x120x158 mm"
       },
       {
             "label": "Weight",
@@ -903,7 +903,7 @@ export const PRODUCTS: Product[] = [
       },
       {
             "label": "Dimension",
-            "value": "225 x 155 x 210 mm"
+            "value": "Φ225x155x210 mm"
       },
       {
             "label": "Weight",
@@ -1772,5 +1772,22 @@ export const PRODUCTS: Product[] = [
             "value": "5 UART, 3 I2C, 2 CAN, 2 ADC"
       }
 ],
+  },
+  {
+    id: "esc-eepf86ho2",
+    series: "esc", seriesLabel: "ESCs",
+    model: "E40 V2 12S", name: "E40 V2 12S", tag: "ESC", application: "UAV / Multi-Rotor",
+    keySpecs: [ { "label": "Continuous", "value": "40 A (under good cooling conditions)"  }, { "label": "Battery", "value": "12S"  }, { "label": "Weight", "value": "115 g"  }
+],
+    allSpecs: [
+      { "label": "BEC", "value": "No" },
+      { "label": "Size (L x W x H)", "value": "82 x 34 x 19 mm" },
+      { "label": "Continuous Current", "value": "40 A" },
+      { "label": "Peak Current", "value": "60 A" },
+      { "label": "Recommended Battery", "value": "12S" },
+      { "label": "Weight", "value": "115 g" },
+      { "label": "Throttle Pulse Width", "value": "1050 us – 1940 us" },
+      { "label": "Protection Grade", "value": "IP67" }
+    ],
   },
 ];
