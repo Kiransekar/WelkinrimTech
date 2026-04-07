@@ -143,9 +143,9 @@ interface FieldProps {
 function Field({ label, id, value, onChange, step = "any", hint, className = "", warn }: FieldProps) {
   const [showHint, setShowHint] = useState(false);
   return (
-    <div className={`flex flex-row items-center gap-2 w-full py-1 relative ${className}`}>
-      <div className="flex items-center gap-1 flex-1 min-w-0">
-        <label className={`text-[9px] tracking-widest uppercase truncate ${warn ? "text-amber-500" : "text-[#ffc812]"}`}
+    <div className={`w-full py-0.5 relative ${className}`}>
+      <div className="flex items-center gap-1 mb-0.5">
+        <label className={`text-[8px] tracking-widest uppercase ${warn ? "text-amber-500" : "text-[#808080]"}`}
                style={{ fontFamily: "Michroma, sans-serif" }} htmlFor={id} title={label}>
           {label}
         </label>
@@ -164,16 +164,14 @@ function Field({ label, id, value, onChange, step = "any", hint, className = "",
           {hint}
         </div>
       )}
-      <div className="w-24 flex-shrink-0">
-        <input
-          id={id} type="number" step={step} value={value}
-          onChange={e => onChange(parseFloat(e.target.value) || 0)}
-          className={`border w-full min-w-0 text-[11px] px-2 py-1 focus:outline-none transition-colors bg-white ${
-            warn ? "border-amber-400 focus:border-amber-500" : "border-gray-200 focus:border-[#ffc812]"
-          }`}
-          style={{ fontFamily: "Michroma, sans-serif" }}
-        />
-      </div>
+      <input
+        id={id} type="number" step={step} value={value}
+        onChange={e => onChange(parseFloat(e.target.value) || 0)}
+        className={`border w-full text-[11px] px-2 py-1 focus:outline-none transition-colors bg-white ${
+          warn ? "border-amber-400 focus:border-amber-500" : "border-gray-200 focus:border-[#ffc812]"
+        }`}
+        style={{ fontFamily: "Michroma, sans-serif" }}
+      />
     </div>
   );
 }
@@ -195,7 +193,7 @@ function CollapsibleSection({
         </p>
         <span className={`text-[#ffc812] text-[10px] transition-transform ${open ? "rotate-180" : ""}`}>▾</span>
       </button>
-      {open && <div className="p-3 grid grid-cols-2 gap-2">{children}</div>}
+      {open && <div className="p-2 space-y-0.5">{children}</div>}
     </div>
   );
 }
@@ -326,28 +324,28 @@ export default function PropCalcPanel() {
   })), [result]);
 
   return (
-    <div className="flex flex-col lg:flex-row gap-6">
-      {/* ── INPUTS COLUMN ──────────────────────────────────────── */}
-      <div className="lg:w-80 xl:w-88 flex-shrink-0">
-        {/* Motor Preset — kept outside collapsible for prominence */}
-        <div className="border border-[#ffc812]/30 bg-[#fffbe6] px-3 py-2.5 mb-2">
-          <label className="text-[9px] tracking-widest uppercase text-[#ffc812] font-bold block mb-1.5"
-                 style={{ fontFamily: "Michroma, sans-serif" }}>
-            ⚡ Motor Preset (Haemng Series)
-          </label>
-          <select
-            value={selectedPreset}
-            onChange={e => applyPreset(e.target.value)}
-            className="w-full border border-[#ffc812]/40 text-[11px] px-2.5 py-1.5 focus:outline-none focus:border-[#ffc812] bg-white"
-            style={{ fontFamily: "Michroma, sans-serif" }}
-          >
-            <option value="">— Select Motor —</option>
-            {presets.map(p => (
-              <option key={p.id} value={p.id}>{p.name} ({p.kv}KV, {p.recommendedVoltage}S)</option>
-            ))}
-          </select>
-        </div>
+    <div className="space-y-4">
+      {/* ── COMPACT INPUTS ──────────────────────────────────────── */}
+      {/* Motor Preset */}
+      <div className="border border-[#ffc812]/30 bg-[#fffbe6] px-3 py-2 flex items-center gap-3">
+        <label className="text-[9px] tracking-widest uppercase text-[#ffc812] font-bold whitespace-nowrap"
+               style={{ fontFamily: "Michroma, sans-serif" }}>
+          ⚡ Motor Preset
+        </label>
+        <select
+          value={selectedPreset}
+          onChange={e => applyPreset(e.target.value)}
+          className="flex-1 border border-[#ffc812]/40 text-[11px] px-2.5 py-1 focus:outline-none focus:border-[#ffc812] bg-white"
+          style={{ fontFamily: "Michroma, sans-serif" }}
+        >
+          <option value="">— Select Motor —</option>
+          {presets.map(p => (
+            <option key={p.id} value={p.id}>{p.name} ({p.kv}KV, {p.recommendedVoltage}S)</option>
+          ))}
+        </select>
+      </div>
 
+      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-3">
         <CollapsibleSection title="Aircraft" defaultOpen>
           <Field label="Weight (g)" id="mw" value={inputs.modelWeightG} onChange={set("modelWeightG")}
                  hint="All-up weight of the airframe without battery." />
@@ -357,16 +355,6 @@ export default function PropCalcPanel() {
                  hint="Total reference wing area in square decimetres (1 dm² = 100 cm²)." />
           <Field label="Drag Coeff (Cd)" id="cd" value={inputs.dragCoefficient} onChange={set("dragCoefficient")} step="0.01"
                  hint="Profile drag coefficient. Typical clean fixed-wing: 0.04–0.08." />
-        </CollapsibleSection>
-
-        <CollapsibleSection title="Environment" defaultOpen={false}>
-          <Field label="Elevation (m)" id="el" value={inputs.elevationM} onChange={set("elevationM")}
-                 hint="Field altitude above sea level. Affects air density and thrust." />
-          <Field label="Temp (°C)" id="tc" value={inputs.temperatureC} onChange={set("temperatureC")}
-                 hint="Ambient air temperature. Higher temp = lower air density." />
-          <Field label="Pressure (hPa)" id="ph" value={inputs.pressureHpa} onChange={set("pressureHpa")}
-                 className="col-span-2"
-                 hint="Local QNH barometric pressure. ISA standard = 1013.25 hPa." />
         </CollapsibleSection>
 
         <CollapsibleSection title="Battery" defaultOpen>
@@ -403,12 +391,21 @@ export default function PropCalcPanel() {
           <Field label="CP" id="cp" value={inputs.cp} onChange={set("cp")} step="0.005"
                  hint="Power coefficient. From APC data: 2-blade ≈ 0.04–0.06." />
         </CollapsibleSection>
+
+        <CollapsibleSection title="Environment" defaultOpen={false}>
+          <Field label="Elevation (m)" id="el" value={inputs.elevationM} onChange={set("elevationM")}
+                 hint="Field altitude above sea level. Affects air density and thrust." />
+          <Field label="Temp (°C)" id="tc" value={inputs.temperatureC} onChange={set("temperatureC")}
+                 hint="Ambient air temperature. Higher temp = lower air density." />
+          <Field label="Pressure (hPa)" id="ph" value={inputs.pressureHpa} onChange={set("pressureHpa")}
+                 hint="Local QNH barometric pressure. ISA standard = 1013.25 hPa." />
+        </CollapsibleSection>
       </div>
 
-      {/* ── RESULTS COLUMN ──────────────────────────────────────── */}
-      <div className="flex-1 min-w-0">
+      {/* ── RESULTS ──────────────────────────────────────── */}
+      <div>
         {/* Action bar */}
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center justify-between mb-3">
           <p className="text-[9px] tracking-[0.3em] uppercase text-[#808080]"
              style={{ fontFamily: "Michroma, sans-serif" }}>
             {warnings.length > 0

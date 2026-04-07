@@ -121,20 +121,20 @@ export default function EvCalc() {
   const warnings = useMemo(() => deriveWarnings(result, inputs), [result, inputs]);
 
   const Field = ({ label, value, onChange, step = 1, min, max, unit, hint }: any) => (
-    <div className="flex flex-row items-center gap-2 w-full py-1">
-      <label className="text-[9px] uppercase text-[#ffc812] tracking-wider flex-1 truncate" title={hint || label}>{label}</label>
-      <div className="flex items-center gap-1 w-24">
+    <div className="w-full py-0.5">
+      <label className="text-[8px] uppercase text-[#808080] tracking-wider block mb-0.5" style={{ fontFamily: "Michroma, sans-serif" }} title={hint || label}>{label}</label>
+      <div className="flex items-center gap-1">
         <input
           type="number"
           value={value}
-          onChange={(e) => onChange(parseFloat(e.target.value) || 0)}
+          onChange={(e: any) => onChange(parseFloat(e.target.value) || 0)}
           step={step}
           min={min}
           max={max}
           className="flex-1 w-full min-w-0 border border-gray-200 px-2 py-1 text-[11px] focus:outline-none focus:border-[#ffc812]"
           style={{ fontFamily: "Michroma, sans-serif" }}
         />
-        {unit && <span className="text-[10px] text-gray-400 w-6">{unit}</span>}
+        {unit && <span className="text-[10px] text-gray-400 w-6 flex-shrink-0">{unit}</span>}
       </div>
     </div>
   );
@@ -146,7 +146,7 @@ export default function EvCalc() {
           {title}
         </p>
       </div>
-      <div className="p-3 grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-1">{children}</div>
+      <div className="p-2 space-y-0.5">{children}</div>
     </div>
   );
 
@@ -161,56 +161,53 @@ export default function EvCalc() {
   );
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {warnings.length > 0 && (
-        <div className="space-y-2">
+        <div className="flex flex-wrap gap-2">
           {warnings.map((w, i) => (
-            <div key={i} className={`p-3 border-l-4 ${w.level === "danger" ? "border-red-500 bg-red-50" : "border-amber-500 bg-amber-50"}`}>
-              <p className="text-sm" style={{ fontFamily: "Lexend, sans-serif" }}>{w.message}</p>
-            </div>
+            <div key={i} className={`px-3 py-1.5 border-l-2 text-[10px] ${w.level === "danger" ? "border-red-500 bg-red-50 text-red-700" : "border-amber-400 bg-amber-50 text-amber-700"}`}
+                 style={{ fontFamily: "Lexend, sans-serif" }}>{w.message}</div>
           ))}
         </div>
       )}
 
-      <div className="flex flex-col xl:flex-row gap-6">
-        <div className="xl:w-1/3 flex-shrink-0 space-y-4">
-          <Section title="Vehicle Specs">
-            <Field label="Mass" value={inputs.massKg} onChange={(v:any) => setInputs({...inputs, massKg: v})} unit="kg" />
-            <Field label="Frontal Area" value={inputs.frontalAreaM2} onChange={(v:any) => setInputs({...inputs, frontalAreaM2: v})} unit="m²" />
-            <Field label="Drag Coeff" value={inputs.dragCoeff} onChange={(v:any) => setInputs({...inputs, dragCoeff: v})} />
-            <Field label="Rolling Res" value={inputs.rollingResCoeff} step={0.001} onChange={(v:any) => setInputs({...inputs, rollingResCoeff: v})} />
-            <Field label="Drivetrain Eff" value={inputs.drivetrainEfficiency} onChange={(v:any) => setInputs({...inputs, drivetrainEfficiency: v})} unit="%" />
-            <Field label="Regen Eff" value={inputs.regenEfficiency} onChange={(v:any) => setInputs({...inputs, regenEfficiency: v})} unit="%" />
-          </Section>
-          <Section title="Battery & Climate">
-            <Field label="Capacity" value={inputs.batteryCapacityKwh} onChange={(v:any) => setInputs({...inputs, batteryCapacityKwh: v})} unit="kWh" />
-            <Field label="Usable Cap" value={inputs.usableBatteryPercent} onChange={(v:any) => setInputs({...inputs, usableBatteryPercent: v})} unit="%" />
-            <Field label="Ambient Temp" value={inputs.ambientTempC} onChange={(v:any) => setInputs({...inputs, ambientTempC: v})} unit="°C" />
-            <Field label="Aux Power" value={inputs.auxiliaryPowerW} onChange={(v:any) => setInputs({...inputs, auxiliaryPowerW: v})} unit="W" />
-          </Section>
-          <Section title="Trip">
-            <Field label="Cruise Speed" value={inputs.cruiseSpeedKmh} onChange={(v:any) => setInputs({...inputs, cruiseSpeedKmh: v})} unit="km/h" />
-            <Field label="Elevation Change" value={inputs.elevationChangeM} onChange={(v:any) => setInputs({...inputs, elevationChangeM: v})} unit="m" />
-          </Section>
-          <Section title="Charging">
-            <Field label="Charger Power" value={inputs.chargerPowerKw} onChange={(v:any) => setInputs({...inputs, chargerPowerKw: v})} unit="kW" />
-            <Field label="Start SOC" value={inputs.chargeStartSoc} onChange={(v:any) => setInputs({...inputs, chargeStartSoc: v})} unit="%" />
-            <Field label="End SOC" value={inputs.chargeEndSoc} onChange={(v:any) => setInputs({...inputs, chargeEndSoc: v})} unit="%" />
-          </Section>
-        </div>
+      {/* ── Compact Inputs ── */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+        <Section title="Vehicle Specs">
+          <Field label="Mass" value={inputs.massKg} onChange={(v:any) => setInputs({...inputs, massKg: v})} unit="kg" />
+          <Field label="Frontal Area" value={inputs.frontalAreaM2} onChange={(v:any) => setInputs({...inputs, frontalAreaM2: v})} unit="m²" />
+          <Field label="Drag Coeff" value={inputs.dragCoeff} onChange={(v:any) => setInputs({...inputs, dragCoeff: v})} />
+          <Field label="Rolling Res" value={inputs.rollingResCoeff} step={0.001} onChange={(v:any) => setInputs({...inputs, rollingResCoeff: v})} />
+          <Field label="Drivetrain Eff" value={inputs.drivetrainEfficiency} onChange={(v:any) => setInputs({...inputs, drivetrainEfficiency: v})} unit="%" />
+          <Field label="Regen Eff" value={inputs.regenEfficiency} onChange={(v:any) => setInputs({...inputs, regenEfficiency: v})} unit="%" />
+        </Section>
+        <Section title="Battery & Climate">
+          <Field label="Capacity" value={inputs.batteryCapacityKwh} onChange={(v:any) => setInputs({...inputs, batteryCapacityKwh: v})} unit="kWh" />
+          <Field label="Usable Cap" value={inputs.usableBatteryPercent} onChange={(v:any) => setInputs({...inputs, usableBatteryPercent: v})} unit="%" />
+          <Field label="Ambient Temp" value={inputs.ambientTempC} onChange={(v:any) => setInputs({...inputs, ambientTempC: v})} unit="°C" />
+          <Field label="Aux Power" value={inputs.auxiliaryPowerW} onChange={(v:any) => setInputs({...inputs, auxiliaryPowerW: v})} unit="W" />
+        </Section>
+        <Section title="Trip">
+          <Field label="Cruise Speed" value={inputs.cruiseSpeedKmh} onChange={(v:any) => setInputs({...inputs, cruiseSpeedKmh: v})} unit="km/h" />
+          <Field label="Elevation" value={inputs.elevationChangeM} onChange={(v:any) => setInputs({...inputs, elevationChangeM: v})} unit="m" />
+        </Section>
+        <Section title="Charging">
+          <Field label="Charger Power" value={inputs.chargerPowerKw} onChange={(v:any) => setInputs({...inputs, chargerPowerKw: v})} unit="kW" />
+          <Field label="Start SOC" value={inputs.chargeStartSoc} onChange={(v:any) => setInputs({...inputs, chargeStartSoc: v})} unit="%" />
+          <Field label="End SOC" value={inputs.chargeEndSoc} onChange={(v:any) => setInputs({...inputs, chargeEndSoc: v})} unit="%" />
+        </Section>
+      </div>
 
-        <div className="xl:w-2/3 space-y-6">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <StatCard label="Consumption" value={result.consumption_Wh_km.toFixed(1)} unit="Wh/km" />
-            <StatCard label="Est. Range" value={result.rangeKm.toFixed(0)} unit="km" warn={result.rangeKm < 100} />
-            <StatCard label="True Capacity" value={result.usableCap_kWh.toFixed(1)} unit="kWh" sub="Temp adjusted" />
-            <StatCard label="Charge Time" value={result.chargeTimeMin.toFixed(0)} unit="min" />
-            <StatCard label="Aero Load" value={result.E_aero_Wh.toFixed(1)} unit="Wh/km" />
-            <StatCard label="Rolling Load" value={result.E_rolling_Wh.toFixed(1)} unit="Wh/km" />
-            <StatCard label="Gradient Load" value={result.E_grad_Wh_per_km.toFixed(1)} unit="Wh/km" />
-            <StatCard label="Aux Load" value={result.E_aux_Wh.toFixed(1)} unit="Wh/km" />
-          </div>
-        </div>
+      {/* ── Results ── */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <StatCard label="Consumption" value={result.consumption_Wh_km.toFixed(1)} unit="Wh/km" />
+        <StatCard label="Est. Range" value={result.rangeKm.toFixed(0)} unit="km" warn={result.rangeKm < 100} />
+        <StatCard label="True Capacity" value={result.usableCap_kWh.toFixed(1)} unit="kWh" sub="Temp adjusted" />
+        <StatCard label="Charge Time" value={result.chargeTimeMin.toFixed(0)} unit="min" />
+        <StatCard label="Aero Load" value={result.E_aero_Wh.toFixed(1)} unit="Wh/km" />
+        <StatCard label="Rolling Load" value={result.E_rolling_Wh.toFixed(1)} unit="Wh/km" />
+        <StatCard label="Gradient Load" value={result.E_grad_Wh_per_km.toFixed(1)} unit="Wh/km" />
+        <StatCard label="Aux Load" value={result.E_aux_Wh.toFixed(1)} unit="Wh/km" />
       </div>
     </div>
   );

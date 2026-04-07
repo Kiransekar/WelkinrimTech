@@ -44,9 +44,9 @@ function Field({
 }) {
   const [showHint, setShowHint] = useState(false);
   return (
-    <div className={`flex flex-row items-center gap-2 w-full py-1 relative ${className}`}>
-      <div className="flex items-center gap-1 flex-1 min-w-0">
-        <label className="text-[9px] tracking-widest uppercase text-[#ffc812] truncate"
+    <div className={`w-full py-0.5 relative ${className}`}>
+      <div className="flex items-center gap-1 mb-0.5">
+        <label className="text-[8px] tracking-widest uppercase text-[#808080]"
                style={{ fontFamily: "Michroma, sans-serif" }} htmlFor={id} title={label}>
           {label}
         </label>
@@ -65,14 +65,12 @@ function Field({
           {hint}
         </div>
       )}
-      <div className="w-24 flex-shrink-0">
-        <input
-          id={id} type="number" step={step} value={value}
-          onChange={e => onChange(parseFloat(e.target.value) || 0)}
-          className="w-full min-w-0 border border-gray-200 text-[11px] px-2 py-1 focus:outline-none focus:border-[#ffc812] transition-colors bg-white"
-          style={{ fontFamily: "Michroma, sans-serif" }}
-        />
-      </div>
+      <input
+        id={id} type="number" step={step} value={value}
+        onChange={e => onChange(parseFloat(e.target.value) || 0)}
+        className="w-full border border-gray-200 text-[11px] px-2 py-1 focus:outline-none focus:border-[#ffc812] transition-colors bg-white"
+        style={{ fontFamily: "Michroma, sans-serif" }}
+      />
     </div>
   );
 }
@@ -85,7 +83,7 @@ function Section({ title, children, action }: { title: string; children: React.R
            style={{ fontFamily: "Michroma, sans-serif" }}>{title}</p>
         {action}
       </div>
-      <div className="p-3 grid grid-cols-2 gap-2">{children}</div>
+      <div className="p-2 space-y-0.5">{children}</div>
     </div>
   );
 }
@@ -227,11 +225,11 @@ export default function CgCalc() {
   ];
 
   return (
-    <div className="flex flex-col lg:flex-row gap-6">
-      {/* Inputs */}
-      <div className="lg:w-96 flex-shrink-0">
+    <div className="space-y-4">
+      {/* ── Compact Inputs ── */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
         {/* Wing Panels */}
-        <div className="border border-gray-100 mb-3">
+        <div className="border border-gray-100">
           <div className="bg-black px-3 py-1.5 flex items-center justify-between">
             <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812]"
                style={{ fontFamily: "Michroma, sans-serif" }}>Wing Panels</p>
@@ -239,27 +237,20 @@ export default function CgCalc() {
                     style={{ fontFamily: "Michroma, sans-serif" }}>+ Add</button>
           </div>
           {wingPanels.map((panel, idx) => (
-            <div key={panel.id} className="p-3 border-b border-gray-100 bg-gray-50/50">
-              <div className="flex items-center justify-between mb-2">
-                <input
-                  type="text"
-                  value={panel.name}
-                  onChange={e => {
-                    const newPanels = [...wingPanels];
-                    newPanels[idx].name = e.target.value;
-                    setWingPanels(newPanels);
-                  }}
+            <div key={panel.id} className="p-2 border-b border-gray-100 bg-gray-50/50">
+              <div className="flex items-center justify-between mb-1">
+                <input type="text" value={panel.name}
+                  onChange={e => { const newPanels = [...wingPanels]; newPanels[idx].name = e.target.value; setWingPanels(newPanels); }}
                   className="text-[10px] font-bold border-none bg-transparent focus:outline-none"
-                  style={{ fontFamily: "Michroma, sans-serif" }}
-                />
+                  style={{ fontFamily: "Michroma, sans-serif" }} />
                 <button onClick={() => removeWingPanel(panel.id)} className="text-red-500 text-xs hover:text-red-700">✕</button>
               </div>
-              <div className="grid grid-cols-2 gap-2">
-                <Field label="Root Chord (cm)" id={`wrc-${panel.id}`} value={panel.rootChordCm} onChange={v => { const p = [...wingPanels]; p[idx].rootChordCm = v; setWingPanels(p); }} />
-                <Field label="Tip Chord (cm)" id={`wtc-${panel.id}`} value={panel.tipChordCm} onChange={v => { const p = [...wingPanels]; p[idx].tipChordCm = v; setWingPanels(p); }} />
+              <div className="grid grid-cols-2 gap-1">
+                <Field label="Root (cm)" id={`wrc-${panel.id}`} value={panel.rootChordCm} onChange={v => { const p = [...wingPanels]; p[idx].rootChordCm = v; setWingPanels(p); }} />
+                <Field label="Tip (cm)" id={`wtc-${panel.id}`} value={panel.tipChordCm} onChange={v => { const p = [...wingPanels]; p[idx].tipChordCm = v; setWingPanels(p); }} />
                 <Field label="Span (cm)" id={`ws-${panel.id}`} value={panel.spanCm} onChange={v => { const p = [...wingPanels]; p[idx].spanCm = v; setWingPanels(p); }} />
                 <Field label="Sweep (cm)" id={`wsw-${panel.id}`} value={panel.sweepCm} onChange={v => { const p = [...wingPanels]; p[idx].sweepCm = v; setWingPanels(p); }} />
-                <Field label="Distance (cm)" id={`wd-${panel.id}`} value={panel.distanceFuselageCm} onChange={v => { const p = [...wingPanels]; p[idx].distanceFuselageCm = v; setWingPanels(p); }} hint="From datum to root LE" />
+                <Field label="Dist (cm)" id={`wd-${panel.id}`} value={panel.distanceFuselageCm} onChange={v => { const p = [...wingPanels]; p[idx].distanceFuselageCm = v; setWingPanels(p); }} hint="From datum to root LE" />
                 <Field label="Weight (g)" id={`ww-${panel.id}`} value={panel.weightG} onChange={v => { const p = [...wingPanels]; p[idx].weightG = v; setWingPanels(p); }} />
               </div>
             </div>
@@ -269,14 +260,14 @@ export default function CgCalc() {
         {/* Horizontal Tail */}
         <Section title="Horizontal Tail">
           <Field label="Span (cm)" id="hts" value={htSpanCm} onChange={setHtSpanCm} />
-          <Field label="Root Chord (cm)" id="htr" value={htRootChordCm} onChange={setHtRootChordCm} />
-          <Field label="Tip Chord (cm)" id="htt" value={htTipChordCm} onChange={setHtTipChordCm} />
+          <Field label="Root (cm)" id="htr" value={htRootChordCm} onChange={setHtRootChordCm} />
+          <Field label="Tip (cm)" id="htt" value={htTipChordCm} onChange={setHtTipChordCm} />
           <Field label="Sweep (cm)" id="htsw" value={htSweepCm} onChange={setHtSweepCm} />
           <Field label="Tail Arm (cm)" id="hta" value={tailArmCm} onChange={setTailArmCm} className="col-span-2" hint="Wing AC to HT AC" />
         </Section>
 
         {/* Components */}
-        <div className="border border-gray-100 mb-3">
+        <div className="border border-gray-100">
           <div className="bg-black px-3 py-1.5 flex items-center justify-between">
             <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812]"
                style={{ fontFamily: "Michroma, sans-serif" }}>Components</p>
@@ -284,32 +275,25 @@ export default function CgCalc() {
                     style={{ fontFamily: "Michroma, sans-serif" }}>+ Add</button>
           </div>
           {components.map((comp, idx) => (
-            <div key={comp.id} className="p-3 border-b border-gray-100 bg-gray-50/50">
-              <div className="flex items-center justify-between mb-2">
-                <input
-                  type="text"
-                  value={comp.name}
-                  onChange={e => {
-                    const newComps = [...components];
-                    newComps[idx].name = e.target.value;
-                    setComponents(newComps);
-                  }}
+            <div key={comp.id} className="p-2 border-b border-gray-100 bg-gray-50/50">
+              <div className="flex items-center justify-between mb-1">
+                <input type="text" value={comp.name}
+                  onChange={e => { const newComps = [...components]; newComps[idx].name = e.target.value; setComponents(newComps); }}
                   className="text-[10px] font-bold border-none bg-transparent focus:outline-none"
-                  style={{ fontFamily: "Michroma, sans-serif" }}
-                />
+                  style={{ fontFamily: "Michroma, sans-serif" }} />
                 <button onClick={() => removeComponent(comp.id)} className="text-red-500 text-xs hover:text-red-700">✕</button>
               </div>
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-2 gap-1">
                 <Field label="Weight (g)" id={`cw-${comp.id}`} value={comp.weightG} onChange={v => { const c = [...components]; c[idx].weightG = v; setComponents(c); }} />
-                <Field label="Arm (cm)" id={`ca-${comp.id}`} value={comp.armCm} onChange={v => { const c = [...components]; c[idx].armCm = v; setComponents(c); }} hint="From datum (+ forward)" />
+                <Field label="Arm (cm)" id={`ca-${comp.id}`} value={comp.armCm} onChange={v => { const c = [...components]; c[idx].armCm = v; setComponents(c); }} hint="From datum (+ fwd)" />
               </div>
             </div>
           ))}
         </div>
       </div>
 
-      {/* Results */}
-      <div className="flex-1 min-w-0">
+      {/* ── Results ── */}
+      <div>
         {/* Summary Cards */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
           <div className="border border-gray-100 p-3 text-center">

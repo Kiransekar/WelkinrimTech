@@ -137,9 +137,9 @@ function Field({
 }) {
   const [showHint, setShowHint] = useState(false);
   return (
-    <div className={`flex flex-row items-center gap-2 w-full py-1 relative ${className}`}>
-      <div className="flex items-center gap-1 flex-1 min-w-0">
-        <label className={`text-[9px] tracking-widest uppercase truncate ${warn ? "text-amber-500" : "text-[#ffc812]"}`}
+    <div className={`w-full py-0.5 relative ${className}`}>
+      <div className="flex items-center gap-1 mb-0.5">
+        <label className={`text-[8px] tracking-widest uppercase ${warn ? "text-amber-500" : "text-[#808080]"}`}
                style={{ fontFamily: "Michroma, sans-serif" }} htmlFor={id} title={label}>
           {label}
         </label>
@@ -158,16 +158,14 @@ function Field({
           {hint}
         </div>
       )}
-      <div className="w-24 flex-shrink-0">
-        <input
-          id={id} type="number" step={step} value={value}
-          onChange={e => onChange(parseFloat(e.target.value) || 0)}
-          className={`border w-full min-w-0 text-[11px] px-2 py-1 focus:outline-none transition-colors bg-white ${
-            warn ? "border-amber-400 focus:border-amber-500" : "border-gray-200 focus:border-[#ffc812]"
-          }`}
-          style={{ fontFamily: "Michroma, sans-serif" }}
-        />
-      </div>
+      <input
+        id={id} type="number" step={step} value={value}
+        onChange={e => onChange(parseFloat(e.target.value) || 0)}
+        className={`border w-full text-[11px] px-2 py-1 focus:outline-none transition-colors bg-white ${
+          warn ? "border-amber-400 focus:border-amber-500" : "border-gray-200 focus:border-[#ffc812]"
+        }`}
+        style={{ fontFamily: "Michroma, sans-serif" }}
+      />
     </div>
   );
 }
@@ -187,7 +185,7 @@ function CollapsibleSection({
            style={{ fontFamily: "Michroma, sans-serif" }}>{title}</p>
         <span className={`text-[#ffc812] text-[10px] transition-transform ${open ? "rotate-180" : ""}`}>▾</span>
       </button>
-      {open && <div className="p-3 grid grid-cols-2 gap-2">{children}</div>}
+      {open && <div className="p-2 space-y-0.5">{children}</div>}
     </div>
   );
 }
@@ -342,86 +340,85 @@ export default function XcopterCalcPanel() {
   }), [result, inputs]);
 
   return (
-    <div className="flex flex-col lg:flex-row gap-6">
-      {/* ── INPUTS COLUMN ──────────────────────────────────────── */}
-      <div className="lg:w-80 xl:w-88 flex-shrink-0">
-        {/* Motor preset */}
-        <div className="border border-[#ffc812]/30 bg-[#fffbe6] px-3 py-2.5 mb-2">
-          <label className="text-[9px] tracking-widest uppercase text-[#ffc812] font-bold block mb-1.5"
-                 style={{ fontFamily: "Michroma, sans-serif" }}>
-            ⚡ Motor Preset (Haemng Series)
-          </label>
-          <select
-            value={selectedPreset}
-            onChange={e => applyPreset(e.target.value)}
-            className="w-full border border-[#ffc812]/40 text-[11px] px-2.5 py-1.5 focus:outline-none focus:border-[#ffc812] bg-white"
-            style={{ fontFamily: "Michroma, sans-serif" }}
-          >
-            <option value="">— Select Motor —</option>
-            {presets.map(p => (
-              <option key={p.id} value={p.id}>{p.name} ({p.kv}KV, {p.recommendedVoltage}S)</option>
-            ))}
-          </select>
-        </div>
+    <div className="space-y-4">
+      {/* ── COMPACT INPUTS ──────────────────────────────────────── */}
+      {/* Motor Preset */}
+      <div className="border border-[#ffc812]/30 bg-[#fffbe6] px-3 py-2 flex items-center gap-3">
+        <label className="text-[9px] tracking-widest uppercase text-[#ffc812] font-bold whitespace-nowrap"
+               style={{ fontFamily: "Michroma, sans-serif" }}>
+          ⚡ Motor Preset
+        </label>
+        <select
+          value={selectedPreset}
+          onChange={e => applyPreset(e.target.value)}
+          className="flex-1 border border-[#ffc812]/40 text-[11px] px-2.5 py-1 focus:outline-none focus:border-[#ffc812] bg-white"
+          style={{ fontFamily: "Michroma, sans-serif" }}
+        >
+          <option value="">— Select Motor —</option>
+          {presets.map(p => (
+            <option key={p.id} value={p.id}>{p.name} ({p.kv}KV, {p.recommendedVoltage}S)</option>
+          ))}
+        </select>
+      </div>
 
+      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-3">
         <CollapsibleSection title="Multirotor Config" defaultOpen>
           <Field label="# Rotors" id="xnr" value={inputs.numRotors} onChange={set("numRotors")} step="1"
-                 hint="Number of rotors (4 = quad, 6 = hex, 8 = octo). More rotors = redundancy and smoother flight." />
+                 hint="Number of rotors (4 = quad, 6 = hex, 8 = octo)." />
           <Field label="AUW (g)" id="xaw" value={inputs.auwG} onChange={set("auwG")}
-                 hint="All-up weight of the frame, motors, ESCs, battery, and all fixed electronics — without payload." />
+                 hint="All-up weight without payload." />
           <Field label="Payload (g)" id="xpg" value={inputs.payloadG} onChange={set("payloadG")}
-                 hint="Additional carried weight (camera, gimbal, cargo). Affects TWR and flight time." className="col-span-2" />
-        </CollapsibleSection>
-
-        <CollapsibleSection title="Environment" defaultOpen={false}>
-          <Field label="Elevation (m)" id="xel" value={inputs.elevationM} onChange={set("elevationM")}
-                 hint="Flight altitude above sea level. Higher elevation = lower air density = less thrust." />
-          <Field label="Temp (°C)" id="xtc" value={inputs.temperatureC} onChange={set("temperatureC")}
-                 hint="Ambient air temperature. Hot air is less dense, reducing thrust." />
-          <Field label="Pressure (hPa)" id="xph" value={inputs.pressureHpa} onChange={set("pressureHpa")}
-                 className="col-span-2"
-                 hint="Local barometric pressure. ISA standard = 1013.25 hPa." />
+                 hint="Additional carried weight." className="col-span-2" />
         </CollapsibleSection>
 
         <CollapsibleSection title="Battery" defaultOpen>
           <Field label="Cells (S)" id="xbc" value={inputs.batteryCells} onChange={set("batteryCells")} step="1"
                  hint="LiPo cells in series. Nominal voltage = cells × 3.7V." />
           <Field label="Capacity (mAh)" id="xbm" value={inputs.batteryCapacityMah} onChange={set("batteryCapacityMah")} step="100"
-                 hint="Battery energy capacity. Higher = longer flight, more weight." />
+                 hint="Battery energy capacity." />
           <Field label="Max Disch (%)" id="xbd" value={inputs.batteryMaxDischarge * 100}
                  onChange={v => set("batteryMaxDischarge")(v / 100)}
-                 hint="Usable proportion of battery capacity. 80% is safe for LiPo longevity." />
+                 hint="Usable proportion. 80% is safe for LiPo." />
           <Field label="Resist (mΩ/cell)" id="xbr" value={inputs.batteryResistanceMohm} onChange={set("batteryResistanceMohm")}
-                 hint="Internal resistance per cell. Drives voltage sag. Low = better discharge. Typical: 5–20 mΩ." />
+                 hint="Internal resistance per cell." />
         </CollapsibleSection>
 
         <CollapsibleSection title="Motor" defaultOpen>
           <Field label="KV (rpm/V)" id="xkv" value={inputs.motorKv} onChange={set("motorKv")} step="1"
-                 hint="Motor velocity constant. Lower KV for large props; higher KV for small props." />
+                 hint="Motor velocity constant." />
           <Field label="Io (A)" id="xio" value={inputs.motorIo} onChange={set("motorIo")} step="0.1"
-                 hint="No-load current — iron/friction losses. Typical: 0.5–3 A." />
+                 hint="No-load current." />
           <Field label="Rm (mΩ)" id="xrm" value={inputs.motorRmMohm} onChange={set("motorRmMohm")}
-                 hint="Phase-to-phase winding resistance. Drives copper losses (I²R). Typical: 20–100 mΩ." />
-          <Field label="Max Current (A)" id="xmc" value={inputs.motorMaxCurrentA} onChange={set("motorMaxCurrentA")}
-                 hint="Continuous current limit from datasheet. Used to cap the maximum operating point." />
+                 hint="Winding resistance." />
+          <Field label="Max Curr (A)" id="xmc" value={inputs.motorMaxCurrentA} onChange={set("motorMaxCurrentA")}
+                 hint="Continuous current limit." />
         </CollapsibleSection>
 
         <CollapsibleSection title="Propeller" defaultOpen>
           <Field label="Dia (inch)" id="xpd" value={inputs.propDiameterInch} onChange={set("propDiameterInch")} step="0.5"
-                 hint="Propeller diameter. Larger = more thrust and better efficiency, but slower response." />
+                 hint="Propeller diameter." />
           <Field label="Pitch (inch)" id="xpp" value={inputs.propPitchInch} onChange={set("propPitchInch")} step="0.1"
-                 hint="Theoretical advance per revolution. Higher pitch = more speed, less static thrust." />
+                 hint="Theoretical advance per revolution." />
           <Field label="CT" id="xct" value={inputs.ct} onChange={set("ct")} step="0.005"
-                 hint="Thrust coefficient from propeller data. Typical range: 0.09–0.14." />
+                 hint="Thrust coefficient. Typical: 0.09–0.14." />
           <Field label="CP" id="xcp" value={inputs.cp} onChange={set("cp")} step="0.005"
-                 hint="Power coefficient from propeller data. Typical range: 0.04–0.07." />
+                 hint="Power coefficient. Typical: 0.04–0.07." />
+        </CollapsibleSection>
+
+        <CollapsibleSection title="Environment" defaultOpen={false}>
+          <Field label="Elevation (m)" id="xel" value={inputs.elevationM} onChange={set("elevationM")}
+                 hint="Flight altitude above sea level." />
+          <Field label="Temp (°C)" id="xtc" value={inputs.temperatureC} onChange={set("temperatureC")}
+                 hint="Ambient air temperature." />
+          <Field label="Pressure (hPa)" id="xph" value={inputs.pressureHpa} onChange={set("pressureHpa")}
+                 hint="Local barometric pressure. ISA = 1013.25 hPa." />
         </CollapsibleSection>
       </div>
 
-      {/* ── RESULTS COLUMN ──────────────────────────────────────── */}
-      <div className="flex-1 min-w-0">
+      {/* ── RESULTS ──────────────────────────────────────── */}
+      <div>
         {/* Action bar */}
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center justify-between mb-3">
           <p className="text-[9px] tracking-[0.3em] uppercase"
              style={{ fontFamily: "Michroma, sans-serif" }}>
             {warnings.length > 0

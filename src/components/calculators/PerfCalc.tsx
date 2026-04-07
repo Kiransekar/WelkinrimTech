@@ -292,20 +292,20 @@ export default function PerfCalcPanel() {
   };
 
   const Field = ({ label, value, onChange, step = 1, min, max, unit, hint }: any) => (
-    <div className="flex flex-row items-center gap-2 w-full py-1">
-      <label className="text-[9px] uppercase text-[#ffc812] tracking-wider flex-1 truncate" title={hint || label}>{label}</label>
-      <div className="flex items-center gap-1 w-24">
+    <div className="w-full py-0.5">
+      <label className="text-[8px] uppercase text-[#808080] tracking-wider block mb-0.5" style={{ fontFamily: "Michroma, sans-serif" }} title={hint || label}>{label}</label>
+      <div className="flex items-center gap-1">
         <input
           type="number"
           value={value}
-          onChange={(e) => onChange(parseFloat(e.target.value) || 0)}
+          onChange={(e: any) => onChange(parseFloat(e.target.value) || 0)}
           step={step}
           min={min}
           max={max}
           className="flex-1 w-full min-w-0 border border-gray-200 px-2 py-1 text-[11px] focus:outline-none focus:border-[#ffc812]"
           style={{ fontFamily: "Michroma, sans-serif" }}
         />
-        {unit && <span className="text-[10px] text-gray-400 w-6">{unit}</span>}
+        {unit && <span className="text-[10px] text-gray-400 w-6 flex-shrink-0">{unit}</span>}
       </div>
     </div>
   );
@@ -317,7 +317,7 @@ export default function PerfCalcPanel() {
           {title}
         </p>
       </div>
-      <div className="p-3 grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-1">{children}</div>
+      <div className="p-2 space-y-0.5">{children}</div>
     </div>
   );
 
@@ -332,19 +332,43 @@ export default function PerfCalcPanel() {
   );
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Warnings */}
       {warnings.length > 0 && (
-        <div className="space-y-2">
+        <div className="flex flex-wrap gap-2">
           {warnings.map((w, i) => (
-            <div key={i} className={`p-3 border-l-4 ${w.level === "danger" ? "border-red-500 bg-red-50" : "border-amber-500 bg-amber-50"}`}>
-              <p className="text-sm" style={{ fontFamily: "Lexend, sans-serif" }}>{w.message}</p>
-            </div>
+            <div key={i} className={`px-3 py-1.5 border-l-2 text-[10px] ${w.level === "danger" ? "border-red-500 bg-red-50 text-red-700" : "border-amber-400 bg-amber-50 text-amber-700"}`}
+                 style={{ fontFamily: "Lexend, sans-serif" }}>{w.message}</div>
           ))}
         </div>
       )}
 
-      {/* Results Summary */}
+      {/* ── Compact Inputs ── */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+        <Section title="Aircraft Geometry">
+          <Field label="Weight" value={inputs.modelWeightG} onChange={(v: number) => updateInput("modelWeightG", v)} step={50} unit="g" />
+          <Field label="Wing Area" value={inputs.wingAreaDm2} onChange={(v: number) => updateInput("wingAreaDm2", v)} step={0.5} unit="dm²" />
+          <Field label="Wingspan" value={inputs.wingspanCm} onChange={(v: number) => updateInput("wingspanCm", v)} step={1} unit="cm" />
+          <Field label="Aspect Ratio" value={inputs.aspectRatio} onChange={(v: number) => updateInput("aspectRatio", v)} step={0.1} min={3} max={30} unit="AR" />
+          <Field label="Oswald Eff" value={inputs.oswaldEfficiency} onChange={(v: number) => updateInput("oswaldEfficiency", v)} step={0.01} min={0.6} max={0.95} unit="e" />
+          <Field label="Cdo" value={inputs.cdo} onChange={(v: number) => updateInput("cdo", v)} step={0.001} min={0.01} max={0.1} unit="Cd" />
+        </Section>
+
+        <Section title="Propulsion">
+          <Field label="Motor Power" value={inputs.motorMaxPowerW} onChange={(v: number) => updateInput("motorMaxPowerW", v)} step={10} unit="W" />
+          <Field label="Prop Eff" value={inputs.propEfficiency * 100} onChange={(v: number) => updateInput("propEfficiency", v / 100)} step={1} min={50} max={90} unit="%" />
+          <Field label="Battery" value={inputs.batteryCapacityMah} onChange={(v: number) => updateInput("batteryCapacityMah", v)} step={100} unit="mAh" />
+          <Field label="Cells" value={inputs.batteryCells} onChange={(v: number) => updateInput("batteryCells", v)} step={1} min={1} max={14} unit="S" />
+          <Field label="Max Disch" value={inputs.batteryMaxDischarge * 100} onChange={(v: number) => updateInput("batteryMaxDischarge", v / 100)} step={5} min={50} max={100} unit="%" />
+        </Section>
+
+        <Section title="Aerodynamics">
+          <Field label="CL Max" value={inputs.liftCoeffMax} onChange={(v: number) => updateInput("liftCoeffMax", v)} step={0.05} min={0.8} max={2.0} unit="CL" />
+          <Field label="CL Cruise" value={inputs.liftCoeffCruise} onChange={(v: number) => updateInput("liftCoeffCruise", v)} step={0.05} min={0.2} max={1.0} unit="CL" />
+        </Section>
+      </div>
+
+      {/* ── Results Summary ── */}
       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3">
         <StatCard label="Max L/D" value={result.ldMax.toFixed(1)} unit=":1" />
         <StatCard label="Stall Speed" value={result.stallSpeedKph.toFixed(0)} unit="km/h" warn={result.stallSpeedKph > 45} />
@@ -356,153 +380,84 @@ export default function PerfCalcPanel() {
         <StatCard label="Min Power" value={(result.minPowerRequiredW / 1000).toFixed(2)} unit="kW" />
       </div>
 
-      <div className="flex flex-col lg:flex-row gap-6">
-        {/* Inputs */}
-        <div className="lg:w-96 flex-shrink-0 space-y-4">
-          <Section title="Aircraft Geometry">
-            <Field label="Weight" value={inputs.modelWeightG} onChange={(v: number) => updateInput("modelWeightG", v)} step={50} unit="g" />
-            <Field label="Wing Area" value={inputs.wingAreaDm2} onChange={(v: number) => updateInput("wingAreaDm2", v)} step={0.5} unit="dm²" />
-            <Field label="Wingspan" value={inputs.wingspanCm} onChange={(v: number) => updateInput("wingspanCm", v)} step={1} unit="cm" />
-            <Field label="Aspect Ratio" value={inputs.aspectRatio} onChange={(v: number) => updateInput("aspectRatio", v)} step={0.1} min={3} max={30} unit="AR" />
-            <Field label="Oswald Efficiency" value={inputs.oswaldEfficiency} onChange={(v: number) => updateInput("oswaldEfficiency", v)} step={0.01} min={0.6} max={0.95} unit="e" />
-            <Field label="Cdo" value={inputs.cdo} onChange={(v: number) => updateInput("cdo", v)} step={0.001} min={0.01} max={0.1} unit="Cd" />
-          </Section>
-
-          <Section title="Propulsion">
-            <Field label="Motor Power" value={inputs.motorMaxPowerW} onChange={(v: number) => updateInput("motorMaxPowerW", v)} step={10} unit="W" />
-            <Field label="Prop Efficiency" value={inputs.propEfficiency * 100} onChange={(v: number) => updateInput("propEfficiency", v / 100)} step={1} min={50} max={90} unit="%" />
-            <Field label="Battery" value={inputs.batteryCapacityMah} onChange={(v: number) => updateInput("batteryCapacityMah", v)} step={100} unit="mAh" />
-            <Field label="Cells" value={inputs.batteryCells} onChange={(v: number) => updateInput("batteryCells", v)} step={1} min={1} max={14} unit="S" />
-            <Field label="Max Discharge" value={inputs.batteryMaxDischarge * 100} onChange={(v: number) => updateInput("batteryMaxDischarge", v / 100)} step={5} min={50} max={100} unit="%" />
-          </Section>
-
-          <Section title="Aerodynamics">
-            <Field label="CL Max" value={inputs.liftCoeffMax} onChange={(v: number) => updateInput("liftCoeffMax", v)} step={0.05} min={0.8} max={2.0} unit="CL" />
-            <Field label="CL Cruise" value={inputs.liftCoeffCruise} onChange={(v: number) => updateInput("liftCoeffCruise", v)} step={0.05} min={0.2} max={1.0} unit="CL" />
-          </Section>
+      {/* ── Charts ── */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+        <div className="border border-gray-100">
+          <div className="bg-black px-3 py-1.5">
+            <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812]" style={{ fontFamily: "Michroma, sans-serif" }}>
+              Drag Polar & L/D Curve
+            </p>
+          </div>
+          <div className="p-4">
+            <ResponsiveContainer width="100%" height={220}>
+              <LineChart data={dragPolarData}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                <XAxis dataKey="cl" tick={{ fontSize: 9 }} name="CL" />
+                <YAxis yAxisId="left" tick={{ fontSize: 9 }} name="CD" />
+                <YAxis yAxisId="right" orientation="right" tick={{ fontSize: 9 }} name="L/D" />
+                <Tooltip contentStyle={{ fontSize: 10 }} />
+                <Legend wrapperStyle={{ fontSize: 9 }} />
+                <Line yAxisId="left" type="monotone" dataKey="cd" stroke="#ef4444" strokeWidth={2} name="Drag (CD)" dot={false} />
+                <Line yAxisId="right" type="monotone" dataKey="ld" stroke="#22c55e" strokeWidth={2} name="L/D Ratio" dot={false} />
+                <ReferenceLine x={Math.sqrt(inputs.cdo / result.k)} stroke="#ffc812" strokeDasharray="3 3" label="Max L/D" yAxisId="right" />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
         </div>
 
-        {/* Charts */}
-        <div className="flex-1 space-y-4">
-          {/* Drag Polar */}
-          <div className="border border-gray-100">
-            <div className="bg-black px-3 py-1.5 flex items-center justify-between">
-              <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812]" style={{ fontFamily: "Michroma, sans-serif" }}>
-                Drag Polar & L/D Curve
-              </p>
-            </div>
-            <div className="p-4">
-              <ResponsiveContainer width="100%" height={250}>
-                <LineChart data={dragPolarData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                  <XAxis dataKey="cl" tick={{ fontSize: 9 }} name="CL" />
-                  <YAxis yAxisId="left" tick={{ fontSize: 9 }} name="CD" />
-                  <YAxis yAxisId="right" orientation="right" tick={{ fontSize: 9 }} name="L/D" />
-                  <Tooltip contentStyle={{ fontSize: 10 }} />
-                  <Legend wrapperStyle={{ fontSize: 9 }} />
-                  <Line yAxisId="left" type="monotone" dataKey="cd" stroke="#ef4444" strokeWidth={2} name="Drag (CD)" />
-                  <Line yAxisId="right" type="monotone" dataKey="ld" stroke="#22c55e" strokeWidth={2} name="L/D Ratio" />
-                  <ReferenceLine x={Math.sqrt(inputs.cdo / result.k)} stroke="#ffc812" strokeDasharray="3 3" label="Max L/D" yAxisId="right" />
-                </LineChart>
-              </ResponsiveContainer>
-            </div>
+        <div className="border border-gray-100">
+          <div className="bg-black px-3 py-1.5">
+            <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812]" style={{ fontFamily: "Michroma, sans-serif" }}>
+              Power Required & Rate of Climb
+            </p>
           </div>
-
-          {/* Power Curve */}
-          <div className="border border-gray-100">
-            <div className="bg-black px-3 py-1.5 flex items-center justify-between">
-              <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812]" style={{ fontFamily: "Michroma, sans-serif" }}>
-                Power Required & Rate of Climb
-              </p>
-            </div>
-            <div className="p-4">
-              <ResponsiveContainer width="100%" height={250}>
-                <LineChart data={powerCurveData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                  <XAxis dataKey="speed" tick={{ fontSize: 9 }} unit="km/h" />
-                  <YAxis yAxisId="left" tick={{ fontSize: 9 }} unit="W" />
-                  <YAxis yAxisId="right" orientation="right" tick={{ fontSize: 9 }} unit="m/min" />
-                  <Tooltip contentStyle={{ fontSize: 10 }} />
-                  <Legend wrapperStyle={{ fontSize: 9 }} />
-                  <Line yAxisId="left" type="monotone" dataKey="powerReq" stroke="#3b82f6" strokeWidth={2} name="Power Required" />
-                  <Line yAxisId="left" type="step" dataKey="powerAvail" stroke="#22c55e" strokeWidth={2} strokeDasharray="3 3" name="Power Available" />
-                  <Line yAxisId="right" type="monotone" dataKey="roc" stroke="#ef4444" strokeWidth={2} name="Rate of Climb" />
-                  <ReferenceLine x={result.bestClimbSpeedKph} stroke="#ffc812" strokeDasharray="3 3" label="Best Climb" yAxisId="left" />
-                  <ReferenceLine x={result.minPowerSpeedKph} stroke="#9ca3af" strokeDasharray="3 3" label="Min Power" yAxisId="left" />
-                </LineChart>
-              </ResponsiveContainer>
-            </div>
+          <div className="p-4">
+            <ResponsiveContainer width="100%" height={220}>
+              <LineChart data={powerCurveData}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                <XAxis dataKey="speed" tick={{ fontSize: 9 }} unit="km/h" />
+                <YAxis yAxisId="left" tick={{ fontSize: 9 }} unit="W" />
+                <YAxis yAxisId="right" orientation="right" tick={{ fontSize: 9 }} unit="m/min" />
+                <Tooltip contentStyle={{ fontSize: 10 }} />
+                <Legend wrapperStyle={{ fontSize: 9 }} />
+                <Line yAxisId="left" type="monotone" dataKey="powerReq" stroke="#3b82f6" strokeWidth={2} name="Power Required" dot={false} />
+                <Line yAxisId="left" type="step" dataKey="powerAvail" stroke="#22c55e" strokeWidth={2} strokeDasharray="3 3" name="Power Available" dot={false} />
+                <Line yAxisId="right" type="monotone" dataKey="roc" stroke="#ef4444" strokeWidth={2} name="Rate of Climb" dot={false} />
+                <ReferenceLine x={result.bestClimbSpeedKph} stroke="#ffc812" strokeDasharray="3 3" label="Best Climb" yAxisId="left" />
+                <ReferenceLine x={result.minPowerSpeedKph} stroke="#9ca3af" strokeDasharray="3 3" label="Min Power" yAxisId="left" />
+              </LineChart>
+            </ResponsiveContainer>
           </div>
+        </div>
+      </div>
 
-          {/* Performance Details */}
-          <div className="grid grid-cols-2 gap-4">
-            <div className="border border-gray-100">
-              <div className="bg-black px-3 py-1.5">
-                <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812]" style={{ fontFamily: "Michroma, sans-serif" }}>
-                  Characteristic Speeds
-                </p>
-              </div>
-              <div className="p-4 space-y-2 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-gray-500">Stall Speed</span>
-                  <span className="font-bold">{result.stallSpeedKph.toFixed(0)} km/h</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-500">Min Power Speed</span>
-                  <span className="font-bold">{result.minPowerSpeedKph.toFixed(0)} km/h</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-500">Best Climb</span>
-                  <span className="font-bold">{result.bestClimbSpeedKph.toFixed(0)} km/h</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-500">Best Range</span>
-                  <span className="font-bold">{result.bestRangeSpeedKph.toFixed(0)} km/h</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-500">Best Endurance</span>
-                  <span className="font-bold">{result.bestEnduranceSpeedKph.toFixed(0)} km/h</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-500">Max L/D Speed</span>
-                  <span className="font-bold">{result.ldMaxSpeed.toFixed(0)} km/h</span>
-                </div>
-              </div>
-            </div>
+      {/* ── Detail Tables ── */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <div className="border border-gray-100">
+          <div className="bg-black px-3 py-1.5">
+            <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812]" style={{ fontFamily: "Michroma, sans-serif" }}>Characteristic Speeds</p>
+          </div>
+          <div className="p-3 space-y-1.5">
+            <div className="flex justify-between text-[11px]"><span className="text-gray-500">Stall Speed</span><span className="font-bold">{result.stallSpeedKph.toFixed(0)} km/h</span></div>
+            <div className="flex justify-between text-[11px]"><span className="text-gray-500">Min Power Speed</span><span className="font-bold">{result.minPowerSpeedKph.toFixed(0)} km/h</span></div>
+            <div className="flex justify-between text-[11px]"><span className="text-gray-500">Best Climb</span><span className="font-bold">{result.bestClimbSpeedKph.toFixed(0)} km/h</span></div>
+            <div className="flex justify-between text-[11px]"><span className="text-gray-500">Best Range</span><span className="font-bold">{result.bestRangeSpeedKph.toFixed(0)} km/h</span></div>
+            <div className="flex justify-between text-[11px]"><span className="text-gray-500">Best Endurance</span><span className="font-bold">{result.bestEnduranceSpeedKph.toFixed(0)} km/h</span></div>
+            <div className="flex justify-between text-[11px]"><span className="text-gray-500">Max L/D Speed</span><span className="font-bold">{result.ldMaxSpeed.toFixed(0)} km/h</span></div>
+          </div>
+        </div>
 
-            <div className="border border-gray-100">
-              <div className="bg-black px-3 py-1.5">
-                <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812]" style={{ fontFamily: "Michroma, sans-serif" }}>
-                  Drag Polar Parameters
-                </p>
-              </div>
-              <div className="p-4 space-y-2 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-gray-500">Zero-lift Drag (Cdo)</span>
-                  <span className="font-bold">{result.cdo.toFixed(3)}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-500">Induced Drag Factor (k)</span>
-                  <span className="font-bold">{result.k.toFixed(4)}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-500">Max L/D Ratio</span>
-                  <span className="font-bold">{result.ldMax.toFixed(1)}:1</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-500">Min Power Required</span>
-                  <span className="font-bold">{result.minPowerRequiredW.toFixed(0)} W</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-500">Max Power Available</span>
-                  <span className="font-bold">{result.maxAvailablePowerW.toFixed(0)} W</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-500">Excess Power</span>
-                  <span className="font-bold">{(result.maxAvailablePowerW - result.minPowerRequiredW).toFixed(0)} W</span>
-                </div>
-              </div>
-            </div>
+        <div className="border border-gray-100">
+          <div className="bg-black px-3 py-1.5">
+            <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812]" style={{ fontFamily: "Michroma, sans-serif" }}>Drag Polar Parameters</p>
+          </div>
+          <div className="p-3 space-y-1.5">
+            <div className="flex justify-between text-[11px]"><span className="text-gray-500">Zero-lift Drag (Cdo)</span><span className="font-bold">{result.cdo.toFixed(3)}</span></div>
+            <div className="flex justify-between text-[11px]"><span className="text-gray-500">Induced Drag (k)</span><span className="font-bold">{result.k.toFixed(4)}</span></div>
+            <div className="flex justify-between text-[11px]"><span className="text-gray-500">Max L/D Ratio</span><span className="font-bold">{result.ldMax.toFixed(1)}:1</span></div>
+            <div className="flex justify-between text-[11px]"><span className="text-gray-500">Min Power Required</span><span className="font-bold">{result.minPowerRequiredW.toFixed(0)} W</span></div>
+            <div className="flex justify-between text-[11px]"><span className="text-gray-500">Max Power Available</span><span className="font-bold">{result.maxAvailablePowerW.toFixed(0)} W</span></div>
+            <div className="flex justify-between text-[11px]"><span className="text-gray-500">Excess Power</span><span className="font-bold">{(result.maxAvailablePowerW - result.minPowerRequiredW).toFixed(0)} W</span></div>
           </div>
         </div>
       </div>

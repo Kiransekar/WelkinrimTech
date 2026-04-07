@@ -40,9 +40,9 @@ function Field({
 }) {
   const [showHint, setShowHint] = useState(false);
   return (
-    <div className={`flex flex-row items-center gap-2 w-full py-1 relative ${className}`}>
-      <div className="flex items-center gap-1 flex-1 min-w-0">
-        <label className="text-[9px] tracking-widest uppercase text-[#ffc812] truncate"
+    <div className={`w-full py-0.5 relative ${className}`}>
+      <div className="flex items-center gap-1 mb-0.5">
+        <label className="text-[8px] tracking-widest uppercase text-[#808080]"
                style={{ fontFamily: "Michroma, sans-serif" }} htmlFor={id} title={label}>
           {label}
         </label>
@@ -61,14 +61,12 @@ function Field({
           {hint}
         </div>
       )}
-      <div className="w-24 flex-shrink-0">
-        <input
-          id={id} type="number" step={step} value={value}
-          onChange={e => onChange(parseFloat(e.target.value) || 0)}
-          className="w-full min-w-0 border border-gray-200 text-[11px] px-2 py-1 focus:outline-none focus:border-[#ffc812] transition-colors bg-white"
-          style={{ fontFamily: "Michroma, sans-serif" }}
-        />
-      </div>
+      <input
+        id={id} type="number" step={step} value={value}
+        onChange={e => onChange(parseFloat(e.target.value) || 0)}
+        className="w-full border border-gray-200 text-[11px] px-2 py-1 focus:outline-none focus:border-[#ffc812] transition-colors bg-white"
+        style={{ fontFamily: "Michroma, sans-serif" }}
+      />
     </div>
   );
 }
@@ -80,7 +78,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
         <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812]"
            style={{ fontFamily: "Michroma, sans-serif" }}>{title}</p>
       </div>
-      <div className="p-3 grid grid-cols-2 gap-2">{children}</div>
+      <div className="p-2 space-y-0.5">{children}</div>
     </div>
   );
 }
@@ -260,32 +258,35 @@ export default function SetupFinder() {
   })), [propResults]);
 
   return (
-    <div className="flex flex-col lg:flex-row gap-6">
-      {/* Inputs */}
-      <div className="lg:w-80 xl:w-96 flex-shrink-0">
-        <Section title="Motor Preset">
-          <div className="col-span-2">
-            <select
-              value={selectedPreset}
-              onChange={e => applyPreset(e.target.value)}
-              className="w-full border-2 border-[#ffc812]/40 text-[12px] px-3 py-2 focus:outline-none focus:border-[#ffc812] transition-colors bg-[#fffbe6] font-medium"
-              style={{ fontFamily: "Michroma, sans-serif" }}
-            >
-              <option value="">-- Select Haemng Motor --</option>
-              {presets.map(p => (
-                <option key={p.id} value={p.id}>{p.name} ({p.kv}KV, {p.recommendedVoltage}S)</option>
-              ))}
-            </select>
-          </div>
-        </Section>
+    <div className="space-y-4">
+      {/* ── Compact Inputs ── */}
+      {/* Motor Preset */}
+      <div className="border border-[#ffc812]/30 bg-[#fffbe6] px-3 py-2 flex items-center gap-3">
+        <label className="text-[9px] tracking-widest uppercase text-[#ffc812] font-bold whitespace-nowrap"
+               style={{ fontFamily: "Michroma, sans-serif" }}>
+          ⚡ Motor Preset
+        </label>
+        <select
+          value={selectedPreset}
+          onChange={e => applyPreset(e.target.value)}
+          className="flex-1 border border-[#ffc812]/40 text-[11px] px-2.5 py-1 focus:outline-none focus:border-[#ffc812] bg-white"
+          style={{ fontFamily: "Michroma, sans-serif" }}
+        >
+          <option value="">— Select Haemng Motor —</option>
+          {presets.map(p => (
+            <option key={p.id} value={p.id}>{p.name} ({p.kv}KV, {p.recommendedVoltage}S)</option>
+          ))}
+        </select>
+      </div>
 
+      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-3">
         <Section title="Aircraft">
           <Field label="Weight (g)" id="mw" value={inputs.modelWeightG} onChange={set("modelWeightG")}
                  hint="Total aircraft weight including battery" />
           <Field label="# Motors" id="nm" value={inputs.numMotors} onChange={set("numMotors")} step="1" />
           <div className="col-span-2 mt-1 relative">
             <label className="text-[9px] tracking-widest uppercase text-[#808080] mb-1 block" style={{ fontFamily: "Michroma, sans-serif" }}>
-              Mission (Factors)
+              Mission
             </label>
             <select
               value={inputs.mission}
@@ -303,41 +304,41 @@ export default function SetupFinder() {
             </select>
           </div>
           {inputs.mission === "glider_tow" && (
-            <Field label="Tow Glider Weight (g)" id="towWeight" value={inputs.gliderTowWeightG} onChange={set("gliderTowWeightG")} className="col-span-2" />
+            <Field label="Tow Wt (g)" id="towWeight" value={inputs.gliderTowWeightG} onChange={set("gliderTowWeightG")} className="col-span-2" />
           )}
-        </Section>
-
-        <Section title="Environment">
-          <Field label="Elevation (m)" id="el" value={inputs.elevationM} onChange={set("elevationM")} />
-          <Field label="Temp (°C)" id="tc" value={inputs.temperatureC} onChange={set("temperatureC")} />
-          <Field label="Pressure (hPa)" id="ph" value={inputs.pressureHpa} onChange={set("pressureHpa")} className="col-span-2" />
         </Section>
 
         <Section title="Battery">
           <Field label="Cells (S)" id="bc" value={inputs.batteryCells} onChange={set("batteryCells")} step="1" />
-          <Field label="Capacity (mAh)" id="bm" value={inputs.batteryCapacityMah} onChange={set("batteryCapacityMah")} step="100" />
+          <Field label="Capacity" id="bm" value={inputs.batteryCapacityMah} onChange={set("batteryCapacityMah")} step="100" />
           <Field label="Max Disch (%)" id="bd" value={inputs.batteryMaxDischarge * 100} onChange={v => set("batteryMaxDischarge")(v / 100)} />
           <Field label="Resist (mΩ)" id="br" value={inputs.batteryResistanceMohm} onChange={set("batteryResistanceMohm")} />
         </Section>
 
         <Section title="Motor">
-          <Field label="KV (rpm/V)" id="kv" value={inputs.motorKv} onChange={set("motorKv")} step="1" />
+          <Field label="KV" id="kv" value={inputs.motorKv} onChange={set("motorKv")} step="1" />
           <Field label="Io (A)" id="io" value={inputs.motorIo} onChange={set("motorIo")} step="0.1" />
           <Field label="Rm (mΩ)" id="rm" value={inputs.motorRmMohm} onChange={set("motorRmMohm")} />
-          <Field label="Max Power (W)" id="mp" value={inputs.motorMaxPowerW} onChange={set("motorMaxPowerW")} />
+          <Field label="Max Pwr (W)" id="mp" value={inputs.motorMaxPowerW} onChange={set("motorMaxPowerW")} />
         </Section>
 
         <Section title="Targets">
-          <Field label="Min Flight Time (min)" id="mft" value={inputs.minFlightTimeMin} onChange={set("minFlightTimeMin")} />
-          <Field label="Max Hover Throttle (%)" id="mht" value={inputs.maxThrottleHover} onChange={set("maxThrottleHover")}
+          <Field label="Min Flight (min)" id="mft" value={inputs.minFlightTimeMin} onChange={set("minFlightTimeMin")} />
+          <Field label="Max Hover (%)" id="mht" value={inputs.maxThrottleHover} onChange={set("maxThrottleHover")}
                  hint="Maximum throttle for stable hover" />
-          <Field label="Prop Min (inch)" id="pmin" value={propFilter.min} onChange={v => setPropFilter(prev => ({...prev, min: v}))} step="1" />
-          <Field label="Prop Max (inch)" id="pmax" value={propFilter.max} onChange={v => setPropFilter(prev => ({...prev, max: v}))} step="1" />
+          <Field label="Prop Min (in)" id="pmin" value={propFilter.min} onChange={v => setPropFilter(prev => ({...prev, min: v}))} step="1" />
+          <Field label="Prop Max (in)" id="pmax" value={propFilter.max} onChange={v => setPropFilter(prev => ({...prev, max: v}))} step="1" />
+        </Section>
+
+        <Section title="Environment">
+          <Field label="Elevation (m)" id="el" value={inputs.elevationM} onChange={set("elevationM")} />
+          <Field label="Temp (°C)" id="tc" value={inputs.temperatureC} onChange={set("temperatureC")} />
+          <Field label="Pressure" id="ph" value={inputs.pressureHpa} onChange={set("pressureHpa")} />
         </Section>
       </div>
 
-      {/* Results */}
-      <div className="flex-1 min-w-0">
+      {/* ── Results ── */}
+      <div>
         <div className="border border-gray-100 p-4 mb-5">
           <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812] mb-4"
              style={{ fontFamily: "Michroma, sans-serif" }}>

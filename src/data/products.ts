@@ -19,6 +19,10 @@ export type Product = {
   keySpecs: { label: string; value: string }[];
   allSpecs: { label: string; value: string }[];
   perf?: PerfRow[];
+  /** Optional per-product photo URL (set via admin console) */
+  thumbnailUrl?: string | null;
+  /** Optional per-product wireframe URL override (set via admin console) */
+  wireframeUrl?: string | null;
 };
 
 export const SERIES_CFG = {

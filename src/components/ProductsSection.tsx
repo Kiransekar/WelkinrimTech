@@ -1,51 +1,6 @@
 import { useState } from "react";
 import { PRODUCTS, SERIES_CFG, type Product } from "@/data/products";
 
-// Motor SVG icon used in cards
-function MotorIcon({ color }: { color: string }) {
-  return (
-    <svg viewBox="0 0 80 80" className="w-16 h-16 opacity-80">
-      <circle cx="40" cy="40" r="30" fill="none" stroke={color} strokeWidth="3" />
-      <circle cx="40" cy="40" r="18" fill="none" stroke={color} strokeWidth="2" />
-      <circle cx="40" cy="40" r="6"  fill={color} />
-      {[0,60,120,180,240,300].map(a => {
-        const r = Math.PI * a / 180;
-        const x1 = 40 + 18 * Math.cos(r), y1 = 40 + 18 * Math.sin(r);
-        const x2 = 40 + 28 * Math.cos(r), y2 = 40 + 28 * Math.sin(r);
-        return <line key={a} x1={x1} y1={y1} x2={x2} y2={y2} stroke={color} strokeWidth="2.5" strokeLinecap="round" />;
-      })}
-    </svg>
-  );
-}
-
-function EscIcon({ color }: { color: string }) {
-  return (
-    <svg viewBox="0 0 80 80" className="w-16 h-16 opacity-80">
-      <rect x="10" y="20" width="60" height="40" rx="4" fill="none" stroke={color} strokeWidth="2.5" />
-      <rect x="18" y="30" width="12" height="8"  rx="1" fill={color} opacity=".4" />
-      <rect x="34" y="30" width="12" height="8"  rx="1" fill={color} opacity=".4" />
-      <rect x="50" y="30" width="12" height="8"  rx="1" fill={color} opacity=".4" />
-      <line x1="10" y1="52" x2="70" y2="52" stroke={color} strokeWidth="1.5" opacity=".4" />
-      {[15,25,35,45,55,65].map(x => (
-        <line key={x} x1={x} y1="52" x2={x} y2="60" stroke={color} strokeWidth="2" strokeLinecap="round" />
-      ))}
-    </svg>
-  );
-}
-
-function FcIcon({ color }: { color: string }) {
-  return (
-    <svg viewBox="0 0 80 80" className="w-16 h-16 opacity-80">
-      <rect x="8" y="8" width="64" height="64" rx="6" fill="none" stroke={color} strokeWidth="2.5" />
-      <circle cx="40" cy="40" r="12" fill="none" stroke={color} strokeWidth="2" />
-      <circle cx="40" cy="40" r="4"  fill={color} />
-      {[8,16,24].map((r,i) => (
-        <circle key={i} cx="40" cy="40" r={r+24} fill="none" stroke={color} strokeWidth=".8" opacity=".25" />
-      ))}
-    </svg>
-  );
-}
-
 const TABS = [
   { id: "all",     label: "All Products",               count: PRODUCTS.length },
   { id: "haemng",  label: "Haemng Series",               count: PRODUCTS.filter(p=>p.series==="haemng").length },
@@ -69,7 +24,7 @@ function ProductCard({ p, expanded, onToggle }: {
 
       {/* Visual header */}
       <div className="relative flex flex-col items-center justify-center h-32 md:h-44 overflow-hidden"
-           style={{ background: `linear-gradient(135deg, #111 0%, #1a1a1a 100%)` }}>
+           style={{ background: "#ffffff" }}>
 
         {/* Faint grid overlay */}
         <div className="absolute inset-0 opacity-10"
@@ -79,20 +34,24 @@ function ProductCard({ p, expanded, onToggle }: {
                backgroundSize: "20px 20px",
              }} />
 
-        {/* Motor/ESC/FC icon */}
+        {/* Series visual */}
         <div className="relative z-10 mb-1 md:mb-2">
           {p.series === "haemng" ? (
-            <img src={`${import.meta.env.BASE_URL}haemng.svg`} alt="Haemng" className="h-10 md:h-14 w-auto" style={{ filter: "brightness(0) invert(1)", opacity: 0.7 }} />
+            <img src={`${import.meta.env.BASE_URL}haemng.svg`} alt="Haemng" className="h-10 md:h-14 w-auto" style={{ opacity: 0.8 }} />
           ) : p.series === "maelard" ? (
-            <img src={`${import.meta.env.BASE_URL}Maelard.svg`} alt="Maelard" className="h-8 md:h-10 w-auto" style={{ filter: "brightness(0) invert(1)", opacity: 0.7 }} />
-          ) : p.series === "esc" ? <EscIcon color={cfg.accent} />
-            : p.series === "fc" ? <FcIcon color={cfg.accent} />
-            : <MotorIcon color={cfg.accent} />}
+            <img src={`${import.meta.env.BASE_URL}Maelard.svg`} alt="Maelard" className="h-8 md:h-10 w-auto" style={{ opacity: 0.85 }} />
+          ) : (
+            <img
+              src={`${import.meta.env.BASE_URL}favicon.svg`}
+              alt="Welkinrim"
+              className="h-10 md:h-12 w-auto opacity-90"
+            />
+          )}
         </div>
 
         {/* Dimension badge */}
         {p.allSpecs.find(s => s.label === "Dimension") && (
-          <p className="relative z-10 text-[7px] md:text-[9px] tracking-widest text-white/40 uppercase"
+          <p className="relative z-10 text-[7px] md:text-[9px] tracking-widest text-[#808080] uppercase"
              style={{ fontFamily: "Michroma, sans-serif" }}>
             {p.allSpecs.find(s => s.label === "Dimension")?.value}
           </p>
@@ -111,7 +70,7 @@ function ProductCard({ p, expanded, onToggle }: {
 
         {/* Tag bottom-left */}
         <div className="absolute bottom-2 md:bottom-3 left-2 md:left-3">
-          <span className="text-[6px] md:text-[8px] tracking-widest uppercase text-white/60 border border-white/20 px-1.5 md:px-2 py-0.5"
+          <span className="text-[6px] md:text-[8px] tracking-widest uppercase text-[#808080] border border-gray-300 bg-white/90 px-1.5 md:px-2 py-0.5"
                 style={{ fontFamily: "Michroma, sans-serif", transform: "skewX(-10deg)", display: "inline-block" }}>
             <span style={{ display: "inline-block", transform: "skewX(10deg)" }}>{p.tag}</span>
           </span>
@@ -124,7 +83,7 @@ function ProductCard({ p, expanded, onToggle }: {
            style={{ fontFamily: "Michroma, sans-serif", color: cfg.accent }}>
           {p.model}
         </p>
-        <h3 className="text-sm font-bold text-black mb-1" style={{ fontFamily: "Michroma, sans-serif" }}>
+        <h3 className="text-sm font-bold text-black mb-1 uppercase" style={{ fontFamily: "Michroma, sans-serif" }}>
           {p.seriesLabel}
         </h3>
         <p className="text-[9px] md:text-[10px] text-[#808080] mb-3 md:mb-4 leading-relaxed" style={{ fontFamily: "Lexend, sans-serif" }}>{p.application}</p>

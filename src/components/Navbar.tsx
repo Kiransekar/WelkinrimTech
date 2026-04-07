@@ -6,8 +6,7 @@ const PRODUCT_CATEGORIES = [
   {
     id: "haemng",
     label: "Haemng Series",
-    useSvgLogo: true,
-    logoSrc: "haemng.svg",
+    menuLabel: "HAEMNG",
     tagline: "UAV & eVTOL Motors — 11 variants",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-5 h-5">
@@ -21,8 +20,7 @@ const PRODUCT_CATEGORIES = [
   {
     id: "maelard",
     label: "Maelard Series",
-    useSvgLogo: true,
-    logoSrc: "Maelard.svg",
+    menuLabel: "MAELARD",
     tagline: "Marine, UAV & Multi-mission — 10 variants",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-5 h-5">
@@ -36,6 +34,7 @@ const PRODUCT_CATEGORIES = [
   {
     id: "esc",
     label: "ESCs",
+    menuLabel: "ESC",
     tagline: "Electronic Speed Controllers — 9 models",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-5 h-5">
@@ -48,6 +47,7 @@ const PRODUCT_CATEGORIES = [
   {
     id: "fc",
     label: "Flight Controller",
+    menuLabel: "AUTO PILOT",
     tagline: "Autonomous UAV Navigation",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-5 h-5">
@@ -61,6 +61,7 @@ const PRODUCT_CATEGORIES = [
   {
     id: "ips",
     label: "Integrated Power Systems",
+    menuLabel: "IPS",
     tagline: "Motor + ESC Matched Assemblies — 5 combos",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-5 h-5">
@@ -307,18 +308,18 @@ export default function Navbar() {
                         <span className={`transition-colors duration-200 flex-shrink-0 ${activeCategory === cat.id ? "text-[#ffc812]" : "text-[#808080] group-hover:text-black"}`}>
                           {cat.icon}
                         </span>
-                        <div className="min-w-0 h-11 flex flex-col justify-center">
-                          <div className="flex items-center">
-                            {cat.useSvgLogo ? (
-                              <img
-                                src={`${import.meta.env.BASE_URL}${cat.id === "haemng" ? "haemng-text.svg" : "maelard-text.svg"}`}
-                                alt={cat.label}
-                                className="h-[10px] w-auto max-w-[120px] object-contain object-left"
-                              />
-                            ) : (
-                              <p className="text-xs font-bold tracking-wide truncate mt-1" style={{ fontFamily: "Michroma, sans-serif" }}>{cat.label}</p>
-                            )}
-                          </div>
+                        <div className="h-11 flex items-center">
+                          <p
+                            className="w-[190px] h-5 text-[11px] font-black leading-none tracking-[0.08em] uppercase whitespace-nowrap flex items-center"
+                            style={{
+                              fontFamily: "Michroma, sans-serif",
+                              fontWeight: 700,
+                              WebkitTextStroke: "0.25px currentColor",
+                              textShadow: "0.2px 0 currentColor, -0.2px 0 currentColor",
+                            }}
+                          >
+                            {cat.menuLabel}
+                          </p>
                         </div>
                         {activeCategory === cat.id && (
                           <svg className="ml-auto w-4 h-4 text-[#ffc812] flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -359,7 +360,7 @@ export default function Navbar() {
                         <div className="w-full h-12 md:h-16 bg-gray-50 mb-1 md:mb-2 flex items-center justify-center group-hover:bg-[#ffc812]/5 transition-colors duration-200">
                           <div className="flex flex-col items-center">
                             <img src={`${import.meta.env.BASE_URL}favicon.svg`} alt="favicon" className="h-[10px] md:h-[12px] w-auto opacity-70 mb-0.5" />
-                            <span className="text-[7px] md:text-[9px] font-black text-black/30" style={{ fontFamily: "Michroma, sans-serif" }}>{p.name}</span>
+                            <span className="text-[7px] md:text-[9px] font-black text-black/30 uppercase" style={{ fontFamily: "Michroma, sans-serif" }}>{p.name}</span>
                           </div>
                         </div>
                         <p className="text-[7px] md:text-[8px] text-[#ffc812] tracking-widest uppercase font-bold mb-0.5 truncate" style={{ fontFamily: "Michroma, sans-serif" }}>{p.tag}</p>

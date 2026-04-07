@@ -82,107 +82,201 @@ export default function ProductDetail() {
   const cfg = SERIES_CFG[product.series];
   const siblings = PRODUCTS.filter(p => p.series === product.series && p.id !== product.id).slice(0, 4);
 
+  /* ── series logo path (data-driven for future admin use) ── */
+  const seriesLogoSrc =
+    product.series === "haemng" ? `${import.meta.env.BASE_URL}haemng.svg`
+    : product.series === "maelard" ? `${import.meta.env.BASE_URL}Maelard.svg`
+    : null;
+
+  /* ── series-level hero image (shared motor photo per series, from admin data) ──
+     Mai.svg is the shared motor photo for both Haemng and Maelard series.
+     Future admin console can set seriesHeroImage per series in SERIES_CFG. ── */
+  const seriesHeroImage =
+    (product.series === "haemng" || product.series === "maelard") ? `${import.meta.env.BASE_URL}Mai.svg`
+    : null;
+
+  /* Final hero image: prefer product-specific thumbnailUrl, then series hero, then wireframe */
+  const heroImageSrc = product.thumbnailUrl || seriesHeroImage || null;
+
   return (
     <div className="min-h-screen bg-white">
 
-      {/* ── Hero ── */}
-      <div className="bg-black pt-28 pb-0 relative overflow-hidden">
-        <div
-          className="absolute inset-0 opacity-[0.06]"
-          style={{
-            backgroundImage: `linear-gradient(${cfg.accent} 1px, transparent 1px),
-                              linear-gradient(90deg, ${cfg.accent} 1px, transparent 1px)`,
-            backgroundSize: "40px 40px",
-          }}
-        />
+      {/* ══════════════════════════════════════════════════════
+          HERO  —  dark band with product image overlapping out
+          Uses a "stage" wrapper so the image can bleed below
+          the black section into the white content via z-layering.
+      ══════════════════════════════════════════════════════ */}
+      <div className="relative">
 
-        <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center pb-20">
-            {/* Left */}
-            <div>
-              <div className="inline-flex items-center gap-2 mb-4 px-3 py-1" style={{ background: cfg.accent, transform: "skewX(-10deg)" }}>
-                <span className="text-[9px] font-black tracking-widest uppercase"
-                      style={{ fontFamily: "Michroma, sans-serif", color: cfg.textOnAccent, display: "inline-block", transform: "skewX(10deg)" }}>
-                  {product.tag}
-                </span>
-              </div>
-              <h1 className="text-5xl md:text-6xl font-bold text-white leading-none mb-2"
-                  style={{ fontFamily: "Michroma, sans-serif" }}>
-                {product.name}
-              </h1>
-              <p className="text-xl font-bold mb-1" style={{ fontFamily: "Michroma, sans-serif", color: cfg.accent }}>
-                {product.model}
-              </p>
-              <p className="text-white/40 text-sm mt-3">{product.application}</p>
+        {/* Dark hero band — overflow-hidden so the absolute image bleeds naturally at edges */}
+        <div className="bg-black pt-28 pb-0 relative overflow-hidden" style={{ minHeight: '480px' }}>
 
-              <div className="flex flex-wrap gap-3 mt-8">
-                {product.keySpecs.map(s => (
-                  <div key={s.label} className="border border-white/10 px-5 py-3 min-w-[100px]">
-                    <p className="text-xl font-black text-white" style={{ fontFamily: "Michroma, sans-serif" }}>
-                      {s.value}
-                    </p>
-                    <p className="text-[9px] text-white/40 uppercase tracking-widest mt-0.5"
-                       style={{ fontFamily: "Michroma, sans-serif" }}>{s.label}</p>
+          {/* Subtle grid texture */}
+          <div
+            className="absolute inset-0 opacity-[0.05] pointer-events-none"
+            style={{
+              backgroundImage: `linear-gradient(${cfg.accent} 1px, transparent 1px),
+                                linear-gradient(90deg, ${cfg.accent} 1px, transparent 1px)`,
+              backgroundSize: "40px 40px",
+            }}
+          />
+
+          {/* Radial glow behind image area */}
+          <div
+            className="absolute right-0 top-0 bottom-0 w-1/2 pointer-events-none"
+            style={{
+              background: `radial-gradient(ellipse 60% 70% at 80% 50%, ${cfg.accent}18 0%, transparent 70%)`,
+            }}
+          />
+
+          {/* ── Hero image: positioned relative to same 1280px container as Navbar content ── */}
+          {heroImageSrc && (
+            <div className="absolute inset-0 z-10 pointer-events-none select-none hidden lg:block">
+              <div className="max-w-7xl mx-auto h-full relative px-6 md:px-12">
+                <img
+                  src={heroImageSrc}
+                  alt={product.seriesLabel}
+                  draggable={false}
+                  className="absolute right-[15%] top-2 h-[500px] w-auto max-w-none"
+                  style={{
+                    filter: 'drop-shadow(-15px 10px 40px rgba(0,0,0,0.5))',
+                  }}
+                />
+                
+                {/* Series logo overlay - aligned specifically with adjusted motor image */}
+                {seriesLogoSrc && (
+                  <div className="absolute right-[18%] bottom-[12%] z-30 pointer-events-none">
+                    <img
+                      src={seriesLogoSrc}
+                      alt={product.seriesLabel}
+                      className="w-40 md:w-52"
+                      style={{ 
+                        filter: 'brightness(0) invert(1) drop-shadow(0 2px 12px rgba(0,0,0,0.7))',
+                        opacity: 0.95
+                      }}
+                    />
                   </div>
-                ))}
-              </div>
-
-              <div className="flex gap-4 mt-10 flex-wrap">
-                <button
-                  onClick={handleEnquire}
-                  className="px-8 py-3 text-[10px] tracking-widest uppercase font-black transition-colors duration-300 hover:opacity-90"
-                  style={{ fontFamily: "Michroma, sans-serif", background: cfg.accent, color: cfg.textOnAccent, transform: "skewX(-10deg)" }}
-                >
-                  <span style={{ display: "inline-block", transform: "skewX(10deg)" }}>Enquire Now</span>
-                </button>
-                <button
-                  onClick={() => navigate("/products")}
-                  className="px-8 py-3 border border-white/20 text-white text-[10px] tracking-widest uppercase hover:border-white/60 transition-colors duration-300"
-                  style={{ fontFamily: "Michroma, sans-serif", transform: "skewX(-10deg)" }}
-                >
-                  <span style={{ display: "inline-block", transform: "skewX(10deg)" }}>← All Products</span>
-                </button>
+                )}
               </div>
             </div>
+          )}
 
-            {/* Right: illustration */}
-            <div className="flex items-center justify-center min-h-[400px]">
-              <div className="relative flex flex-col items-center">
-                {/* Motor image with shadow — scaled up visually with a safer container to avoid cropping */}
-                <div className="relative group transition-transform duration-500 hover:scale-105" 
-                     style={{ 
-                       transform: "scale(2.2)", 
-                       transformOrigin: "center center",
-                       filter: "drop-shadow(0 25px 35px rgba(0,0,0,0.15))"
-                     }}>
-                  <div className="absolute inset-0 blur-3xl opacity-20 scale-110"
-                       style={{ background: cfg.accent }} />
-                  {product.thumbnailUrl ? (
-                    <img 
-                      src={product.thumbnailUrl} 
-                      alt={product.model} 
-                      className="h-48 w-auto relative z-10" 
-                    />
-                  ) : (
-                    <div className="relative z-10 flex items-center justify-center">
-                      {product.series === "haemng" ? <MotorIcon color={cfg.accent} size={180} />
-                        : product.series === "maelard" ? <MotorIcon color={cfg.accent} size={160} />
-                        : product.series === "esc" ? <EscIcon color={cfg.accent} size={200} />
-                        : product.series === "fc" ? <FcIcon color={cfg.accent} size={180} />
-                        : <MotorIcon color={cfg.accent} size={180} />}
+          <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-20">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+
+              {/* ── Left: text content ── */}
+              <div className="relative z-20">
+                {/* Series tag badge */}
+                <div
+                  className="inline-flex items-center gap-2 mb-5 px-3 py-1"
+                  style={{ background: cfg.accent, transform: "skewX(-10deg)" }}
+                >
+                  <span
+                    className="text-[9px] font-black tracking-[0.3em] uppercase"
+                    style={{ fontFamily: "Michroma, sans-serif", color: cfg.textOnAccent, display: "inline-block", transform: "skewX(10deg)" }}
+                  >
+                    {product.tag}
+                  </span>
+                </div>
+
+                {/* Product name — large, bold */}
+                <h1
+                  className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-[1.05] mb-2 uppercase"
+                  style={{ fontFamily: "Michroma, sans-serif" }}
+                >
+                  {product.name}
+                </h1>
+
+                {/* Model subtitle */}
+                <p
+                  className="text-base md:text-lg font-bold mb-1"
+                  style={{ fontFamily: "Michroma, sans-serif", color: cfg.accent }}
+                >
+                  {product.model}
+                </p>
+
+                {/* Application */}
+                <p className="text-white/40 text-sm mt-2" style={{ fontFamily: "Lexend, sans-serif" }}>
+                  {product.application}
+                </p>
+
+                {/* Key specs strip */}
+                <div className="flex flex-wrap gap-3 mt-7">
+                  {product.keySpecs.map(s => (
+                    <div key={s.label} className="border border-white/15 px-4 py-3 min-w-[90px] bg-white/[0.03] backdrop-blur-sm">
+                      <p className="text-lg font-black text-white leading-none" style={{ fontFamily: "Michroma, sans-serif" }}>
+                        {s.value}
+                      </p>
+                      <p className="text-[8px] text-white/35 uppercase tracking-[0.2em] mt-1"
+                         style={{ fontFamily: "Michroma, sans-serif" }}>{s.label}</p>
                     </div>
-                  )}
+                  ))}
+                </div>
+
+                {/* CTA buttons */}
+                <div className="flex gap-4 mt-8 flex-wrap">
+                  <button
+                    onClick={handleEnquire}
+                    className="px-8 py-3 text-[10px] tracking-widest uppercase font-black transition-opacity duration-200 hover:opacity-85"
+                    style={{ fontFamily: "Michroma, sans-serif", background: cfg.accent, color: cfg.textOnAccent, transform: "skewX(-10deg)" }}
+                  >
+                    <span style={{ display: "inline-block", transform: "skewX(10deg)" }}>Enquire Now</span>
+                  </button>
+                  <button
+                    onClick={() => navigate("/products")}
+                    className="px-8 py-3 border border-white/20 text-white text-[10px] tracking-widest uppercase hover:border-white/50 transition-colors duration-200"
+                    style={{ fontFamily: "Michroma, sans-serif", transform: "skewX(-10deg)" }}
+                  >
+                    <span style={{ display: "inline-block", transform: "skewX(10deg)" }}>← All Products</span>
+                  </button>
                 </div>
               </div>
+
+              {/* ── Right col: spacer when hero image is handled absolutely above ──
+                  When no heroImageSrc exists, show the wireframe as an inline fallback.
+              ── */}
+              <div className="relative flex items-center justify-center lg:justify-end min-h-[340px] pb-10">
+                {!heroImageSrc && (
+                  <div className="relative z-10 w-full max-w-[480px]">
+                    <div
+                      className="absolute inset-0 blur-[50px] opacity-20 pointer-events-none"
+                      style={{ background: cfg.accent }}
+                    />
+                    <img
+                      src={`${import.meta.env.BASE_URL}wireframes/${product.id}.png`}
+                      alt={`${product.name} technical drawing`}
+                      className="w-full h-auto relative z-10 select-none"
+                      style={{ filter: 'invert(1) brightness(0.8) contrast(1.15)', mixBlendMode: 'screen' }}
+                      draggable={false}
+                    />
+                    {seriesLogoSrc && (
+                      <div className="absolute bottom-2 left-1/2 -translate-x-1/2 z-20 pointer-events-none">
+                        <img
+                          src={seriesLogoSrc}
+                          alt={product.seriesLabel}
+                          className="w-28 opacity-35"
+                          style={{ filter: 'brightness(0) invert(1)' }}
+                        />
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+
             </div>
           </div>
+
+          {/* Bottom gradient fade: black → white, creates the seamless bleed-into-content effect */}
+          <div className="absolute inset-x-0 bottom-0 h-24 pointer-events-none z-30"
+            style={{ background: 'linear-gradient(to bottom, transparent 0%, #000 60%, #fff 100%)' }} />
         </div>
 
-        <div className="h-8 bg-gradient-to-b from-black to-white" />
+        {/* Thin accent line */}
+        <div className="h-[2px] w-full" style={{ background: `linear-gradient(90deg, transparent 0%, ${cfg.accent}66 50%, transparent 100%)` }} />
       </div>
 
       {/* ── Content ── */}
-      <div className="max-w-7xl mx-auto px-6 md:px-12 py-16">
+      <div className="max-w-7xl mx-auto px-6 md:px-12 pt-16 pb-16">
         <div className="flex flex-col gap-14">
 
           {/* Specifications */}
@@ -214,21 +308,65 @@ export default function ProductDetail() {
             )}
           </section>
 
-          {/* Product Wireframe */}
+          {/* Product Wireframe — dynamic, aspect-ratio-aware container */}
           <section id="dimensions" className="relative z-10 scroll-mt-20">
-            <div className="flex flex-col items-center justify-center py-20 bg-white border border-gray-100 px-4 md:px-12 shadow-[0_4px_20px_-5px_theme(colors.gray.100)] rounded-sm overflow-hidden">
-              <p className="text-[10px] tracking-[0.5em] uppercase text-[#999] mb-16 font-bold text-center" style={{ fontFamily: "Michroma, sans-serif" }}>
-                Technical Dimensions (mm)
-              </p>
-              <div className="relative w-full max-w-5xl group flex justify-center">
-                <div className="absolute inset-0 bg-transparent z-20" />
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-1 h-6" style={{ background: cfg.accent }} />
+              <h2 className="text-lg font-bold text-black" style={{ fontFamily: "Michroma, sans-serif" }}>
+                Technical Dimensions
+              </h2>
+              <span className="text-[10px] text-[#aaa] tracking-widest ml-1" style={{ fontFamily: "Michroma, sans-serif" }}>(mm)</span>
+            </div>
+            {/* 
+              The wireframe container uses a padding-bottom trick to create a
+              responsive aspect-ratio box (16:7 default). The image is absolutely
+              positioned and uses object-fit: contain so any shape wireframe
+              (wide ESC, tall IPS combo, square motor) always fits without clipping.
+              wireframeUrl is a data field for future admin-console support.
+            */}
+            <div className="border border-gray-100 bg-[#fafafa] overflow-hidden">
+              <div
+                className="relative w-full group"
+                style={{ paddingBottom: "42%" /* responsive 16:6.7 ratio — gives breathing room */ }}
+              >
+                {/* Soft grid backdrop for technical drawing feel */}
+                <div
+                  className="absolute inset-0 opacity-[0.4] pointer-events-none"
+                  style={{
+                    backgroundImage: `linear-gradient(#e5e5e5 1px, transparent 1px), linear-gradient(90deg, #e5e5e5 1px, transparent 1px)`,
+                    backgroundSize: "30px 30px",
+                  }}
+                />
+                {/* Corner accent marks */}
+                {[
+                  "top-2 left-2 border-t-2 border-l-2",
+                  "top-2 right-2 border-t-2 border-r-2",
+                  "bottom-2 left-2 border-b-2 border-l-2",
+                  "bottom-2 right-2 border-b-2 border-r-2",
+                ].map((cls, i) => (
+                  <div
+                    key={i}
+                    className={`absolute w-5 h-5 ${cls} pointer-events-none`}
+                    style={{ borderColor: `${cfg.accent}66` }}
+                  />
+                ))}
+                {/* The wireframe image — contains itself within the aspect box */}
                 <img
                   src={product.wireframeUrl || `${import.meta.env.BASE_URL}wireframes/${product.id}.png`}
                   alt={`${product.name} Technical Drawing`}
-                  className="w-full max-w-4xl h-auto relative z-10 transition-all duration-700 group-hover:scale-[1.01]"
-                  style={{ filter: "contrast(1.05)" }}
+                  className="absolute inset-0 w-full h-full object-contain p-6 md:p-10 transition-transform duration-500 group-hover:scale-[1.015]"
+                  style={{ filter: "contrast(1.08) brightness(0.97)" }}
+                  onError={(e) => {
+                    /* Graceful fallback if wireframe image is missing */
+                    (e.target as HTMLImageElement).style.display = "none";
+                  }}
                 />
-                <div className="absolute inset-x-0 -bottom-10 h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent opacity-40" />
+                {/* Label */}
+                <div className="absolute bottom-3 right-4 pointer-events-none">
+                  <span className="text-[9px] tracking-[0.35em] uppercase text-[#bbb]" style={{ fontFamily: "Michroma, sans-serif" }}>
+                    {product.model}
+                  </span>
+                </div>
               </div>
             </div>
           </section>
@@ -358,7 +496,7 @@ export default function ProductDetail() {
           <div className="mt-16">
             <div className="flex items-center gap-4 mb-7">
               <div className="w-1 h-6" style={{ background: cfg.accent }} />
-              <h2 className="text-lg font-bold text-black" style={{ fontFamily: "Michroma, sans-serif" }}>
+              <h2 className="text-lg font-bold text-black uppercase" style={{ fontFamily: "Michroma, sans-serif" }}>
                 More in {product.seriesLabel}
               </h2>
               <div className="flex-1 h-px bg-gray-100" />

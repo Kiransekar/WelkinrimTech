@@ -26,7 +26,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
         <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812]"
            style={{ fontFamily: "Michroma, sans-serif" }}>{title}</p>
       </div>
-      <div className="p-3 grid grid-cols-2 gap-2">{children}</div>
+      <div className="p-2 space-y-0.5">{children}</div>
     </div>
   );
 }
@@ -39,9 +39,9 @@ function Field({
 }) {
   const [showHint, setShowHint] = useState(false);
   return (
-    <div className={`flex flex-row items-center gap-2 w-full py-1 relative ${className}`}>
-      <div className="flex items-center gap-1 flex-1 min-w-0">
-        <label className="text-[9px] tracking-widest uppercase text-[#ffc812] truncate"
+    <div className={`w-full py-0.5 relative ${className}`}>
+      <div className="flex items-center gap-1 mb-0.5">
+        <label className="text-[8px] tracking-widest uppercase text-[#808080]"
                style={{ fontFamily: "Michroma, sans-serif" }} htmlFor={id} title={label}>
           {label}
         </label>
@@ -60,14 +60,12 @@ function Field({
           {hint}
         </div>
       )}
-      <div className="w-24 flex-shrink-0">
-        <input
-          id={id} type="number" step={step} value={value}
-          onChange={e => onChange(parseFloat(e.target.value) || 0)}
-          className="w-full min-w-0 border border-gray-200 text-[11px] px-2 py-1 focus:outline-none focus:border-[#ffc812] transition-colors bg-white"
-          style={{ fontFamily: "Michroma, sans-serif" }}
-        />
-      </div>
+      <input
+        id={id} type="number" step={step} value={value}
+        onChange={e => onChange(parseFloat(e.target.value) || 0)}
+        className="w-full border border-gray-200 text-[11px] px-2 py-1 focus:outline-none focus:border-[#ffc812] transition-colors bg-white"
+        style={{ fontFamily: "Michroma, sans-serif" }}
+      />
     </div>
   );
 }
@@ -197,13 +195,13 @@ export default function BladeCalc() {
   }, [calcBladeElements]);
 
   return (
-    <div className="flex flex-col lg:flex-row gap-6">
-      {/* Inputs */}
-      <div className="lg:w-80 xl:w-96 flex-shrink-0">
+    <div className="space-y-4">
+      {/* ── Compact Inputs ── */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
         <Section title="Operating Conditions">
           <Field label="RPM" id="rpm" value={rpm} onChange={setRpm} step="100"
                  hint="Propeller rotational speed" />
-          <Field label="Air Density (kg/m³)" id="rho" value={airDensity} onChange={setAirDensity} step="0.01"
+          <Field label="Air Density" id="rho" value={airDensity} onChange={setAirDensity} step="0.01"
                  hint="ISA standard = 1.225 kg/m³" />
         </Section>
 
@@ -253,7 +251,7 @@ export default function BladeCalc() {
                 <span className="font-bold">CT: {calcBladeElements.prop2.ct}</span>
               </div>
               <div className="flex justify-between border-t pt-2">
-                <span className="text-gray-500">Efficiency comparison</span>
+                <span className="text-gray-500">Efficiency</span>
                 <span className="font-bold">{calcBladeElements.prop1.efficiency > calcBladeElements.prop2.efficiency ? "Prop 1" : "Prop 2"} better</span>
               </div>
             </div>
@@ -261,57 +259,38 @@ export default function BladeCalc() {
         )}
       </div>
 
-      {/* Results */}
-      <div className="flex-1 min-w-0">
-        {/* Summary cards */}
-        {metrics && (
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
-            <div className="border border-gray-100 p-3 text-center">
-              <p className="text-[8px] tracking-widest uppercase text-[#808080] mb-1" style={{ fontFamily: "Michroma, sans-serif" }}>
-                Thrust (Prop 1)
-              </p>
-              <p className="text-lg font-black text-black" style={{ fontFamily: "Michroma, sans-serif" }}>
-                {metrics.thrust1.toFixed(1)} N
-              </p>
-            </div>
-            <div className="border border-gray-100 p-3 text-center">
-              <p className="text-[8px] tracking-widest uppercase text-[#808080] mb-1" style={{ fontFamily: "Michroma, sans-serif" }}>
-                Thrust (Prop 2)
-              </p>
-              <p className="text-lg font-black text-black" style={{ fontFamily: "Michroma, sans-serif" }}>
-                {metrics.thrust2.toFixed(1)} N
-              </p>
-            </div>
-            <div className="border border-gray-100 p-3 text-center">
-              <p className="text-[8px] tracking-widest uppercase text-[#808080] mb-1" style={{ fontFamily: "Michroma, sans-serif" }}>
-                Power (Prop 1)
-              </p>
-              <p className="text-lg font-black text-black" style={{ fontFamily: "Michroma, sans-serif" }}>
-                {metrics.power1.toFixed(0)} W
-              </p>
-            </div>
-            <div className="border border-gray-100 p-3 text-center">
-              <p className="text-[8px] tracking-widest uppercase text-[#808080] mb-1" style={{ fontFamily: "Michroma, sans-serif" }}>
-                Power (Prop 2)
-              </p>
-              <p className="text-lg font-black text-black" style={{ fontFamily: "Michroma, sans-serif" }}>
-                {metrics.power2.toFixed(0)} W
-              </p>
-            </div>
+      {/* ── Results Summary ── */}
+      {metrics && (
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <div className="border border-gray-100 p-3 text-center">
+            <p className="text-[8px] tracking-widest uppercase text-[#808080] mb-1" style={{ fontFamily: "Michroma, sans-serif" }}>Thrust (Prop 1)</p>
+            <p className="text-lg font-black text-black" style={{ fontFamily: "Michroma, sans-serif" }}>{metrics.thrust1.toFixed(1)} N</p>
           </div>
-        )}
+          <div className="border border-gray-100 p-3 text-center">
+            <p className="text-[8px] tracking-widest uppercase text-[#808080] mb-1" style={{ fontFamily: "Michroma, sans-serif" }}>Thrust (Prop 2)</p>
+            <p className="text-lg font-black text-black" style={{ fontFamily: "Michroma, sans-serif" }}>{metrics.thrust2.toFixed(1)} N</p>
+          </div>
+          <div className="border border-gray-100 p-3 text-center">
+            <p className="text-[8px] tracking-widest uppercase text-[#808080] mb-1" style={{ fontFamily: "Michroma, sans-serif" }}>Power (Prop 1)</p>
+            <p className="text-lg font-black text-black" style={{ fontFamily: "Michroma, sans-serif" }}>{metrics.power1.toFixed(0)} W</p>
+          </div>
+          <div className="border border-gray-100 p-3 text-center">
+            <p className="text-[8px] tracking-widest uppercase text-[#808080] mb-1" style={{ fontFamily: "Michroma, sans-serif" }}>Power (Prop 2)</p>
+            <p className="text-lg font-black text-black" style={{ fontFamily: "Michroma, sans-serif" }}>{metrics.power2.toFixed(0)} W</p>
+          </div>
+        </div>
+      )}
 
-        {/* Thrust distribution */}
-        {calcBladeElements && (
-          <div className="border border-gray-100 mb-5">
+      {/* ── Charts ── */}
+      {calcBladeElements && (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+          <div className="border border-gray-100">
             <div className="bg-black px-3 py-1.5">
               <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812]"
-                 style={{ fontFamily: "Michroma, sans-serif" }}>
-                Thrust Distribution Along Blade
-              </p>
+                 style={{ fontFamily: "Michroma, sans-serif" }}>Thrust Distribution Along Blade</p>
             </div>
             <div className="p-4">
-              <ResponsiveContainer width="100%" height={250}>
+              <ResponsiveContainer width="100%" height={220}>
                 <BarChart data={thrustChartData} margin={{ top: 4, right: 16, left: 0, bottom: 4 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
                   <XAxis dataKey="station" tick={{ fontSize: 9, fontFamily: "Michroma, sans-serif" }} />
@@ -324,19 +303,14 @@ export default function BladeCalc() {
               </ResponsiveContainer>
             </div>
           </div>
-        )}
 
-        {/* Power distribution */}
-        {calcBladeElements && (
           <div className="border border-gray-100">
             <div className="bg-black px-3 py-1.5">
               <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812]"
-                 style={{ fontFamily: "Michroma, sans-serif" }}>
-                Power Distribution Along Blade
-              </p>
+                 style={{ fontFamily: "Michroma, sans-serif" }}>Power Distribution Along Blade</p>
             </div>
             <div className="p-4">
-              <ResponsiveContainer width="100%" height={250}>
+              <ResponsiveContainer width="100%" height={220}>
                 <BarChart data={powerChartData} margin={{ top: 4, right: 16, left: 0, bottom: 4 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
                   <XAxis dataKey="station" tick={{ fontSize: 9, fontFamily: "Michroma, sans-serif" }} />
@@ -349,8 +323,8 @@ export default function BladeCalc() {
               </ResponsiveContainer>
             </div>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }

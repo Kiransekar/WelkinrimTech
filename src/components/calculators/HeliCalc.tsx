@@ -251,20 +251,20 @@ export default function HeliCalcPanel() {
   };
 
   const Field = ({ label, value, onChange, step = 1, min, max, unit, hint }: any) => (
-    <div className="flex flex-row items-center gap-2 w-full py-1">
-      <label className="text-[9px] uppercase text-[#ffc812] tracking-wider flex-1 truncate" title={hint || label}>{label}</label>
-      <div className="flex items-center gap-1 w-24">
+    <div className="w-full py-0.5">
+      <label className="text-[8px] uppercase text-[#808080] tracking-wider block mb-0.5" style={{ fontFamily: "Michroma, sans-serif" }} title={hint || label}>{label}</label>
+      <div className="flex items-center gap-1">
         <input
           type="number"
           value={value}
-          onChange={(e) => onChange(parseFloat(e.target.value) || 0)}
+          onChange={(e: any) => onChange(parseFloat(e.target.value) || 0)}
           step={step}
           min={min}
           max={max}
           className="flex-1 w-full min-w-0 border border-gray-200 px-2 py-1 text-[11px] focus:outline-none focus:border-[#ffc812]"
           style={{ fontFamily: "Michroma, sans-serif" }}
         />
-        {unit && <span className="text-[10px] text-gray-400 w-6">{unit}</span>}
+        {unit && <span className="text-[10px] text-gray-400 w-6 flex-shrink-0">{unit}</span>}
       </div>
     </div>
   );
@@ -276,7 +276,7 @@ export default function HeliCalcPanel() {
           {title}
         </p>
       </div>
-      <div className="p-3 grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-1">{children}</div>
+      <div className="p-2 space-y-0.5">{children}</div>
     </div>
   );
 
@@ -291,20 +291,57 @@ export default function HeliCalcPanel() {
   );
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Warnings */}
       {warnings.length > 0 && (
-        <div className="space-y-2">
+        <div className="flex flex-wrap gap-2">
           {warnings.map((w, i) => (
-            <div key={i} className={`p-3 border-l-4 ${w.level === "danger" ? "border-red-500 bg-red-50" : "border-amber-500 bg-amber-50"}`}>
-              <p className="text-sm" style={{ fontFamily: "Lexend, sans-serif" }}>{w.message}</p>
-            </div>
+            <div key={i} className={`px-3 py-1.5 border-l-2 text-[10px] ${w.level === "danger" ? "border-red-500 bg-red-50 text-red-700" : "border-amber-400 bg-amber-50 text-amber-700"}`}
+                 style={{ fontFamily: "Lexend, sans-serif" }}>{w.message}</div>
           ))}
         </div>
       )}
 
-      {/* Results Summary */}
-      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
+      {/* ── Compact Inputs ── */}
+      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-3">
+        <Section title="Helicopter">
+          <Field label="Weight" value={inputs.heliWeightG} onChange={(v: number) => updateInput("heliWeightG", v)} step={50} unit="g" />
+          <Field label="Main Diam" value={inputs.mainRotorDiameterMm} onChange={(v: number) => updateInput("mainRotorDiameterMm", v)} step={5} unit="mm" />
+          <Field label="Main Chord" value={inputs.mainRotorChordMm} onChange={(v: number) => updateInput("mainRotorChordMm", v)} step={0.5} unit="mm" />
+          <Field label="Main Blades" value={inputs.mainRotorBlades} onChange={(v: number) => updateInput("mainRotorBlades", v)} step={1} min={2} max={7} unit="#" />
+          <Field label="Tail Diam" value={inputs.tailRotorDiameterMm} onChange={(v: number) => updateInput("tailRotorDiameterMm", v)} step={1} unit="mm" />
+          <Field label="Tail Blades" value={inputs.tailRotorBlades} onChange={(v: number) => updateInput("tailRotorBlades", v)} step={1} min={2} max={6} unit="#" />
+          <Field label="Gear Ratio" value={inputs.gearRatio} onChange={(v: number) => updateInput("gearRatio", v)} step={0.1} unit=":1" />
+          <Field label="Tail Ratio" value={inputs.tailGearRatio} onChange={(v: number) => updateInput("tailGearRatio", v)} step={0.1} unit=":1" />
+        </Section>
+
+        <Section title="Power System">
+          <Field label="Cells" value={inputs.batteryCells} onChange={(v: number) => updateInput("batteryCells", v)} step={1} min={3} max={14} unit="S" />
+          <Field label="Capacity" value={inputs.batteryCapacityMah} onChange={(v: number) => updateInput("batteryCapacityMah", v)} step={500} unit="mAh" />
+          <Field label="Max Disch" value={inputs.batteryMaxDischarge * 100} onChange={(v: number) => updateInput("batteryMaxDischarge", v / 100)} step={5} unit="%" />
+        </Section>
+
+        <Section title="Main Motor">
+          <Field label="KV" value={inputs.mainMotorKv} onChange={(v: number) => updateInput("mainMotorKv", v)} step={50} unit="KV" />
+          <Field label="Io" value={inputs.mainMotorIo} onChange={(v: number) => updateInput("mainMotorIo", v)} step={0.1} unit="A" />
+          <Field label="Rm" value={inputs.mainMotorRmMohm} onChange={(v: number) => updateInput("mainMotorRmMohm", v)} step={1} unit="mΩ" />
+          <Field label="Max Curr" value={inputs.mainMotorMaxCurrent} onChange={(v: number) => updateInput("mainMotorMaxCurrent", v)} step={5} unit="A" />
+        </Section>
+
+        <Section title="Tail Motor">
+          <Field label="KV" value={inputs.tailMotorKv} onChange={(v: number) => updateInput("tailMotorKv", v)} step={100} unit="KV" />
+          <Field label="Io" value={inputs.tailMotorIo} onChange={(v: number) => updateInput("tailMotorIo", v)} step={0.1} unit="A" />
+          <Field label="Rm" value={inputs.tailMotorRmMohm} onChange={(v: number) => updateInput("tailMotorRmMohm", v)} step={5} unit="mΩ" />
+        </Section>
+
+        <Section title="Flight">
+          <Field label="Head Speed" value={inputs.headSpeedRpm} onChange={(v: number) => updateInput("headSpeedRpm", v)} step={50} unit="RPM" />
+          <Field label="Collective" value={inputs.collectivePitchDeg} onChange={(v: number) => updateInput("collectivePitchDeg", v)} step={0.5} min={0} max={15} unit="deg" />
+        </Section>
+      </div>
+
+      {/* ── Results Summary ── */}
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
         <StatCard label="Head Speed" value={(result.mainRpm / 1000).toFixed(1)} unit="kRPM" />
         <StatCard label="Main Tip" value={result.mainTipSpeed.toFixed(0)} unit="m/s" />
         <StatCard label="Disc Loading" value={result.discLoading.toFixed(1)} unit="g/dm²" />
@@ -313,132 +350,55 @@ export default function HeliCalcPanel() {
         <StatCard label="Load C" value={result.loadC.toFixed(0)} unit="C" />
       </div>
 
-      <div className="flex flex-col lg:flex-row gap-6">
-        {/* Inputs */}
-        <div className="lg:w-96 flex-shrink-0 space-y-4">
-          <Section title="Helicopter">
-            <Field label="Weight" value={inputs.heliWeightG} onChange={(v: number) => updateInput("heliWeightG", v)} step={50} unit="g" />
-            <Field label="Main Diameter" value={inputs.mainRotorDiameterMm} onChange={(v: number) => updateInput("mainRotorDiameterMm", v)} step={5} unit="mm" />
-            <Field label="Main Chord" value={inputs.mainRotorChordMm} onChange={(v: number) => updateInput("mainRotorChordMm", v)} step={0.5} unit="mm" />
-            <Field label="Main Blades" value={inputs.mainRotorBlades} onChange={(v: number) => updateInput("mainRotorBlades", v)} step={1} min={2} max={7} unit="#" />
-            <Field label="Tail Diameter" value={inputs.tailRotorDiameterMm} onChange={(v: number) => updateInput("tailRotorDiameterMm", v)} step={1} unit="mm" />
-            <Field label="Tail Blades" value={inputs.tailRotorBlades} onChange={(v: number) => updateInput("tailRotorBlades", v)} step={1} min={2} max={6} unit="#" />
-            <Field label="Gear Ratio" value={inputs.gearRatio} onChange={(v: number) => updateInput("gearRatio", v)} step={0.1} unit=":1" />
-            <Field label="Tail Ratio" value={inputs.tailGearRatio} onChange={(v: number) => updateInput("tailGearRatio", v)} step={0.1} unit=":1" />
-          </Section>
+      {/* ── Chart ── */}
+      <div className="border border-gray-100">
+        <div className="bg-black px-3 py-1.5">
+          <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812]" style={{ fontFamily: "Michroma, sans-serif" }}>
+            Power & Current vs Collective Pitch
+          </p>
+        </div>
+        <div className="p-4">
+          <ResponsiveContainer width="100%" height={220}>
+            <LineChart data={powerCurveData}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+              <XAxis dataKey="pitch" tick={{ fontSize: 9 }} unit="deg" />
+              <YAxis yAxisId="left" tick={{ fontSize: 9 }} unit="W" />
+              <YAxis yAxisId="right" orientation="right" tick={{ fontSize: 9 }} unit="A" />
+              <Tooltip contentStyle={{ fontSize: 10 }} />
+              <Legend wrapperStyle={{ fontSize: 9 }} />
+              <Line yAxisId="left" type="monotone" dataKey="power" stroke="#ef4444" strokeWidth={2} name="Power" dot={false} />
+              <Line yAxisId="right" type="monotone" dataKey="current" stroke="#3b82f6" strokeWidth={2} name="Current" dot={false} />
+              <ReferenceLine x={inputs.collectivePitchDeg} stroke="#ffc812" strokeDasharray="3 3" label="Current" yAxisId="left" />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
 
-          <Section title="Power System">
-            <Field label="Battery Cells" value={inputs.batteryCells} onChange={(v: number) => updateInput("batteryCells", v)} step={1} min={3} max={14} unit="S" />
-            <Field label="Capacity" value={inputs.batteryCapacityMah} onChange={(v: number) => updateInput("batteryCapacityMah", v)} step={500} unit="mAh" />
-            <Field label="Max Discharge" value={inputs.batteryMaxDischarge * 100} onChange={(v: number) => updateInput("batteryMaxDischarge", v / 100)} step={5} unit="%" />
-          </Section>
-
-          <Section title="Main Motor">
-            <Field label="KV Rating" value={inputs.mainMotorKv} onChange={(v: number) => updateInput("mainMotorKv", v)} step={50} unit="KV" />
-            <Field label="Io" value={inputs.mainMotorIo} onChange={(v: number) => updateInput("mainMotorIo", v)} step={0.1} unit="A" />
-            <Field label="Rm" value={inputs.mainMotorRmMohm} onChange={(v: number) => updateInput("mainMotorRmMohm", v)} step={1} unit="mΩ" />
-            <Field label="Max Current" value={inputs.mainMotorMaxCurrent} onChange={(v: number) => updateInput("mainMotorMaxCurrent", v)} step={5} unit="A" />
-          </Section>
-
-          <Section title="Tail Motor">
-            <Field label="KV Rating" value={inputs.tailMotorKv} onChange={(v: number) => updateInput("tailMotorKv", v)} step={100} unit="KV" />
-            <Field label="Io" value={inputs.tailMotorIo} onChange={(v: number) => updateInput("tailMotorIo", v)} step={0.1} unit="A" />
-            <Field label="Rm" value={inputs.tailMotorRmMohm} onChange={(v: number) => updateInput("tailMotorRmMohm", v)} step={5} unit="mΩ" />
-          </Section>
-
-          <Section title="Flight">
-            <Field label="Head Speed" value={inputs.headSpeedRpm} onChange={(v: number) => updateInput("headSpeedRpm", v)} step={50} unit="RPM" />
-            <Field label="Collective" value={inputs.collectivePitchDeg} onChange={(v: number) => updateInput("collectivePitchDeg", v)} step={0.5} min={0} max={15} unit="deg" />
-          </Section>
+      {/* ── Detail Tables ── */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <div className="border border-gray-100">
+          <div className="bg-black px-3 py-1.5">
+            <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812]" style={{ fontFamily: "Michroma, sans-serif" }}>Main Rotor</p>
+          </div>
+          <div className="p-3 space-y-1.5">
+            <div className="flex justify-between text-[11px]"><span className="text-gray-500">RPM</span><span className="font-bold">{result.mainRpm.toFixed(0)}</span></div>
+            <div className="flex justify-between text-[11px]"><span className="text-gray-500">Tip Speed</span><span className="font-bold">{result.mainTipSpeed.toFixed(0)} m/s</span></div>
+            <div className="flex justify-between text-[11px]"><span className="text-gray-500">Torque</span><span className="font-bold">{result.mainTorque.toFixed(2)} N·m</span></div>
+            <div className="flex justify-between text-[11px]"><span className="text-gray-500">Power</span><span className="font-bold">{result.mainPowerW.toFixed(0)} W</span></div>
+            <div className="flex justify-between text-[11px]"><span className="text-gray-500">Motor Current</span><span className="font-bold">{result.mainMotorCurrent.toFixed(1)} A</span></div>
+          </div>
         </div>
 
-        {/* Charts */}
-        <div className="flex-1">
-          {/* Power curve */}
-          <div className="border border-gray-100 mb-4">
-            <div className="bg-black px-3 py-1.5 flex items-center justify-between">
-              <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812]" style={{ fontFamily: "Michroma, sans-serif" }}>
-                Power & Current vs Collective Pitch
-              </p>
-            </div>
-            <div className="p-4">
-              <ResponsiveContainer width="100%" height={250}>
-                <LineChart data={powerCurveData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                  <XAxis dataKey="pitch" tick={{ fontSize: 9 }} unit="deg" />
-                  <YAxis yAxisId="left" tick={{ fontSize: 9 }} unit="W" />
-                  <YAxis yAxisId="right" orientation="right" tick={{ fontSize: 9 }} unit="A" />
-                  <Tooltip contentStyle={{ fontSize: 10 }} />
-                  <Legend wrapperStyle={{ fontSize: 9 }} />
-                  <Line yAxisId="left" type="monotone" dataKey="power" stroke="#ef4444" strokeWidth={2} name="Power" />
-                  <Line yAxisId="right" type="monotone" dataKey="current" stroke="#3b82f6" strokeWidth={2} name="Current" />
-                  <ReferenceLine x={inputs.collectivePitchDeg} stroke="#ffc812" strokeDasharray="3 3" label="Current" yAxisId="left" />
-                </LineChart>
-              </ResponsiveContainer>
-            </div>
+        <div className="border border-gray-100">
+          <div className="bg-black px-3 py-1.5">
+            <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812]" style={{ fontFamily: "Michroma, sans-serif" }}>Tail Rotor</p>
           </div>
-
-          {/* Details */}
-          <div className="grid grid-cols-2 gap-4">
-            <div className="border border-gray-100">
-              <div className="bg-black px-3 py-1.5">
-                <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812]" style={{ fontFamily: "Michroma, sans-serif" }}>
-                  Main Rotor
-                </p>
-              </div>
-              <div className="p-4 space-y-2">
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-500">RPM</span>
-                  <span className="font-bold">{result.mainRpm.toFixed(0)}</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-500">Tip Speed</span>
-                  <span className="font-bold">{result.mainTipSpeed.toFixed(0)} m/s</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-500">Torque</span>
-                  <span className="font-bold">{result.mainTorque.toFixed(2)} N·m</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-500">Power</span>
-                  <span className="font-bold">{result.mainPowerW.toFixed(0)} W</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-500">Motor Current</span>
-                  <span className="font-bold">{result.mainMotorCurrent.toFixed(1)} A</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="border border-gray-100">
-              <div className="bg-black px-3 py-1.5">
-                <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812]" style={{ fontFamily: "Michroma, sans-serif" }}>
-                  Tail Rotor
-                </p>
-              </div>
-              <div className="p-4 space-y-2">
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-500">RPM</span>
-                  <span className="font-bold">{result.tailRpm.toFixed(0)}</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-500">Tip Speed</span>
-                  <span className="font-bold">{result.tailTipSpeed.toFixed(0)} m/s</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-500">Torque</span>
-                  <span className="font-bold">{result.tailTorque.toFixed(2)} N·m</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-500">Power</span>
-                  <span className="font-bold">{result.tailPowerW.toFixed(0)} W</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-500">Motor Current</span>
-                  <span className="font-bold">{result.tailMotorCurrent.toFixed(1)} A</span>
-                </div>
-              </div>
-            </div>
+          <div className="p-3 space-y-1.5">
+            <div className="flex justify-between text-[11px]"><span className="text-gray-500">RPM</span><span className="font-bold">{result.tailRpm.toFixed(0)}</span></div>
+            <div className="flex justify-between text-[11px]"><span className="text-gray-500">Tip Speed</span><span className="font-bold">{result.tailTipSpeed.toFixed(0)} m/s</span></div>
+            <div className="flex justify-between text-[11px]"><span className="text-gray-500">Torque</span><span className="font-bold">{result.tailTorque.toFixed(2)} N·m</span></div>
+            <div className="flex justify-between text-[11px]"><span className="text-gray-500">Power</span><span className="font-bold">{result.tailPowerW.toFixed(0)} W</span></div>
+            <div className="flex justify-between text-[11px]"><span className="text-gray-500">Motor Current</span><span className="font-bold">{result.tailMotorCurrent.toFixed(1)} A</span></div>
           </div>
         </div>
       </div>

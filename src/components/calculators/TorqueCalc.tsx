@@ -114,20 +114,20 @@ export default function TorqueCalc() {
   const warnings = useMemo(() => deriveWarnings(result, inputs), [result, inputs]);
 
   const Field = ({ label, value, onChange, step = 1, min, max, unit, hint }: any) => (
-    <div className="flex flex-row items-center gap-2 w-full py-1">
-      <label className="text-[9px] uppercase text-[#ffc812] tracking-wider flex-1 truncate" title={hint || label}>{label}</label>
-      <div className="flex items-center gap-1 w-24">
+    <div className="w-full py-0.5">
+      <label className="text-[8px] uppercase text-[#808080] tracking-wider block mb-0.5" style={{ fontFamily: "Michroma, sans-serif" }} title={hint || label}>{label}</label>
+      <div className="flex items-center gap-1">
         <input
           type="number"
           value={value}
-          onChange={(e) => onChange(parseFloat(e.target.value) || 0)}
+          onChange={(e: any) => onChange(parseFloat(e.target.value) || 0)}
           step={step}
           min={min}
           max={max}
           className="flex-1 w-full min-w-0 border border-gray-200 px-2 py-1 text-[11px] focus:outline-none focus:border-[#ffc812]"
           style={{ fontFamily: "Michroma, sans-serif" }}
         />
-        {unit && <span className="text-[10px] text-gray-400 w-6">{unit}</span>}
+        {unit && <span className="text-[10px] text-gray-400 w-6 flex-shrink-0">{unit}</span>}
       </div>
     </div>
   );
@@ -139,7 +139,7 @@ export default function TorqueCalc() {
           {title}
         </p>
       </div>
-      <div className="p-3 grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-1">{children}</div>
+      <div className="p-2 space-y-0.5">{children}</div>
     </div>
   );
 
@@ -154,60 +154,57 @@ export default function TorqueCalc() {
   );
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {warnings.length > 0 && (
-        <div className="space-y-2">
+        <div className="flex flex-wrap gap-2">
           {warnings.map((w, i) => (
-            <div key={i} className={`p-3 border-l-4 ${w.level === "danger" ? "border-red-500 bg-red-50" : "border-amber-500 bg-amber-50"}`}>
-              <p className="text-sm" style={{ fontFamily: "Lexend, sans-serif" }}>{w.message}</p>
-            </div>
+            <div key={i} className={`px-3 py-1.5 border-l-2 text-[10px] ${w.level === "danger" ? "border-red-500 bg-red-50 text-red-700" : "border-amber-400 bg-amber-50 text-amber-700"}`}
+                 style={{ fontFamily: "Lexend, sans-serif" }}>{w.message}</div>
           ))}
         </div>
       )}
 
-      <div className="flex flex-col xl:flex-row gap-6">
-        <div className="xl:w-1/3 flex-shrink-0 space-y-4">
-          <Section title="Requirements">
-            <Field label="Req. Torque" value={inputs.requiredTorqueNcm} onChange={(v:any) => setInputs({...inputs, requiredTorqueNcm: v})} unit="Ncm" />
-            <Field label="Req. RPM" value={inputs.requiredRpm} onChange={(v:any) => setInputs({...inputs, requiredRpm: v})} unit="RPM" />
-            <Field label="Min Voltage" value={inputs.supplyVoltageMin} onChange={(v:any) => setInputs({...inputs, supplyVoltageMin: v})} unit="V" />
-            <Field label="Max Voltage" value={inputs.supplyVoltageMax} onChange={(v:any) => setInputs({...inputs, supplyVoltageMax: v})} unit="V" />
-          </Section>
-          <Section title="Motor">
-            <Field label="Motor KV" value={inputs.motorKv} onChange={(v:any) => setInputs({...inputs, motorKv: v})} unit="rpm/V" />
-            <Field label="No-Load Curr (Io)" value={inputs.motorIo} onChange={(v:any) => setInputs({...inputs, motorIo: v})} unit="A" />
-            <Field label="Motor Rm" value={inputs.motorRmMohm} onChange={(v:any) => setInputs({...inputs, motorRmMohm: v})} unit="mΩ" />
-            <Field label="Max Current" value={inputs.motorMaxCurrent} onChange={(v:any) => setInputs({...inputs, motorMaxCurrent: v})} unit="A" />
-            <Field label="Weight" value={inputs.motorWeightG} onChange={(v:any) => setInputs({...inputs, motorWeightG: v})} unit="g" />
-          </Section>
-          <Section title="System">
-            <Field label="Ambient Temp" value={inputs.ambientTempC} onChange={(v:any) => setInputs({...inputs, ambientTempC: v})} unit="°C" />
-            <div className="flex flex-row items-center gap-2 w-full py-1 col-span-1 md:col-span-2">
-              <label className="text-[9px] uppercase text-[#ffc812] tracking-wider flex-1 truncate">Thermal Mode</label>
-              <select value={inputs.thermalMode} onChange={e => setInputs({...inputs, thermalMode: e.target.value as any})} className="border text-[11px] px-2 py-1 flex-1">
-                <option value="none">None (20°C)</option>
-                <option value="partial">Partial (+30°C)</option>
-                <option value="full">Full Calculation</option>
-              </select>
-            </div>
-            <Field label="ESC Resistance" value={inputs.controllerRmMohm} onChange={(v:any) => setInputs({...inputs, controllerRmMohm: v})} unit="mΩ" />
-            <Field label="Gear Ratio" value={inputs.gearRatio} onChange={(v:any) => setInputs({...inputs, gearRatio: v})} unit=":1" />
-            <Field label="Gear Efficiency" value={inputs.gearEfficiency} onChange={(v:any) => setInputs({...inputs, gearEfficiency: v})} unit="%" />
-          </Section>
-        </div>
-
-        <div className="xl:w-2/3 space-y-6">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <StatCard label="Current Draw" value={result.currentA.toFixed(1)} unit="A" />
-            <StatCard label="Req. Voltage" value={result.requiredVoltage.toFixed(1)} unit="V" />
-            <StatCard label="Achievable RPM" value={result.achievableRpm.toFixed(0)} unit="RPM" warn={result.achievableRpm < inputs.requiredRpm} />
-            <StatCard label="Est. Temp" value={result.motorTempC.toFixed(0)} unit="°C" warn={result.motorTempC > 100} />
-            <StatCard label="Elec Power" value={result.electricalPowerW.toFixed(0)} unit="W" />
-            <StatCard label="Mech Power" value={result.mechanicalPowerW.toFixed(0)} unit="W" />
-            <StatCard label="Motor Efficiency" value={result.efficiency.toFixed(1)} unit="%" />
-            <StatCard label="Motor Torque" value={(result.torqueNm * 100).toFixed(1)} unit="Ncm" />
+      {/* ── Compact Inputs ── */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+        <Section title="Requirements">
+          <Field label="Req. Torque" value={inputs.requiredTorqueNcm} onChange={(v:any) => setInputs({...inputs, requiredTorqueNcm: v})} unit="Ncm" />
+          <Field label="Req. RPM" value={inputs.requiredRpm} onChange={(v:any) => setInputs({...inputs, requiredRpm: v})} unit="RPM" />
+          <Field label="Min Voltage" value={inputs.supplyVoltageMin} onChange={(v:any) => setInputs({...inputs, supplyVoltageMin: v})} unit="V" />
+          <Field label="Max Voltage" value={inputs.supplyVoltageMax} onChange={(v:any) => setInputs({...inputs, supplyVoltageMax: v})} unit="V" />
+        </Section>
+        <Section title="Motor">
+          <Field label="Motor KV" value={inputs.motorKv} onChange={(v:any) => setInputs({...inputs, motorKv: v})} unit="rpm/V" />
+          <Field label="Io" value={inputs.motorIo} onChange={(v:any) => setInputs({...inputs, motorIo: v})} unit="A" />
+          <Field label="Rm" value={inputs.motorRmMohm} onChange={(v:any) => setInputs({...inputs, motorRmMohm: v})} unit="mΩ" />
+          <Field label="Max Current" value={inputs.motorMaxCurrent} onChange={(v:any) => setInputs({...inputs, motorMaxCurrent: v})} unit="A" />
+          <Field label="Weight" value={inputs.motorWeightG} onChange={(v:any) => setInputs({...inputs, motorWeightG: v})} unit="g" />
+        </Section>
+        <Section title="System">
+          <Field label="Ambient Temp" value={inputs.ambientTempC} onChange={(v:any) => setInputs({...inputs, ambientTempC: v})} unit="°C" />
+          <div className="w-full py-0.5">
+            <label className="text-[8px] uppercase text-[#808080] tracking-wider block mb-0.5" style={{ fontFamily: "Michroma, sans-serif" }}>Thermal Mode</label>
+            <select value={inputs.thermalMode} onChange={e => setInputs({...inputs, thermalMode: e.target.value as any})} className="w-full border border-gray-200 text-[11px] px-2 py-1 focus:outline-none focus:border-[#ffc812]" style={{ fontFamily: "Michroma, sans-serif" }}>
+              <option value="none">None (20°C)</option>
+              <option value="partial">Partial (+30°C)</option>
+              <option value="full">Full Calculation</option>
+            </select>
           </div>
-        </div>
+          <Field label="ESC Resistance" value={inputs.controllerRmMohm} onChange={(v:any) => setInputs({...inputs, controllerRmMohm: v})} unit="mΩ" />
+          <Field label="Gear Ratio" value={inputs.gearRatio} onChange={(v:any) => setInputs({...inputs, gearRatio: v})} unit=":1" />
+          <Field label="Gear Efficiency" value={inputs.gearEfficiency} onChange={(v:any) => setInputs({...inputs, gearEfficiency: v})} unit="%" />
+        </Section>
+      </div>
+
+      {/* ── Results ── */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <StatCard label="Current Draw" value={result.currentA.toFixed(1)} unit="A" />
+        <StatCard label="Req. Voltage" value={result.requiredVoltage.toFixed(1)} unit="V" />
+        <StatCard label="Achievable RPM" value={result.achievableRpm.toFixed(0)} unit="RPM" warn={result.achievableRpm < inputs.requiredRpm} />
+        <StatCard label="Est. Temp" value={result.motorTempC.toFixed(0)} unit="°C" warn={result.motorTempC > 100} />
+        <StatCard label="Elec Power" value={result.electricalPowerW.toFixed(0)} unit="W" />
+        <StatCard label="Mech Power" value={result.mechanicalPowerW.toFixed(0)} unit="W" />
+        <StatCard label="Motor Efficiency" value={result.efficiency.toFixed(1)} unit="%" />
+        <StatCard label="Motor Torque" value={(result.torqueNm * 100).toFixed(1)} unit="Ncm" />
       </div>
     </div>
   );

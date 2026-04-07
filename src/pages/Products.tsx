@@ -34,48 +34,6 @@ function useHash() {
 
 const USE_DATABASE = true; // Set to true to fetch from Supabase
 
-function MotorIcon({ color }: { color: string }) {
-  return (
-    <svg viewBox="0 0 80 80" className="w-14 h-14 opacity-70">
-      <circle cx="40" cy="40" r="28" fill="none" stroke={color} strokeWidth="2.5" />
-      <circle cx="40" cy="40" r="17" fill="none" stroke={color} strokeWidth="1.5" />
-      <circle cx="40" cy="40" r="5" fill={color} />
-      {[0, 60, 120, 180, 240, 300].map(a => {
-        const r = (Math.PI * a) / 180;
-        const x1 = 40 + 17 * Math.cos(r), y1 = 40 + 17 * Math.sin(r);
-        const x2 = 40 + 26 * Math.cos(r), y2 = 40 + 26 * Math.sin(r);
-        return <line key={a} x1={x1} y1={y1} x2={x2} y2={y2} stroke={color} strokeWidth="2" strokeLinecap="round" />;
-      })}
-    </svg>
-  );
-}
-
-function EscIcon({ color }: { color: string }) {
-  return (
-    <svg viewBox="0 0 80 80" className="w-14 h-14 opacity-70">
-      <rect x="10" y="22" width="60" height="36" rx="3" fill="none" stroke={color} strokeWidth="2" />
-      <rect x="17" y="31" width="10" height="7" rx="1" fill={color} opacity=".35" />
-      <rect x="35" y="31" width="10" height="7" rx="1" fill={color} opacity=".35" />
-      <rect x="53" y="31" width="10" height="7" rx="1" fill={color} opacity=".35" />
-      <line x1="10" y1="50" x2="70" y2="50" stroke={color} strokeWidth="1.2" opacity=".35" />
-      {[15, 25, 35, 45, 55, 65].map(x => (
-        <line key={x} x1={x} y1="50" x2={x} y2="58" stroke={color} strokeWidth="1.8" strokeLinecap="round" />
-      ))}
-    </svg>
-  );
-}
-
-function FcIcon({ color }: { color: string }) {
-  return (
-    <svg viewBox="0 0 80 80" className="w-14 h-14 opacity-70">
-      <rect x="10" y="10" width="60" height="60" rx="5" fill="none" stroke={color} strokeWidth="2" />
-      <circle cx="40" cy="40" r="11" fill="none" stroke={color} strokeWidth="1.5" />
-      <circle cx="40" cy="40" r="4" fill={color} />
-      <path d="M40 10v9M40 61v9M10 40h9M61 40h9" stroke={color} strokeWidth="2" strokeLinecap="round" />
-    </svg>
-  );
-}
-
 export default function Products() {
   const [, navigate] = useLocation();
   const hash = useHash();
@@ -118,12 +76,12 @@ export default function Products() {
 
   // Generate tabs dynamically from products
   const TABS = [
-    { id: "all", label: "All", count: products.length },
-    { id: "haemng", label: "Haemng Series", count: products.filter(p => p.series === "haemng").length },
-    { id: "maelard", label: "Maelard Series", count: products.filter(p => p.series === "maelard").length },
-    { id: "esc", label: "ESCs", count: products.filter(p => p.series === "esc").length },
-    { id: "fc", label: "Flight Controller", count: products.filter(p => p.series === "fc").length },
-    { id: "ips", label: "Integrated Power Systems", count: products.filter(p => p.series === "ips").length },
+    { id: "all", label: "ALL", count: products.length },
+    { id: "haemng", label: "HAEMNG", count: products.filter(p => p.series === "haemng").length },
+    { id: "maelard", label: "MAELARD", count: products.filter(p => p.series === "maelard").length },
+    { id: "esc", label: "ESC", count: products.filter(p => p.series === "esc").length },
+    { id: "fc", label: "FLIGHT CONTROLLER", count: products.filter(p => p.series === "fc").length },
+    { id: "ips", label: "IPS", count: products.filter(p => p.series === "ips").length },
   ];
 
   // Derive activeTab directly from hash
@@ -163,21 +121,21 @@ export default function Products() {
 
         {/* ── Sticky filter bar ── */}
         <div className="sticky top-[60px] md:top-[72px] z-30 bg-white border-b border-gray-100 shadow-sm">
-          <div className="max-w-7xl mx-auto px-4 md:px-12 flex items-center gap-2 md:gap-4 py-3">
-            {/* Tabs - scrollable */}
-            <div className="flex items-center gap-0 overflow-x-auto flex-1 pb-2 md:pb-2">
+          <div className="max-w-7xl mx-auto px-4 md:px-12 flex flex-col lg:flex-row lg:items-center gap-3 md:gap-4 py-3">
+            {/* Tabs */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-1 flex-1 w-full">
               {TABS.map(tab => (
                 <button
                   key={tab.id}
                   onClick={() => { window.location.hash = tab.id; setSearch(""); }}
-                  className={`flex items-center gap-2 px-5 py-2 text-[10px] tracking-widest uppercase font-bold whitespace-nowrap transition-all duration-200 border-b-2 ${
+                  className={`flex items-center justify-center gap-1 px-2 md:px-3 py-2 text-[9px] tracking-wide uppercase font-bold whitespace-nowrap transition-all duration-200 border-b-2 ${
                     activeTab === tab.id
                       ? "border-[#ffc812] text-black"
                       : "border-transparent text-[#808080] hover:text-black hover:border-gray-200"
                   }`}
                   style={{ fontFamily: "Michroma, sans-serif", transform: "skewX(-10deg)" }}
                 >
-                  <span className="inline-flex items-center gap-2" style={{ transform: "skewX(10deg)" }}>
+                  <span className="inline-flex items-center gap-1" style={{ transform: "skewX(10deg)" }}>
                     {tab.label}
                     <span className={`text-[8px] px-1.5 py-0.5 rounded-sm font-medium ${
                       activeTab === tab.id ? "bg-[#ffc812] text-black" : "bg-gray-100 text-[#808080]"
@@ -189,13 +147,13 @@ export default function Products() {
               ))}
             </div>
             {/* Search - fixed on right */}
-            <div className="flex-shrink-0 w-full sm:w-auto">
+            <div className="flex-shrink-0 w-full lg:w-auto">
               <input
                 type="text"
                 placeholder="Search..."
                 value={search}
                 onChange={e => setSearch(e.target.value)}
-                className="text-[10px] border border-gray-200 px-3 py-2 w-full sm:w-48 md:w-64 focus:outline-none focus:border-[#ffc812] transition-colors duration-200"
+                className="text-[10px] border border-gray-200 px-3 py-2 w-full lg:w-56 xl:w-64 focus:outline-none focus:border-[#ffc812] transition-colors duration-200"
                 style={{ fontFamily: "Michroma, sans-serif", transform: "skewX(-10deg)" }}
               />
             </div>
@@ -294,7 +252,7 @@ function ProductGrid({
           {/* Visual header */}
           <div
             className="relative flex flex-col items-center justify-center h-40 overflow-hidden"
-            style={{ background: p.thumbnailBgColor || "linear-gradient(135deg, #111 0%, #1c1c1c 100%)" }}
+            style={{ background: "#ffffff" }}
           >
             <div
               className="absolute inset-0 opacity-10"
@@ -304,29 +262,36 @@ function ProductGrid({
                 backgroundSize: "20px 20px",
               }}
             />
-            {/* Thumbnail image if available */}
-            {p.thumbnailUrl ? (
-              <div className="relative z-10 w-full h-full flex items-center justify-center p-4">
-                <img 
-                  src={p.thumbnailUrl} 
-                  alt={p.model}
-                  className="max-w-full max-h-full object-contain"
-                  style={{ filter: "drop-shadow(0 4px 12px rgba(0,0,0,0.3))" }}
-                />
-              </div>
+            {(p.series === "haemng" || p.series === "maelard") ? (
+              p.thumbnailUrl ? (
+                <div className="relative z-10 w-full h-full flex items-center justify-center p-4">
+                  <img
+                    src={p.thumbnailUrl}
+                    alt={p.model}
+                    className="max-w-full max-h-full object-contain"
+                    style={{ filter: "drop-shadow(0 4px 12px rgba(0,0,0,0.3))" }}
+                  />
+                </div>
+              ) : (
+                <div className="relative z-10">
+                  {p.series === "haemng" ? (
+                    <img src={`${import.meta.env.BASE_URL}haemng.svg`} alt="Haemng" className="h-10 md:h-14 w-auto" style={{ opacity: 0.8 }} />
+                  ) : (
+                    <img src={`${import.meta.env.BASE_URL}Maelard.svg`} alt="Maelard" className="h-8 md:h-10 w-auto" style={{ opacity: 0.85 }} />
+                  )}
+                </div>
+              )
             ) : (
               <div className="relative z-10">
-                {p.series === "haemng" ? (
-                  <img src={`${import.meta.env.BASE_URL}haemng.svg`} alt="Haemng" className="h-10 md:h-14 w-auto" style={{ filter: "brightness(0) invert(1)", opacity: 0.7 }} />
-                ) : p.series === "maelard" ? (
-                  <img src={`${import.meta.env.BASE_URL}Maelard.svg`} alt="Maelard" className="h-8 md:h-10 w-auto" style={{ filter: "brightness(0) invert(1)", opacity: 0.7 }} />
-                ) : p.series === "esc" ? <EscIcon color={cfg.accent} />
-                  : p.series === "fc" ? <FcIcon color={cfg.accent} />
-                  : <MotorIcon color={cfg.accent} />}
+                <img
+                  src={`${import.meta.env.BASE_URL}favicon.svg`}
+                  alt="Welkinrim"
+                  className="h-10 md:h-12 w-auto opacity-90"
+                />
               </div>
             )}
             {p.allSpecs.find(s => s.label === "Dimension") && (
-              <p className="relative z-10 text-[7px] md:text-[8px] tracking-widest text-white/30 uppercase mt-0.5 md:mt-1"
+              <p className="relative z-10 text-[7px] md:text-[8px] tracking-widest text-[#808080] uppercase mt-0.5 md:mt-1"
                  style={{ fontFamily: "Michroma, sans-serif" }}>
                 {p.allSpecs.find(s => s.label === "Dimension")?.value}
               </p>
@@ -339,15 +304,15 @@ function ProductGrid({
               </span>
             </div>
             {/* Tag */}
-            <div className="absolute bottom-2.5 left-2.5 border border-white/20 px-2 py-0.5" style={{ transform: "skewX(-10deg)" }}>
-              <span className="text-[7px] tracking-widest uppercase text-white/50"
+            <div className="absolute bottom-2.5 left-2.5 border border-gray-300 px-2 py-0.5 bg-white/90" style={{ transform: "skewX(-10deg)" }}>
+              <span className="text-[7px] tracking-widest uppercase text-[#808080]"
                     style={{ fontFamily: "Michroma, sans-serif", display: "inline-block", transform: "skewX(10deg)" }}>{p.tag}</span>
             </div>
             {/* Hover arrow */}
             <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200"
                  style={{ background: `${cfg.accent}18` }}>
-              <div className="w-10 h-10 rounded-full border border-white/30 flex items-center justify-center">
-                <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <div className="w-10 h-10 rounded-full border border-black/20 bg-white/90 flex items-center justify-center">
+                <svg className="w-4 h-4 text-black" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M5 12h14M12 5l7 7-7 7" />
                 </svg>
               </div>
@@ -360,7 +325,7 @@ function ProductGrid({
                style={{ fontFamily: "Michroma, sans-serif", color: cfg.accent }}>
               {p.model}
             </p>
-            <h3 className="text-sm font-bold text-black mb-3" style={{ fontFamily: "Michroma, sans-serif" }}>
+            <h3 className="text-sm font-bold text-black mb-3 uppercase" style={{ fontFamily: "Michroma, sans-serif" }}>
               {p.seriesLabel}
             </h3>
             <div className="grid grid-cols-3 gap-px bg-gray-100 mt-auto">

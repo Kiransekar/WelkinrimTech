@@ -48,9 +48,9 @@ function Field({
 }) {
   const [showHint, setShowHint] = useState(false);
   return (
-    <div className={`flex flex-row items-center gap-2 w-full py-1 relative ${className}`}>
-      <div className="flex items-center gap-1 flex-1 min-w-0">
-        <label className="text-[9px] tracking-widest uppercase text-[#ffc812] truncate"
+    <div className={`w-full py-0.5 relative ${className}`}>
+      <div className="flex items-center gap-1 mb-0.5">
+        <label className="text-[8px] tracking-widest uppercase text-[#808080]"
                style={{ fontFamily: "Michroma, sans-serif" }} htmlFor={id} title={label}>
           {label}
         </label>
@@ -69,14 +69,12 @@ function Field({
           {hint}
         </div>
       )}
-      <div className="w-24 flex-shrink-0">
-        <input
-          id={id} type="number" step={step} value={value}
-          onChange={e => onChange(parseFloat(e.target.value) || 0)}
-          className="w-full min-w-0 border border-gray-200 text-[11px] px-2 py-1 focus:outline-none focus:border-[#ffc812] transition-colors bg-white"
-          style={{ fontFamily: "Michroma, sans-serif" }}
-        />
-      </div>
+      <input
+        id={id} type="number" step={step} value={value}
+        onChange={e => onChange(parseFloat(e.target.value) || 0)}
+        className="w-full border border-gray-200 text-[11px] px-2 py-1 focus:outline-none focus:border-[#ffc812] transition-colors bg-white"
+        style={{ fontFamily: "Michroma, sans-serif" }}
+      />
     </div>
   );
 }
@@ -89,7 +87,7 @@ function Section({ title, children, action }: { title: string; children: React.R
            style={{ fontFamily: "Michroma, sans-serif" }}>{title}</p>
         {action}
       </div>
-      <div className="p-3 grid grid-cols-2 gap-2">{children}</div>
+      <div className="p-2 space-y-0.5">{children}</div>
     </div>
   );
 }
@@ -208,91 +206,77 @@ export default function WbCalc() {
   const status = getStatusIcon();
 
   return (
-    <div className="flex flex-col lg:flex-row gap-6">
-      {/* Inputs */}
-      <div className="lg:w-96 flex-shrink-0">
+    <div className="space-y-4">
+      {/* ── Compact Inputs ── */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
         {/* Aircraft Basics */}
         <Section title="Aircraft Basics">
-          <Field label="Empty Weight (g)" id="ew" value={emptyWeightG} onChange={setEmptyWeightG}
+          <Field label="Empty Wt (g)" id="ew" value={emptyWeightG} onChange={setEmptyWeightG}
                  hint="Basic empty weight including unusable fuel" />
           <Field label="Empty CG (cm)" id="ecg" value={emptyCgCm} onChange={setEmptyCgCm}
                  hint="CG location at empty weight" />
-          <Field label="Max Gross Weight (g)" id="mgw" value={maxGrossWeightG} onChange={setMaxGrossWeightG}
+          <Field label="Max Gross (g)" id="mgw" value={maxGrossWeightG} onChange={setMaxGrossWeightG}
                  hint="Maximum tested takeoff weight" />
-        </Section>
-
-        {/* CG Limits */}
-        <Section title="CG Envelope Limits">
-          <Field label="Forward Limit (cm)" id="cgf" value={cgLimits.forwardCm} onChange={v => setCgLimits({ ...cgLimits, forwardCm: v })}
+          <Field label="Fwd Limit (cm)" id="cgf" value={cgLimits.forwardCm} onChange={v => setCgLimits({ ...cgLimits, forwardCm: v })}
                  hint="Most forward allowable CG" />
           <Field label="Aft Limit (cm)" id="cga" value={cgLimits.aftCm} onChange={v => setCgLimits({ ...cgLimits, aftCm: v })}
                  hint="Most aft allowable CG" />
         </Section>
 
         {/* Stations */}
-        <div className="border border-gray-100 mb-3">
+        <div className="border border-gray-100 md:col-span-2">
           <div className="bg-black px-3 py-1.5 flex items-center justify-between">
             <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812]"
                style={{ fontFamily: "Michroma, sans-serif" }}>Loading Stations</p>
             <button onClick={addStation} className="text-[9px] bg-[#ffc812] text-black px-2 py-0.5 font-bold"
                     style={{ fontFamily: "Michroma, sans-serif" }}>+ Add</button>
           </div>
-
-          {stations.map((station) => (
-            <div key={station.id} className="p-3 border-b border-gray-100 bg-gray-50/50">
-              <div className="flex items-center justify-between mb-2">
-                <input
-                  type="text"
-                  value={station.name}
-                  onChange={e => updateStation(station.id, "name", e.target.value)}
-                  className="text-[10px] font-bold border-none bg-transparent focus:outline-none flex-1"
-                  style={{ fontFamily: "Michroma, sans-serif" }}
-                />
-                <select
-                  value={station.type}
-                  onChange={e => updateStation(station.id, "type", e.target.value)}
-                  className="text-[9px] border border-gray-300 px-1 py-0.5 bg-white"
-                  style={{ fontFamily: "Michroma, sans-serif" }}
-                >
-                  <option value="equipment">Equipment</option>
-                  <option value="payload">Payload</option>
-                  <option value="fuel">Fuel</option>
-                  <option value="structure">Structure</option>
-                  <option value="other">Other</option>
-                </select>
-                <button onClick={() => removeStation(station.id)} className="text-red-500 text-xs hover:text-red-700 ml-1">✕</button>
-              </div>
-              <div className="grid grid-cols-2 gap-2">
-                <Field label="Arm (cm)" id={`sta-${station.id}`} value={station.armCm} onChange={v => updateStation(station.id, "armCm", v)}
-                       hint="Distance from datum" />
-                <Field label="Current (g)" id={`stw-${station.id}`} value={station.currentWeightG} onChange={v => updateStation(station.id, "currentWeightG", v)} />
-                <Field label="Min (g)" id={`stn-${station.id}`} value={station.minWeightG} onChange={v => updateStation(station.id, "minWeightG", v)} />
-                <Field label="Max (g)" id={`stm-${station.id}`} value={station.maxWeightG} onChange={v => updateStation(station.id, "maxWeightG", v)} />
-              </div>
-              {/* Slider for quick adjustment */}
-              <div className="mt-2">
-                <input
-                  type="range"
-                  min={station.minWeightG}
-                  max={station.maxWeightG}
-                  value={station.currentWeightG}
-                  onChange={e => updateStation(station.id, "currentWeightG", parseFloat(e.target.value))}
-                  className="w-full accent-[#ffc812]"
-                />
-                <div className="flex justify-between text-[8px] text-gray-400">
-                  <span>{station.minWeightG}g</span>
-                  <span>{station.maxWeightG}g</span>
+          <div className="grid grid-cols-1 md:grid-cols-2 max-h-72 overflow-y-auto">
+            {stations.map((station) => (
+              <div key={station.id} className="p-2 border-b border-r border-gray-100 bg-gray-50/50">
+                <div className="flex items-center justify-between mb-1">
+                  <input type="text" value={station.name}
+                    onChange={e => updateStation(station.id, "name", e.target.value)}
+                    className="text-[10px] font-bold border-none bg-transparent focus:outline-none flex-1"
+                    style={{ fontFamily: "Michroma, sans-serif" }} />
+                  <select value={station.type}
+                    onChange={e => updateStation(station.id, "type", e.target.value)}
+                    className="text-[9px] border border-gray-300 px-1 py-0.5 bg-white"
+                    style={{ fontFamily: "Michroma, sans-serif" }}>
+                    <option value="equipment">Equipment</option>
+                    <option value="payload">Payload</option>
+                    <option value="fuel">Fuel</option>
+                    <option value="structure">Structure</option>
+                    <option value="other">Other</option>
+                  </select>
+                  <button onClick={() => removeStation(station.id)} className="text-red-500 text-xs hover:text-red-700 ml-1">✕</button>
+                </div>
+                <div className="grid grid-cols-2 gap-1">
+                  <Field label="Arm (cm)" id={`sta-${station.id}`} value={station.armCm} onChange={v => updateStation(station.id, "armCm", v)}
+                         hint="Distance from datum" />
+                  <Field label="Current (g)" id={`stw-${station.id}`} value={station.currentWeightG} onChange={v => updateStation(station.id, "currentWeightG", v)} />
+                  <Field label="Min (g)" id={`stn-${station.id}`} value={station.minWeightG} onChange={v => updateStation(station.id, "minWeightG", v)} />
+                  <Field label="Max (g)" id={`stm-${station.id}`} value={station.maxWeightG} onChange={v => updateStation(station.id, "maxWeightG", v)} />
+                </div>
+                <div className="mt-1">
+                  <input type="range" min={station.minWeightG} max={station.maxWeightG} value={station.currentWeightG}
+                    onChange={e => updateStation(station.id, "currentWeightG", parseFloat(e.target.value))}
+                    className="w-full accent-[#ffc812] h-1" />
+                  <div className="flex justify-between text-[7px] text-gray-400">
+                    <span>{station.minWeightG}g</span>
+                    <span>{station.maxWeightG}g</span>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
 
-      {/* Results */}
-      <div className="flex-1 min-w-0">
+      {/* ── Results ── */}
+      <div>
         {/* Summary Cards */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
           <div className="border border-gray-100 p-3 text-center">
             <p className="text-[8px] tracking-widest uppercase text-[#808080] mb-1" style={{ fontFamily: "Michroma, sans-serif" }}>Total Weight</p>
             <p className={`text-xl font-black ${currentWandB.weightOverMax ? "text-red-500" : "text-black"}`}
