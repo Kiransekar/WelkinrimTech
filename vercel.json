@@ -4,5 +4,16 @@
   "framework": null,
   "rewrites": [
     { "source": "/(.*)", "destination": "/index.html" }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Content-Security-Policy",
+          "value": "default-src 'self' 'unsafe-inline' 'unsafe-eval' https: blob: data:; img-src 'self' data: blob: https:; worker-src 'self' blob:; child-src 'self' blob:; connect-src 'self' https: blob: data:;"
+        }
+      ]
+    }
   ]
 }
