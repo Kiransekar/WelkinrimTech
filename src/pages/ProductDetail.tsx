@@ -88,11 +88,9 @@ export default function ProductDetail() {
     : product.series === "maelard" ? `${import.meta.env.BASE_URL}Maelard.svg`
     : null;
 
-  /* ── series-level hero image (shared motor photo per series, from admin data) ──
-     Mai.svg is the shared motor photo for both Haemng and Maelard series.
-     Future admin console can set seriesHeroImage per series in SERIES_CFG. ── */
+  /* ── series-level hero image (transparent PNG motor photo for Haemng & Maelard) ── */
   const seriesHeroImage =
-    (product.series === "haemng" || product.series === "maelard") ? `${import.meta.env.BASE_URL}Mai.svg`
+    (product.series === "haemng" || product.series === "maelard") ? `${import.meta.env.BASE_URL}welkinrim-motor.png`
     : null;
 
   /* Final hero image: prefer product-specific thumbnailUrl, then series hero, then wireframe */
@@ -129,34 +127,46 @@ export default function ProductDetail() {
             }}
           />
 
-          {/* ── Hero image: positioned relative to same 1280px container as Navbar content ── */}
+          {/* ── Hero motor image (transparent PNG) + series logo ── */}
           {heroImageSrc && (
             <div className="absolute inset-0 z-10 pointer-events-none select-none hidden lg:block">
               <div className="max-w-7xl mx-auto h-full relative px-6 md:px-12">
-                <img
-                  src={heroImageSrc}
-                  alt={product.seriesLabel}
-                  draggable={false}
-                  className="absolute right-[15%] top-2 h-[500px] w-auto max-w-none"
-                  style={{
-                    filter: 'drop-shadow(-15px 10px 40px rgba(0,0,0,0.5))',
-                  }}
-                />
-                
-                {/* Series logo overlay - aligned specifically with adjusted motor image */}
-                {seriesLogoSrc && (
-                  <div className="absolute right-[18%] bottom-[12%] z-30 pointer-events-none">
+                {/* Flex column: motor image on top, series logo directly underneath */}
+                <div className="absolute right-[6%] top-0 bottom-0 w-[38%] flex flex-col items-center justify-center gap-4">
+                  {/* Motor image with soft radial fade at edges */}
+                  <div
+                    style={{
+                      WebkitMaskImage: 'radial-gradient(ellipse 90% 90% at 50% 48%, black 55%, rgba(0,0,0,0.7) 70%, transparent 92%)',
+                      maskImage:       'radial-gradient(ellipse 90% 90% at 50% 48%, black 55%, rgba(0,0,0,0.7) 70%, transparent 92%)',
+                    }}
+                  >
                     <img
-                      src={seriesLogoSrc}
+                      src={heroImageSrc}
                       alt={product.seriesLabel}
-                      className="w-40 md:w-52"
-                      style={{ 
-                        filter: 'brightness(0) invert(1) drop-shadow(0 2px 12px rgba(0,0,0,0.7))',
-                        opacity: 0.95
+                      draggable={false}
+                      className="w-auto h-auto object-contain"
+                      style={{
+                        maxHeight: '310px',
+                        maxWidth: '100%',
+                        filter: 'drop-shadow(-4px 4px 20px rgba(0,0,0,0.45))',
                       }}
                     />
                   </div>
-                )}
+
+                  {/* Series logo — centered directly under the motor */}
+                  {seriesLogoSrc && (
+                    <img
+                      src={seriesLogoSrc}
+                      alt={product.seriesLabel}
+                      className="w-28 md:w-36"
+                      style={{
+                        filter: 'brightness(0) invert(1) drop-shadow(0 2px 8px rgba(0,0,0,0.7))',
+                        opacity: 0.8,
+                        marginTop: '-8px',
+                      }}
+                    />
+                  )}
+                </div>
               </div>
             </div>
           )}

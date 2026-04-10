@@ -237,13 +237,13 @@ function ProductGrid({
   cfg,
   navigate,
 }: {
-  items: ReturnType<typeof PRODUCTS.filter>;
+  items: Product[];
   cfg: typeof SERIES_CFG[keyof typeof SERIES_CFG];
   navigate: (to: string) => void;
 }) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-      {items.map(p => (
+      {items.map((p: Product) => (
         <button
           key={p.id}
           onClick={() => navigate(`/products/${p.id}`)}
@@ -290,10 +290,10 @@ function ProductGrid({
                 />
               </div>
             )}
-            {p.allSpecs.find(s => s.label === "Dimension") && (
+            {p.allSpecs.find((s: { label: string; value: string }) => s.label === "Dimension") && (
               <p className="relative z-10 text-[7px] md:text-[8px] tracking-widest text-[#808080] uppercase mt-0.5 md:mt-1"
                  style={{ fontFamily: "Michroma, sans-serif" }}>
-                {p.allSpecs.find(s => s.label === "Dimension")?.value}
+                {p.allSpecs.find((s: { label: string; value: string }) => s.label === "Dimension")?.value}
               </p>
             )}
             {/* Series badge */}
@@ -329,7 +329,7 @@ function ProductGrid({
               {p.seriesLabel}
             </h3>
             <div className="grid grid-cols-3 gap-px bg-gray-100 mt-auto">
-              {p.keySpecs.map(s => (
+              {p.keySpecs.map((s: { label: string; value: string }) => (
                 <div key={s.label} className="bg-white px-2 py-2 text-center">
                   <p className="text-[10px] font-black text-black" style={{ fontFamily: "Michroma, sans-serif" }}>
                     {s.value}
