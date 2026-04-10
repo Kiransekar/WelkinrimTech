@@ -219,6 +219,21 @@ export const CALCULATORS: CalculatorConfig[] = [
     inputCount: 15,
     outputCount: 8,
   },
+  {
+    id: "motortoolbox",
+    label: "motorToolbox",
+    tag: "Formulas / Utility",
+    description: "Complete electric motor formula reference including Torque/Power calculations, Ke/Kt constants, and unit conversions.",
+    status: "live",
+    accent: "#ffc812",
+    textColor: "#000",
+    category: "analysis",
+    metrics: ["Power", "Km", "Ke/Kt", "eRPM"],
+    icon: FaviconIcon,
+    inputCount: 16,
+    outputCount: 22,
+    popular: true,
+  },
 ];
 
 // Category display labels

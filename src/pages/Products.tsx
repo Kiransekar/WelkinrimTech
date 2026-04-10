@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
-import { SERIES_CFG } from "@/data/products";
+import { SERIES_CFG, PRODUCTS } from "@/data/products";
 import { fetchProducts } from "@/lib/supabase";
 import Footer from "@/components/Footer";
 
@@ -32,7 +32,7 @@ function useHash() {
   return hash;
 }
 
-const USE_DATABASE = true; // Set to true to fetch from Supabase
+const USE_DATABASE = false; // Set to true to fetch from Supabase
 
 export default function Products() {
   const [, navigate] = useLocation();
@@ -50,18 +50,12 @@ export default function Products() {
           setProducts(dbProducts);
           setLoading(false);
         } else {
-          // Fallback to static data
-          import('@/data/products').then(mod => {
-            setProducts(mod.PRODUCTS);
-            setLoading(false);
-          });
+          setProducts(PRODUCTS);
+          setLoading(false);
         }
       } else {
-        // Use static data
-        import('@/data/products').then(mod => {
-          setProducts(mod.PRODUCTS);
-          setLoading(false);
-        });
+        setProducts(PRODUCTS);
+        setLoading(false);
       }
     };
     loadProducts();
@@ -113,9 +107,7 @@ export default function Products() {
             <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold text-white leading-tight" style={{ fontFamily: "Michroma, sans-serif" }}>
               Product <span className="text-[#ffc812]">Catalogue</span>
             </h1>
-            <p className="text-white/40 text-sm mt-3 max-w-lg" style={{ fontFamily: "Lexend, sans-serif" }}>
-              IIT Madras Incubated · 36+ variants · Haemng, Maelard, ESC, Flight Controller & Integrated Systems
-            </p>
+
           </div>
         </div>
 
@@ -303,11 +295,7 @@ function ProductGrid({
                 {p.series === "ips" ? "IPS" : p.series === "fc" ? "FC" : p.series.toUpperCase()}
               </span>
             </div>
-            {/* Tag */}
-            <div className="absolute bottom-2.5 left-2.5 border border-gray-300 px-2 py-0.5 bg-white/90" style={{ transform: "skewX(-10deg)" }}>
-              <span className="text-[7px] tracking-widest uppercase text-[#808080]"
-                    style={{ fontFamily: "Michroma, sans-serif", display: "inline-block", transform: "skewX(10deg)" }}>{p.tag}</span>
-            </div>
+
             {/* Hover arrow */}
             <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200"
                  style={{ background: `${cfg.accent}18` }}>
@@ -323,10 +311,10 @@ function ProductGrid({
           <div className="p-4 flex flex-col flex-1">
             <p className="text-[8px] tracking-[0.25em] uppercase mb-0.5"
                style={{ fontFamily: "Michroma, sans-serif", color: cfg.accent }}>
-              {p.model}
+              {p.application}
             </p>
             <h3 className="text-sm font-bold text-black mb-3 uppercase" style={{ fontFamily: "Michroma, sans-serif" }}>
-              {p.seriesLabel}
+              {p.model}
             </h3>
             <div className="grid grid-cols-3 gap-px bg-gray-100 mt-auto">
               {p.keySpecs.map((s: { label: string; value: string }) => (

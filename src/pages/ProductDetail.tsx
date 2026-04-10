@@ -2,50 +2,9 @@ import { useEffect } from "react";
 import { useLocation, useParams } from "wouter";
 import { PRODUCTS, SERIES_CFG } from "@/data/products";
 import Footer from "@/components/Footer";
+import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid } from "recharts";
 
-function MotorIcon({ color, size = 120 }: { color: string; size?: number }) {
-  const cx = size / 2, cy = size / 2, r1 = size * 0.38, r2 = size * 0.23, r3 = size * 0.08;
-  return (
-    <svg viewBox={`0 0 ${size} ${size}`} width={size} height={size}>
-      <circle cx={cx} cy={cy} r={r1} fill="none" stroke={color} strokeWidth="3" opacity=".6" />
-      <circle cx={cx} cy={cy} r={r2} fill="none" stroke={color} strokeWidth="2" />
-      <circle cx={cx} cy={cy} r={r3} fill={color} />
-      {[0, 45, 90, 135, 180, 225, 270, 315].map(a => {
-        const rad = (Math.PI * a) / 180;
-        const x1 = cx + r2 * Math.cos(rad), y1 = cy + r2 * Math.sin(rad);
-        const x2 = cx + r1 * 0.9 * Math.cos(rad), y2 = cy + r1 * 0.9 * Math.sin(rad);
-        return <line key={a} x1={x1} y1={y1} x2={x2} y2={y2} stroke={color} strokeWidth="2.5" strokeLinecap="round" opacity=".7" />;
-      })}
-    </svg>
-  );
-}
 
-function EscIcon({ color, size = 120 }: { color: string; size?: number }) {
-  return (
-    <svg viewBox="0 0 120 80" width={size} height={(size * 80) / 120}>
-      <rect x="8" y="10" width="104" height="60" rx="5" fill="none" stroke={color} strokeWidth="2.5" opacity=".7" />
-      {[18, 42, 66, 90].map(x => (
-        <rect key={x} x={x} y="22" width="16" height="12" rx="2" fill={color} opacity=".3" />
-      ))}
-      <line x1="8" y1="50" x2="112" y2="50" stroke={color} strokeWidth="1.5" opacity=".3" />
-      {[14, 24, 34, 44, 54, 64, 74, 84, 94, 104].map(x => (
-        <line key={x} x1={x} y1="50" x2={x} y2="70" stroke={color} strokeWidth="2" strokeLinecap="round" opacity=".5" />
-      ))}
-    </svg>
-  );
-}
-
-function FcIcon({ color, size = 120 }: { color: string; size?: number }) {
-  return (
-    <svg viewBox="0 0 120 120" width={size} height={size}>
-      <rect x="12" y="12" width="96" height="96" rx="8" fill="none" stroke={color} strokeWidth="2.5" opacity=".6" />
-      <circle cx="60" cy="60" r="18" fill="none" stroke={color} strokeWidth="2" />
-      <circle cx="60" cy="60" r="6" fill={color} opacity=".8" />
-      <path d="M60 12v16M60 92v16M12 60h16M92 60h16" stroke={color} strokeWidth="2.5" strokeLinecap="round" opacity=".7" />
-      <circle cx="60" cy="60" r="32" fill="none" stroke={color} strokeWidth="1" opacity=".2" strokeDasharray="4 3" />
-    </svg>
-  );
-}
 
 export default function ProductDetail() {
   const params = useParams<{ id: string }>();
@@ -107,7 +66,7 @@ export default function ProductDetail() {
       <div className="relative">
 
         {/* Dark hero band — overflow-hidden so the absolute image bleeds naturally at edges */}
-        <div className="bg-black pt-28 pb-0 relative overflow-hidden" style={{ minHeight: '480px' }}>
+        <div className="bg-black pt-20 pb-0 relative overflow-hidden" style={{ minHeight: '380px' }}>
 
           {/* Subtle grid texture */}
           <div
@@ -146,7 +105,7 @@ export default function ProductDetail() {
                       draggable={false}
                       className="w-auto h-auto object-contain"
                       style={{
-                        maxHeight: '310px',
+                        maxHeight: '260px',
                         maxWidth: '100%',
                         filter: 'drop-shadow(-4px 4px 20px rgba(0,0,0,0.45))',
                       }}
@@ -211,7 +170,7 @@ export default function ProductDetail() {
                 </p>
 
                 {/* Key specs strip */}
-                <div className="flex flex-wrap gap-3 mt-7">
+                <div className="flex flex-wrap gap-3 mt-7 mb-16">
                   {product.keySpecs.map(s => (
                     <div key={s.label} className="border border-white/15 px-4 py-3 min-w-[90px] bg-white/[0.03] backdrop-blur-sm">
                       <p className="text-lg font-black text-white leading-none" style={{ fontFamily: "Michroma, sans-serif" }}>
@@ -223,29 +182,12 @@ export default function ProductDetail() {
                   ))}
                 </div>
 
-                {/* CTA buttons */}
-                <div className="flex gap-4 mt-8 flex-wrap">
-                  <button
-                    onClick={handleEnquire}
-                    className="px-8 py-3 text-[10px] tracking-widest uppercase font-black transition-opacity duration-200 hover:opacity-85"
-                    style={{ fontFamily: "Michroma, sans-serif", background: cfg.accent, color: cfg.textOnAccent, transform: "skewX(-10deg)" }}
-                  >
-                    <span style={{ display: "inline-block", transform: "skewX(10deg)" }}>Enquire Now</span>
-                  </button>
-                  <button
-                    onClick={() => navigate("/products")}
-                    className="px-8 py-3 border border-white/20 text-white text-[10px] tracking-widest uppercase hover:border-white/50 transition-colors duration-200"
-                    style={{ fontFamily: "Michroma, sans-serif", transform: "skewX(-10deg)" }}
-                  >
-                    <span style={{ display: "inline-block", transform: "skewX(10deg)" }}>← All Products</span>
-                  </button>
-                </div>
               </div>
 
               {/* ── Right col: spacer when hero image is handled absolutely above ──
                   When no heroImageSrc exists, show the wireframe as an inline fallback.
               ── */}
-              <div className="relative flex items-center justify-center lg:justify-end min-h-[340px] pb-10">
+              <div className="relative flex items-center justify-center lg:justify-end min-h-[260px] pb-6">
                 {!heroImageSrc && (
                   <div className="relative z-10 w-full max-w-[480px]">
                     <div
@@ -277,7 +219,7 @@ export default function ProductDetail() {
           </div>
 
           {/* Bottom gradient fade: black → white, creates the seamless bleed-into-content effect */}
-          <div className="absolute inset-x-0 bottom-0 h-24 pointer-events-none z-30"
+          <div className="absolute inset-x-0 bottom-0 h-16 pointer-events-none z-30"
             style={{ background: 'linear-gradient(to bottom, transparent 0%, #000 60%, #fff 100%)' }} />
         </div>
 
@@ -286,7 +228,7 @@ export default function ProductDetail() {
       </div>
 
       {/* ── Content ── */}
-      <div className="max-w-7xl mx-auto px-6 md:px-12 pt-16 pb-16">
+      <div className="max-w-7xl mx-auto px-6 md:px-12 pt-8 pb-16">
         <div className="flex flex-col gap-14">
 
           {/* Specifications */}
@@ -365,7 +307,7 @@ export default function ProductDetail() {
                   src={product.wireframeUrl || `${import.meta.env.BASE_URL}wireframes/${product.id}.png`}
                   alt={`${product.name} Technical Drawing`}
                   className="absolute inset-0 w-full h-full object-contain p-6 md:p-10 transition-transform duration-500 group-hover:scale-[1.015]"
-                  style={{ filter: "contrast(1.08) brightness(0.97)" }}
+                  style={{ filter: "grayscale(1) contrast(1.2) brightness(1.1)", mixBlendMode: "multiply" }}
                   onError={(e) => {
                     /* Graceful fallback if wireframe image is missing */
                     (e.target as HTMLImageElement).style.display = "none";
@@ -396,20 +338,25 @@ export default function ProductDetail() {
                   <thead>
                     <tr style={{ background: cfg.accent }}>
                       {[
-                        "Throttle", 
-                        "Voltage(V)", 
-                        "Current(A)", 
-                        "Power(W)", 
-                        "Thrust(g)", 
-                        "Speed(RPM)", 
-                        "Efficiency(g/W)"
-                      ].map(h => (
-                        <th key={h}
-                            className="px-3 py-3 text-left text-[8px] tracking-widest uppercase font-black"
-                            style={{ fontFamily: "Michroma, sans-serif", color: cfg.textOnAccent }}>
-                          {h}
-                        </th>
-                      ))}
+                        { key: 'throttle', label: 'Throttle' },
+                        { key: 'voltage', label: 'Voltage' },
+                        { key: 'current', label: 'Current' },
+                        { key: 'power', label: 'Power' },
+                        { key: 'thrust', label: 'Thrust' },
+                        { key: 'speed', label: 'Speed' },
+                        { key: 'efficiency', label: 'Efficiency' }
+                      ].map(col => {
+                        const firstRowValue = (product.perf![0] as any)[col.key];
+                        const unit = firstRowValue ? firstRowValue.replace(/[0-9.,-]/g, '').trim() : '';
+                        const headingText = unit ? `${col.label}(${unit})` : col.label;
+                        return (
+                          <th key={col.key}
+                              className="px-3 py-3 text-left text-[10px] tracking-widest uppercase font-black"
+                              style={{ fontFamily: "Michroma, sans-serif", color: cfg.textOnAccent }}>
+                            {headingText}
+                          </th>
+                        );
+                      })}
                     </tr>
                   </thead>
                   <tbody>
@@ -417,47 +364,81 @@ export default function ProductDetail() {
                       <tr key={row.throttle}
                           className={`border-t border-gray-50 ${i % 2 === 0 ? "bg-white" : "bg-gray-50/50"}`}>
                         <td className="px-3 py-3 text-[11px] font-black text-black"
-                            style={{ fontFamily: "Michroma, sans-serif" }}>{row.throttle}</td>
-                        <td className="px-3 py-3 text-[11px] text-[#555]">{row.voltage}</td>
-                        <td className="px-3 py-3 text-[11px] text-[#555]">{row.current}</td>
-                        <td className="px-3 py-3 text-[11px] text-[#555]">{row.power}</td>
-                        <td className="px-3 py-3 text-[11px] font-bold" style={{ color: cfg.accent }}>{row.thrust}</td>
-                        <td className="px-3 py-3 text-[11px] text-[#555]">{row.speed || "-"}</td>
-                        <td className="px-3 py-3 text-[11px] text-[#555]">{row.efficiency || "-"}</td>
+                            style={{ fontFamily: "Michroma, sans-serif" }}>{row.throttle.replace(/[^0-9.,-]/g, '')}</td>
+                        <td className="px-3 py-3 text-[11px] text-[#555]">{row.voltage.replace(/[^0-9.,-]/g, '')}</td>
+                        <td className="px-3 py-3 text-[11px] text-[#555]">{row.current.replace(/[^0-9.,-]/g, '')}</td>
+                        <td className="px-3 py-3 text-[11px] text-[#555]">{row.power.replace(/[^0-9.,-]/g, '')}</td>
+                        <td className="px-3 py-3 text-[11px] font-bold" style={{ color: cfg.accent }}>{row.thrust.replace(/[^0-9.,-]/g, '')}</td>
+                        <td className="px-3 py-3 text-[11px] text-[#555]">{row.speed ? row.speed.replace(/[^0-9.,-]/g, '') : "-"}</td>
+                        <td className="px-3 py-3 text-[11px] text-[#555]">{row.efficiency ? row.efficiency.replace(/[^0-9.,-]/g, '') : "-"}</td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
               </div>
 
-              {/* Thrust bar */}
-              <div className="mt-6">
-                <p className="text-[9px] text-[#808080] tracking-widest uppercase mb-3"
+              {/* Thrust curve */}
+              <div className="mt-8">
+                <p className="text-[9px] text-[#808080] tracking-widest uppercase mb-4"
                    style={{ fontFamily: "Michroma, sans-serif" }}>
-                  Thrust at Throttle
+                  Thrust curve
                 </p>
-                <div className="space-y-2">
-                  {product.perf.map(row => {
-                    const maxVal = parseFloat(product.perf![product.perf!.length - 1].thrust.replace(/[^0-9.]/g, "")) || 1;
-                    const val = parseFloat(row.thrust.replace(/[^0-9.]/g, "")) || 0;
-                    const pct = Math.min(100, (val / maxVal) * 100);
-                    return (
-                      <div key={row.throttle} className="flex items-center gap-3">
-                        <span className="text-[9px] text-[#808080] w-10 flex-shrink-0 text-right"
-                              style={{ fontFamily: "Michroma, sans-serif" }}>
-                          {row.throttle}
-                        </span>
-                        <div className="flex-1 bg-gray-100 h-4">
-                          <div className="h-full transition-all duration-700"
-                               style={{ width: `${pct}%`, background: cfg.accent }} />
-                        </div>
-                        <span className="text-[9px] font-bold text-black w-20 flex-shrink-0"
-                              style={{ fontFamily: "Michroma, sans-serif" }}>
-                          {row.thrust}
-                        </span>
-                      </div>
-                    );
-                  })}
+                <div className="w-full h-48 sm:h-64 mt-4 bg-gray-50/30 border border-gray-100 p-4">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <AreaChart
+                      data={product.perf.map(row => ({
+                        throttle: row.throttle,
+                        thrustVal: parseFloat(row.thrust.replace(/[^0-9.]/g, "")) || 0,
+                        thrustStr: row.thrust
+                      }))}
+                      margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
+                    >
+                      <defs>
+                        <linearGradient id="thrustGradient" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor={cfg.accent} stopOpacity={0.4}/>
+                          <stop offset="100%" stopColor={cfg.accent} stopOpacity={0}/>
+                        </linearGradient>
+                      </defs>
+                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#eaeaea" />
+                      <XAxis 
+                        dataKey="throttle" 
+                        tick={{ fontSize: 9, fontFamily: 'Michroma, sans-serif', fill: '#808080' }}
+                        axisLine={false}
+                        tickLine={false}
+                      />
+                      <YAxis 
+                        tick={{ fontSize: 9, fontFamily: 'Michroma, sans-serif', fill: '#808080' }}
+                        axisLine={false}
+                        tickLine={false}
+                      />
+                      <Tooltip 
+                        cursor={{ stroke: '#ccc', strokeWidth: 1, strokeDasharray: '4 4' }}
+                        content={({ active, payload }) => {
+                          if (active && payload && payload.length) {
+                            return (
+                              <div className="bg-black/95 p-3 px-4 border-l-2" style={{ borderColor: cfg.accent }}>
+                                <p className="text-[8px] text-gray-400 font-bold tracking-widest mb-1.5 uppercase" style={{ fontFamily: 'Michroma, sans-serif' }}>
+                                  Throttle @ {payload[0].payload.throttle}
+                                </p>
+                                <p className="text-[14px] font-black" style={{ fontFamily: 'Michroma, sans-serif', color: cfg.accent }}>
+                                  {payload[0].payload.thrustStr}
+                                </p>
+                              </div>
+                            );
+                          }
+                          return null;
+                        }}
+                      />
+                      <Area 
+                        type="monotone" 
+                        dataKey="thrustVal" 
+                        stroke={cfg.accent} 
+                        strokeWidth={3}
+                        fillOpacity={1} 
+                        fill="url(#thrustGradient)" 
+                      />
+                    </AreaChart>
+                  </ResponsiveContainer>
                 </div>
               </div>
             </div>
@@ -526,16 +507,13 @@ export default function ProductDetail() {
                   className="text-left border border-gray-100 hover:border-gray-300 hover:shadow-lg transition-all duration-300 group"
                 >
                   <div
-                    className="h-24 flex items-center justify-center"
-                    style={{ background: "linear-gradient(135deg, #111 0%, #1c1c1c 100%)" }}
+                    className="h-24 flex items-center justify-center bg-white border-b border-gray-50 bg-[#fafafa]"
                   >
-                    <div className="scale-75">
-                      {p.series === "haemng" ? <MotorIcon color={cfg.accent} size={60} />
-                        : p.series === "maelard" ? <MotorIcon color={cfg.accent} size={55} />
-                        : p.series === "esc" ? <EscIcon color={cfg.accent} size={60} />
-                        : p.series === "fc" ? <FcIcon color={cfg.accent} size={55} />
-                        : <MotorIcon color={cfg.accent} size={55} />}
-                    </div>
+                    <img
+                      src={`${import.meta.env.BASE_URL}favicon.svg`}
+                      alt="Welkinrim"
+                      className="h-10 w-auto opacity-70 transition-transform duration-300 group-hover:scale-105"
+                     />
                   </div>
                   <div className="p-3">
                     <p className="text-[8px] tracking-widest uppercase mb-0.5"

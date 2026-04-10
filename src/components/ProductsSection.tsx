@@ -68,25 +68,18 @@ function ProductCard({ p, expanded, onToggle }: {
           </span>
         </div>
 
-        {/* Tag bottom-left */}
-        <div className="absolute bottom-2 md:bottom-3 left-2 md:left-3">
-          <span className="text-[6px] md:text-[8px] tracking-widest uppercase text-[#808080] border border-gray-300 bg-white/90 px-1.5 md:px-2 py-0.5"
-                style={{ fontFamily: "Michroma, sans-serif", transform: "skewX(-10deg)", display: "inline-block" }}>
-            <span style={{ display: "inline-block", transform: "skewX(10deg)" }}>{p.tag}</span>
-          </span>
-        </div>
+
       </div>
 
       {/* Card body */}
       <div className="flex flex-col flex-1 p-3 md:p-5">
         <p className="text-[8px] md:text-[9px] tracking-[0.25em] uppercase mb-0.5"
            style={{ fontFamily: "Michroma, sans-serif", color: cfg.accent }}>
-          {p.model}
+          {p.application}
         </p>
-        <h3 className="text-sm font-bold text-black mb-1 uppercase" style={{ fontFamily: "Michroma, sans-serif" }}>
-          {p.seriesLabel}
+        <h3 className="text-sm font-bold text-black mb-3 md:mb-4 uppercase" style={{ fontFamily: "Michroma, sans-serif" }}>
+          {p.model}
         </h3>
-        <p className="text-[9px] md:text-[10px] text-[#808080] mb-3 md:mb-4 leading-relaxed" style={{ fontFamily: "Lexend, sans-serif" }}>{p.application}</p>
 
         {/* Key 3 specs as badges */}
         <div className="grid grid-cols-3 gap-px bg-gray-100 mb-3 md:mb-4">

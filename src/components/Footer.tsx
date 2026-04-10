@@ -120,7 +120,7 @@ export default function Footer() {
           <div className="flex items-center gap-1">
             <div className="h-px w-8 bg-[#ffc812]/40" />
             <span className="text-[10px] text-[#ffc812]/60 uppercase tracking-widest px-2" style={{ fontFamily: 'Michroma, sans-serif' }}>
-              Precision Electric Propulsion
+              Made with 💛 by Upcheck Technologies.
             </span>
             <div className="h-px w-8 bg-[#ffc812]/40" />
           </div>

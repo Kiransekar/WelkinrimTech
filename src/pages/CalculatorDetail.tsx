@@ -25,6 +25,7 @@ import PerfCalcPanel from "@/components/calculators/PerfCalc";
 import TorqueCalc from "@/components/calculators/TorqueCalc";
 import CarCalc from "@/components/calculators/CarCalc";
 import EvCalc from "@/components/calculators/EvCalc";
+import ToolboxCalc from "@/components/calculators/ToolboxCalc";
 import { CALCULATORS, getCalculatorById } from "@/data/calculators";
 
 // ─── Page-level styles injected once ────────────────────────────────────────
@@ -544,6 +545,7 @@ export default function CalculatorDetail() {
           {current.id === "torquecalc"    && <TorqueCalc />}
           {current.id === "carcalc"       && <CarCalc />}
           {current.id === "evcalc"        && <EvCalc />}
+          {current.id === "motortoolbox"  && <ToolboxCalc />}
 
           {/* ── Info bar */}
           {current.status === "live" && current.inputCount && current.outputCount && (

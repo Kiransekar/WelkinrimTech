@@ -37,7 +37,7 @@ export const PRODUCTS: Product[] = [
   {
     id: "haemng-xamqa8ak3",
     series: "haemng", seriesLabel: "Haemng Series",
-    model: "HAEMNG 2121 II — Configuration 1", name: "HAEMNG 2121 II", tag: "HAEMNG", application: "UAV / eVTOL",
+    model: "HAEMNG 2121 II", name: "HAEMNG 2121 II", tag: "HAEMNG", application: "UAV / eVTOL",
     keySpecs: [ { "label": "KV Rating", "value": "380"  }, { "label": "Peak Thrust", "value": "350 g"  }, { "label": "Voltage", "value": "6S"  }
 ],
     allSpecs: [
@@ -93,7 +93,7 @@ export const PRODUCTS: Product[] = [
   {
     id: "haemng-axn8bed5g",
     series: "haemng", seriesLabel: "Haemng Series",
-    model: "HAEMNG 2121 II — Configuration 2", name: "HAEMNG 2121 II", tag: "HAEMNG", application: "UAV / eVTOL",
+    model: "HAEMNG 2121 II", name: "HAEMNG 2121 II", tag: "HAEMNG", application: "UAV / eVTOL",
     keySpecs: [ { "label": "KV Rating", "value": "380"  }, { "label": "Peak Thrust", "value": "550 g"  }, { "label": "Voltage", "value": "6S"  }
 ],
     allSpecs: [
@@ -149,7 +149,7 @@ export const PRODUCTS: Product[] = [
   {
     id: "haemng-p7ofe6dco",
     series: "haemng", seriesLabel: "Haemng Series",
-    model: "HAEMNG 4143 II — Configuration 1", name: "HAEMNG 4143 II", tag: "HAEMNG", application: "UAV / eVTOL",
+    model: "HAEMNG 4143 II", name: "HAEMNG 4143 II", tag: "HAEMNG", application: "UAV / eVTOL",
     keySpecs: [ { "label": "KV Rating", "value": "100"  }, { "label": "Peak Thrust", "value": "5 kg"  }, { "label": "Voltage", "value": "12S"  }
 ],
     allSpecs: [
@@ -205,7 +205,7 @@ export const PRODUCTS: Product[] = [
   {
     id: "haemng-kwksy3thl",
     series: "haemng", seriesLabel: "Haemng Series",
-    model: "HAEMNG 4143 II — Configuration 2", name: "HAEMNG 4143 II", tag: "HAEMNG", application: "UAV / eVTOL",
+    model: "HAEMNG 4143 II", name: "HAEMNG 4143 II", tag: "HAEMNG", application: "UAV / eVTOL",
     keySpecs: [ { "label": "KV Rating", "value": "100"  }, { "label": "Peak Thrust", "value": "5.5 kg"  }, { "label": "Voltage", "value": "12S"  }
 ],
     allSpecs: [
@@ -485,7 +485,7 @@ export const PRODUCTS: Product[] = [
   {
     id: "maelard-a4w2jf3t2",
     series: "maelard", seriesLabel: "Maelard Series",
-    model: "MAELARD 1026 — Configuration 1", name: "MAELARD 1026", tag: "MAELARD", application: "Multi-Mission",
+    model: "MAELARD 1026", name: "MAELARD 1026", tag: "MAELARD", application: "Multi-Mission",
     keySpecs: [ { "label": "KV Rating", "value": "100"  }, { "label": "Peak Thrust", "value": "6 kg"  }, { "label": "Voltage", "value": "14S"  }
 ],
     allSpecs: [
@@ -541,7 +541,7 @@ export const PRODUCTS: Product[] = [
   {
     id: "maelard-vnu49pfqo",
     series: "maelard", seriesLabel: "Maelard Series",
-    model: "MAELARD 1026 — Configuration 2", name: "MAELARD 1026", tag: "MAELARD", application: "Multi-Mission",
+    model: "MAELARD 1026", name: "MAELARD 1026", tag: "MAELARD", application: "Multi-Mission",
     keySpecs: [ { "label": "KV Rating", "value": "100"  }, { "label": "Peak Thrust", "value": "12 kg"  }, { "label": "Voltage", "value": "14S"  }
 ],
     allSpecs: [

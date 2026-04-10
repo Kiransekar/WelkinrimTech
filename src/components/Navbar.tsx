@@ -87,7 +87,7 @@ export default function Navbar() {
   const [megaOpen, setMegaOpen]             = useState(false);
   const [activeCategory, setActiveCategory] = useState(PRODUCT_CATEGORIES[0].id);
   const [activeSegment, setActiveSegment]   = useState("uav");
-  const megaCloseTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   const [location, navigate]               = useLocation();
 
   const isHome = location === "/" || location === "";
@@ -129,8 +129,7 @@ export default function Navbar() {
     navigate(`/products/${id}`);
   };
 
-  const openMega  = () => { if (megaCloseTimer.current) clearTimeout(megaCloseTimer.current); setMegaOpen(true); };
-  const closeMega = () => { megaCloseTimer.current = setTimeout(() => { setMegaOpen(false); setActiveSegment("uav"); }, 140); };
+
 
   const activeCat = PRODUCT_CATEGORIES.find(c => c.id === activeCategory)!;
   const isTransparent = !scrolled && !megaOpen;
@@ -167,9 +166,9 @@ export default function Navbar() {
             ))}
 
             {/* Products trigger */}
-            <div className="relative" onMouseEnter={openMega} onMouseLeave={closeMega}>
+            <div className="relative">
               <button
-                onClick={() => goToProducts()}
+                onClick={() => setMegaOpen(!megaOpen)}
                 className={`text-xs tracking-widest uppercase font-medium transition-all duration-300 flex items-center gap-1 relative group ${
                   isTransparent ? "text-white" : "text-black"
                 } ${megaOpen ? "text-[#ffc812]" : "hover:text-[#ffc812]"}`}
@@ -249,13 +248,10 @@ export default function Navbar() {
         </div>
       </nav>
 
-      {/* ── Mega Menu Panel ── */}
       <div
         className={`fixed top-[60px] md:top-[72px] left-0 right-0 z-40 transition-all duration-300 ${
           megaOpen ? "opacity-100 translate-y-0 pointer-events-auto" : "opacity-0 -translate-y-2 pointer-events-none"
         }`}
-        onMouseEnter={openMega}
-        onMouseLeave={closeMega}
       >
         <div className="bg-white border-b border-gray-100 shadow-2xl overflow-y-auto max-h-[80vh] md:max-h-none">
 
@@ -267,7 +263,6 @@ export default function Navbar() {
               {SEGMENTS.map(seg => (
                 <button
                   key={seg.id}
-                  onMouseEnter={() => setActiveSegment(seg.id)}
                   onClick={() => setActiveSegment(seg.id)}
                   className={`flex items-center gap-2 px-6 py-1.5 text-[8px] tracking-[0.15em] uppercase font-bold transition-all duration-300 ${
                     activeSegment === seg.id
@@ -299,8 +294,7 @@ export default function Navbar() {
                     {PRODUCT_CATEGORIES.map((cat) => (
                       <button
                         key={cat.id}
-                        onMouseEnter={() => setActiveCategory(cat.id)}
-                        onClick={() => goToProducts(cat.id)}
+                        onClick={() => setActiveCategory(cat.id)}
                         className={`flex items-center gap-2 md:gap-3 px-2 md:px-3 py-2 rounded-sm text-left transition-all duration-200 group flex-shrink-0 ${
                           activeCategory === cat.id ? "bg-[#ffc812]/10 text-black" : "text-[#444] hover:bg-gray-50"
                         }`}
