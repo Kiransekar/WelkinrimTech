@@ -7,6 +7,8 @@ import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
   ReferenceLine,
 } from "recharts";
+import { DownloadReportButton, PdfTemplateHeader } from "./PdfExport";
+import SplitLayout from "./SplitLayout";
 
 interface Warning { level: "warn" | "danger"; message: string; }
 
@@ -290,8 +292,48 @@ export default function HeliCalcPanel() {
     </div>
   );
 
-  return (
-    <div className="space-y-4">
+  const inputsPanel = (
+    <div className="space-y-3">
+      <Section title="Helicopter">
+        <Field label="Weight" value={inputs.heliWeightG} onChange={(v: number) => updateInput("heliWeightG", v)} step={50} unit="g" />
+        <Field label="Main Diam" value={inputs.mainRotorDiameterMm} onChange={(v: number) => updateInput("mainRotorDiameterMm", v)} step={5} unit="mm" />
+        <Field label="Main Chord" value={inputs.mainRotorChordMm} onChange={(v: number) => updateInput("mainRotorChordMm", v)} step={0.5} unit="mm" />
+        <Field label="Main Blades" value={inputs.mainRotorBlades} onChange={(v: number) => updateInput("mainRotorBlades", v)} step={1} min={2} max={7} unit="#" />
+        <Field label="Tail Diam" value={inputs.tailRotorDiameterMm} onChange={(v: number) => updateInput("tailRotorDiameterMm", v)} step={1} unit="mm" />
+        <Field label="Tail Blades" value={inputs.tailRotorBlades} onChange={(v: number) => updateInput("tailRotorBlades", v)} step={1} min={2} max={6} unit="#" />
+        <Field label="Gear Ratio" value={inputs.gearRatio} onChange={(v: number) => updateInput("gearRatio", v)} step={0.1} unit=":1" />
+        <Field label="Tail Ratio" value={inputs.tailGearRatio} onChange={(v: number) => updateInput("tailGearRatio", v)} step={0.1} unit=":1" />
+      </Section>
+
+      <Section title="Power System">
+        <Field label="Cells" value={inputs.batteryCells} onChange={(v: number) => updateInput("batteryCells", v)} step={1} min={3} max={14} unit="S" />
+        <Field label="Capacity" value={inputs.batteryCapacityMah} onChange={(v: number) => updateInput("batteryCapacityMah", v)} step={500} unit="mAh" />
+        <Field label="Max Disch" value={inputs.batteryMaxDischarge * 100} onChange={(v: number) => updateInput("batteryMaxDischarge", v / 100)} step={5} unit="%" />
+      </Section>
+
+      <Section title="Main Motor">
+        <Field label="KV" value={inputs.mainMotorKv} onChange={(v: number) => updateInput("mainMotorKv", v)} step={50} unit="KV" />
+        <Field label="Io" value={inputs.mainMotorIo} onChange={(v: number) => updateInput("mainMotorIo", v)} step={0.1} unit="A" />
+        <Field label="Rm" value={inputs.mainMotorRmMohm} onChange={(v: number) => updateInput("mainMotorRmMohm", v)} step={1} unit="mΩ" />
+        <Field label="Max Curr" value={inputs.mainMotorMaxCurrent} onChange={(v: number) => updateInput("mainMotorMaxCurrent", v)} step={5} unit="A" />
+      </Section>
+
+      <Section title="Tail Motor">
+        <Field label="KV" value={inputs.tailMotorKv} onChange={(v: number) => updateInput("tailMotorKv", v)} step={100} unit="KV" />
+        <Field label="Io" value={inputs.tailMotorIo} onChange={(v: number) => updateInput("tailMotorIo", v)} step={0.1} unit="A" />
+        <Field label="Rm" value={inputs.tailMotorRmMohm} onChange={(v: number) => updateInput("tailMotorRmMohm", v)} step={5} unit="mΩ" />
+      </Section>
+
+      <Section title="Flight">
+        <Field label="Head Speed" value={inputs.headSpeedRpm} onChange={(v: number) => updateInput("headSpeedRpm", v)} step={50} unit="RPM" />
+        <Field label="Collective" value={inputs.collectivePitchDeg} onChange={(v: number) => updateInput("collectivePitchDeg", v)} step={0.5} min={0} max={15} unit="deg" />
+      </Section>
+    </div>
+  );
+
+  const resultsPanel = (
+    <div id="helicalc-report-area" className="relative space-y-4">
+      <PdfTemplateHeader calculatorName="Electric Heli Drive" />
       {/* Warnings */}
       {warnings.length > 0 && (
         <div className="flex flex-wrap gap-2">
@@ -302,45 +344,11 @@ export default function HeliCalcPanel() {
         </div>
       )}
 
-      {/* ── Compact Inputs ── */}
-      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-3">
-        <Section title="Helicopter">
-          <Field label="Weight" value={inputs.heliWeightG} onChange={(v: number) => updateInput("heliWeightG", v)} step={50} unit="g" />
-          <Field label="Main Diam" value={inputs.mainRotorDiameterMm} onChange={(v: number) => updateInput("mainRotorDiameterMm", v)} step={5} unit="mm" />
-          <Field label="Main Chord" value={inputs.mainRotorChordMm} onChange={(v: number) => updateInput("mainRotorChordMm", v)} step={0.5} unit="mm" />
-          <Field label="Main Blades" value={inputs.mainRotorBlades} onChange={(v: number) => updateInput("mainRotorBlades", v)} step={1} min={2} max={7} unit="#" />
-          <Field label="Tail Diam" value={inputs.tailRotorDiameterMm} onChange={(v: number) => updateInput("tailRotorDiameterMm", v)} step={1} unit="mm" />
-          <Field label="Tail Blades" value={inputs.tailRotorBlades} onChange={(v: number) => updateInput("tailRotorBlades", v)} step={1} min={2} max={6} unit="#" />
-          <Field label="Gear Ratio" value={inputs.gearRatio} onChange={(v: number) => updateInput("gearRatio", v)} step={0.1} unit=":1" />
-          <Field label="Tail Ratio" value={inputs.tailGearRatio} onChange={(v: number) => updateInput("tailGearRatio", v)} step={0.1} unit=":1" />
-        </Section>
-
-        <Section title="Power System">
-          <Field label="Cells" value={inputs.batteryCells} onChange={(v: number) => updateInput("batteryCells", v)} step={1} min={3} max={14} unit="S" />
-          <Field label="Capacity" value={inputs.batteryCapacityMah} onChange={(v: number) => updateInput("batteryCapacityMah", v)} step={500} unit="mAh" />
-          <Field label="Max Disch" value={inputs.batteryMaxDischarge * 100} onChange={(v: number) => updateInput("batteryMaxDischarge", v / 100)} step={5} unit="%" />
-        </Section>
-
-        <Section title="Main Motor">
-          <Field label="KV" value={inputs.mainMotorKv} onChange={(v: number) => updateInput("mainMotorKv", v)} step={50} unit="KV" />
-          <Field label="Io" value={inputs.mainMotorIo} onChange={(v: number) => updateInput("mainMotorIo", v)} step={0.1} unit="A" />
-          <Field label="Rm" value={inputs.mainMotorRmMohm} onChange={(v: number) => updateInput("mainMotorRmMohm", v)} step={1} unit="mΩ" />
-          <Field label="Max Curr" value={inputs.mainMotorMaxCurrent} onChange={(v: number) => updateInput("mainMotorMaxCurrent", v)} step={5} unit="A" />
-        </Section>
-
-        <Section title="Tail Motor">
-          <Field label="KV" value={inputs.tailMotorKv} onChange={(v: number) => updateInput("tailMotorKv", v)} step={100} unit="KV" />
-          <Field label="Io" value={inputs.tailMotorIo} onChange={(v: number) => updateInput("tailMotorIo", v)} step={0.1} unit="A" />
-          <Field label="Rm" value={inputs.tailMotorRmMohm} onChange={(v: number) => updateInput("tailMotorRmMohm", v)} step={5} unit="mΩ" />
-        </Section>
-
-        <Section title="Flight">
-          <Field label="Head Speed" value={inputs.headSpeedRpm} onChange={(v: number) => updateInput("headSpeedRpm", v)} step={50} unit="RPM" />
-          <Field label="Collective" value={inputs.collectivePitchDeg} onChange={(v: number) => updateInput("collectivePitchDeg", v)} step={0.5} min={0} max={15} unit="deg" />
-        </Section>
-      </div>
-
       {/* ── Results Summary ── */}
+      <div className="flex items-center justify-between mb-3 border-t border-gray-100 pt-4">
+        <h3 className="text-xs uppercase font-bold tracking-widest pdf-no-hide" style={{ fontFamily: "Michroma, sans-serif" }}>Results Summary</h3>
+        <DownloadReportButton targetElementId="calculator-capture-area" filename="WelkinRim_Heli_Report.pdf" />
+      </div>
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
         <StatCard label="Head Speed" value={(result.mainRpm / 1000).toFixed(1)} unit="kRPM" />
         <StatCard label="Main Tip" value={result.mainTipSpeed.toFixed(0)} unit="m/s" />
@@ -404,4 +412,6 @@ export default function HeliCalcPanel() {
       </div>
     </div>
   );
+
+  return <SplitLayout inputs={inputsPanel} results={resultsPanel} />;
 }

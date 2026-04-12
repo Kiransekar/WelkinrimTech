@@ -216,7 +216,7 @@ export default function CalculatorDetail() {
           style={{
             maxWidth: 1280,
             margin: "0 auto",
-            padding: "96px 48px 36px",
+            padding: "52px 48px 16px",
             position: "relative",
           }}
         >
@@ -227,110 +227,35 @@ export default function CalculatorDetail() {
               height: 2,
               width: 40,
               background: "#ffc812",
-              marginBottom: 20,
+              marginBottom: 14,
             }}
           />
 
-          {/* Breadcrumb */}
-          <div
-            className="cd-header-content"
-            style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 20 }}
-          >
-            {[
-              { label: "Home", path: "/" },
-              { label: "Calculators", path: "/calculators" },
-              { label: current.label, path: null },
-            ].map((crumb, i) => (
-              <span key={crumb.label} style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                {i > 0 && (
-                  <span style={{ color: "rgba(255,255,255,0.15)", fontSize: 10 }}>/</span>
-                )}
-                {crumb.path ? (
-                  <button
-                    onClick={() => navigate(crumb.path!)}
-                    style={{
-                      fontFamily: "Michroma, sans-serif",
-                      fontSize: 9,
-                      letterSpacing: "0.28em",
-                      textTransform: "uppercase",
-                      color: "rgba(255,201,20,0.5)",
-                      background: "none",
-                      border: "none",
-                      cursor: "pointer",
-                      padding: 0,
-                      transition: "color 0.15s",
-                    }}
-                    onMouseEnter={e => (e.currentTarget.style.color = "#ffc812")}
-                    onMouseLeave={e => (e.currentTarget.style.color = "rgba(255,201,20,0.5)")}
-                  >
-                    {i === 0 && (
-                      <svg
-                        style={{ width: 10, height: 10, marginRight: 3, verticalAlign: "middle" }}
-                        viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"
-                      >
-                        <polyline points="15 18 9 12 15 6" />
-                      </svg>
-                    )}
-                    {crumb.label}
-                  </button>
-                ) : (
-                  <span
-                    style={{
-                      fontFamily: "Michroma, sans-serif",
-                      fontSize: 9,
-                      letterSpacing: "0.28em",
-                      textTransform: "uppercase",
-                      color: "#ffc812",
-                    }}
-                  >
-                    {crumb.label}
-                  </span>
-                )}
-              </span>
-            ))}
-          </div>
-
-          {/* Title row */}
+          {/* Title row — breadcrumb and subtitle removed */}
           <div
             className="cd-header-content"
             style={{
               display: "flex",
               flexDirection: "row",
-              alignItems: "flex-end",
+              alignItems: "center",
               justifyContent: "space-between",
               gap: 24,
-              animationDelay: "0.05s",
             }}
           >
-            <div>
-              <h1
-                style={{
-                  fontFamily: "Michroma, sans-serif",
-                  fontSize: "clamp(28px, 4vw, 48px)",
-                  fontWeight: 700,
-                  color: "#fff",
-                  lineHeight: 1.1,
-                  margin: 0,
-                }}
-              >
-                Drive{" "}
-                <span style={{ color: "#ffc812" }}>Calculator</span>{" "}
-                Suite
-              </h1>
-              <p
-                style={{
-                  fontFamily: "Lexend, sans-serif",
-                  fontSize: 13,
-                  color: "rgba(255,255,255,0.38)",
-                  marginTop: 10,
-                  maxWidth: 480,
-                  lineHeight: 1.65,
-                }}
-              >
-                Professional-grade RC aircraft &amp; drone performance simulation —
-                all calculations run locally, no data sent to any server.
-              </p>
-            </div>
+            <h1
+              style={{
+                fontFamily: "Michroma, sans-serif",
+                fontSize: "clamp(22px, 3vw, 36px)",
+                fontWeight: 700,
+                color: "#fff",
+                lineHeight: 1.1,
+                margin: 0,
+              }}
+            >
+              Drive{" "}
+              <span style={{ color: "#ffc812" }}>Calculator</span>{" "}
+              Suite
+            </h1>
             <LiveDot status={current.status} />
           </div>
         </div>
@@ -424,7 +349,7 @@ export default function CalculatorDetail() {
       {/* ── CONTENT ─────────────────────────────────────────────────────── */}
       <div style={{ background: "#fff", minHeight: "60vh" }}>
         <div
-          style={{ maxWidth: 1280, margin: "0 auto", padding: "36px 48px" }}
+          style={{ maxWidth: 1280, margin: "0 auto", padding: "20px 48px" }}
           className="cd-panel-enter"
           key={active} // remount animation when tab changes
         >
@@ -433,9 +358,9 @@ export default function CalculatorDetail() {
             style={{
               display: "flex",
               alignItems: "flex-start",
-              gap: 16,
-              marginBottom: 24,
-              paddingBottom: 24,
+              gap: 12,
+              marginBottom: 14,
+              paddingBottom: 14,
               borderBottom: "1px solid #f0f0f0",
             }}
           >
@@ -509,13 +434,13 @@ export default function CalculatorDetail() {
             style={{
               display: "flex",
               alignItems: "flex-start",
-              gap: 10,
+              gap: 8,
               background: "rgba(255,201,20,0.05)",
               border: "1px solid rgba(255,201,20,0.18)",
               borderLeft: "3px solid #ffc812",
-              padding: "10px 14px",
+              padding: "6px 12px",
               borderRadius: "0 6px 6px 0",
-              marginBottom: 28,
+              marginBottom: 16,
             }}
           >
             <svg
@@ -551,8 +476,8 @@ export default function CalculatorDetail() {
           {current.status === "live" && current.inputCount && current.outputCount && (
             <div
               style={{
-                marginTop: 28,
-                paddingTop: 20,
+                marginTop: 16,
+                paddingTop: 12,
                 borderTop: "1px solid #f0f0f0",
                 display: "flex",
                 alignItems: "center",

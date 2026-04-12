@@ -4,9 +4,10 @@
 
 import { useState, useMemo } from "react";
 import {
-  ResponsiveContainer, ScatterChart, Scatter, XAxis, YAxis, CartesianGrid,
-  Tooltip, ReferenceLine, ReferenceArea, ZAxis, Cell,
+  ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ZAxis, ReferenceArea, ReferenceLine, Cell
 } from "recharts";
+import { DownloadReportButton, PdfTemplateHeader } from "./PdfExport";
+import SplitLayout from "./SplitLayout";
 
 interface Station {
   id: number;
@@ -205,76 +206,82 @@ export default function WbCalc() {
 
   const status = getStatusIcon();
 
-  return (
-    <div className="space-y-4">
-      {/* ── Compact Inputs ── */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-        {/* Aircraft Basics */}
-        <Section title="Aircraft Basics">
-          <Field label="Empty Wt (g)" id="ew" value={emptyWeightG} onChange={setEmptyWeightG}
-                 hint="Basic empty weight including unusable fuel" />
-          <Field label="Empty CG (cm)" id="ecg" value={emptyCgCm} onChange={setEmptyCgCm}
-                 hint="CG location at empty weight" />
-          <Field label="Max Gross (g)" id="mgw" value={maxGrossWeightG} onChange={setMaxGrossWeightG}
-                 hint="Maximum tested takeoff weight" />
-          <Field label="Fwd Limit (cm)" id="cgf" value={cgLimits.forwardCm} onChange={v => setCgLimits({ ...cgLimits, forwardCm: v })}
-                 hint="Most forward allowable CG" />
-          <Field label="Aft Limit (cm)" id="cga" value={cgLimits.aftCm} onChange={v => setCgLimits({ ...cgLimits, aftCm: v })}
-                 hint="Most aft allowable CG" />
-        </Section>
+  const inputsPanel = (
+    <div className="space-y-3">
+      {/* Aircraft Basics */}
+      <Section title="Aircraft Basics">
+        <Field label="Empty Wt (g)" id="ew" value={emptyWeightG} onChange={setEmptyWeightG}
+               hint="Basic empty weight including unusable fuel" />
+        <Field label="Empty CG (cm)" id="ecg" value={emptyCgCm} onChange={setEmptyCgCm}
+               hint="CG location at empty weight" />
+        <Field label="Max Gross (g)" id="mgw" value={maxGrossWeightG} onChange={setMaxGrossWeightG}
+               hint="Maximum tested takeoff weight" />
+        <Field label="Fwd Limit (cm)" id="cgf" value={cgLimits.forwardCm} onChange={v => setCgLimits({ ...cgLimits, forwardCm: v })}
+               hint="Most forward allowable CG" />
+        <Field label="Aft Limit (cm)" id="cga" value={cgLimits.aftCm} onChange={v => setCgLimits({ ...cgLimits, aftCm: v })}
+               hint="Most aft allowable CG" />
+      </Section>
 
-        {/* Stations */}
-        <div className="border border-gray-100 md:col-span-2">
-          <div className="bg-black px-3 py-1.5 flex items-center justify-between">
-            <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812]"
-               style={{ fontFamily: "Michroma, sans-serif" }}>Loading Stations</p>
-            <button onClick={addStation} className="text-[9px] bg-[#ffc812] text-black px-2 py-0.5 font-bold"
-                    style={{ fontFamily: "Michroma, sans-serif" }}>+ Add</button>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 max-h-72 overflow-y-auto">
-            {stations.map((station) => (
-              <div key={station.id} className="p-2 border-b border-r border-gray-100 bg-gray-50/50">
-                <div className="flex items-center justify-between mb-1">
-                  <input type="text" value={station.name}
-                    onChange={e => updateStation(station.id, "name", e.target.value)}
-                    className="text-[10px] font-bold border-none bg-transparent focus:outline-none flex-1"
-                    style={{ fontFamily: "Michroma, sans-serif" }} />
-                  <select value={station.type}
-                    onChange={e => updateStation(station.id, "type", e.target.value)}
-                    className="text-[9px] border border-gray-300 px-1 py-0.5 bg-white"
-                    style={{ fontFamily: "Michroma, sans-serif" }}>
-                    <option value="equipment">Equipment</option>
-                    <option value="payload">Payload</option>
-                    <option value="fuel">Fuel</option>
-                    <option value="structure">Structure</option>
-                    <option value="other">Other</option>
-                  </select>
-                  <button onClick={() => removeStation(station.id)} className="text-red-500 text-xs hover:text-red-700 ml-1">✕</button>
-                </div>
-                <div className="grid grid-cols-2 gap-1">
-                  <Field label="Arm (cm)" id={`sta-${station.id}`} value={station.armCm} onChange={v => updateStation(station.id, "armCm", v)}
-                         hint="Distance from datum" />
-                  <Field label="Current (g)" id={`stw-${station.id}`} value={station.currentWeightG} onChange={v => updateStation(station.id, "currentWeightG", v)} />
-                  <Field label="Min (g)" id={`stn-${station.id}`} value={station.minWeightG} onChange={v => updateStation(station.id, "minWeightG", v)} />
-                  <Field label="Max (g)" id={`stm-${station.id}`} value={station.maxWeightG} onChange={v => updateStation(station.id, "maxWeightG", v)} />
-                </div>
-                <div className="mt-1">
-                  <input type="range" min={station.minWeightG} max={station.maxWeightG} value={station.currentWeightG}
-                    onChange={e => updateStation(station.id, "currentWeightG", parseFloat(e.target.value))}
-                    className="w-full accent-[#ffc812] h-1" />
-                  <div className="flex justify-between text-[7px] text-gray-400">
-                    <span>{station.minWeightG}g</span>
-                    <span>{station.maxWeightG}g</span>
-                  </div>
+      {/* Stations */}
+      <div className="border border-gray-100 md:col-span-2">
+        <div className="bg-black px-3 py-1.5 flex items-center justify-between">
+          <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812]"
+             style={{ fontFamily: "Michroma, sans-serif" }}>Loading Stations</p>
+          <button onClick={addStation} className="pdf-hide text-[9px] bg-[#ffc812] text-black px-2 py-0.5 font-bold"
+                  style={{ fontFamily: "Michroma, sans-serif" }}>+ Add</button>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 max-h-[500px] overflow-y-auto">
+          {stations.map((station) => (
+            <div key={station.id} className="p-2 border-b border-r border-gray-100 bg-gray-50/50">
+              <div className="flex items-center justify-between mb-1">
+                <input type="text" value={station.name}
+                  onChange={e => updateStation(station.id, "name", e.target.value)}
+                  className="text-[10px] font-bold border-none bg-transparent focus:outline-none flex-1"
+                  style={{ fontFamily: "Michroma, sans-serif" }} />
+                <select value={station.type}
+                  onChange={e => updateStation(station.id, "type", e.target.value)}
+                  className="text-[9px] border border-gray-300 px-1 py-0.5 bg-white"
+                  style={{ fontFamily: "Michroma, sans-serif" }}>
+                  <option value="equipment">Equipment</option>
+                  <option value="payload">Payload</option>
+                  <option value="fuel">Fuel</option>
+                  <option value="structure">Structure</option>
+                  <option value="other">Other</option>
+                </select>
+                <button onClick={() => removeStation(station.id)} className="pdf-hide text-red-500 text-xs hover:text-red-700 ml-1">✕</button>
+              </div>
+              <div className="grid grid-cols-2 gap-1">
+                <Field label="Arm (cm)" id={`sta-${station.id}`} value={station.armCm} onChange={v => updateStation(station.id, "armCm", v)}
+                       hint="Distance from datum" />
+                <Field label="Current (g)" id={`stw-${station.id}`} value={station.currentWeightG} onChange={v => updateStation(station.id, "currentWeightG", v)} />
+                <Field label="Min (g)" id={`stn-${station.id}`} value={station.minWeightG} onChange={v => updateStation(station.id, "minWeightG", v)} />
+                <Field label="Max (g)" id={`stm-${station.id}`} value={station.maxWeightG} onChange={v => updateStation(station.id, "maxWeightG", v)} />
+              </div>
+              <div className="mt-1">
+                <input type="range" min={station.minWeightG} max={station.maxWeightG} value={station.currentWeightG}
+                  onChange={e => updateStation(station.id, "currentWeightG", parseFloat(e.target.value))}
+                  className="w-full accent-[#ffc812] h-1" />
+                <div className="flex justify-between text-[7px] text-gray-400">
+                  <span>{station.minWeightG}g</span>
+                  <span>{station.maxWeightG}g</span>
                 </div>
               </div>
-            ))}
-          </div>
+            </div>
+          ))}
         </div>
       </div>
+    </div>
+  );
 
-      {/* ── Results ── */}
+  const resultsPanel = (
+
+      <div id="wbcalc-report-area" className="relative space-y-4">
+      <PdfTemplateHeader calculatorName="Weight & Balance" />
       <div>
+        <div className="flex items-center justify-between mb-3 text-white">
+          <h3 className="text-xs uppercase font-bold tracking-widest pdf-no-hide" style={{ fontFamily: "Michroma, sans-serif" }}>Results Summary</h3>
+          <DownloadReportButton targetElementId="calculator-capture-area" filename="WelkinRim_WB_Report.pdf" />
+        </div>
         {/* Summary Cards */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
           <div className="border border-gray-100 p-3 text-center">
@@ -314,164 +321,162 @@ export default function WbCalc() {
           </div>
         </div>
 
-        {/* CG Envelope Chart */}
-        <div className="border border-gray-100 mb-5">
-          <div className="bg-black px-3 py-1.5">
-            <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812]"
-               style={{ fontFamily: "Michroma, sans-serif" }}>CG Envelope</p>
-          </div>
-          <div className="p-4">
-            <ResponsiveContainer width="100%" height={300}>
-              <ScatterChart margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                <XAxis type="number" dataKey="cg" name="CG Position" unit="cm"
-                       domain={[cgLimits.forwardCm - 5, cgLimits.aftCm + 5]}
-                       tick={{ fontSize: 9, fontFamily: "Michroma, sans-serif" }} />
-                <YAxis type="number" dataKey="weight" name="Weight" unit="g"
-                       domain={[emptyWeightG - 100, maxGrossWeightG + 100]}
-                       tick={{ fontSize: 9, fontFamily: "Michroma, sans-serif" }} />
-                <ZAxis type="number" range={[50, 100]} />
-                <Tooltip contentStyle={{ fontSize: 10, fontFamily: "Michroma, sans-serif" }}
-                         cursor={{ strokeDasharray: "3 3" }} />
-
-                {/* Envelope area */}
-                <ReferenceArea x1={cgLimits.forwardCm} x2={cgLimits.aftCm} y1={emptyWeightG} y2={maxGrossWeightG}
-                               fill="#22c55e" fillOpacity={0.1} />
-
-                {/* CG limits */}
-                <ReferenceLine x={cgLimits.forwardCm} stroke="#ef4444" strokeWidth={2} label={{ value: "FWD", angle: -90, fontSize: 8, fill: "#ef4444" }} />
-                <ReferenceLine x={cgLimits.aftCm} stroke="#ef4444" strokeWidth={2} label={{ value: "AFT", angle: 90, fontSize: 8, fill: "#ef4444" }} />
-
-                {/* Max weight line */}
-                <ReferenceLine y={maxGrossWeightG} stroke="#ef4444" strokeWidth={2} label={{ value: "MAX WEIGHT", position: "insideTopRight", fontSize: 8, fill: "#ef4444" }} />
-
-                {/* Flight conditions */}
-                <Scatter name="Conditions" data={flightConditions} fill="#ffc812">
-                  {flightConditions.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.inEnvelope ? "#22c55e" : "#ef4444"} />
-                  ))}
-                </Scatter>
-
-                {/* Current loading */}
-                <Scatter name="Current" data={[{ cg: currentWandB.cgArm, weight: currentWandB.totalWeight }]}
-                         fill="#3b82f6" />
-              </ScatterChart>
-            </ResponsiveContainer>
-            <p className="text-[9px] text-center text-gray-500 mt-2" style={{ fontFamily: "Lexend, sans-serif" }}>
-              Green area = safe envelope · Blue = current loading · Green dots = valid conditions · Red dots = invalid
-            </p>
-          </div>
-        </div>
-
-        {/* Flight Conditions Table */}
-        <div className="border border-gray-100 mb-5">
-          <div className="bg-black px-3 py-1.5">
-            <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812]"
-               style={{ fontFamily: "Michroma, sans-serif" }}>Flight Conditions Summary</p>
-          </div>
-          <div className="overflow-x-auto">
-            <table className="w-full text-[10px]" style={{ fontFamily: "Michroma, sans-serif" }}>
-              <thead>
-                <tr className="bg-gray-50">
-                  <th className="px-3 py-2 text-left">Condition</th>
-                  <th className="px-3 py-2 text-right">Weight (g)</th>
-                  <th className="px-3 py-2 text-right">CG (cm)</th>
-                  <th className="px-3 py-2 text-right">%MAC</th>
-                  <th className="px-3 py-2 text-right">Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {flightConditions.map((fc, i) => (
-                  <tr key={fc.id} className={i % 2 === 0 ? "bg-white" : "bg-gray-50/50"}>
-                    <td className="px-3 py-2 font-bold">{fc.name}</td>
-                    <td className="px-3 py-2 text-right">{fc.weight.toFixed(0)}</td>
-                    <td className="px-3 py-2 text-right">{fc.cgArm.toFixed(1)}</td>
-                    <td className="px-3 py-2 text-right">
-                      {(((fc.cgArm - cgLimits.forwardCm) / (cgLimits.aftCm - cgLimits.forwardCm)) * 100).toFixed(1)}%
-                    </td>
-                    <td className="px-3 py-2 text-right">
-                      {fc.inEnvelope ? (
-                        <span className="text-green-500 font-bold">OK</span>
-                      ) : (
-                        <span className="text-red-500 font-bold">OUT</span>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        {/* Station Breakdown */}
+        {/* CG Envelope Chart + Tables — side by side */}
         <div className="border border-gray-100">
-          <div className="bg-black px-3 py-1.5">
-            <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812]"
-               style={{ fontFamily: "Michroma, sans-serif" }}>Station Loading Detail</p>
+          {/* Shared header */}
+          <div className="bg-black grid grid-cols-2">
+            <div className="px-3 py-1 border-r border-white/10">
+              <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812]"
+                 style={{ fontFamily: "Michroma, sans-serif" }}>CG Envelope</p>
+            </div>
+            <div className="px-3 py-1">
+              <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812]"
+                 style={{ fontFamily: "Michroma, sans-serif" }}>Flight Conditions & Station Detail</p>
+            </div>
           </div>
-          <div className="overflow-x-auto">
-            <table className="w-full text-[10px]" style={{ fontFamily: "Michroma, sans-serif" }}>
-              <thead>
-                <tr className="bg-gray-50">
-                  <th className="px-3 py-2 text-left">Station</th>
-                  <th className="px-3 py-2 text-right">Type</th>
-                  <th className="px-3 py-2 text-right">Arm (cm)</th>
-                  <th className="px-3 py-2 text-right">Current (g)</th>
-                  <th className="px-3 py-2 text-right">Min-Max (g)</th>
-                  <th className="px-3 py-2 text-right">Moment (g·cm)</th>
-                  <th className="px-3 py-2 text-right">Fill</th>
-                  <th className="px-3 py-2 text-right">% Total</th>
-                </tr>
-              </thead>
-              <tbody>
-                {/* Empty aircraft row */}
-                <tr className="bg-gray-100 font-bold">
-                  <td className="px-3 py-2">Empty Aircraft</td>
-                  <td className="px-3 py-2 text-right">—</td>
-                  <td className="px-3 py-2 text-right">{emptyCgCm.toFixed(1)}</td>
-                  <td className="px-3 py-2 text-right">{emptyWeightG.toFixed(0)}</td>
-                  <td className="px-3 py-2 text-right">—</td>
-                  <td className="px-3 py-2 text-right">{(emptyWeightG * emptyCgCm).toFixed(0)}</td>
-                  <td className="px-3 py-2 text-right">—</td>
-                  <td className="px-3 py-2 text-right">{((emptyWeightG / currentWandB.totalWeight) * 100).toFixed(1)}%</td>
-                </tr>
-                {stationBreakdown.map((station, i) => (
-                  <tr key={station.id} className={i % 2 === 0 ? "bg-white" : "bg-gray-50/50"}>
-                    <td className="px-3 py-2">
-                        {station.name}
-                    </td>
-                    <td className="px-3 py-2 text-right capitalize">{station.type}</td>
-                    <td className="px-3 py-2 text-right">{station.armCm.toFixed(1)}</td>
-                    <td className="px-3 py-2 text-right font-bold">{station.currentWeightG.toFixed(0)}</td>
-                    <td className="px-3 py-2 text-right text-gray-500">{station.minWeightG} - {station.maxWeightG}</td>
-                    <td className="px-3 py-2 text-right">{station.moment.toFixed(0)}</td>
-                    <td className="px-3 py-2 text-right">
-                      <div className="flex items-center justify-end gap-1">
-                        <div className="w-16 h-2 bg-gray-200 rounded-full overflow-hidden">
-                          <div className="h-full bg-[#ffc812]" style={{ width: `${station.percentMax}%` }} />
-                        </div>
-                        <span className="text-[8px] text-gray-500 w-8">{station.percentMax.toFixed(0)}%</span>
-                      </div>
-                    </td>
-                    <td className="px-3 py-2 text-right">{station.percentTotal.toFixed(1)}%</td>
-                  </tr>
-                ))}
-                {/* Total row */}
-                <tr className="bg-black text-[#ffc812] font-bold">
-                  <td className="px-3 py-2">TOTAL</td>
-                  <td className="px-3 py-2 text-right">—</td>
-                  <td className="px-3 py-2 text-right">{currentWandB.cgArm.toFixed(1)}</td>
-                  <td className="px-3 py-2 text-right">{currentWandB.totalWeight.toFixed(0)}</td>
-                  <td className="px-3 py-2 text-right">—</td>
-                  <td className="px-3 py-2 text-right">{currentWandB.totalMoment.toFixed(0)}</td>
-                  <td className="px-3 py-2 text-right">100%</td>
-                  <td className="px-3 py-2 text-right">100%</td>
-                </tr>
-              </tbody>
-            </table>
+
+          {/* Body: chart left, tables right */}
+          <div className="grid grid-cols-2 divide-x divide-gray-100">
+            {/* Chart column */}
+            <div className="p-3 flex flex-col">
+              <ResponsiveContainer width="100%" height={260}>
+                <ScatterChart margin={{ top: 16, right: 16, bottom: 16, left: 16 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                  <XAxis type="number" dataKey="cg" name="CG Position" unit="cm"
+                         domain={[cgLimits.forwardCm - 5, cgLimits.aftCm + 5]}
+                         tick={{ fontSize: 9, fontFamily: "Michroma, sans-serif" }} />
+                  <YAxis type="number" dataKey="weight" name="Weight" unit="g"
+                         domain={[emptyWeightG - 100, maxGrossWeightG + 100]}
+                         tick={{ fontSize: 9, fontFamily: "Michroma, sans-serif" }} />
+                  <ZAxis type="number" range={[50, 100]} />
+                  <Tooltip contentStyle={{ fontSize: 10, fontFamily: "Michroma, sans-serif" }}
+                           cursor={{ strokeDasharray: "3 3" }} />
+                  <ReferenceArea x1={cgLimits.forwardCm} x2={cgLimits.aftCm} y1={emptyWeightG} y2={maxGrossWeightG}
+                                 fill="#22c55e" fillOpacity={0.1} />
+                  <ReferenceLine x={cgLimits.forwardCm} stroke="#ef4444" strokeWidth={2} label={{ value: "FWD", angle: -90, fontSize: 8, fill: "#ef4444" }} />
+                  <ReferenceLine x={cgLimits.aftCm} stroke="#ef4444" strokeWidth={2} label={{ value: "AFT", angle: 90, fontSize: 8, fill: "#ef4444" }} />
+                  <ReferenceLine y={maxGrossWeightG} stroke="#ef4444" strokeWidth={2} label={{ value: "MAX WEIGHT", position: "insideTopRight", fontSize: 8, fill: "#ef4444" }} />
+                  <Scatter name="Conditions" data={flightConditions} fill="#ffc812">
+                    {flightConditions.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.inEnvelope ? "#22c55e" : "#ef4444"} />
+                    ))}
+                  </Scatter>
+                  <Scatter name="Current" data={[{ cg: currentWandB.cgArm, weight: currentWandB.totalWeight }]}
+                           fill="#3b82f6" />
+                </ScatterChart>
+              </ResponsiveContainer>
+              <p className="text-[8px] text-center text-gray-400 mt-1" style={{ fontFamily: "Lexend, sans-serif" }}>
+                Green area = safe envelope · <span className="text-blue-500 font-bold">●</span> current ·
+                <span className="text-green-500 font-bold"> ●</span> valid · <span className="text-red-500 font-bold">●</span> invalid
+              </p>
+            </div>
+
+            {/* Tables column: flight conditions + station breakdown stacked */}
+            <div className="flex flex-col divide-y divide-gray-100">
+              {/* Flight Conditions Table */}
+              <div>
+                <div className="bg-gray-50 border-b border-gray-100 px-2 py-1">
+                  <p className="text-[8px] tracking-[0.2em] uppercase text-[#808080]"
+                     style={{ fontFamily: "Michroma, sans-serif" }}>Flight Conditions</p>
+                </div>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-[10px]" style={{ fontFamily: "Michroma, sans-serif" }}>
+                    <thead>
+                      <tr className="bg-gray-50">
+                        <th className="px-2 py-1.5 text-left">Condition</th>
+                        <th className="px-2 py-1.5 text-right">Wt (g)</th>
+                        <th className="px-2 py-1.5 text-right">CG (cm)</th>
+                        <th className="px-2 py-1.5 text-right">%MAC</th>
+                        <th className="px-2 py-1.5 text-right">OK?</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {flightConditions.map((fc, i) => (
+                        <tr key={fc.id} className={i % 2 === 0 ? "bg-white" : "bg-gray-50/50"}>
+                          <td className="px-2 py-1.5 font-bold">{fc.name}</td>
+                          <td className="px-2 py-1.5 text-right">{fc.weight.toFixed(0)}</td>
+                          <td className="px-2 py-1.5 text-right">{fc.cgArm.toFixed(1)}</td>
+                          <td className="px-2 py-1.5 text-right">
+                            {(((fc.cgArm - cgLimits.forwardCm) / (cgLimits.aftCm - cgLimits.forwardCm)) * 100).toFixed(1)}%
+                          </td>
+                          <td className="px-2 py-1.5 text-right">
+                            {fc.inEnvelope
+                              ? <span className="text-green-500 font-bold">✓</span>
+                              : <span className="text-red-500 font-bold">✗</span>}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              {/* Station Breakdown Table */}
+              <div>
+                <div className="bg-gray-50 border-b border-gray-100 px-2 py-1">
+                  <p className="text-[8px] tracking-[0.2em] uppercase text-[#808080]"
+                     style={{ fontFamily: "Michroma, sans-serif" }}>Station Loading Detail</p>
+                </div>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-[10px]" style={{ fontFamily: "Michroma, sans-serif" }}>
+                    <thead>
+                      <tr className="bg-gray-50">
+                        <th className="px-2 py-1.5 text-left">Station</th>
+                        <th className="px-2 py-1.5 text-right">Type</th>
+                        <th className="px-2 py-1.5 text-right">Arm</th>
+                        <th className="px-2 py-1.5 text-right">Wt (g)</th>
+                        <th className="px-2 py-1.5 text-right">Moment</th>
+                        <th className="px-2 py-1.5 text-right">Fill</th>
+                        <th className="px-2 py-1.5 text-right">%</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr className="bg-gray-100 font-bold">
+                        <td className="px-2 py-1.5">Empty Aircraft</td>
+                        <td className="px-2 py-1.5 text-right">—</td>
+                        <td className="px-2 py-1.5 text-right">{emptyCgCm.toFixed(1)}</td>
+                        <td className="px-2 py-1.5 text-right">{emptyWeightG.toFixed(0)}</td>
+                        <td className="px-2 py-1.5 text-right">{(emptyWeightG * emptyCgCm).toFixed(0)}</td>
+                        <td className="px-2 py-1.5 text-right">—</td>
+                        <td className="px-2 py-1.5 text-right">{((emptyWeightG / currentWandB.totalWeight) * 100).toFixed(1)}%</td>
+                      </tr>
+                      {stationBreakdown.map((station, i) => (
+                        <tr key={station.id} className={i % 2 === 0 ? "bg-white" : "bg-gray-50/50"}>
+                          <td className="px-2 py-1.5">{station.name}</td>
+                          <td className="px-2 py-1.5 text-right capitalize">{station.type}</td>
+                          <td className="px-2 py-1.5 text-right">{station.armCm.toFixed(1)}</td>
+                          <td className="px-2 py-1.5 text-right font-bold">{station.currentWeightG.toFixed(0)}</td>
+                          <td className="px-2 py-1.5 text-right">{station.moment.toFixed(0)}</td>
+                          <td className="px-2 py-1.5 text-right">
+                            <div className="flex items-center justify-end gap-1">
+                              <div className="w-10 h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                                <div className="h-full bg-[#ffc812]" style={{ width: `${station.percentMax}%` }} />
+                              </div>
+                              <span className="text-[8px] text-gray-500">{station.percentMax.toFixed(0)}%</span>
+                            </div>
+                          </td>
+                          <td className="px-2 py-1.5 text-right">{station.percentTotal.toFixed(1)}%</td>
+                        </tr>
+                      ))}
+                      <tr className="bg-black text-[#ffc812] font-bold">
+                        <td className="px-2 py-1.5">TOTAL</td>
+                        <td className="px-2 py-1.5 text-right">—</td>
+                        <td className="px-2 py-1.5 text-right">{currentWandB.cgArm.toFixed(1)}</td>
+                        <td className="px-2 py-1.5 text-right">{currentWandB.totalWeight.toFixed(0)}</td>
+                        <td className="px-2 py-1.5 text-right">{currentWandB.totalMoment.toFixed(0)}</td>
+                        <td className="px-2 py-1.5 text-right">—</td>
+                        <td className="px-2 py-1.5 text-right">100%</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
   );
+
+  return <SplitLayout inputs={inputsPanel} results={resultsPanel} />;
 }

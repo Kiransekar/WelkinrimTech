@@ -91,40 +91,55 @@ export default function ProductDetail() {
             <div className="absolute inset-0 z-10 pointer-events-none select-none hidden lg:block">
               <div className="max-w-7xl mx-auto h-full relative px-6 md:px-12">
                 {/* Flex column: motor image on top, series logo directly underneath */}
-                <div className="absolute right-[6%] top-0 bottom-0 w-[38%] flex flex-col items-center justify-center gap-4">
-                  {/* Motor image with soft radial fade at edges */}
-                  <div
-                    style={{
-                      WebkitMaskImage: 'radial-gradient(ellipse 90% 90% at 50% 48%, black 55%, rgba(0,0,0,0.7) 70%, transparent 92%)',
-                      maskImage:       'radial-gradient(ellipse 90% 90% at 50% 48%, black 55%, rgba(0,0,0,0.7) 70%, transparent 92%)',
-                    }}
-                  >
-                    <img
-                      src={heroImageSrc}
-                      alt={product.seriesLabel}
-                      draggable={false}
-                      className="w-auto h-auto object-contain"
+              <div className="absolute right-[4%] top-0 bottom-0 w-[40%] flex flex-col items-center justify-center">
+                  {/* Motor image — centered, slightly larger */}
+                  <div className="relative">
+                    {/* The motor photo */}
+                    <div
                       style={{
-                        maxHeight: '260px',
-                        maxWidth: '100%',
-                        filter: 'drop-shadow(-4px 4px 20px rgba(0,0,0,0.45))',
+                        WebkitMaskImage: 'radial-gradient(ellipse 92% 92% at 50% 48%, black 55%, rgba(0,0,0,0.7) 72%, transparent 94%)',
+                        maskImage:       'radial-gradient(ellipse 92% 92% at 50% 48%, black 55%, rgba(0,0,0,0.7) 72%, transparent 94%)',
                       }}
-                    />
-                  </div>
+                    >
+                      <img
+                        src={heroImageSrc}
+                        alt={product.seriesLabel}
+                        draggable={false}
+                        className="w-auto h-auto object-contain"
+                        style={{
+                          maxHeight: '300px',
+                          maxWidth: '100%',
+                          filter: 'drop-shadow(-4px 6px 24px rgba(0,0,0,0.5))',
+                        }}
+                      />
+                    </div>
 
-                  {/* Series logo — centered directly under the motor */}
-                  {seriesLogoSrc && (
-                    <img
-                      src={seriesLogoSrc}
-                      alt={product.seriesLabel}
-                      className="w-28 md:w-36"
-                      style={{
-                        filter: 'brightness(0) invert(1) drop-shadow(0 2px 8px rgba(0,0,0,0.7))',
-                        opacity: 0.8,
-                        marginTop: '-8px',
-                      }}
-                    />
-                  )}
+                    {/* Series logo — bottom center of motor, overlapping onto it */}
+                    {seriesLogoSrc && (
+                      <>
+                        {/* Full-width gray gradient covering the bottom region of the motor */}
+                        <div
+                          className="absolute bottom-0 left-0 right-0 pointer-events-none"
+                          style={{
+                            height: '55%',
+                            background: 'linear-gradient(to bottom, transparent 0%, rgba(10, 10, 10, 0.25) 30%, rgba(10, 10, 10, 0.65) 65%, rgba(10, 10, 10, 0.85) 100%)',
+                          }}
+                        />
+                        {/* SVG logo positioned at bottom center */}
+                        <div className="absolute bottom-[8%] left-[40%] -translate-x-1/2 pointer-events-none z-10">
+                          <img
+                            src={seriesLogoSrc}
+                            alt={product.seriesLabel}
+                            className="w-28 md:w-32"
+                            style={{
+                              filter: 'brightness(0) invert(1) drop-shadow(0 2px 12px rgba(0,0,0,0.9))',
+                              opacity: 0.92,
+                            }}
+                          />
+                        </div>
+                      </>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
@@ -351,7 +366,7 @@ export default function ProductDetail() {
                         const headingText = unit ? `${col.label}(${unit})` : col.label;
                         return (
                           <th key={col.key}
-                              className="px-3 py-3 text-left text-[10px] tracking-widest uppercase font-black"
+                              className="px-3 py-3 text-center text-[10px] tracking-widest uppercase font-black"
                               style={{ fontFamily: "Michroma, sans-serif", color: cfg.textOnAccent }}>
                             {headingText}
                           </th>
@@ -363,82 +378,150 @@ export default function ProductDetail() {
                     {product.perf.map((row, i) => (
                       <tr key={row.throttle}
                           className={`border-t border-gray-50 ${i % 2 === 0 ? "bg-white" : "bg-gray-50/50"}`}>
-                        <td className="px-3 py-3 text-[11px] font-black text-black"
+                        <td className="px-3 py-3 text-[11px] text-center font-black text-black"
                             style={{ fontFamily: "Michroma, sans-serif" }}>{row.throttle.replace(/[^0-9.,-]/g, '')}</td>
-                        <td className="px-3 py-3 text-[11px] text-[#555]">{row.voltage.replace(/[^0-9.,-]/g, '')}</td>
-                        <td className="px-3 py-3 text-[11px] text-[#555]">{row.current.replace(/[^0-9.,-]/g, '')}</td>
-                        <td className="px-3 py-3 text-[11px] text-[#555]">{row.power.replace(/[^0-9.,-]/g, '')}</td>
-                        <td className="px-3 py-3 text-[11px] font-bold" style={{ color: cfg.accent }}>{row.thrust.replace(/[^0-9.,-]/g, '')}</td>
-                        <td className="px-3 py-3 text-[11px] text-[#555]">{row.speed ? row.speed.replace(/[^0-9.,-]/g, '') : "-"}</td>
-                        <td className="px-3 py-3 text-[11px] text-[#555]">{row.efficiency ? row.efficiency.replace(/[^0-9.,-]/g, '') : "-"}</td>
+                        <td className="px-3 py-3 text-[11px] text-center text-[#555]">{row.voltage.replace(/[^0-9.,-]/g, '')}</td>
+                        <td className="px-3 py-3 text-[11px] text-center text-[#555]">{row.current.replace(/[^0-9.,-]/g, '')}</td>
+                        <td className="px-3 py-3 text-[11px] text-center text-[#555]">{row.power.replace(/[^0-9.,-]/g, '')}</td>
+                        <td className="px-3 py-3 text-[11px] text-center font-bold" style={{ color: cfg.accent }}>{row.thrust.replace(/[^0-9.,-]/g, '')}</td>
+                        <td className="px-3 py-3 text-[11px] text-center text-[#555]">{row.speed ? row.speed.replace(/[^0-9.,-]/g, '') : "-"}</td>
+                        <td className="px-3 py-3 text-[11px] text-center text-[#555]">{row.efficiency ? row.efficiency.replace(/[^0-9.,-]/g, '') : "-"}</td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
               </div>
 
-              {/* Thrust curve */}
-              <div className="mt-8">
-                <p className="text-[9px] text-[#808080] tracking-widest uppercase mb-4"
-                   style={{ fontFamily: "Michroma, sans-serif" }}>
-                  Thrust curve
-                </p>
-                <div className="w-full h-48 sm:h-64 mt-4 bg-gray-50/30 border border-gray-100 p-4">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <AreaChart
-                      data={product.perf.map(row => ({
-                        throttle: row.throttle,
-                        thrustVal: parseFloat(row.thrust.replace(/[^0-9.]/g, "")) || 0,
-                        thrustStr: row.thrust
-                      }))}
-                      margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
-                    >
-                      <defs>
-                        <linearGradient id="thrustGradient" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="5%" stopColor={cfg.accent} stopOpacity={0.4}/>
-                          <stop offset="100%" stopColor={cfg.accent} stopOpacity={0}/>
-                        </linearGradient>
-                      </defs>
-                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#eaeaea" />
-                      <XAxis 
-                        dataKey="throttle" 
-                        tick={{ fontSize: 9, fontFamily: 'Michroma, sans-serif', fill: '#808080' }}
-                        axisLine={false}
-                        tickLine={false}
-                      />
-                      <YAxis 
-                        tick={{ fontSize: 9, fontFamily: 'Michroma, sans-serif', fill: '#808080' }}
-                        axisLine={false}
-                        tickLine={false}
-                      />
-                      <Tooltip 
-                        cursor={{ stroke: '#ccc', strokeWidth: 1, strokeDasharray: '4 4' }}
-                        content={({ active, payload }) => {
-                          if (active && payload && payload.length) {
-                            return (
-                              <div className="bg-black/95 p-3 px-4 border-l-2" style={{ borderColor: cfg.accent }}>
-                                <p className="text-[8px] text-gray-400 font-bold tracking-widest mb-1.5 uppercase" style={{ fontFamily: 'Michroma, sans-serif' }}>
-                                  Throttle @ {payload[0].payload.throttle}
-                                </p>
-                                <p className="text-[14px] font-black" style={{ fontFamily: 'Michroma, sans-serif', color: cfg.accent }}>
-                                  {payload[0].payload.thrustStr}
-                                </p>
-                              </div>
-                            );
-                          }
-                          return null;
-                        }}
-                      />
-                      <Area 
-                        type="monotone" 
-                        dataKey="thrustVal" 
-                        stroke={cfg.accent} 
-                        strokeWidth={3}
-                        fillOpacity={1} 
-                        fill="url(#thrustGradient)" 
-                      />
-                    </AreaChart>
-                  </ResponsiveContainer>
+              {/* Thrust & Efficiency curves — side by side */}
+              <div className="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Thrust curve */}
+                <div>
+                  <p className="text-[9px] text-[#808080] tracking-widest uppercase mb-4"
+                     style={{ fontFamily: "Michroma, sans-serif" }}>
+                    Thrust Curve
+                  </p>
+                  <div className="w-full h-48 sm:h-64 bg-gray-50/30 border border-gray-100 p-4">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <AreaChart
+                        data={product.perf.map(row => ({
+                          throttle: row.throttle,
+                          thrustVal: parseFloat(row.thrust.replace(/[^0-9.]/g, "")) || 0,
+                          thrustStr: row.thrust
+                        }))}
+                        margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
+                      >
+                        <defs>
+                          <linearGradient id="thrustGradient" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor={cfg.accent} stopOpacity={0.4}/>
+                            <stop offset="100%" stopColor={cfg.accent} stopOpacity={0}/>
+                          </linearGradient>
+                        </defs>
+                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#eaeaea" />
+                        <XAxis 
+                          dataKey="throttle" 
+                          tick={{ fontSize: 9, fontFamily: 'Michroma, sans-serif', fill: '#808080' }}
+                          axisLine={false}
+                          tickLine={false}
+                        />
+                        <YAxis 
+                          tick={{ fontSize: 9, fontFamily: 'Michroma, sans-serif', fill: '#808080' }}
+                          axisLine={false}
+                          tickLine={false}
+                        />
+                        <Tooltip 
+                          cursor={{ stroke: '#ccc', strokeWidth: 1, strokeDasharray: '4 4' }}
+                          content={({ active, payload }) => {
+                            if (active && payload && payload.length) {
+                              return (
+                                <div className="bg-black/95 p-3 px-4 border-l-2" style={{ borderColor: cfg.accent }}>
+                                  <p className="text-[8px] text-gray-400 font-bold tracking-widest mb-1.5 uppercase" style={{ fontFamily: 'Michroma, sans-serif' }}>
+                                    Throttle @ {payload[0].payload.throttle}
+                                  </p>
+                                  <p className="text-[14px] font-black" style={{ fontFamily: 'Michroma, sans-serif', color: cfg.accent }}>
+                                    {payload[0].payload.thrustStr}
+                                  </p>
+                                </div>
+                              );
+                            }
+                            return null;
+                          }}
+                        />
+                        <Area 
+                          type="monotone" 
+                          dataKey="thrustVal" 
+                          stroke={cfg.accent} 
+                          strokeWidth={3}
+                          fillOpacity={1} 
+                          fill="url(#thrustGradient)" 
+                        />
+                      </AreaChart>
+                    </ResponsiveContainer>
+                  </div>
+                </div>
+
+                {/* Efficiency curve */}
+                <div>
+                  <p className="text-[9px] text-[#808080] tracking-widest uppercase mb-4"
+                     style={{ fontFamily: "Michroma, sans-serif" }}>
+                    Efficiency Curve
+                  </p>
+                  <div className="w-full h-48 sm:h-64 bg-gray-50/30 border border-gray-100 p-4">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <AreaChart
+                        data={product.perf.map(row => ({
+                          throttle: row.throttle,
+                          effVal: row.efficiency ? parseFloat(row.efficiency.replace(/[^0-9.]/g, "")) || 0 : 0,
+                          effStr: row.efficiency || "-"
+                        }))}
+                        margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
+                      >
+                        <defs>
+                          <linearGradient id="effGradient" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor="#22c55e" stopOpacity={0.35}/>
+                            <stop offset="100%" stopColor="#22c55e" stopOpacity={0}/>
+                          </linearGradient>
+                        </defs>
+                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#eaeaea" />
+                        <XAxis 
+                          dataKey="throttle" 
+                          tick={{ fontSize: 9, fontFamily: 'Michroma, sans-serif', fill: '#808080' }}
+                          axisLine={false}
+                          tickLine={false}
+                        />
+                        <YAxis 
+                          tick={{ fontSize: 9, fontFamily: 'Michroma, sans-serif', fill: '#808080' }}
+                          axisLine={false}
+                          tickLine={false}
+                        />
+                        <Tooltip 
+                          cursor={{ stroke: '#ccc', strokeWidth: 1, strokeDasharray: '4 4' }}
+                          content={({ active, payload }) => {
+                            if (active && payload && payload.length) {
+                              return (
+                                <div className="bg-black/95 p-3 px-4 border-l-2 border-green-500">
+                                  <p className="text-[8px] text-gray-400 font-bold tracking-widest mb-1.5 uppercase" style={{ fontFamily: 'Michroma, sans-serif' }}>
+                                    Throttle @ {payload[0].payload.throttle}
+                                  </p>
+                                  <p className="text-[14px] font-black text-green-400" style={{ fontFamily: 'Michroma, sans-serif' }}>
+                                    {payload[0].payload.effStr}
+                                  </p>
+                                </div>
+                              );
+                            }
+                            return null;
+                          }}
+                        />
+                        <Area 
+                          type="monotone" 
+                          dataKey="effVal" 
+                          stroke="#22c55e" 
+                          strokeWidth={3}
+                          fillOpacity={1} 
+                          fill="url(#effGradient)" 
+                        />
+                      </AreaChart>
+                    </ResponsiveContainer>
+                  </div>
                 </div>
               </div>
             </div>
@@ -516,11 +599,12 @@ export default function ProductDetail() {
                      />
                   </div>
                   <div className="p-3">
-                    <p className="text-[8px] tracking-widest uppercase mb-0.5"
+                    {/* Swap: product name is now larger text-xs, spec number is smaller text-[10px] */}
+                    <p className="text-xs font-bold truncate mb-0.5"
                        style={{ fontFamily: "Michroma, sans-serif", color: cfg.accent }}>
                       {p.name}
                     </p>
-                    <p className="text-xs font-bold text-black truncate" style={{ fontFamily: "Michroma, sans-serif" }}>
+                    <p className="text-[10px] tracking-widest uppercase text-black font-black" style={{ fontFamily: "Michroma, sans-serif" }}>
                       {p.keySpecs[0].value}
                     </p>
                     <p className="text-[9px] text-[#808080]">{p.keySpecs[0].label}</p>

@@ -81,6 +81,98 @@
   }
 }
 
+/* =========================================================================
+ * PDF Export Utility Classes
+ * ========================================================================= */
+
+.pdf-header {
+  display: none; /* Hidden by default in normal view */
+}
+
+/* When a PDF generation is active on the body */
+body.pdf-exporting .pdf-header {
+  display: block; /* Reveal header for capture */
+}
+
+/* Hide only elements explicitly tagged for PDF exclusion */
+body.pdf-exporting .pdf-hide {
+  display: none !important;
+}
+
+/* Ensure the capture area has a clean white background and no overflow clipping */
+body.pdf-exporting {
+  overflow: visible !important;
+}
+
+body.pdf-exporting [id$="-report-area"] {
+  overflow: visible !important;
+  background: #ffffff;
+  /* Remove all max-width constraints so content fills the full capture width */
+  max-width: none !important;
+  width: 100% !important;
+  padding-left: 16px !important;
+  padding-right: 16px !important;
+}
+
+/* Remove max-width on ALL ancestor containers during PDF export */
+body.pdf-exporting [id$="-report-area"] * {
+  max-width: none !important;
+}
+
+/* During PDF export, force scrollable containers to show full content */
+body.pdf-exporting .max-h-72 {
+  max-height: none !important;
+  overflow: visible !important;
+}
+
+/* SplitLayout-specific overrides for PDF export
+   When capturing, the report area should expand to full width and its
+   parent flex containers should allow natural flow */
+body.pdf-exporting [id$="-report-area"] {
+  position: relative !important;
+  width: 100% !important;
+  max-width: none !important;
+}
+
+/* Override sticky positioning on results column during PDF capture */
+body.pdf-exporting [id$="-report-area"] > div:first-child {
+  position: static !important;
+  width: 100% !important;
+  max-height: none !important;
+  overflow: visible !important;
+}
+
+/* Force flex containers to stack vertically during PDF capture */
+body.pdf-exporting #calculator-capture-area {
+  flex-direction: column !important;
+  display: block !important;
+  background: white !important;
+  width: 100% !important;
+  max-width: none !important;
+}
+
+body.pdf-exporting #calculator-capture-area > div {
+  width: 100% !important;
+  max-width: none !important;
+  position: static !important;
+  overflow: visible !important;
+  max-height: none !important;
+  padding-right: 0 !important;
+}
+
+/* Add spacing between Inputs and Results in PDF */
+body.pdf-exporting #calculator-capture-area > div:first-child {
+  border-bottom: 2px dashed #eee;
+  padding-bottom: 40px;
+  margin-bottom: 40px;
+}
+
+/* Ensure charts and gauges inside PDF capture area occupy full width */
+body.pdf-exporting #calculator-capture-area .recharts-responsive-container {
+  width: 100% !important;
+  height: 400px !important;
+}
+
 /* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 6px;

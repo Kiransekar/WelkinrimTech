@@ -8,6 +8,7 @@ import Products from "@/pages/Products";
 import ProductDetail from "@/pages/ProductDetail";
 import Calculators from "@/pages/Calculators";
 import CalculatorDetail from "@/pages/CalculatorDetail";
+import About from "@/pages/About";
 import Navbar from "@/components/Navbar";
 
 const queryClient = new QueryClient();
@@ -20,6 +21,7 @@ function Router() {
       <Route path="/products/:id" component={ProductDetail} />
       <Route path="/calculators" component={Calculators} />
       <Route path="/calculators/detail/:id" component={CalculatorDetail} />
+      <Route path="/about" component={About} />
       <Route component={NotFound} />
     </Switch>
   );

@@ -7,6 +7,8 @@ import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
   ReferenceLine,
 } from "recharts";
+import { DownloadReportButton, PdfTemplateHeader } from "./PdfExport";
+import SplitLayout from "./SplitLayout";
 
 interface Warning { level: "warn" | "danger"; message: string; }
 
@@ -331,8 +333,35 @@ export default function PerfCalcPanel() {
     </div>
   );
 
-  return (
-    <div className="space-y-4">
+  const inputsPanel = (
+    <div className="space-y-3">
+      <Section title="Aircraft Geometry">
+        <Field label="Weight" value={inputs.modelWeightG} onChange={(v: number) => updateInput("modelWeightG", v)} step={50} unit="g" />
+        <Field label="Wing Area" value={inputs.wingAreaDm2} onChange={(v: number) => updateInput("wingAreaDm2", v)} step={0.5} unit="dm²" />
+        <Field label="Wingspan" value={inputs.wingspanCm} onChange={(v: number) => updateInput("wingspanCm", v)} step={1} unit="cm" />
+        <Field label="Aspect Ratio" value={inputs.aspectRatio} onChange={(v: number) => updateInput("aspectRatio", v)} step={0.1} min={3} max={30} unit="AR" />
+        <Field label="Oswald Eff" value={inputs.oswaldEfficiency} onChange={(v: number) => updateInput("oswaldEfficiency", v)} step={0.01} min={0.6} max={0.95} unit="e" />
+        <Field label="Cdo" value={inputs.cdo} onChange={(v: number) => updateInput("cdo", v)} step={0.001} min={0.01} max={0.1} unit="Cd" />
+      </Section>
+
+      <Section title="Propulsion">
+        <Field label="Motor Power" value={inputs.motorMaxPowerW} onChange={(v: number) => updateInput("motorMaxPowerW", v)} step={10} unit="W" />
+        <Field label="Prop Eff" value={inputs.propEfficiency * 100} onChange={(v: number) => updateInput("propEfficiency", v / 100)} step={1} min={50} max={90} unit="%" />
+        <Field label="Battery" value={inputs.batteryCapacityMah} onChange={(v: number) => updateInput("batteryCapacityMah", v)} step={100} unit="mAh" />
+        <Field label="Cells" value={inputs.batteryCells} onChange={(v: number) => updateInput("batteryCells", v)} step={1} min={1} max={14} unit="S" />
+        <Field label="Max Disch" value={inputs.batteryMaxDischarge * 100} onChange={(v: number) => updateInput("batteryMaxDischarge", v / 100)} step={5} min={50} max={100} unit="%" />
+      </Section>
+
+      <Section title="Aerodynamics">
+        <Field label="CL Max" value={inputs.liftCoeffMax} onChange={(v: number) => updateInput("liftCoeffMax", v)} step={0.05} min={0.8} max={2.0} unit="CL" />
+        <Field label="CL Cruise" value={inputs.liftCoeffCruise} onChange={(v: number) => updateInput("liftCoeffCruise", v)} step={0.05} min={0.2} max={1.0} unit="CL" />
+      </Section>
+    </div>
+  );
+
+  const resultsPanel = (
+    <div id="perfcalc-report-area" className="relative space-y-4">
+      <PdfTemplateHeader calculatorName="Aircraft Performance" />
       {/* Warnings */}
       {warnings.length > 0 && (
         <div className="flex flex-wrap gap-2">
@@ -343,32 +372,11 @@ export default function PerfCalcPanel() {
         </div>
       )}
 
-      {/* ── Compact Inputs ── */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-        <Section title="Aircraft Geometry">
-          <Field label="Weight" value={inputs.modelWeightG} onChange={(v: number) => updateInput("modelWeightG", v)} step={50} unit="g" />
-          <Field label="Wing Area" value={inputs.wingAreaDm2} onChange={(v: number) => updateInput("wingAreaDm2", v)} step={0.5} unit="dm²" />
-          <Field label="Wingspan" value={inputs.wingspanCm} onChange={(v: number) => updateInput("wingspanCm", v)} step={1} unit="cm" />
-          <Field label="Aspect Ratio" value={inputs.aspectRatio} onChange={(v: number) => updateInput("aspectRatio", v)} step={0.1} min={3} max={30} unit="AR" />
-          <Field label="Oswald Eff" value={inputs.oswaldEfficiency} onChange={(v: number) => updateInput("oswaldEfficiency", v)} step={0.01} min={0.6} max={0.95} unit="e" />
-          <Field label="Cdo" value={inputs.cdo} onChange={(v: number) => updateInput("cdo", v)} step={0.001} min={0.01} max={0.1} unit="Cd" />
-        </Section>
-
-        <Section title="Propulsion">
-          <Field label="Motor Power" value={inputs.motorMaxPowerW} onChange={(v: number) => updateInput("motorMaxPowerW", v)} step={10} unit="W" />
-          <Field label="Prop Eff" value={inputs.propEfficiency * 100} onChange={(v: number) => updateInput("propEfficiency", v / 100)} step={1} min={50} max={90} unit="%" />
-          <Field label="Battery" value={inputs.batteryCapacityMah} onChange={(v: number) => updateInput("batteryCapacityMah", v)} step={100} unit="mAh" />
-          <Field label="Cells" value={inputs.batteryCells} onChange={(v: number) => updateInput("batteryCells", v)} step={1} min={1} max={14} unit="S" />
-          <Field label="Max Disch" value={inputs.batteryMaxDischarge * 100} onChange={(v: number) => updateInput("batteryMaxDischarge", v / 100)} step={5} min={50} max={100} unit="%" />
-        </Section>
-
-        <Section title="Aerodynamics">
-          <Field label="CL Max" value={inputs.liftCoeffMax} onChange={(v: number) => updateInput("liftCoeffMax", v)} step={0.05} min={0.8} max={2.0} unit="CL" />
-          <Field label="CL Cruise" value={inputs.liftCoeffCruise} onChange={(v: number) => updateInput("liftCoeffCruise", v)} step={0.05} min={0.2} max={1.0} unit="CL" />
-        </Section>
-      </div>
-
       {/* ── Results Summary ── */}
+      <div className="flex items-center justify-between mb-3 border-t border-gray-100 pt-4">
+        <h3 className="text-xs uppercase font-bold tracking-widest pdf-no-hide" style={{ fontFamily: "Michroma, sans-serif" }}>Results Summary</h3>
+        <DownloadReportButton targetElementId="calculator-capture-area" filename="WelkinRim_Perf_Report.pdf" />
+      </div>
       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3">
         <StatCard label="Max L/D" value={result.ldMax.toFixed(1)} unit=":1" />
         <StatCard label="Stall Speed" value={result.stallSpeedKph.toFixed(0)} unit="km/h" warn={result.stallSpeedKph > 45} />
@@ -463,4 +471,6 @@ export default function PerfCalcPanel() {
       </div>
     </div>
   );
+
+  return <SplitLayout inputs={inputsPanel} results={resultsPanel} />;
 }

@@ -8,6 +8,8 @@ import {
   XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
 } from "recharts";
 import { PROPELLERS } from "@/data/propellers";
+import { DownloadReportButton, PdfTemplateHeader } from "./PdfExport";
+import SplitLayout from "./SplitLayout";
 
 interface BladeElement {
   station: number; // 0-1 (percentage of radius)
@@ -193,73 +195,79 @@ export default function BladeCalc() {
       eff2: totalThrust2 > 0 ? totalThrust2 / totalPower2 : 0,
     };
   }, [calcBladeElements]);
+  const inputsPanel = (
+    <div className="space-y-3">
+      <Section title="Operating Conditions">
+        <Field label="RPM" id="rpm" value={rpm} onChange={setRpm} step="100"
+               hint="Propeller rotational speed" />
+        <Field label="Air Density" id="rho" value={airDensity} onChange={setAirDensity} step="0.01"
+               hint="ISA standard = 1.225 kg/m³" />
+      </Section>
 
-  return (
-    <div className="space-y-4">
-      {/* ── Compact Inputs ── */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
-        <Section title="Operating Conditions">
-          <Field label="RPM" id="rpm" value={rpm} onChange={setRpm} step="100"
-                 hint="Propeller rotational speed" />
-          <Field label="Air Density" id="rho" value={airDensity} onChange={setAirDensity} step="0.01"
-                 hint="ISA standard = 1.225 kg/m³" />
-        </Section>
+      <Section title="Propeller 1">
+        <div className="col-span-2">
+          <label className="text-[9px] tracking-widest uppercase text-[#808080] block mb-1"
+                 style={{ fontFamily: "Michroma, sans-serif" }}>Select Propeller</label>
+          <select
+            value={selectedProp1}
+            onChange={e => setSelectedProp1(e.target.value)}
+            className="w-full border border-gray-200 text-[11px] px-2 py-1.5 focus:outline-none focus:border-[#ffc812] transition-colors bg-white"
+            style={{ fontFamily: "Michroma, sans-serif" }}
+          >
+            {PROPELLERS.filter(p => p.application === "airplane" || p.application === "both").map(p => (
+              <option key={p.id} value={p.id}>{p.brand} {p.model} ({p.diameterInch}×{p.pitchInch})</option>
+            ))}
+          </select>
+        </div>
+      </Section>
 
-        <Section title="Propeller 1">
-          <div className="col-span-2">
-            <label className="text-[9px] tracking-widest uppercase text-[#808080] block mb-1"
-                   style={{ fontFamily: "Michroma, sans-serif" }}>Select Propeller</label>
-            <select
-              value={selectedProp1}
-              onChange={e => setSelectedProp1(e.target.value)}
-              className="w-full border border-gray-200 text-[11px] px-2 py-1.5 focus:outline-none focus:border-[#ffc812] transition-colors bg-white"
-              style={{ fontFamily: "Michroma, sans-serif" }}
-            >
-              {PROPELLERS.filter(p => p.application === "airplane" || p.application === "both").map(p => (
-                <option key={p.id} value={p.id}>{p.brand} {p.model} ({p.diameterInch}×{p.pitchInch})</option>
-              ))}
-            </select>
-          </div>
-        </Section>
+      <Section title="Propeller 2">
+        <div className="col-span-2">
+          <label className="text-[9px] tracking-widest uppercase text-[#808080] block mb-1"
+                 style={{ fontFamily: "Michroma, sans-serif" }}>Select Propeller</label>
+          <select
+            value={selectedProp2}
+            onChange={e => setSelectedProp2(e.target.value)}
+            className="w-full border border-gray-200 text-[11px] px-2 py-1.5 focus:outline-none focus:border-[#ffc812] transition-colors bg-white"
+            style={{ fontFamily: "Michroma, sans-serif" }}
+          >
+            {PROPELLERS.filter(p => p.application === "airplane" || p.application === "both").map(p => (
+              <option key={p.id} value={p.id}>{p.brand} {p.model} ({p.diameterInch}×{p.pitchInch})</option>
+            ))}
+          </select>
+        </div>
+      </Section>
 
-        <Section title="Propeller 2">
-          <div className="col-span-2">
-            <label className="text-[9px] tracking-widest uppercase text-[#808080] block mb-1"
-                   style={{ fontFamily: "Michroma, sans-serif" }}>Select Propeller</label>
-            <select
-              value={selectedProp2}
-              onChange={e => setSelectedProp2(e.target.value)}
-              className="w-full border border-gray-200 text-[11px] px-2 py-1.5 focus:outline-none focus:border-[#ffc812] transition-colors bg-white"
-              style={{ fontFamily: "Michroma, sans-serif" }}
-            >
-              {PROPELLERS.filter(p => p.application === "airplane" || p.application === "both").map(p => (
-                <option key={p.id} value={p.id}>{p.brand} {p.model} ({p.diameterInch}×{p.pitchInch})</option>
-              ))}
-            </select>
-          </div>
-        </Section>
-
-        {calcBladeElements && (
-          <Section title="Propeller Specs">
-            <div className="col-span-2 space-y-2 text-xs" style={{ fontFamily: "Michroma, sans-serif" }}>
-              <div className="flex justify-between">
-                <span className="text-gray-500">{calcBladeElements.prop1.brand} {calcBladeElements.prop1.model}</span>
-                <span className="font-bold">CT: {calcBladeElements.prop1.ct}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-500">{calcBladeElements.prop2.brand} {calcBladeElements.prop2.model}</span>
-                <span className="font-bold">CT: {calcBladeElements.prop2.ct}</span>
-              </div>
-              <div className="flex justify-between border-t pt-2">
-                <span className="text-gray-500">Efficiency</span>
-                <span className="font-bold">{calcBladeElements.prop1.efficiency > calcBladeElements.prop2.efficiency ? "Prop 1" : "Prop 2"} better</span>
-              </div>
+      {calcBladeElements && (
+        <Section title="Propeller Specs">
+          <div className="col-span-2 space-y-2 text-xs" style={{ fontFamily: "Michroma, sans-serif" }}>
+            <div className="flex justify-between">
+              <span className="text-gray-500">{calcBladeElements.prop1.brand} {calcBladeElements.prop1.model}</span>
+              <span className="font-bold">CT: {calcBladeElements.prop1.ct}</span>
             </div>
-          </Section>
-        )}
+            <div className="flex justify-between">
+              <span className="text-gray-500">{calcBladeElements.prop2.brand} {calcBladeElements.prop2.model}</span>
+              <span className="font-bold">CT: {calcBladeElements.prop2.ct}</span>
+            </div>
+            <div className="flex justify-between border-t pt-2">
+              <span className="text-gray-500">Efficiency</span>
+              <span className="font-bold">{calcBladeElements.prop1.efficiency > calcBladeElements.prop2.efficiency ? "Prop 1" : "Prop 2"} better</span>
+            </div>
+          </div>
+        </Section>
+      )}
+    </div>
+  );
+
+  const resultsPanel = (
+
+  <div id="bladecalc-report-area" className="relative space-y-4">
+      <PdfTemplateHeader calculatorName="Rotor Blade Element" />
+      <div className="flex items-center justify-between mb-3 mt-0 border-t border-gray-100 pt-0">
+        <h3 className="text-xs uppercase font-bold tracking-widest pdf-no-hide" style={{ fontFamily: "Michroma, sans-serif" }}>Analysis Results</h3>
+        <DownloadReportButton targetElementId="calculator-capture-area" filename="WelkinRim_Blade_Report.pdf" />
       </div>
 
-      {/* ── Results Summary ── */}
       {metrics && (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           <div className="border border-gray-100 p-3 text-center">
@@ -327,4 +335,6 @@ export default function BladeCalc() {
       )}
     </div>
   );
+
+  return <SplitLayout inputs={inputsPanel} results={resultsPanel} />;
 }

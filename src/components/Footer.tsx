@@ -1,17 +1,25 @@
+import { useLocation } from "wouter";
+
 const navLinks = [
   { label: "Home", href: "#home" },
   { label: "Technology", href: "#technology" },
   { label: "Products", href: "#products" },
-  { label: "About", href: "#about" },
+  { label: "About", href: "/about", isRoute: true },
   { label: "Contact", href: "#contact" },
 ];
 
 const industries = ["UAV/eVTOL", "Marine", "Land", "Robotics"];
 
 export default function Footer() {
-  const handleNav = (href: string) => {
-    const el = document.querySelector(href);
-    if (el) el.scrollIntoView({ behavior: "smooth" });
+  const [, navigate] = useLocation();
+  const handleNav = (link: typeof navLinks[number]) => {
+    if (link.isRoute) {
+      navigate(link.href);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } else {
+      const el = document.querySelector(link.href);
+      if (el) el.scrollIntoView({ behavior: "smooth" });
+    }
   };
 
   return (
@@ -65,7 +73,7 @@ export default function Footer() {
             {navLinks.map((link) => (
               <button
                 key={link.label}
-                onClick={() => handleNav(link.href)}
+                onClick={() => handleNav(link)}
                 className="text-left text-xs text-white/60 hover:text-[#ffc812] transition-colors duration-200 uppercase tracking-widest"
                 style={{ fontFamily: 'Michroma, sans-serif' }}
               >

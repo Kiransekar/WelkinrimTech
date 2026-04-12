@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { PRODUCTS } from "@/data/products";
 
@@ -132,13 +132,20 @@ export default function Navbar() {
 
 
   const activeCat = PRODUCT_CATEGORIES.find(c => c.id === activeCategory)!;
+  // Pages that should keep the dark navbar theme even when scrolled
+  const forceDark = location.startsWith("/about") || location.startsWith("/calculators");
   const isTransparent = !scrolled && !megaOpen;
+  const useDarkText = !isTransparent && !forceDark;
 
   return (
     <>
       <nav
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-          isTransparent ? "bg-transparent" : "bg-white/95 backdrop-blur-md shadow-sm"
+          isTransparent
+            ? "bg-transparent"
+            : forceDark
+            ? "bg-[#0a0a0a]/95 backdrop-blur-md shadow-sm"
+            : "bg-white/95 backdrop-blur-md shadow-sm"
         }`}
       >
           <div className="max-w-7xl mx-auto px-4 md:px-6 py-3 md:py-4 flex items-center">
@@ -148,7 +155,7 @@ export default function Navbar() {
             {[
               { label: "Home",       action: () => scrollToSection("home")       },
               { label: "Technology", action: () => scrollToSection("technology") },
-              { label: "About",      action: () => scrollToSection("about")      },
+              { label: "About",      action: () => { setMenuOpen(false); navigate("/about"); } },
               { label: "Calculators",action: () => { setMenuOpen(false); navigate("/calculators"); } },
               { label: "Contact",    action: () => scrollToSection("contact")    },
             ].map(({ label, action }) => (
@@ -156,7 +163,7 @@ export default function Navbar() {
                 key={label}
                 onClick={action}
                 className={`text-xs tracking-widest uppercase font-medium transition-all duration-300 hover:text-[#ffc812] relative group ${
-                  isTransparent ? "text-white" : "text-black"
+                  useDarkText ? "text-black" : "text-white"
                 }`}
                 style={{ fontFamily: "Michroma, sans-serif" }}
               >
@@ -170,7 +177,7 @@ export default function Navbar() {
               <button
                 onClick={() => setMegaOpen(!megaOpen)}
                 className={`text-xs tracking-widest uppercase font-medium transition-all duration-300 flex items-center gap-1 relative group ${
-                  isTransparent ? "text-white" : "text-black"
+                  useDarkText ? "text-black" : "text-white"
                 } ${megaOpen ? "text-[#ffc812]" : "hover:text-[#ffc812]"}`}
                 style={{ fontFamily: "Michroma, sans-serif" }}
               >
@@ -200,7 +207,7 @@ export default function Navbar() {
             className="flex items-center gap-2 md:gap-3 ml-auto"
           >
             <img
-              src={`${import.meta.env.BASE_URL}${isTransparent ? "welkinrim-logo-white.svg" : "welkinrim-logo.svg"}`}
+              src={`${import.meta.env.BASE_URL}${useDarkText ? "welkinrim-logo.svg" : "welkinrim-logo-white.svg"}`}
               alt="Welkinrim Technologies"
               className="h-8 md:h-10 lg:h-12 w-auto transition-opacity duration-500"
             />
@@ -208,7 +215,7 @@ export default function Navbar() {
 
           {/* ── Mobile toggle ── */}
           <button
-            className={`md:hidden flex flex-col gap-1.5 transition-colors duration-300 ml-4 ${isTransparent ? "text-white" : "text-black"}`}
+            className={`md:hidden flex flex-col gap-1.5 transition-colors duration-300 ml-4 ${useDarkText ? "text-black" : "text-white"}`}
             onClick={() => setMenuOpen(!menuOpen)}
           >
             <span className={`block w-6 h-0.5 bg-current transition-all duration-300 ${menuOpen ? "rotate-45 translate-y-2" : ""}`} />
@@ -225,7 +232,7 @@ export default function Navbar() {
               { label: "Technology",  action: () => scrollToSection("technology") },
               { label: "Products",    action: () => goToProducts()                },
               { label: "Calculators", action: () => { setMenuOpen(false); navigate("/calculators"); } },
-              { label: "About",       action: () => scrollToSection("about")      },
+              { label: "About",       action: () => { setMenuOpen(false); navigate("/about"); } },
               { label: "Contact",     action: () => scrollToSection("contact")    },
             ].map(({ label, action }) => (
               <button
@@ -330,9 +337,8 @@ export default function Navbar() {
                   <div className="flex items-start justify-between mb-4">
                     <div>
                       <p className="text-[9px] text-[#808080] tracking-[0.3em] uppercase" style={{ fontFamily: "Michroma, sans-serif" }}>
-                        {activeCat.label}
+                        {activeCat.label} <span className="lowercase inline-block ml-1 tracking-normal font-bold">({activeCat.products.length} variants)</span>
                       </p>
-                      <p className="text-xs text-[#444] mt-0.5" style={{ fontFamily: "Lexend, sans-serif" }}>{activeCat.tagline}</p>
                     </div>
                     <button
                       onClick={() => goToProducts(activeCategory)}

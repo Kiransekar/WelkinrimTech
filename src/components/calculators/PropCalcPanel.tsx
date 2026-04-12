@@ -16,6 +16,8 @@ import {
 import GaugeMeter from "./GaugeMeter";
 import { calcProp, PropCalcInput, PropCalcResult } from "@/lib/calculators/propCalc";
 import { useMotorPresets, getPresetById } from "@/hooks/useMotorPresets";
+import { DownloadReportButton, PdfTemplateHeader } from "./PdfExport";
+import SplitLayout from "./SplitLayout";
 
 // ─────────────────────────────────────────────────────────────
 // Types
@@ -83,47 +85,7 @@ function deriveWarnings(result: PropCalcResult, inputs: PropCalcInput): Warning[
   return w;
 }
 
-// ─────────────────────────────────────────────────────────────
-// CSV Export
-// ─────────────────────────────────────────────────────────────
-function exportCSV(result: PropCalcResult, inputs: PropCalcInput) {
-  const rows: string[] = [
-    "PropCalc Export",
-    `Weight (g),${inputs.modelWeightG}`,
-    `Motors,${inputs.numMotors}`,
-    `Battery,${inputs.batteryCells}S ${inputs.batteryCapacityMah}mAh`,
-    `Motor KV,${inputs.motorKv}`,
-    `Prop,${inputs.propDiameterInch}×${inputs.propPitchInch}`,
-    "",
-    "Key Results",
-    `Flight Time (min),${result.battery.flightTimeMin.toFixed(1)}`,
-    `Static Thrust (g),${result.propeller.staticThrustG.toFixed(0)}`,
-    `Thrust:Weight,${result.totalDrive.thrustWeightRatio.toFixed(2)}`,
-    `Stall Speed (km/h),${result.airplane.stallSpeedKmh.toFixed(1)}`,
-    `Max Speed (km/h),${result.airplane.maxSpeedKmh.toFixed(1)}`,
-    `Climb Rate (m/s),${result.airplane.climbRateMs.toFixed(1)}`,
-    `Motor Efficiency (%),${result.motorMaximum.efficiencyPercent.toFixed(1)}`,
-    "",
-    "Static Partial Load",
-    "Throttle%,RPM,Current A,Voltage V,Power W,Eff%,Thrust g,g/W",
-    ...result.partialLoadStatic.map(r =>
-      `${r.throttlePercent.toFixed(0)},${r.rpm.toFixed(0)},${r.currentA.toFixed(1)},${r.voltageV.toFixed(2)},${r.powerW.toFixed(0)},${r.efficiencyPercent.toFixed(1)},${r.thrustG.toFixed(0)},${r.specificThrustGW.toFixed(2)}`
-    ),
-    "",
-    "Dynamic Partial Load",
-    "Throttle%,RPM,Speed km/h,Current A,Power W,Thrust g,Wh/km",
-    ...result.partialLoadDynamic.map(r =>
-      `${r.throttlePercent.toFixed(0)},${r.rpm.toFixed(0)},${r.speedKmh.toFixed(1)},${r.currentA.toFixed(1)},${r.powerW.toFixed(0)},${r.thrustG.toFixed(0)},${r.energyWhKm.toFixed(2)}`
-    ),
-  ];
-  const blob = new Blob([rows.join("\n")], { type: "text/csv" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url; a.download = "propcalc_results.csv"; a.click();
-  URL.revokeObjectURL(url);
-}
-
-// ─────────────────────────────────────────────────────────────
+// Removed exportCSV in favor of PdfExport// ─────────────────────────────────────────────────────────────
 // Shared UI primitives
 // ─────────────────────────────────────────────────────────────
 const TOOLTIP_STYLE: React.CSSProperties = {
@@ -323,14 +285,13 @@ export default function PropCalcPanel() {
     eff: +r.efficiencyPercent.toFixed(1),
   })), [result]);
 
-  return (
-    <div className="space-y-4">
-      {/* ── COMPACT INPUTS ──────────────────────────────────────── */}
+  const inputsPanel = (
+    <div className="space-y-3">
       {/* Motor Preset */}
       <div className="border border-[#ffc812]/30 bg-[#fffbe6] px-3 py-2 flex items-center gap-3">
         <label className="text-[9px] tracking-widest uppercase text-[#ffc812] font-bold whitespace-nowrap"
                style={{ fontFamily: "Michroma, sans-serif" }}>
-          ⚡ Motor Preset
+          Motor Preset
         </label>
         <select
           value={selectedPreset}
@@ -345,88 +306,83 @@ export default function PropCalcPanel() {
         </select>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-3">
-        <CollapsibleSection title="Aircraft" defaultOpen>
-          <Field label="Weight (g)" id="mw" value={inputs.modelWeightG} onChange={set("modelWeightG")}
-                 hint="All-up weight of the airframe without battery." />
-          <Field label="# Motors" id="nm" value={inputs.numMotors} onChange={set("numMotors")} step="1"
-                 hint="Number of driven propellers on the airframe." />
-          <Field label="Wing Area (dm²)" id="wa" value={inputs.wingAreaDm2} onChange={set("wingAreaDm2")}
-                 hint="Total reference wing area in square decimetres (1 dm² = 100 cm²)." />
-          <Field label="Drag Coeff (Cd)" id="cd" value={inputs.dragCoefficient} onChange={set("dragCoefficient")} step="0.01"
-                 hint="Profile drag coefficient. Typical clean fixed-wing: 0.04–0.08." />
-        </CollapsibleSection>
+      <CollapsibleSection title="Aircraft" defaultOpen>
+        <Field label="Weight (g)" id="mw" value={inputs.modelWeightG} onChange={set("modelWeightG")}
+               hint="All-up weight of the airframe without battery." />
+        <Field label="# Motors" id="nm" value={inputs.numMotors} onChange={set("numMotors")} step="1"
+               hint="Number of driven propellers on the airframe." />
+        <Field label="Wing Area (dm²)" id="wa" value={inputs.wingAreaDm2} onChange={set("wingAreaDm2")}
+               hint="Total reference wing area in square decimetres (1 dm² = 100 cm²)." />
+        <Field label="Drag Coeff (Cd)" id="cd" value={inputs.dragCoefficient} onChange={set("dragCoefficient")} step="0.01"
+               hint="Profile drag coefficient. Typical clean fixed-wing: 0.04–0.08." />
+      </CollapsibleSection>
 
-        <CollapsibleSection title="Battery" defaultOpen>
-          <Field label="Cells (S)" id="bc" value={inputs.batteryCells} onChange={set("batteryCells")} step="1"
-                 hint="Number of LiPo cells in series. 1S = 3.7V nominal." />
-          <Field label="Capacity (mAh)" id="bm" value={inputs.batteryCapacityMah} onChange={set("batteryCapacityMah")} step="100"
-                 hint="Battery energy capacity in milliamp-hours." />
-          <Field label="Max Disch (%)" id="bd" value={inputs.batteryMaxDischarge * 100} onChange={v => set("batteryMaxDischarge")(v / 100)}
-                 hint="Usable proportion of battery capacity (0–100%). 80–85% is typical." />
-          <Field label="Resist (mΩ/cell)" id="br" value={inputs.batteryResistanceMohm} onChange={set("batteryResistanceMohm")}
-                 hint="Internal resistance per cell. Higher value = more voltage sag under load." />
-        </CollapsibleSection>
+      <CollapsibleSection title="Battery" defaultOpen>
+        <Field label="Cells (S)" id="bc" value={inputs.batteryCells} onChange={set("batteryCells")} step="1"
+               hint="Number of LiPo cells in series. 1S = 3.7V nominal." />
+        <Field label="Capacity (mAh)" id="bm" value={inputs.batteryCapacityMah} onChange={set("batteryCapacityMah")} step="100"
+               hint="Battery energy capacity in milliamp-hours." />
+        <Field label="Max Disch (%)" id="bd" value={inputs.batteryMaxDischarge * 100} onChange={v => set("batteryMaxDischarge")(v / 100)}
+               hint="Usable proportion of battery capacity (0–100%). 80–85% is typical." />
+        <Field label="Resist (mΩ/cell)" id="br" value={inputs.batteryResistanceMohm} onChange={set("batteryResistanceMohm")}
+               hint="Internal resistance per cell. Higher value = more voltage sag under load." />
+      </CollapsibleSection>
 
-        <CollapsibleSection title="Motor" defaultOpen>
-          <Field label="KV (rpm/V)" id="kv" value={inputs.motorKv} onChange={set("motorKv")} step="1"
-                 hint="Motor velocity constant. RPM = KV × Voltage (no-load)." />
-          <Field label="Io (A)" id="io" value={inputs.motorIo} onChange={set("motorIo")} step="0.1"
-                 hint="No-load current. Friction/iron losses at operating voltage." />
-          <Field label="Rm (mΩ)" id="rm" value={inputs.motorRmMohm} onChange={set("motorRmMohm")}
-                 hint="Winding resistance (phase-to-phase). Drives copper losses: P = I²·Rm." />
-          <Field label="Max Power (W)" id="mp" value={inputs.motorMaxPowerW} onChange={set("motorMaxPowerW")}
-                 hint="Rated peak power. Used to cap the operating point." />
-        </CollapsibleSection>
+      <CollapsibleSection title="Motor" defaultOpen>
+        <Field label="KV (rpm/V)" id="kv" value={inputs.motorKv} onChange={set("motorKv")} step="1"
+               hint="Motor velocity constant. RPM = KV × Voltage (no-load)." />
+        <Field label="Io (A)" id="io" value={inputs.motorIo} onChange={set("motorIo")} step="0.1"
+               hint="No-load current. Friction/iron losses at operating voltage." />
+        <Field label="Rm (mΩ)" id="rm" value={inputs.motorRmMohm} onChange={set("motorRmMohm")}
+               hint="Winding resistance (phase-to-phase). Drives copper losses: P = I²·Rm." />
+        <Field label="Max Power (W)" id="mp" value={inputs.motorMaxPowerW} onChange={set("motorMaxPowerW")}
+               hint="Rated peak power. Used to cap the operating point." />
+      </CollapsibleSection>
 
-        <CollapsibleSection title="Propeller" defaultOpen>
-          <Field label="Diameter (in)" id="pd" value={inputs.propDiameterInch} onChange={set("propDiameterInch")} step="0.5"
-                 hint="Propeller diameter in inches. Larger dia = more thrust, more torque." />
-          <Field label="Pitch (in)" id="pp" value={inputs.propPitchInch} onChange={set("propPitchInch")} step="0.1"
-                 hint="Theoretical advance per revolution. Higher pitch = more top speed." />
-          <Field label="Blades" id="pb" value={inputs.propBlades} onChange={set("propBlades")} step="1"
-                 hint="Number of blades. More blades = smoother thrust, slightly less efficient." />
-          <Field label="CT" id="ct" value={inputs.ct} onChange={set("ct")} step="0.005"
-                 hint="Thrust coefficient. From APC data: 2-blade ≈ 0.10–0.12." />
-          <Field label="CP" id="cp" value={inputs.cp} onChange={set("cp")} step="0.005"
-                 hint="Power coefficient. From APC data: 2-blade ≈ 0.04–0.06." />
-        </CollapsibleSection>
+      <CollapsibleSection title="Propeller" defaultOpen>
+        <Field label="Diameter (in)" id="pd" value={inputs.propDiameterInch} onChange={set("propDiameterInch")} step="0.5"
+               hint="Propeller diameter in inches. Larger dia = more thrust, more torque." />
+        <Field label="Pitch (in)" id="pp" value={inputs.propPitchInch} onChange={set("propPitchInch")} step="0.1"
+               hint="Theoretical advance per revolution. Higher pitch = more top speed." />
+        <Field label="Blades" id="pb" value={inputs.propBlades} onChange={set("propBlades")} step="1"
+               hint="Number of blades. More blades = smoother thrust, slightly less efficient." />
+        <Field label="CT" id="ct" value={inputs.ct} onChange={set("ct")} step="0.005"
+               hint="Thrust coefficient. From APC data: 2-blade ≈ 0.10–0.12." />
+        <Field label="CP" id="cp" value={inputs.cp} onChange={set("cp")} step="0.005"
+               hint="Power coefficient. From APC data: 2-blade ≈ 0.04–0.06." />
+      </CollapsibleSection>
 
-        <CollapsibleSection title="Environment" defaultOpen={false}>
-          <Field label="Elevation (m)" id="el" value={inputs.elevationM} onChange={set("elevationM")}
-                 hint="Field altitude above sea level. Affects air density and thrust." />
-          <Field label="Temp (°C)" id="tc" value={inputs.temperatureC} onChange={set("temperatureC")}
-                 hint="Ambient air temperature. Higher temp = lower air density." />
-          <Field label="Pressure (hPa)" id="ph" value={inputs.pressureHpa} onChange={set("pressureHpa")}
-                 hint="Local QNH barometric pressure. ISA standard = 1013.25 hPa." />
-        </CollapsibleSection>
-      </div>
+      <CollapsibleSection title="Environment" defaultOpen={false}>
+        <Field label="Elevation (m)" id="el" value={inputs.elevationM} onChange={set("elevationM")}
+               hint="Field altitude above sea level. Affects air density and thrust." />
+        <Field label="Temp (°C)" id="tc" value={inputs.temperatureC} onChange={set("temperatureC")}
+               hint="Ambient air temperature. Higher temp = lower air density." />
+        <Field label="Pressure (hPa)" id="ph" value={inputs.pressureHpa} onChange={set("pressureHpa")}
+               hint="Local QNH barometric pressure. ISA standard = 1013.25 hPa." />
+      </CollapsibleSection>
+    </div>
+  );
 
-      {/* ── RESULTS ──────────────────────────────────────── */}
-      <div>
+  const resultsPanel = (
+      <div id="propcalc-report-area" className="relative">
+        <PdfTemplateHeader calculatorName="Propeller Airplane" />
         {/* Action bar */}
-        <div className="flex items-center justify-between mb-3">
-          <p className="text-[9px] tracking-[0.3em] uppercase text-[#808080]"
+        <div className="flex items-center justify-between mb-2">
+          <p className="text-[9px] tracking-[0.3em] uppercase text-[#808080] pdf-no-hide"
              style={{ fontFamily: "Michroma, sans-serif" }}>
             {warnings.length > 0
               ? <span className="text-amber-500">{warnings.length} alert{warnings.length > 1 ? "s" : ""} — review below</span>
               : <span className="text-green-600">✓ All values within normal range</span>}
           </p>
-          <button
-            onClick={() => exportCSV(result, inputs)}
-            className="flex items-center gap-1.5 border border-gray-200 px-3 py-1.5 text-[9px] tracking-widest uppercase hover:bg-black hover:text-[#ffc812] hover:border-black transition-colors"
-            style={{ fontFamily: "Michroma, sans-serif" }}
-          >
-            ↓ Export CSV
-          </button>
+          <DownloadReportButton targetElementId="calculator-capture-area" filename="WelkinRim_Prop_Report.pdf" />
         </div>
 
         {/* Warnings */}
         <WarningBar warnings={warnings} />
 
         {/* Gauges */}
-        <div className="border border-gray-100 p-4 mb-4">
-          <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812] mb-4"
+        <div className="border border-gray-100 p-2.5 mb-2">
+          <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812] mb-3"
              style={{ fontFamily: "Michroma, sans-serif" }}>Key Metrics</p>
           <div className="grid grid-cols-3 md:grid-cols-6 gap-3 justify-items-center">
             <GaugeMeter value={result.battery.loadC} max={150} label="Load" unit="C" yellowAt={0.33} redAt={0.67} />
@@ -442,7 +398,7 @@ export default function PropCalcPanel() {
         </div>
 
         {/* Stat Cards */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-1.5 mb-3">
           <StatCard label="All-Up Weight" value={`${result.airplane.allUpWeightG.toFixed(0)} g`}
                     sub={`${(result.airplane.allUpWeightG / 1000).toFixed(2)} kg`} />
           <StatCard label="Wing Loading" value={`${result.airplane.wingLoadingGdm2.toFixed(1)} g/dm²`} />
@@ -453,14 +409,14 @@ export default function PropCalcPanel() {
                     warn={correctedFlightTimeMin < 6} />
         </div>
 
-        {/* Performance Tables */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+        {/* Performance Tables — all 4 in one horizontal row */}
+        <div className="grid grid-cols-4 gap-1.5 mb-3">
           <div className="border border-gray-100">
-            <div className="bg-black px-3 py-1.5">
-              <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812]"
+            <div className="bg-black px-2 py-1">
+              <p className="text-[8px] tracking-[0.2em] uppercase text-[#ffc812]"
                  style={{ fontFamily: "Michroma, sans-serif" }}>Motor — Optimum (70%)</p>
             </div>
-            <div className="p-3">
+            <div className="p-2">
               <table className="w-full">
                 <tbody>
                   <Row label="Current" value={`${result.motorOptimum.currentA.toFixed(1)} A`} />
@@ -474,20 +430,20 @@ export default function PropCalcPanel() {
           </div>
 
           <div className="border border-gray-100">
-            <div className="bg-black px-3 py-1.5">
-              <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812]"
+            <div className="bg-black px-2 py-1">
+              <p className="text-[8px] tracking-[0.2em] uppercase text-[#ffc812]"
                  style={{ fontFamily: "Michroma, sans-serif" }}>Motor — Maximum</p>
             </div>
-            <div className="p-3">
+            <div className="p-2">
               <table className="w-full">
                 <tbody>
                   <Row label="Current" value={`${result.motorMaximum.currentA.toFixed(1)} A`} />
                   <Row label="Voltage" value={`${result.motorMaximum.voltageV.toFixed(2)} V`} />
-                  <Row label="Loaded Voltage" value={`${loadedVoltageV.toFixed(2)} V`} />
+                  <Row label="Loaded V" value={`${loadedVoltageV.toFixed(2)} V`} />
                   <Row label="RPM" value={result.motorMaximum.rpm.toFixed(0)} />
                   <Row label="El. Power" value={`${result.motorMaximum.electricPowerW.toFixed(0)} W`} />
                   <Row label="Efficiency" value={`${result.motorMaximum.efficiencyPercent.toFixed(1)} %`} />
-                  <Row label="Motor Temp (est.)" value={`${correctedMotorTempC.toFixed(0)} °C`}
+                  <Row label="Motor Temp" value={`${correctedMotorTempC.toFixed(0)} °C`}
                        warn={correctedMotorTempC > 85} />
                 </tbody>
               </table>
@@ -495,11 +451,11 @@ export default function PropCalcPanel() {
           </div>
 
           <div className="border border-gray-100">
-            <div className="bg-black px-3 py-1.5">
-              <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812]"
+            <div className="bg-black px-2 py-1">
+              <p className="text-[8px] tracking-[0.2em] uppercase text-[#ffc812]"
                  style={{ fontFamily: "Michroma, sans-serif" }}>Propeller</p>
             </div>
-            <div className="p-3">
+            <div className="p-2">
               <table className="w-full">
                 <tbody>
                   <Row label="Static Thrust" value={`${result.propeller.staticThrustG.toFixed(0)} g`} />
@@ -512,11 +468,11 @@ export default function PropCalcPanel() {
           </div>
 
           <div className="border border-gray-100">
-            <div className="bg-black px-3 py-1.5">
-              <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812]"
+            <div className="bg-black px-2 py-1">
+              <p className="text-[8px] tracking-[0.2em] uppercase text-[#ffc812]"
                  style={{ fontFamily: "Michroma, sans-serif" }}>Aircraft Performance</p>
             </div>
-            <div className="p-3">
+            <div className="p-2">
               <table className="w-full">
                 <tbody>
                   <Row label="Stall Speed" value={`${result.airplane.stallSpeedKmh.toFixed(1)} km/h`} />
@@ -530,132 +486,134 @@ export default function PropCalcPanel() {
           </div>
         </div>
 
-        {/* Chart tabs */}
-        <div className="border border-gray-100 mb-4">
-          <div className="bg-black px-3 py-1.5 flex items-center gap-4">
-            <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812]"
-               style={{ fontFamily: "Michroma, sans-serif" }}>Performance Charts</p>
-            <div className="flex gap-1 ml-auto">
-              {(["static", "dynamic", "efficiency"] as const).map(t => (
-                <button key={t} onClick={() => setActiveTab(t)}
-                  className={`text-[8px] tracking-widest uppercase px-2 py-0.5 transition-colors ${
-                    activeTab === t ? "bg-[#ffc812] text-black" : "text-white/50 hover:text-white"
-                  }`}
-                  style={{ fontFamily: "Michroma, sans-serif" }}>{t}</button>
-              ))}
+        {/* Performance Charts + Partial Load Table — side by side */}
+        <div className="border border-gray-100">
+          {/* Shared header: chart label + tabs left | table label right */}
+          <div className="bg-black grid grid-cols-2">
+            <div className="px-3 py-1 border-r border-white/10 flex items-center gap-4">
+              <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812]"
+                 style={{ fontFamily: "Michroma, sans-serif" }}>Performance Charts</p>
+              <div className="flex gap-1 ml-auto">
+                {(["static", "dynamic", "efficiency"] as const).map(t => (
+                  <button key={t} onClick={() => setActiveTab(t)}
+                    className={`text-[8px] tracking-widest uppercase px-2 py-0.5 transition-colors ${
+                      activeTab === t ? "bg-[#ffc812] text-black" : "text-white/50 hover:text-white"
+                    }`}
+                    style={{ fontFamily: "Michroma, sans-serif" }}>{t}</button>
+                ))}
+              </div>
+            </div>
+            <div className="px-3 py-1">
+              <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812]"
+                 style={{ fontFamily: "Michroma, sans-serif" }}>
+                Partial Load — {activeTab === "dynamic" ? "Dynamic" : "Static"}
+              </p>
             </div>
           </div>
-          <div className="p-4">
-            <ResponsiveContainer width="100%" height={260}>
-              {activeTab === "static" ? (
-                <LineChart data={staticChartData} margin={{ top: 4, right: 20, left: 0, bottom: 4 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                  <XAxis dataKey="throttle" tick={{ fontSize: 9, fontFamily: "Michroma, sans-serif" }} />
-                  <YAxis tick={{ fontSize: 9, fontFamily: "Michroma, sans-serif" }} />
-                  <Tooltip contentStyle={TOOLTIP_STYLE} />
-                  <Legend wrapperStyle={{ fontSize: 9, fontFamily: "Michroma, sans-serif" }} />
-                  <Line type="monotone" dataKey="Power (W)" stroke="#ffc812" strokeWidth={2} dot={{ r: 3 }} />
-                  <Line type="monotone" dataKey="Thrust (g)" stroke="#111" strokeWidth={2} dot={{ r: 3 }} />
-                  <Line type="monotone" dataKey="Eff (%)" stroke="#22c55e" strokeWidth={2} dot={{ r: 3 }} />
-                </LineChart>
-              ) : activeTab === "dynamic" ? (
-                <LineChart data={dynamicChartData} margin={{ top: 4, right: 20, left: 0, bottom: 4 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                  <XAxis dataKey="throttle" tick={{ fontSize: 9, fontFamily: "Michroma, sans-serif" }} />
-                  <YAxis tick={{ fontSize: 9, fontFamily: "Michroma, sans-serif" }} />
-                  <Tooltip contentStyle={TOOLTIP_STYLE} />
-                  <Legend wrapperStyle={{ fontSize: 9, fontFamily: "Michroma, sans-serif" }} />
-                  <Line type="monotone" dataKey="Speed (km/h)" stroke="#3b82f6" strokeWidth={2} dot={{ r: 3 }} />
-                  <Line type="monotone" dataKey="Power (W)" stroke="#ffc812" strokeWidth={2} dot={{ r: 3 }} />
-                  <Line type="monotone" dataKey="Thrust (g)" stroke="#111" strokeWidth={2} dot={{ r: 3 }} />
-                </LineChart>
-              ) : (
-                // Efficiency map: scatter of throttle points, colored by efficiency
-                <ScatterChart margin={{ top: 4, right: 20, left: 0, bottom: 4 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                  <XAxis dataKey="rpm" name="RPM" tick={{ fontSize: 9, fontFamily: "Michroma, sans-serif" }} label={{ value: "RPM", position: "insideBottom", offset: -2, fontSize: 9 }} />
-                  <YAxis dataKey="power" name="Power (W)" tick={{ fontSize: 9, fontFamily: "Michroma, sans-serif" }} label={{ value: "W", angle: -90, position: "insideLeft", fontSize: 9 }} />
-                  <ZAxis dataKey="eff" range={[40, 400]} name="Efficiency %" />
-                  <Tooltip
-                    contentStyle={TOOLTIP_STYLE}
-                    formatter={(value: number, name: string) => [value, name]}
-                  />
-                  <Scatter name="Eff %" data={effMapData} fill="#ffc812" opacity={0.85} />
-                </ScatterChart>
-              )}
-            </ResponsiveContainer>
-            {activeTab === "efficiency" && (
-              <p className="text-[9px] text-[#808080] mt-1 text-center" style={{ fontFamily: "Lexend, sans-serif" }}>
-                Bubble size ∝ efficiency %. Larger = more efficient operating point.
-              </p>
-            )}
-          </div>
-        </div>
 
-        {/* Partial Load Table */}
-        <div className="border border-gray-100">
-          <div className="bg-black px-3 py-1.5">
-            <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812]"
-               style={{ fontFamily: "Michroma, sans-serif" }}>
-              Partial Load — {activeTab === "dynamic" ? "Dynamic" : "Static"}
-            </p>
-          </div>
-          <div className="overflow-x-auto">
-            {activeTab !== "dynamic" ? (
-              <table className="w-full text-[10px] min-w-[600px]" style={{ fontFamily: "Michroma, sans-serif" }}>
-                <thead>
-                  <tr className="bg-gray-50">
-                    {["Throttle %", "RPM", "Current A", "Voltage V", "Power W", "Eff %", "Thrust g", "g/W"].map(h => (
-                      <th key={h} className="px-3 py-2 text-left text-[8px] tracking-wider text-[#808080] font-normal">{h}</th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {result.partialLoadStatic.map((r, i) => (
-                    <tr key={i} className={i % 2 === 0 ? "bg-white" : "bg-gray-50/50"}>
-                      <td className="px-3 py-2">{r.throttlePercent.toFixed(0)}</td>
-                      <td className="px-3 py-2">{r.rpm.toFixed(0)}</td>
-                      <td className="px-3 py-2">{r.currentA.toFixed(1)}</td>
-                      <td className="px-3 py-2">{r.voltageV.toFixed(2)}</td>
-                      <td className="px-3 py-2">{r.powerW.toFixed(0)}</td>
-                      <td className={`px-3 py-2 ${r.efficiencyPercent > 90 ? "text-green-600 font-bold" : ""}`}>
-                        {r.efficiencyPercent.toFixed(1)}
-                      </td>
-                      <td className="px-3 py-2">{r.thrustG.toFixed(0)}</td>
-                      <td className="px-3 py-2">{r.specificThrustGW.toFixed(2)}</td>
+          {/* Body: chart left, table right */}
+          <div className="grid grid-cols-2 divide-x divide-gray-100">
+            {/* Chart column */}
+            <div className="p-3">
+              <ResponsiveContainer width="100%" height={200}>
+                {activeTab === "static" ? (
+                  <LineChart data={staticChartData} margin={{ top: 4, right: 20, left: 0, bottom: 4 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                    <XAxis dataKey="throttle" tick={{ fontSize: 9, fontFamily: "Michroma, sans-serif" }} />
+                    <YAxis tick={{ fontSize: 9, fontFamily: "Michroma, sans-serif" }} />
+                    <Tooltip contentStyle={TOOLTIP_STYLE} />
+                    <Legend wrapperStyle={{ fontSize: 9, fontFamily: "Michroma, sans-serif" }} />
+                    <Line type="monotone" dataKey="Power (W)" stroke="#ffc812" strokeWidth={2} dot={{ r: 3 }} />
+                    <Line type="monotone" dataKey="Thrust (g)" stroke="#111" strokeWidth={2} dot={{ r: 3 }} />
+                    <Line type="monotone" dataKey="Eff (%)" stroke="#22c55e" strokeWidth={2} dot={{ r: 3 }} />
+                  </LineChart>
+                ) : activeTab === "dynamic" ? (
+                  <LineChart data={dynamicChartData} margin={{ top: 4, right: 20, left: 0, bottom: 4 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                    <XAxis dataKey="throttle" tick={{ fontSize: 9, fontFamily: "Michroma, sans-serif" }} />
+                    <YAxis tick={{ fontSize: 9, fontFamily: "Michroma, sans-serif" }} />
+                    <Tooltip contentStyle={TOOLTIP_STYLE} />
+                    <Legend wrapperStyle={{ fontSize: 9, fontFamily: "Michroma, sans-serif" }} />
+                    <Line type="monotone" dataKey="Speed (km/h)" stroke="#3b82f6" strokeWidth={2} dot={{ r: 3 }} />
+                    <Line type="monotone" dataKey="Power (W)" stroke="#ffc812" strokeWidth={2} dot={{ r: 3 }} />
+                    <Line type="monotone" dataKey="Thrust (g)" stroke="#111" strokeWidth={2} dot={{ r: 3 }} />
+                  </LineChart>
+                ) : (
+                  <ScatterChart margin={{ top: 4, right: 20, left: 0, bottom: 4 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                    <XAxis dataKey="rpm" name="RPM" tick={{ fontSize: 9, fontFamily: "Michroma, sans-serif" }} label={{ value: "RPM", position: "insideBottom", offset: -2, fontSize: 9 }} />
+                    <YAxis dataKey="power" name="Power (W)" tick={{ fontSize: 9, fontFamily: "Michroma, sans-serif" }} label={{ value: "W", angle: -90, position: "insideLeft", fontSize: 9 }} />
+                    <ZAxis dataKey="eff" range={[40, 400]} name="Efficiency %" />
+                    <Tooltip contentStyle={TOOLTIP_STYLE} formatter={(value: number, name: string) => [value, name]} />
+                    <Scatter name="Eff %" data={effMapData} fill="#ffc812" opacity={0.85} />
+                  </ScatterChart>
+                )}
+              </ResponsiveContainer>
+              {activeTab === "efficiency" && (
+                <p className="text-[9px] text-[#808080] mt-1 text-center" style={{ fontFamily: "Lexend, sans-serif" }}>
+                  Bubble size ∝ efficiency %. Larger = more efficient operating point.
+                </p>
+              )}
+            </div>
+
+            {/* Table column */}
+            <div className="overflow-x-auto">
+              {activeTab !== "dynamic" ? (
+                <table className="w-full text-[10px]" style={{ fontFamily: "Michroma, sans-serif" }}>
+                  <thead>
+                    <tr className="bg-gray-50">
+                      {["Thr%", "RPM", "A", "V", "W", "Eff%", "g", "g/W"].map(h => (
+                        <th key={h} className="px-2 py-1.5 text-left text-[8px] tracking-wider text-[#808080] font-normal">{h}</th>
+                      ))}
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            ) : (
-              <table className="w-full text-[10px] min-w-[600px]" style={{ fontFamily: "Michroma, sans-serif" }}>
-                <thead>
-                  <tr className="bg-gray-50">
-                    {["Throttle %", "RPM", "Speed km/h", "Current A", "Power W", "Thrust g", "Wh/km"].map(h => (
-                      <th key={h} className="px-3 py-2 text-left text-[8px] tracking-wider text-[#808080] font-normal">{h}</th>
+                  </thead>
+                  <tbody>
+                    {result.partialLoadStatic.map((r, i) => (
+                      <tr key={i} className={i % 2 === 0 ? "bg-white" : "bg-gray-50/50"}>
+                        <td className="px-2 py-1.5">{r.throttlePercent.toFixed(0)}</td>
+                        <td className="px-2 py-1.5">{r.rpm.toFixed(0)}</td>
+                        <td className="px-2 py-1.5">{r.currentA.toFixed(1)}</td>
+                        <td className="px-2 py-1.5">{r.voltageV.toFixed(2)}</td>
+                        <td className="px-2 py-1.5">{r.powerW.toFixed(0)}</td>
+                        <td className={`px-2 py-1.5 ${r.efficiencyPercent > 90 ? "text-green-600 font-bold" : ""}`}>
+                          {r.efficiencyPercent.toFixed(1)}
+                        </td>
+                        <td className="px-2 py-1.5">{r.thrustG.toFixed(0)}</td>
+                        <td className="px-2 py-1.5">{r.specificThrustGW.toFixed(2)}</td>
+                      </tr>
                     ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {result.partialLoadDynamic.map((r, i) => (
-                    <tr key={i} className={i % 2 === 0 ? "bg-white" : "bg-gray-50/50"}>
-                      <td className="px-3 py-2">{r.throttlePercent.toFixed(0)}</td>
-                      <td className="px-3 py-2">{r.rpm.toFixed(0)}</td>
-                      <td className="px-3 py-2">{r.speedKmh.toFixed(1)}</td>
-                      <td className="px-3 py-2">{r.currentA.toFixed(1)}</td>
-                      <td className="px-3 py-2">{r.powerW.toFixed(0)}</td>
-                      <td className="px-3 py-2">{r.thrustG.toFixed(0)}</td>
-                      <td className="px-3 py-2">{r.energyWhKm.toFixed(2)}</td>
+                  </tbody>
+                </table>
+              ) : (
+                <table className="w-full text-[10px]" style={{ fontFamily: "Michroma, sans-serif" }}>
+                  <thead>
+                    <tr className="bg-gray-50">
+                      {["Thr%", "RPM", "km/h", "A", "W", "g", "Wh/km"].map(h => (
+                        <th key={h} className="px-2 py-1.5 text-left text-[8px] tracking-wider text-[#808080] font-normal">{h}</th>
+                      ))}
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            )}
+                  </thead>
+                  <tbody>
+                    {result.partialLoadDynamic.map((r, i) => (
+                      <tr key={i} className={i % 2 === 0 ? "bg-white" : "bg-gray-50/50"}>
+                        <td className="px-2 py-1.5">{r.throttlePercent.toFixed(0)}</td>
+                        <td className="px-2 py-1.5">{r.rpm.toFixed(0)}</td>
+                        <td className="px-2 py-1.5">{r.speedKmh.toFixed(1)}</td>
+                        <td className="px-2 py-1.5">{r.currentA.toFixed(1)}</td>
+                        <td className="px-2 py-1.5">{r.powerW.toFixed(0)}</td>
+                        <td className="px-2 py-1.5">{r.thrustG.toFixed(0)}</td>
+                        <td className="px-2 py-1.5">{r.energyWhKm.toFixed(2)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+            </div>
           </div>
         </div>
 
         {/* Environment Info Bar */}
-        <div className="mt-4 flex items-center gap-3 bg-[#ffc812]/5 border border-[#ffc812]/20 px-4 py-2.5">
+        <div className="mt-3 flex items-center gap-3 bg-[#ffc812]/5 border border-[#ffc812]/20 px-3 py-2">
           <div className="w-1 h-8 bg-[#ffc812] flex-shrink-0" />
           <p className="text-[10px] text-[#555]" style={{ fontFamily: "Lexend, sans-serif" }}>
             Air density at {result.environment.elevationM} m / {result.environment.temperatureC}°C:{" "}
@@ -667,6 +625,7 @@ export default function PropCalcPanel() {
           </p>
         </div>
       </div>
-    </div>
   );
+
+  return <SplitLayout inputs={inputsPanel} results={resultsPanel} />;
 }

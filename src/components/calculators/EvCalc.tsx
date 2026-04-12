@@ -1,4 +1,6 @@
 import { useState, useMemo } from "react";
+import { DownloadReportButton, PdfTemplateHeader } from "./PdfExport";
+import SplitLayout from "./SplitLayout";
 
 interface Warning { level: "warn" | "danger"; message: string; }
 
@@ -160,8 +162,37 @@ export default function EvCalc() {
     </div>
   );
 
-  return (
-    <div className="space-y-4">
+  const inputsPanel = (
+    <div className="space-y-3">
+      <Section title="Vehicle Specs">
+        <Field label="Mass" value={inputs.massKg} onChange={(v:any) => setInputs({...inputs, massKg: v})} unit="kg" />
+        <Field label="Frontal Area" value={inputs.frontalAreaM2} onChange={(v:any) => setInputs({...inputs, frontalAreaM2: v})} unit="m²" />
+        <Field label="Drag Coeff" value={inputs.dragCoeff} onChange={(v:any) => setInputs({...inputs, dragCoeff: v})} />
+        <Field label="Rolling Res" value={inputs.rollingResCoeff} step={0.001} onChange={(v:any) => setInputs({...inputs, rollingResCoeff: v})} />
+        <Field label="Drivetrain Eff" value={inputs.drivetrainEfficiency} onChange={(v:any) => setInputs({...inputs, drivetrainEfficiency: v})} unit="%" />
+        <Field label="Regen Eff" value={inputs.regenEfficiency} onChange={(v:any) => setInputs({...inputs, regenEfficiency: v})} unit="%" />
+      </Section>
+      <Section title="Battery & Climate">
+        <Field label="Capacity" value={inputs.batteryCapacityKwh} onChange={(v:any) => setInputs({...inputs, batteryCapacityKwh: v})} unit="kWh" />
+        <Field label="Usable Cap" value={inputs.usableBatteryPercent} onChange={(v:any) => setInputs({...inputs, usableBatteryPercent: v})} unit="%" />
+        <Field label="Ambient Temp" value={inputs.ambientTempC} onChange={(v:any) => setInputs({...inputs, ambientTempC: v})} unit="°C" />
+        <Field label="Aux Power" value={inputs.auxiliaryPowerW} onChange={(v:any) => setInputs({...inputs, auxiliaryPowerW: v})} unit="W" />
+      </Section>
+      <Section title="Trip">
+        <Field label="Cruise Speed" value={inputs.cruiseSpeedKmh} onChange={(v:any) => setInputs({...inputs, cruiseSpeedKmh: v})} unit="km/h" />
+        <Field label="Elevation" value={inputs.elevationChangeM} onChange={(v:any) => setInputs({...inputs, elevationChangeM: v})} unit="m" />
+      </Section>
+      <Section title="Charging">
+        <Field label="Charger Power" value={inputs.chargerPowerKw} onChange={(v:any) => setInputs({...inputs, chargerPowerKw: v})} unit="kW" />
+        <Field label="Start SOC" value={inputs.chargeStartSoc} onChange={(v:any) => setInputs({...inputs, chargeStartSoc: v})} unit="%" />
+        <Field label="End SOC" value={inputs.chargeEndSoc} onChange={(v:any) => setInputs({...inputs, chargeEndSoc: v})} unit="%" />
+      </Section>
+    </div>
+  );
+
+  const resultsPanel = (
+    <div id="evcalc-report-area" className="relative space-y-4">
+      <PdfTemplateHeader calculatorName="Electric Vehicle Range" />
       {warnings.length > 0 && (
         <div className="flex flex-wrap gap-2">
           {warnings.map((w, i) => (
@@ -171,34 +202,11 @@ export default function EvCalc() {
         </div>
       )}
 
-      {/* ── Compact Inputs ── */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
-        <Section title="Vehicle Specs">
-          <Field label="Mass" value={inputs.massKg} onChange={(v:any) => setInputs({...inputs, massKg: v})} unit="kg" />
-          <Field label="Frontal Area" value={inputs.frontalAreaM2} onChange={(v:any) => setInputs({...inputs, frontalAreaM2: v})} unit="m²" />
-          <Field label="Drag Coeff" value={inputs.dragCoeff} onChange={(v:any) => setInputs({...inputs, dragCoeff: v})} />
-          <Field label="Rolling Res" value={inputs.rollingResCoeff} step={0.001} onChange={(v:any) => setInputs({...inputs, rollingResCoeff: v})} />
-          <Field label="Drivetrain Eff" value={inputs.drivetrainEfficiency} onChange={(v:any) => setInputs({...inputs, drivetrainEfficiency: v})} unit="%" />
-          <Field label="Regen Eff" value={inputs.regenEfficiency} onChange={(v:any) => setInputs({...inputs, regenEfficiency: v})} unit="%" />
-        </Section>
-        <Section title="Battery & Climate">
-          <Field label="Capacity" value={inputs.batteryCapacityKwh} onChange={(v:any) => setInputs({...inputs, batteryCapacityKwh: v})} unit="kWh" />
-          <Field label="Usable Cap" value={inputs.usableBatteryPercent} onChange={(v:any) => setInputs({...inputs, usableBatteryPercent: v})} unit="%" />
-          <Field label="Ambient Temp" value={inputs.ambientTempC} onChange={(v:any) => setInputs({...inputs, ambientTempC: v})} unit="°C" />
-          <Field label="Aux Power" value={inputs.auxiliaryPowerW} onChange={(v:any) => setInputs({...inputs, auxiliaryPowerW: v})} unit="W" />
-        </Section>
-        <Section title="Trip">
-          <Field label="Cruise Speed" value={inputs.cruiseSpeedKmh} onChange={(v:any) => setInputs({...inputs, cruiseSpeedKmh: v})} unit="km/h" />
-          <Field label="Elevation" value={inputs.elevationChangeM} onChange={(v:any) => setInputs({...inputs, elevationChangeM: v})} unit="m" />
-        </Section>
-        <Section title="Charging">
-          <Field label="Charger Power" value={inputs.chargerPowerKw} onChange={(v:any) => setInputs({...inputs, chargerPowerKw: v})} unit="kW" />
-          <Field label="Start SOC" value={inputs.chargeStartSoc} onChange={(v:any) => setInputs({...inputs, chargeStartSoc: v})} unit="%" />
-          <Field label="End SOC" value={inputs.chargeEndSoc} onChange={(v:any) => setInputs({...inputs, chargeEndSoc: v})} unit="%" />
-        </Section>
+      {/* ── Results Summary ── */}
+      <div className="flex items-center justify-between mb-3 border-t border-gray-100 pt-4">
+        <h3 className="text-xs uppercase font-bold tracking-widest pdf-no-hide" style={{ fontFamily: "Michroma, sans-serif" }}>Results Summary</h3>
+        <DownloadReportButton targetElementId="calculator-capture-area" filename="WelkinRim_EV_Report.pdf" />
       </div>
-
-      {/* ── Results ── */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <StatCard label="Consumption" value={result.consumption_Wh_km.toFixed(1)} unit="Wh/km" />
         <StatCard label="Est. Range" value={result.rangeKm.toFixed(0)} unit="km" warn={result.rangeKm < 100} />
@@ -211,4 +219,6 @@ export default function EvCalc() {
       </div>
     </div>
   );
+
+  return <SplitLayout inputs={inputsPanel} results={resultsPanel} />;
 }

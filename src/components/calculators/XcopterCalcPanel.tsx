@@ -13,14 +13,14 @@
 
 import { useState, useMemo, useCallback } from "react";
 import {
-  LineChart, Line,
-  BarChart, Bar,
-  ScatterChart, Scatter,
-  XAxis, YAxis, ZAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
+  LineChart, Line, BarChart, Bar, ScatterChart, Scatter,
+  XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ZAxis
 } from "recharts";
 import GaugeMeter from "./GaugeMeter";
 import { calcXcopter, XcopterCalcInput, XcopterCalcResult } from "@/lib/calculators/xcopterCalc";
 import { useMotorPresets, getPresetById } from "@/hooks/useMotorPresets";
+import { DownloadReportButton, PdfTemplateHeader } from "./PdfExport";
+import SplitLayout from "./SplitLayout";
 
 // ─────────────────────────────────────────────────────────────
 // Types
@@ -81,43 +81,7 @@ function deriveWarnings(result: XcopterCalcResult, inputs: XcopterCalcInput, cor
   return w;
 }
 
-// ─────────────────────────────────────────────────────────────
-// CSV Export
-// ─────────────────────────────────────────────────────────────
-function exportCSV(result: XcopterCalcResult, inputs: XcopterCalcInput, correctedFlightMin: number) {
-  const rows: string[] = [
-    "XcopterCalc Export",
-    `Rotors,${inputs.numRotors}`,
-    `AUW (g),${inputs.auwG}`,
-    `Payload (g),${inputs.payloadG}`,
-    `Battery,${inputs.batteryCells}S ${inputs.batteryCapacityMah}mAh`,
-    `Motor KV,${inputs.motorKv}`,
-    `Prop,${inputs.propDiameterInch}×${inputs.propPitchInch}`,
-    "",
-    "Key Results",
-    `Hover Flight Time (min),${correctedFlightMin.toFixed(1)}`,
-    `Total Thrust (g),${result.performance.totalThrustG.toFixed(0)}`,
-    `TWR,${result.performance.thrustWeightRatio.toFixed(2)}`,
-    `Hover Throttle (%),${result.hover.throttlePercent.toFixed(1)}`,
-    `Hover Current per Motor (A),${result.hover.currentA.toFixed(1)}`,
-    `Hover Power (W),${result.hover.powerW.toFixed(0)}`,
-    `Disc Loading (N/m²),${result.hover.discLoadingNm2.toFixed(1)}`,
-    `Est. Range (km),${result.performance.estimatedRangeKm.toFixed(1)}`,
-    "",
-    "Throttle Curve (per rotor)",
-    "Throttle%,RPM,Thrust g,Power W,Current A",
-    ...result.throttleCurve.map(r =>
-      `${r.throttle.toFixed(0)},${r.rpm.toFixed(0)},${r.thrustG.toFixed(0)},${r.powerW.toFixed(0)},${r.currentA.toFixed(1)}`
-    ),
-  ];
-  const blob = new Blob([rows.join("\n")], { type: "text/csv" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url; a.download = "xcopter_results.csv"; a.click();
-  URL.revokeObjectURL(url);
-}
-
-// ─────────────────────────────────────────────────────────────
+// Removed exportCSV in favor of PdfExport// ─────────────────────────────────────────────────────────────
 // Shared UI — identical API to PropCalcPanel for consistency
 // ─────────────────────────────────────────────────────────────
 const TOOLTIP_STYLE: React.CSSProperties = {
@@ -339,9 +303,8 @@ export default function XcopterCalcPanel() {
     };
   }), [result, inputs]);
 
-  return (
-    <div className="space-y-4">
-      {/* ── COMPACT INPUTS ──────────────────────────────────────── */}
+  const inputsPanel = (
+    <div className="space-y-3">
       {/* Motor Preset */}
       <div className="border border-[#ffc812]/30 bg-[#fffbe6] px-3 py-2 flex items-center gap-3">
         <label className="text-[9px] tracking-widest uppercase text-[#ffc812] font-bold whitespace-nowrap"
@@ -361,85 +324,80 @@ export default function XcopterCalcPanel() {
         </select>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-3">
-        <CollapsibleSection title="Multirotor Config" defaultOpen>
-          <Field label="# Rotors" id="xnr" value={inputs.numRotors} onChange={set("numRotors")} step="1"
-                 hint="Number of rotors (4 = quad, 6 = hex, 8 = octo)." />
-          <Field label="AUW (g)" id="xaw" value={inputs.auwG} onChange={set("auwG")}
-                 hint="All-up weight without payload." />
-          <Field label="Payload (g)" id="xpg" value={inputs.payloadG} onChange={set("payloadG")}
-                 hint="Additional carried weight." className="col-span-2" />
-        </CollapsibleSection>
+      <CollapsibleSection title="Multirotor Config" defaultOpen>
+        <Field label="# Rotors" id="xnr" value={inputs.numRotors} onChange={set("numRotors")} step="1"
+               hint="Number of rotors (4 = quad, 6 = hex, 8 = octo)." />
+        <Field label="AUW (g)" id="xaw" value={inputs.auwG} onChange={set("auwG")}
+               hint="All-up weight without payload." />
+        <Field label="Payload (g)" id="xpg" value={inputs.payloadG} onChange={set("payloadG")}
+               hint="Additional carried weight." className="col-span-2" />
+      </CollapsibleSection>
 
-        <CollapsibleSection title="Battery" defaultOpen>
-          <Field label="Cells (S)" id="xbc" value={inputs.batteryCells} onChange={set("batteryCells")} step="1"
-                 hint="LiPo cells in series. Nominal voltage = cells × 3.7V." />
-          <Field label="Capacity (mAh)" id="xbm" value={inputs.batteryCapacityMah} onChange={set("batteryCapacityMah")} step="100"
-                 hint="Battery energy capacity." />
-          <Field label="Max Disch (%)" id="xbd" value={inputs.batteryMaxDischarge * 100}
-                 onChange={v => set("batteryMaxDischarge")(v / 100)}
-                 hint="Usable proportion. 80% is safe for LiPo." />
-          <Field label="Resist (mΩ/cell)" id="xbr" value={inputs.batteryResistanceMohm} onChange={set("batteryResistanceMohm")}
-                 hint="Internal resistance per cell." />
-        </CollapsibleSection>
+      <CollapsibleSection title="Battery" defaultOpen>
+        <Field label="Cells (S)" id="xbc" value={inputs.batteryCells} onChange={set("batteryCells")} step="1"
+               hint="LiPo cells in series. Nominal voltage = cells × 3.7V." />
+        <Field label="Capacity (mAh)" id="xbm" value={inputs.batteryCapacityMah} onChange={set("batteryCapacityMah")} step="100"
+               hint="Battery energy capacity." />
+        <Field label="Max Disch (%)" id="xbd" value={inputs.batteryMaxDischarge * 100}
+               onChange={v => set("batteryMaxDischarge")(v / 100)}
+               hint="Usable proportion. 80% is safe for LiPo." />
+        <Field label="Resist (mΩ/cell)" id="xbr" value={inputs.batteryResistanceMohm} onChange={set("batteryResistanceMohm")}
+               hint="Internal resistance per cell." />
+      </CollapsibleSection>
 
-        <CollapsibleSection title="Motor" defaultOpen>
-          <Field label="KV (rpm/V)" id="xkv" value={inputs.motorKv} onChange={set("motorKv")} step="1"
-                 hint="Motor velocity constant." />
-          <Field label="Io (A)" id="xio" value={inputs.motorIo} onChange={set("motorIo")} step="0.1"
-                 hint="No-load current." />
-          <Field label="Rm (mΩ)" id="xrm" value={inputs.motorRmMohm} onChange={set("motorRmMohm")}
-                 hint="Winding resistance." />
-          <Field label="Max Curr (A)" id="xmc" value={inputs.motorMaxCurrentA} onChange={set("motorMaxCurrentA")}
-                 hint="Continuous current limit." />
-        </CollapsibleSection>
+      <CollapsibleSection title="Motor" defaultOpen>
+        <Field label="KV (rpm/V)" id="xkv" value={inputs.motorKv} onChange={set("motorKv")} step="1"
+               hint="Motor velocity constant." />
+        <Field label="Io (A)" id="xio" value={inputs.motorIo} onChange={set("motorIo")} step="0.1"
+               hint="No-load current." />
+        <Field label="Rm (mΩ)" id="xrm" value={inputs.motorRmMohm} onChange={set("motorRmMohm")}
+               hint="Winding resistance." />
+        <Field label="Max Curr (A)" id="xmc" value={inputs.motorMaxCurrentA} onChange={set("motorMaxCurrentA")}
+               hint="Continuous current limit." />
+      </CollapsibleSection>
 
-        <CollapsibleSection title="Propeller" defaultOpen>
-          <Field label="Dia (inch)" id="xpd" value={inputs.propDiameterInch} onChange={set("propDiameterInch")} step="0.5"
-                 hint="Propeller diameter." />
-          <Field label="Pitch (inch)" id="xpp" value={inputs.propPitchInch} onChange={set("propPitchInch")} step="0.1"
-                 hint="Theoretical advance per revolution." />
-          <Field label="CT" id="xct" value={inputs.ct} onChange={set("ct")} step="0.005"
-                 hint="Thrust coefficient. Typical: 0.09–0.14." />
-          <Field label="CP" id="xcp" value={inputs.cp} onChange={set("cp")} step="0.005"
-                 hint="Power coefficient. Typical: 0.04–0.07." />
-        </CollapsibleSection>
+      <CollapsibleSection title="Propeller" defaultOpen>
+        <Field label="Dia (inch)" id="xpd" value={inputs.propDiameterInch} onChange={set("propDiameterInch")} step="0.5"
+               hint="Propeller diameter." />
+        <Field label="Pitch (inch)" id="xpp" value={inputs.propPitchInch} onChange={set("propPitchInch")} step="0.1"
+               hint="Theoretical advance per revolution." />
+        <Field label="CT" id="xct" value={inputs.ct} onChange={set("ct")} step="0.005"
+               hint="Thrust coefficient. Typical: 0.09–0.14." />
+        <Field label="CP" id="xcp" value={inputs.cp} onChange={set("cp")} step="0.005"
+               hint="Power coefficient. Typical: 0.04–0.07." />
+      </CollapsibleSection>
 
-        <CollapsibleSection title="Environment" defaultOpen={false}>
-          <Field label="Elevation (m)" id="xel" value={inputs.elevationM} onChange={set("elevationM")}
-                 hint="Flight altitude above sea level." />
-          <Field label="Temp (°C)" id="xtc" value={inputs.temperatureC} onChange={set("temperatureC")}
-                 hint="Ambient air temperature." />
-          <Field label="Pressure (hPa)" id="xph" value={inputs.pressureHpa} onChange={set("pressureHpa")}
-                 hint="Local barometric pressure. ISA = 1013.25 hPa." />
-        </CollapsibleSection>
-      </div>
+      <CollapsibleSection title="Environment" defaultOpen={false}>
+        <Field label="Elevation (m)" id="xel" value={inputs.elevationM} onChange={set("elevationM")}
+               hint="Flight altitude above sea level." />
+        <Field label="Temp (°C)" id="xtc" value={inputs.temperatureC} onChange={set("temperatureC")}
+               hint="Ambient air temperature." />
+        <Field label="Pressure (hPa)" id="xph" value={inputs.pressureHpa} onChange={set("pressureHpa")}
+               hint="Local barometric pressure. ISA = 1013.25 hPa." />
+      </CollapsibleSection>
+    </div>
+  );
 
-      {/* ── RESULTS ──────────────────────────────────────── */}
-      <div>
+  const resultsPanel = (
+      <div id="xcopter-report-area" className="relative">
+        <PdfTemplateHeader calculatorName="Multi-Rotor Drive" />
         {/* Action bar */}
-        <div className="flex items-center justify-between mb-3">
-          <p className="text-[9px] tracking-[0.3em] uppercase"
+        <div className="flex items-center justify-between mb-2">
+          <p className="text-[9px] tracking-[0.3em] uppercase pdf-no-hide"
              style={{ fontFamily: "Michroma, sans-serif" }}>
             {warnings.length > 0
               ? <span className="text-amber-500">{warnings.length} alert{warnings.length > 1 ? "s" : ""} — review below</span>
               : <span className="text-green-600">✓ All values within normal range</span>}
           </p>
-          <button
-            onClick={() => exportCSV(result, inputs, correctedHoverFlightMin)}
-            className="flex items-center gap-1.5 border border-gray-200 px-3 py-1.5 text-[9px] tracking-widest uppercase hover:bg-black hover:text-[#ffc812] hover:border-black transition-colors"
-            style={{ fontFamily: "Michroma, sans-serif" }}
-          >
-            ↓ Export CSV
-          </button>
+          <DownloadReportButton targetElementId="calculator-capture-area" filename="WelkinRim_Xcopter_Report.pdf" />
         </div>
 
         {/* Warnings */}
         <WarningBar warnings={warnings} />
 
         {/* Gauges */}
-        <div className="border border-gray-100 p-4 mb-4">
-          <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812] mb-4"
+        <div className="border border-gray-100 p-2.5 mb-2">
+          <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812] mb-3"
              style={{ fontFamily: "Michroma, sans-serif" }}>Key Metrics</p>
           <div className="grid grid-cols-3 md:grid-cols-6 gap-3 justify-items-center">
             <GaugeMeter value={result.hover.rpm} max={20000} label="Hover RPM" unit="rpm" yellowAt={0.60} redAt={0.80} />
@@ -455,7 +413,7 @@ export default function XcopterCalcPanel() {
         </div>
 
         {/* Stat cards */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-1.5 mb-3">
           <StatCard label="Total Thrust" value={`${result.performance.totalThrustG.toFixed(0)} g`}
                     sub={`${correctedTWR.toFixed(2)}:1 TWR`}
                     warn={correctedTWR < 2.0} />
@@ -517,106 +475,112 @@ export default function XcopterCalcPanel() {
           </div>
         </div>
 
-        {/* Charts */}
-        <div className="border border-gray-100 mb-4">
-          <div className="bg-black px-3 py-1.5 flex items-center gap-4">
-            <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812]"
-               style={{ fontFamily: "Michroma, sans-serif" }}>Performance Charts</p>
-            <div className="flex gap-1 ml-auto">
-              {(["throttle", "flighttime", "efficiency"] as const).map(t => (
-                <button key={t} onClick={() => setActiveChart(t)}
-                  className={`text-[8px] tracking-widest uppercase px-2 py-0.5 transition-colors ${
-                    activeChart === t ? "bg-[#ffc812] text-black" : "text-white/50 hover:text-white"
-                  }`}
-                  style={{ fontFamily: "Michroma, sans-serif" }}>
-                  {t === "flighttime" ? "flight time" : t}
-                </button>
-              ))}
+        {/* Performance Charts + Throttle Curve Table — side by side */}
+        <div className="border border-gray-100">
+          {/* Shared header */}
+          <div className="bg-black grid grid-cols-2">
+            <div className="px-3 py-1 border-r border-white/10 flex items-center gap-4">
+              <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812]"
+                 style={{ fontFamily: "Michroma, sans-serif" }}>Performance Charts</p>
+              <div className="flex gap-1 ml-auto">
+                {(["throttle", "flighttime", "efficiency"] as const).map(t => (
+                  <button key={t} onClick={() => setActiveChart(t)}
+                    className={`text-[8px] tracking-widest uppercase px-2 py-0.5 transition-colors ${
+                      activeChart === t ? "bg-[#ffc812] text-black" : "text-white/50 hover:text-white"
+                    }`}
+                    style={{ fontFamily: "Michroma, sans-serif" }}>
+                    {t === "flighttime" ? "flight time" : t}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="px-3 py-1">
+              <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812]"
+                 style={{ fontFamily: "Michroma, sans-serif" }}>Throttle Curve (per rotor)</p>
             </div>
           </div>
-          <div className="p-4">
-            <ResponsiveContainer width="100%" height={260}>
-              {activeChart === "throttle" ? (
-                <LineChart data={throttleData} margin={{ top: 4, right: 20, left: 0, bottom: 4 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                  <XAxis dataKey="throttle" tick={{ fontSize: 9, fontFamily: "Michroma, sans-serif" }} />
-                  <YAxis tick={{ fontSize: 9, fontFamily: "Michroma, sans-serif" }} />
-                  <Tooltip contentStyle={TOOLTIP_STYLE} />
-                  <Legend wrapperStyle={{ fontSize: 9, fontFamily: "Michroma, sans-serif" }} />
-                  <Line type="monotone" dataKey="Thrust (g)" stroke="#ffc812" strokeWidth={2} dot={{ r: 3 }} />
-                  <Line type="monotone" dataKey="Power (W)" stroke="#111" strokeWidth={2} dot={{ r: 3 }} />
-                  <Line type="monotone" dataKey="Current (A)" stroke="#22c55e" strokeWidth={2} dot={{ r: 3 }} />
-                </LineChart>
-              ) : activeChart === "flighttime" ? (
-                <BarChart data={flightTimeData} margin={{ top: 4, right: 20, left: 0, bottom: 4 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                  <XAxis dataKey="mode" tick={{ fontSize: 9, fontFamily: "Michroma, sans-serif" }} />
-                  <YAxis tick={{ fontSize: 9, fontFamily: "Michroma, sans-serif" }} unit=" min" />
-                  <Tooltip contentStyle={TOOLTIP_STYLE} />
-                  <Bar dataKey="minutes" fill="#ffc812" radius={[2, 2, 0, 0]} label={{ position: "top", fontSize: 9, fontFamily: "Michroma, sans-serif" }} />
-                </BarChart>
-              ) : (
-                <ScatterChart margin={{ top: 4, right: 20, left: 0, bottom: 4 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                  <XAxis dataKey="throttle" name="Throttle %" tick={{ fontSize: 9, fontFamily: "Michroma, sans-serif" }}
-                         label={{ value: "Throttle %", position: "insideBottom", offset: -2, fontSize: 9 }} />
-                  <YAxis dataKey="power" name="Power (W)" tick={{ fontSize: 9, fontFamily: "Michroma, sans-serif" }}
-                         label={{ value: "W", angle: -90, position: "insideLeft", fontSize: 9 }} />
-                  <ZAxis dataKey="eff" range={[30, 400]} name="Efficiency %" />
-                  <Tooltip contentStyle={TOOLTIP_STYLE} formatter={(v: number, n: string) => [v, n]} />
-                  <Scatter name="Eff %" data={effMapData} fill="#ffc812" opacity={0.85} />
-                </ScatterChart>
-              )}
-            </ResponsiveContainer>
-            {activeChart === "efficiency" && (
-              <p className="text-[9px] text-[#808080] mt-1 text-center" style={{ fontFamily: "Lexend, sans-serif" }}>
-                Bubble size ∝ propulsive efficiency %. Larger = better operating point.
-              </p>
-            )}
-          </div>
-        </div>
 
-        {/* Throttle curve table */}
-        <div className="border border-gray-100">
-          <div className="bg-black px-3 py-1.5">
-            <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812]"
-               style={{ fontFamily: "Michroma, sans-serif" }}>Throttle Curve (per rotor)</p>
-          </div>
-          <div className="overflow-x-auto">
-            <table className="w-full text-[10px] min-w-[500px]" style={{ fontFamily: "Michroma, sans-serif" }}>
-              <thead>
-                <tr className="bg-gray-50">
-                  {["Throttle %", "RPM", "Thrust g", "Power W", "Current A", "g/W"].map(h => (
-                    <th key={h} className="px-3 py-2 text-left text-[8px] tracking-wider text-[#808080] font-normal">{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {result.throttleCurve.map((r, i) => {
-                  const gW = r.powerW > 0 ? r.thrustG / r.powerW : 0;
-                  const isHover = Math.abs(r.throttle - result.hover.throttlePercent) < 5;
-                  return (
-                    <tr key={i} className={isHover ? "bg-[#ffc812]/10 font-bold" : i % 2 === 0 ? "bg-white" : "bg-gray-50/50"}>
-                      <td className="px-3 py-2">{r.throttle.toFixed(0)}{isHover ? " ← hover" : ""}</td>
-                      <td className="px-3 py-2">{r.rpm.toFixed(0)}</td>
-                      <td className="px-3 py-2">{r.thrustG.toFixed(0)}</td>
-                      <td className="px-3 py-2">{r.powerW.toFixed(0)}</td>
-                      <td className={`px-3 py-2 ${r.currentA > inputs.motorMaxCurrentA ? "text-red-500" : ""}`}>
-                        {r.currentA.toFixed(1)}
-                      </td>
-                      <td className={`px-3 py-2 ${gW > 8 ? "text-green-600 font-bold" : ""}`}>
-                        {gW.toFixed(2)}
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+          {/* Body: chart left, table right */}
+          <div className="grid grid-cols-2 divide-x divide-gray-100">
+            {/* Chart column */}
+            <div className="p-3">
+              <ResponsiveContainer width="100%" height={200}>
+                {activeChart === "throttle" ? (
+                  <LineChart data={throttleData} margin={{ top: 4, right: 20, left: 0, bottom: 4 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                    <XAxis dataKey="throttle" tick={{ fontSize: 9, fontFamily: "Michroma, sans-serif" }} />
+                    <YAxis tick={{ fontSize: 9, fontFamily: "Michroma, sans-serif" }} />
+                    <Tooltip contentStyle={TOOLTIP_STYLE} />
+                    <Legend wrapperStyle={{ fontSize: 9, fontFamily: "Michroma, sans-serif" }} />
+                    <Line type="monotone" dataKey="Thrust (g)" stroke="#ffc812" strokeWidth={2} dot={{ r: 3 }} />
+                    <Line type="monotone" dataKey="Power (W)" stroke="#111" strokeWidth={2} dot={{ r: 3 }} />
+                    <Line type="monotone" dataKey="Current (A)" stroke="#22c55e" strokeWidth={2} dot={{ r: 3 }} />
+                  </LineChart>
+                ) : activeChart === "flighttime" ? (
+                  <BarChart data={flightTimeData} margin={{ top: 4, right: 20, left: 0, bottom: 4 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                    <XAxis dataKey="mode" tick={{ fontSize: 9, fontFamily: "Michroma, sans-serif" }} />
+                    <YAxis tick={{ fontSize: 9, fontFamily: "Michroma, sans-serif" }} unit=" min" />
+                    <Tooltip contentStyle={TOOLTIP_STYLE} />
+                    <Bar dataKey="minutes" fill="#ffc812" radius={[2, 2, 0, 0]} label={{ position: "top", fontSize: 9, fontFamily: "Michroma, sans-serif" }} />
+                  </BarChart>
+                ) : (
+                  <ScatterChart margin={{ top: 4, right: 20, left: 0, bottom: 4 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                    <XAxis dataKey="throttle" name="Throttle %" tick={{ fontSize: 9, fontFamily: "Michroma, sans-serif" }}
+                           label={{ value: "Throttle %", position: "insideBottom", offset: -2, fontSize: 9 }} />
+                    <YAxis dataKey="power" name="Power (W)" tick={{ fontSize: 9, fontFamily: "Michroma, sans-serif" }}
+                           label={{ value: "W", angle: -90, position: "insideLeft", fontSize: 9 }} />
+                    <ZAxis dataKey="eff" range={[30, 400]} name="Efficiency %" />
+                    <Tooltip contentStyle={TOOLTIP_STYLE} formatter={(v: number, n: string) => [v, n]} />
+                    <Scatter name="Eff %" data={effMapData} fill="#ffc812" opacity={0.85} />
+                  </ScatterChart>
+                )}
+              </ResponsiveContainer>
+              {activeChart === "efficiency" && (
+                <p className="text-[9px] text-[#808080] mt-1 text-center" style={{ fontFamily: "Lexend, sans-serif" }}>
+                  Bubble size ∝ propulsive efficiency %. Larger = better operating point.
+                </p>
+              )}
+            </div>
+
+            {/* Table column */}
+            <div className="overflow-x-auto">
+              <table className="w-full text-[10px]" style={{ fontFamily: "Michroma, sans-serif" }}>
+                <thead>
+                  <tr className="bg-gray-50">
+                    {["Thr%", "RPM", "g", "W", "A", "g/W"].map(h => (
+                      <th key={h} className="px-2 py-1.5 text-left text-[8px] tracking-wider text-[#808080] font-normal">{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {result.throttleCurve.map((r, i) => {
+                    const gW = r.powerW > 0 ? r.thrustG / r.powerW : 0;
+                    const isHover = Math.abs(r.throttle - result.hover.throttlePercent) < 5;
+                    return (
+                      <tr key={i} className={isHover ? "bg-[#ffc812]/10 font-bold" : i % 2 === 0 ? "bg-white" : "bg-gray-50/50"}>
+                        <td className="px-2 py-1.5">{r.throttle.toFixed(0)}{isHover ? " ←" : ""}</td>
+                        <td className="px-2 py-1.5">{r.rpm.toFixed(0)}</td>
+                        <td className="px-2 py-1.5">{r.thrustG.toFixed(0)}</td>
+                        <td className="px-2 py-1.5">{r.powerW.toFixed(0)}</td>
+                        <td className={`px-2 py-1.5 ${r.currentA > inputs.motorMaxCurrentA ? "text-red-500" : ""}`}>
+                          {r.currentA.toFixed(1)}
+                        </td>
+                        <td className={`px-2 py-1.5 ${gW > 8 ? "text-green-600 font-bold" : ""}`}>
+                          {gW.toFixed(2)}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
 
         {/* Environment / summary bar */}
-        <div className="mt-4 flex items-center gap-3 bg-[#ffc812]/5 border border-[#ffc812]/20 px-4 py-2.5">
+        <div className="mt-3 flex items-center gap-3 bg-[#ffc812]/5 border border-[#ffc812]/20 px-3 py-2">
           <div className="w-1 h-8 bg-[#ffc812] flex-shrink-0" />
           <p className="text-[10px] text-[#555]" style={{ fontFamily: "Lexend, sans-serif" }}>
             Air density: <strong className="text-black">{result.environment?.airDensityKgm3?.toFixed(4) ?? "—"} kg/m³</strong>
@@ -626,6 +590,7 @@ export default function XcopterCalcPanel() {
           </p>
         </div>
       </div>
-    </div>
   );
+
+  return <SplitLayout inputs={inputsPanel} results={resultsPanel} />;
 }

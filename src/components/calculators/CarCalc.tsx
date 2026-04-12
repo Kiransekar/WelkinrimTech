@@ -1,4 +1,6 @@
 import { useState, useMemo } from "react";
+import { DownloadReportButton, PdfTemplateHeader } from "./PdfExport";
+import SplitLayout from "./SplitLayout";
 
 interface Warning { level: "warn" | "danger"; message: string; }
 
@@ -149,8 +151,33 @@ export default function CarCalc() {
     </div>
   );
 
-  return (
-    <div className="space-y-4">
+  const inputsPanel = (
+    <div className="space-y-3">
+      <Section title="Vehicle">
+        <Field label="Weight" value={inputs.carWeightWeightG} onChange={(v:any) => setInputs({...inputs, carWeightWeightG: v})} unit="g" />
+        <Field label="Wheel Diam" value={inputs.wheelDiameterMm} onChange={(v:any) => setInputs({...inputs, wheelDiameterMm: v})} unit="mm" />
+        <Field label="Frontal Area" value={inputs.frontalAreaDm2} onChange={(v:any) => setInputs({...inputs, frontalAreaDm2: v})} unit="dm²" />
+        <Field label="Drag Coeff" value={inputs.dragCoeff} onChange={(v:any) => setInputs({...inputs, dragCoeff: v})} />
+        <Field label="Rolling Res" value={inputs.rollingResistanceCoeff} step={0.001} onChange={(v:any) => setInputs({...inputs, rollingResistanceCoeff: v})} />
+      </Section>
+      <Section title="Drivetrain">
+        <Field label="Pinion Teeth" value={inputs.pinionTeeth} onChange={(v:any) => setInputs({...inputs, pinionTeeth: v})} />
+        <Field label="Spur Teeth" value={inputs.spurTeeth} onChange={(v:any) => setInputs({...inputs, spurTeeth: v})} />
+        <Field label="Internal Ratio" value={inputs.internalGearRatio} onChange={(v:any) => setInputs({...inputs, internalGearRatio: v})} unit=":1" />
+        <Field label="Efficiency" value={inputs.drivetrainEfficiency} onChange={(v:any) => setInputs({...inputs, drivetrainEfficiency: v})} unit="%" />
+      </Section>
+      <Section title="Motor & Battery">
+        <Field label="Cells (S)" value={inputs.batteryCells} onChange={(v:any) => setInputs({...inputs, batteryCells: v})} />
+        <Field label="Capacity" value={inputs.batteryCapacityMah} onChange={(v:any) => setInputs({...inputs, batteryCapacityMah: v})} unit="mAh" />
+        <Field label="Motor KV" value={inputs.motorKv} onChange={(v:any) => setInputs({...inputs, motorKv: v})} unit="rpm/V" />
+        <Field label="Target Accel" value={inputs.accelerationTargetTimeS} onChange={(v:any) => setInputs({...inputs, accelerationTargetTimeS: v})} unit="s" />
+      </Section>
+    </div>
+  );
+
+  const resultsPanel = (
+    <div id="carcalc-report-area" className="relative space-y-4">
+      <PdfTemplateHeader calculatorName="RC Car Drive" />
       {warnings.length > 0 && (
         <div className="flex flex-wrap gap-2">
           {warnings.map((w, i) => (
@@ -160,30 +187,11 @@ export default function CarCalc() {
         </div>
       )}
 
-      {/* ── Compact Inputs ── */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-        <Section title="Vehicle">
-          <Field label="Weight" value={inputs.carWeightWeightG} onChange={(v:any) => setInputs({...inputs, carWeightWeightG: v})} unit="g" />
-          <Field label="Wheel Diam" value={inputs.wheelDiameterMm} onChange={(v:any) => setInputs({...inputs, wheelDiameterMm: v})} unit="mm" />
-          <Field label="Frontal Area" value={inputs.frontalAreaDm2} onChange={(v:any) => setInputs({...inputs, frontalAreaDm2: v})} unit="dm²" />
-          <Field label="Drag Coeff" value={inputs.dragCoeff} onChange={(v:any) => setInputs({...inputs, dragCoeff: v})} />
-          <Field label="Rolling Res" value={inputs.rollingResistanceCoeff} step={0.001} onChange={(v:any) => setInputs({...inputs, rollingResistanceCoeff: v})} />
-        </Section>
-        <Section title="Drivetrain">
-          <Field label="Pinion Teeth" value={inputs.pinionTeeth} onChange={(v:any) => setInputs({...inputs, pinionTeeth: v})} />
-          <Field label="Spur Teeth" value={inputs.spurTeeth} onChange={(v:any) => setInputs({...inputs, spurTeeth: v})} />
-          <Field label="Internal Ratio" value={inputs.internalGearRatio} onChange={(v:any) => setInputs({...inputs, internalGearRatio: v})} unit=":1" />
-          <Field label="Efficiency" value={inputs.drivetrainEfficiency} onChange={(v:any) => setInputs({...inputs, drivetrainEfficiency: v})} unit="%" />
-        </Section>
-        <Section title="Motor & Battery">
-          <Field label="Cells (S)" value={inputs.batteryCells} onChange={(v:any) => setInputs({...inputs, batteryCells: v})} />
-          <Field label="Capacity" value={inputs.batteryCapacityMah} onChange={(v:any) => setInputs({...inputs, batteryCapacityMah: v})} unit="mAh" />
-          <Field label="Motor KV" value={inputs.motorKv} onChange={(v:any) => setInputs({...inputs, motorKv: v})} unit="rpm/V" />
-          <Field label="Target Accel" value={inputs.accelerationTargetTimeS} onChange={(v:any) => setInputs({...inputs, accelerationTargetTimeS: v})} unit="s" />
-        </Section>
-      </div>
-
       {/* ── Results ── */}
+      <div className="flex items-center justify-between mb-3 border-t border-gray-100 pt-4">
+        <h3 className="text-xs uppercase font-bold tracking-widest pdf-no-hide" style={{ fontFamily: "Michroma, sans-serif" }}>Results Summary</h3>
+        <DownloadReportButton targetElementId="calculator-capture-area" filename="WelkinRim_Car_Report.pdf" />
+      </div>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <StatCard label="Top Speed" value={result.topSpeedKmh.toFixed(1)} unit="km/h" />
         <StatCard label="Total Gear Ratio" value={result.gearRatio.toFixed(2)} unit=":1" />
@@ -196,4 +204,6 @@ export default function CarCalc() {
       </div>
     </div>
   );
+
+  return <SplitLayout inputs={inputsPanel} results={resultsPanel} />;
 }

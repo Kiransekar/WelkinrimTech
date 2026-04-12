@@ -7,6 +7,8 @@ import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
   ReferenceLine,
 } from "recharts";
+import { DownloadReportButton, PdfTemplateHeader } from "./PdfExport";
+import SplitLayout from "./SplitLayout";
 
 interface Warning { level: "warn" | "danger"; message: string; }
 
@@ -288,8 +290,41 @@ export default function FanCalcPanel() {
     </div>
   );
 
-  return (
-    <div className="space-y-4">
+  const inputsPanel = (
+    <div className="space-y-3">
+      <Section title="Aircraft">
+        <Field label="Weight" value={inputs.modelWeightG} onChange={(v: number) => updateInput("modelWeightG", v)} step={10} unit="g" />
+        <Field label="Wing Area" value={inputs.wingAreaDm2} onChange={(v: number) => updateInput("wingAreaDm2", v)} step={0.5} unit="dm²" />
+        <Field label="Drag Coeff" value={inputs.dragCoefficient} onChange={(v: number) => updateInput("dragCoefficient", v)} step={0.005} min={0.01} max={0.2} unit="Cd" />
+      </Section>
+
+      <Section title="Power System">
+        <Field label="Cells" value={inputs.batteryCells} onChange={(v: number) => updateInput("batteryCells", v)} step={1} min={1} max={12} unit="S" />
+        <Field label="Capacity" value={inputs.batteryCapacityMah} onChange={(v: number) => updateInput("batteryCapacityMah", v)} step={100} unit="mAh" />
+        <Field label="Max Disch" value={inputs.batteryMaxDischarge * 100} onChange={(v: number) => updateInput("batteryMaxDischarge", v / 100)} step={5} min={50} max={100} unit="%" />
+      </Section>
+
+      <Section title="Motor">
+        <Field label="KV" value={inputs.motorKv} onChange={(v: number) => updateInput("motorKv", v)} step={50} unit="KV" />
+        <Field label="Io" value={inputs.motorIo} onChange={(v: number) => updateInput("motorIo", v)} step={0.1} unit="A" />
+        <Field label="Rm" value={inputs.motorRmMohm} onChange={(v: number) => updateInput("motorRmMohm", v)} step={1} unit="mΩ" />
+        <Field label="Max Power" value={inputs.motorMaxPowerW} onChange={(v: number) => updateInput("motorMaxPowerW", v)} step={10} unit="W" />
+        <Field label="Max Current" value={inputs.motorMaxCurrent} onChange={(v: number) => updateInput("motorMaxCurrent", v)} step={1} unit="A" />
+      </Section>
+
+      <Section title="EDF Fan">
+        <Field label="Diameter" value={inputs.fanDiameterMm} onChange={(v: number) => updateInput("fanDiameterMm", v)} step={1} unit="mm" />
+        <Field label="Blades" value={inputs.fanBlades} onChange={(v: number) => updateInput("fanBlades", v)} step={1} min={3} max={12} unit="#" />
+        <Field label="Fan Eff" value={inputs.fanEfficiency * 100} onChange={(v: number) => updateInput("fanEfficiency", v / 100)} step={1} min={50} max={95} unit="%" />
+        <Field label="Duct Eff" value={inputs.ductEfficiency * 100} onChange={(v: number) => updateInput("ductEfficiency", v / 100)} step={1} min={60} max={95} unit="%" />
+        <Field label="FVR" value={inputs.fvr} onChange={(v: number) => updateInput("fvr", v)} step={0.05} min={0.8} max={1.5} unit="" hint="Fan Velocity Ratio" />
+      </Section>
+    </div>
+  );
+
+  const resultsPanel = (
+    <div id="fancalc-report-area" className="relative space-y-4">
+      <PdfTemplateHeader calculatorName="EDF Jet Analysis" />
       {/* Warnings */}
       {warnings.length > 0 && (
         <div className="flex flex-wrap gap-2">
@@ -300,38 +335,11 @@ export default function FanCalcPanel() {
         </div>
       )}
 
-      {/* ── Compact Inputs ── */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
-        <Section title="Aircraft">
-          <Field label="Weight" value={inputs.modelWeightG} onChange={(v: number) => updateInput("modelWeightG", v)} step={10} unit="g" />
-          <Field label="Wing Area" value={inputs.wingAreaDm2} onChange={(v: number) => updateInput("wingAreaDm2", v)} step={0.5} unit="dm²" />
-          <Field label="Drag Coeff" value={inputs.dragCoefficient} onChange={(v: number) => updateInput("dragCoefficient", v)} step={0.005} min={0.01} max={0.2} unit="Cd" />
-        </Section>
-
-        <Section title="Power System">
-          <Field label="Cells" value={inputs.batteryCells} onChange={(v: number) => updateInput("batteryCells", v)} step={1} min={1} max={12} unit="S" />
-          <Field label="Capacity" value={inputs.batteryCapacityMah} onChange={(v: number) => updateInput("batteryCapacityMah", v)} step={100} unit="mAh" />
-          <Field label="Max Disch" value={inputs.batteryMaxDischarge * 100} onChange={(v: number) => updateInput("batteryMaxDischarge", v / 100)} step={5} min={50} max={100} unit="%" />
-        </Section>
-
-        <Section title="Motor">
-          <Field label="KV" value={inputs.motorKv} onChange={(v: number) => updateInput("motorKv", v)} step={50} unit="KV" />
-          <Field label="Io" value={inputs.motorIo} onChange={(v: number) => updateInput("motorIo", v)} step={0.1} unit="A" />
-          <Field label="Rm" value={inputs.motorRmMohm} onChange={(v: number) => updateInput("motorRmMohm", v)} step={1} unit="mΩ" />
-          <Field label="Max Power" value={inputs.motorMaxPowerW} onChange={(v: number) => updateInput("motorMaxPowerW", v)} step={10} unit="W" />
-          <Field label="Max Current" value={inputs.motorMaxCurrent} onChange={(v: number) => updateInput("motorMaxCurrent", v)} step={1} unit="A" />
-        </Section>
-
-        <Section title="EDF Fan">
-          <Field label="Diameter" value={inputs.fanDiameterMm} onChange={(v: number) => updateInput("fanDiameterMm", v)} step={1} unit="mm" />
-          <Field label="Blades" value={inputs.fanBlades} onChange={(v: number) => updateInput("fanBlades", v)} step={1} min={3} max={12} unit="#" />
-          <Field label="Fan Eff" value={inputs.fanEfficiency * 100} onChange={(v: number) => updateInput("fanEfficiency", v / 100)} step={1} min={50} max={95} unit="%" />
-          <Field label="Duct Eff" value={inputs.ductEfficiency * 100} onChange={(v: number) => updateInput("ductEfficiency", v / 100)} step={1} min={60} max={95} unit="%" />
-          <Field label="FVR" value={inputs.fvr} onChange={(v: number) => updateInput("fvr", v)} step={0.05} min={0.8} max={1.5} unit="" hint="Fan Velocity Ratio" />
-        </Section>
-      </div>
-
       {/* ── Results Summary ── */}
+      <div className="flex items-center justify-between mb-3 border-t border-gray-100 pt-4">
+        <h3 className="text-xs uppercase font-bold tracking-widest pdf-no-hide" style={{ fontFamily: "Michroma, sans-serif" }}>Results Summary</h3>
+        <DownloadReportButton targetElementId="calculator-capture-area" filename="WelkinRim_EDF_Report.pdf" />
+      </div>
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
         <StatCard label="Static Thrust" value={result.staticThrustG.toFixed(0)} unit="g" />
         <StatCard label="Dynamic Thrust" value={result.dynamicThrustG.toFixed(0)} unit="g" />
@@ -397,4 +405,6 @@ export default function FanCalcPanel() {
       </div>
     </div>
   );
+
+  return <SplitLayout inputs={inputsPanel} results={resultsPanel} />;
 }

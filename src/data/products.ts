@@ -919,7 +919,7 @@ export const PRODUCTS: Product[] = [
     id: "esc-6z5af7bk8",
     series: "esc", seriesLabel: "ESCs",
     model: "E40 V2 12S", name: "E40 V2 12S", tag: "ESC", application: "UAV / Multi-Rotor",
-    keySpecs: [ { "label": "Continuous", "value": "40 A (under good cooling conditions)"  }, { "label": "Battery", "value": "12S"  }, { "label": "Weight", "value": "57 g"  }
+    keySpecs: [ { "label": "Continuous", "value": "40 A"  }, { "label": "Battery", "value": "12S"  }, { "label": "Weight", "value": "57 g"  }
 ],
     allSpecs: [
       {
@@ -948,7 +948,7 @@ export const PRODUCTS: Product[] = [
       },
       {
             "label": "Continuous Current",
-            "value": "40 A (under good cooling conditions)"
+            "value": "40 A"
       },
       {
             "label": "Current Limiting",
@@ -1008,7 +1008,7 @@ export const PRODUCTS: Product[] = [
     id: "esc-eepf86ho2",
     series: "esc", seriesLabel: "ESCs",
     model: "E60 12S", name: "E60 12S", tag: "ESC", application: "UAV / Multi-Rotor",
-    keySpecs: [ { "label": "Continuous", "value": "60 A (under good cooling conditions)"  }, { "label": "Battery", "value": "12S"  }, { "label": "Weight", "value": "108 g"  }
+    keySpecs: [ { "label": "Continuous", "value": "60 A"  }, { "label": "Battery", "value": "12S"  }, { "label": "Weight", "value": "108 g"  }
 ],
     allSpecs: [
       {
@@ -1037,7 +1037,7 @@ export const PRODUCTS: Product[] = [
       },
       {
             "label": "Continuous Current",
-            "value": "60 A (under good cooling conditions)"
+            "value": "60 A"
       },
       {
             "label": "Current Limiting",
@@ -1097,7 +1097,7 @@ export const PRODUCTS: Product[] = [
     id: "esc-bxxdn0bgg",
     series: "esc", seriesLabel: "ESCs",
     model: "E120 12S", name: "E120 12S", tag: "ESC", application: "UAV / Multi-Rotor",
-    keySpecs: [ { "label": "Continuous", "value": "120 A (under good cooling conditions)"  }, { "label": "Battery", "value": "12S"  }, { "label": "Weight", "value": "215 g"  }
+    keySpecs: [ { "label": "Continuous", "value": "120 A"  }, { "label": "Battery", "value": "12S"  }, { "label": "Weight", "value": "215 g"  }
 ],
     allSpecs: [
       {
@@ -1126,7 +1126,7 @@ export const PRODUCTS: Product[] = [
       },
       {
             "label": "Continuous Current",
-            "value": "120 A (under good cooling conditions)"
+            "value": "120 A"
       },
       {
             "label": "Current Limiting",
@@ -1186,7 +1186,7 @@ export const PRODUCTS: Product[] = [
     id: "esc-zxyrl48rr",
     series: "esc", seriesLabel: "ESCs",
     model: "EH200 24S", name: "EH200 24S", tag: "ESC", application: "UAV / Multi-Rotor",
-    keySpecs: [ { "label": "Continuous", "value": "200 A (under good cooling conditions)"  }, { "label": "Battery", "value": "24S"  }, { "label": "Weight", "value": "725 g"  }
+    keySpecs: [ { "label": "Continuous", "value": "200 A"  }, { "label": "Battery", "value": "24S"  }, { "label": "Weight", "value": "725 g"  }
 ],
     allSpecs: [
       {
@@ -1215,7 +1215,7 @@ export const PRODUCTS: Product[] = [
       },
       {
             "label": "Continuous Current",
-            "value": "200 A (under good cooling conditions)"
+            "value": "200 A"
       },
       {
             "label": "Current Limiting",
@@ -1275,7 +1275,7 @@ export const PRODUCTS: Product[] = [
     id: "esc-locti9bx7",
     series: "esc", seriesLabel: "ESCs",
     model: "E260 14S", name: "E260 14S", tag: "ESC", application: "UAV / Multi-Rotor",
-    keySpecs: [ { "label": "Continuous", "value": "260 A (under good cooling conditions)"  }, { "label": "Battery", "value": "14S"  }, { "label": "Weight", "value": "537 g"  }
+    keySpecs: [ { "label": "Continuous", "value": "260 A"  }, { "label": "Battery", "value": "14S"  }, { "label": "Weight", "value": "537 g"  }
 ],
     allSpecs: [
       {
@@ -1304,7 +1304,7 @@ export const PRODUCTS: Product[] = [
       },
       {
             "label": "Continuous Current",
-            "value": "260 A (under good cooling conditions)"
+            "value": "260 A"
       },
       {
             "label": "Current Limiting",
@@ -1364,7 +1364,7 @@ export const PRODUCTS: Product[] = [
     id: "esc-8q6gbe0z3",
     series: "esc", seriesLabel: "ESCs",
     model: "E150 14S", name: "E150 14S", tag: "ESC", application: "UAV / Multi-Rotor",
-    keySpecs: [ { "label": "Continuous", "value": "150 A (under good cooling conditions)"  }, { "label": "Battery", "value": "14S"  }, { "label": "Weight", "value": "357 g"  }
+    keySpecs: [ { "label": "Continuous", "value": "150 A"  }, { "label": "Battery", "value": "14S"  }, { "label": "Weight", "value": "357 g"  }
 ],
     allSpecs: [
       {
@@ -1393,7 +1393,7 @@ export const PRODUCTS: Product[] = [
       },
       {
             "label": "Continuous Current",
-            "value": "150 A (under good cooling conditions)"
+            "value": "150 A"
       },
       {
             "label": "Current Limiting",
@@ -1453,7 +1453,7 @@ export const PRODUCTS: Product[] = [
     id: "esc-z8owr938a",
     series: "esc", seriesLabel: "ESCs",
     model: "E200 14S", name: "E200 14S", tag: "ESC", application: "UAV / Multi-Rotor",
-    keySpecs: [ { "label": "Continuous", "value": "200 A (under good cooling conditions)"  }, { "label": "Battery", "value": "14S"  }, { "label": "Weight", "value": "320 g"  }
+    keySpecs: [ { "label": "Continuous", "value": "200 A"  }, { "label": "Battery", "value": "14S"  }, { "label": "Weight", "value": "320 g"  }
 ],
     allSpecs: [
       {
@@ -1482,7 +1482,7 @@ export const PRODUCTS: Product[] = [
       },
       {
             "label": "Continuous Current",
-            "value": "200 A (under good cooling conditions)"
+            "value": "200 A"
       },
       {
             "label": "Current Limiting",
@@ -1542,7 +1542,7 @@ export const PRODUCTS: Product[] = [
     id: "esc-njzr7o9zc",
     series: "esc", seriesLabel: "ESCs",
     model: "F120A 12S", name: "F120A 12S", tag: "ESC", application: "UAV / Multi-Rotor",
-    keySpecs: [ { "label": "Continuous", "value": "150 A (under good cooling conditions)"  }, { "label": "Battery", "value": "12S – 14S"  }, { "label": "Weight", "value": "248 g"  }
+    keySpecs: [ { "label": "Continuous", "value": "150 A"  }, { "label": "Battery", "value": "12S – 14S"  }, { "label": "Weight", "value": "248 g"  }
 ],
     allSpecs: [
       {
@@ -1571,7 +1571,7 @@ export const PRODUCTS: Product[] = [
       },
       {
             "label": "Continuous Current",
-            "value": "150 A (under good cooling conditions)"
+            "value": "150 A"
       },
       {
             "label": "Current Limiting",
@@ -1631,7 +1631,7 @@ export const PRODUCTS: Product[] = [
     id: "esc-fkfwura91",
     series: "esc", seriesLabel: "ESCs",
     model: "F30 6S", name: "F30 6S", tag: "ESC", application: "UAV / Multi-Rotor",
-    keySpecs: [ { "label": "Continuous", "value": "30 A (under good cooling conditions)"  }, { "label": "Battery", "value": "6S"  }, { "label": "Weight", "value": "65 g"  }
+    keySpecs: [ { "label": "Continuous", "value": "30 A"  }, { "label": "Battery", "value": "6S"  }, { "label": "Weight", "value": "65 g"  }
 ],
     allSpecs: [
       {
@@ -1660,7 +1660,7 @@ export const PRODUCTS: Product[] = [
       },
       {
             "label": "Continuous Current",
-            "value": "30 A (under good cooling conditions)"
+            "value": "30 A"
       },
       {
             "label": "Current Limiting",
@@ -1781,7 +1781,7 @@ export const PRODUCTS: Product[] = [
     id: "esc-eepf86ho2",
     series: "esc", seriesLabel: "ESCs",
     model: "E40 V2 12S", name: "E40 V2 12S", tag: "ESC", application: "UAV / Multi-Rotor",
-    keySpecs: [ { "label": "Continuous", "value": "40 A (under good cooling conditions)"  }, { "label": "Battery", "value": "12S"  }, { "label": "Weight", "value": "115 g"  }
+    keySpecs: [ { "label": "Continuous", "value": "40 A"  }, { "label": "Battery", "value": "12S"  }, { "label": "Weight", "value": "115 g"  }
 ],
     allSpecs: [
       { "label": "BEC", "value": "No" },
