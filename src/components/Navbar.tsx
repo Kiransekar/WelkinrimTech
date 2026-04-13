@@ -154,10 +154,8 @@ export default function Navbar() {
           <div className="hidden md:flex items-center gap-8">
             {[
               { label: "Home",       action: () => scrollToSection("home")       },
-              { label: "Technology", action: () => scrollToSection("technology") },
               { label: "About",      action: () => { setMenuOpen(false); navigate("/about"); } },
               { label: "Calculators",action: () => { setMenuOpen(false); navigate("/calculators"); } },
-              { label: "Contact",    action: () => scrollToSection("contact")    },
             ].map(({ label, action }) => (
               <button
                 key={label}
@@ -229,11 +227,9 @@ export default function Navbar() {
           <div className="px-4 py-4 flex flex-col gap-4">
             {[
               { label: "Home",        action: () => scrollToSection("home")       },
-              { label: "Technology",  action: () => scrollToSection("technology") },
               { label: "Products",    action: () => goToProducts()                },
               { label: "Calculators", action: () => { setMenuOpen(false); navigate("/calculators"); } },
               { label: "About",       action: () => { setMenuOpen(false); navigate("/about"); } },
-              { label: "Contact",     action: () => scrollToSection("contact")    },
             ].map(({ label, action }) => (
               <button
                 key={label}

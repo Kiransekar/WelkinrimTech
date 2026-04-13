@@ -10,12 +10,13 @@
 
 import { useState, useMemo, useCallback } from "react";
 import {
-  LineChart, Line, ScatterChart, Scatter,
+  LineChart, Line, ScatterChart, Scatter, ReferenceArea,
   XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ZAxis,
 } from "recharts";
 import GaugeMeter from "./GaugeMeter";
 import { calcProp, PropCalcInput, PropCalcResult } from "@/lib/calculators/propCalc";
-import { useMotorPresets, getPresetById } from "@/hooks/useMotorPresets";
+import { useMotorPresets, getPresetById, suggestProps } from "@/hooks/useMotorPresets";
+import { suggestESCs } from "@/data/escs";
 import { DownloadReportButton, PdfTemplateHeader } from "./PdfExport";
 import SplitLayout from "./SplitLayout";
 
@@ -203,6 +204,22 @@ function WarningBar({ warnings }: { warnings: Warning[] }) {
 // ─────────────────────────────────────────────────────────────
 // Main Panel
 // ─────────────────────────────────────────────────────────────
+// ISA atmosphere: estimate air density from altitude (MSL)
+function airDensityFromAltitude(altM: number, tempC: number): { density: number; pressure: number; temp: number } {
+  // ISA lapse rate: 6.5°C per 1000m, pressure: barometric formula
+  const T0 = 288.15; // K
+  const P0 = 101325; // Pa
+  const L = 0.0065;  // K/m lapse rate
+  const g = 9.80665;
+  const M = 0.0289644;
+  const R = 8.31447;
+  const T = T0 - L * altM;           // temperature at altitude
+  const P = P0 * Math.pow(T / T0, g * M / (R * L)); // pressure
+  const Tk = tempC + 273.15;
+  const rho = (P * M) / (R * Tk);    // density using actual temp
+  return { density: rho, pressure: P / 100, temp: T - 273.15 };
+}
+
 export default function PropCalcPanel() {
   const [inputs, setInputs] = useState<PropCalcInput>(DEFAULTS);
   const [activeTab, setActiveTab] = useState<"static" | "dynamic" | "efficiency">("static");
@@ -225,6 +242,40 @@ export default function PropCalcPanel() {
       motorRmMohm: preset.estimatedRmMohm,
     }));
     setSelectedPreset(presetId);
+  };
+
+  // Suggested ESCs & propellers based on selected motor
+  const currentPreset = selectedPreset ? getPresetById(selectedPreset) : null;
+  const suggestedESCs = useMemo(() => {
+    if (!currentPreset) return [];
+    return suggestESCs(currentPreset.peakCurrent, inputs.batteryCells, "airplane");
+  }, [currentPreset, inputs.batteryCells]);
+  const suggestedPropellers = useMemo(() => {
+    if (!currentPreset) return [];
+    return suggestProps(currentPreset, "airplane");
+  }, [currentPreset]);
+
+  const applyProp = (propId: string) => {
+    const prop = suggestedPropellers.find(p => p.id === propId);
+    if (!prop) return;
+    setInputs(prev => ({
+      ...prev,
+      propDiameterInch: prop.diameterInch,
+      propPitchInch: prop.pitchInch,
+      propBlades: prop.blades,
+      ct: prop.ct,
+      cp: prop.cp,
+    }));
+  };
+
+  // MSL altitude estimation — update pressure & temp when elevation changes
+  const applyMSL = (altM: number) => {
+    const atm = airDensityFromAltitude(altM, inputs.temperatureC);
+    setInputs(prev => ({
+      ...prev,
+      elevationM: altM,
+      pressureHpa: Math.round(atm.pressure * 10) / 10,
+    }));
   };
 
   // ── FIXED CALCULATIONS ──────────────────────────────────────
@@ -306,6 +357,42 @@ export default function PropCalcPanel() {
         </select>
       </div>
 
+      {/* ESC Suggestion */}
+      {suggestedESCs.length > 0 && (
+        <div className="border border-gray-200 bg-gray-50 px-3 py-2">
+          <label className="text-[8px] tracking-widest uppercase text-[#808080] block mb-1"
+                 style={{ fontFamily: "Michroma, sans-serif" }}>Suggested ESC</label>
+          <div className="space-y-1">
+            {suggestedESCs.slice(0, 3).map(e => (
+              <div key={e.id} className="flex items-center justify-between text-[10px] border border-gray-200 bg-white px-2 py-1"
+                   style={{ fontFamily: "Lexend, sans-serif" }}>
+                <span className="font-medium">{e.model}</span>
+                <span className="text-gray-400">{e.continuousA}A / {e.minCells}–{e.maxCells}S</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Compatible Propeller */}
+      {suggestedPropellers.length > 0 && (
+        <div className="border border-gray-200 bg-gray-50 px-3 py-2">
+          <label className="text-[8px] tracking-widest uppercase text-[#808080] block mb-1"
+                 style={{ fontFamily: "Michroma, sans-serif" }}>Compatible Propeller</label>
+          <select
+            onChange={e => applyProp(e.target.value)}
+            className="w-full border border-gray-200 text-[11px] px-2 py-1 focus:outline-none focus:border-[#ffc812] bg-white"
+            style={{ fontFamily: "Michroma, sans-serif" }}
+            defaultValue=""
+          >
+            <option value="" disabled>— Select Propeller —</option>
+            {suggestedPropellers.map(p => (
+              <option key={p.id} value={p.id}>{p.type} {p.diameterInch}×{p.pitchInch} {p.blades}-blade</option>
+            ))}
+          </select>
+        </div>
+      )}
+
       <CollapsibleSection title="Aircraft" defaultOpen>
         <Field label="Weight (g)" id="mw" value={inputs.modelWeightG} onChange={set("modelWeightG")}
                hint="All-up weight of the airframe without battery." />
@@ -355,6 +442,12 @@ export default function PropCalcPanel() {
       <CollapsibleSection title="Environment" defaultOpen={false}>
         <Field label="Elevation (m)" id="el" value={inputs.elevationM} onChange={set("elevationM")}
                hint="Field altitude above sea level. Affects air density and thrust." />
+        <button
+          type="button"
+          onClick={() => applyMSL(inputs.elevationM)}
+          className="w-full text-[8px] tracking-widest uppercase bg-black text-[#ffc812] py-1 mb-1 hover:bg-gray-800 transition-colors"
+          style={{ fontFamily: "Michroma, sans-serif" }}
+        >Estimate from MSL</button>
         <Field label="Temp (°C)" id="tc" value={inputs.temperatureC} onChange={set("temperatureC")}
                hint="Ambient air temperature. Higher temp = lower air density." />
         <Field label="Pressure (hPa)" id="ph" value={inputs.pressureHpa} onChange={set("pressureHpa")}
@@ -366,6 +459,10 @@ export default function PropCalcPanel() {
   const resultsPanel = (
       <div id="propcalc-report-area" className="relative">
         <PdfTemplateHeader calculatorName="Propeller Airplane" />
+        {/* Description */}
+        <p className="text-[11px] text-gray-500 border-l-2 border-[#ffc812] pl-3 py-1 mb-3" style={{ fontFamily: "Lexend, sans-serif" }}>
+          Estimate propeller thrust, motor power draw, RPM, efficiency and flight time for fixed-wing aircraft. Select your motor, battery and propeller to size the drive system and identify the optimal operating point.
+        </p>
         {/* Action bar */}
         <div className="flex items-center justify-between mb-2">
           <p className="text-[9px] tracking-[0.3em] uppercase text-[#808080] pdf-no-hide"
@@ -409,8 +506,8 @@ export default function PropCalcPanel() {
                     warn={correctedFlightTimeMin < 6} />
         </div>
 
-        {/* Performance Tables — all 4 in one horizontal row */}
-        <div className="grid grid-cols-4 gap-1.5 mb-3">
+        {/* Performance Tables — 3 columns */}
+        <div className="grid grid-cols-3 gap-1.5 mb-3">
           <div className="border border-gray-100">
             <div className="bg-black px-2 py-1">
               <p className="text-[8px] tracking-[0.2em] uppercase text-[#ffc812]"
@@ -467,23 +564,6 @@ export default function PropCalcPanel() {
             </div>
           </div>
 
-          <div className="border border-gray-100">
-            <div className="bg-black px-2 py-1">
-              <p className="text-[8px] tracking-[0.2em] uppercase text-[#ffc812]"
-                 style={{ fontFamily: "Michroma, sans-serif" }}>Aircraft Performance</p>
-            </div>
-            <div className="p-2">
-              <table className="w-full">
-                <tbody>
-                  <Row label="Stall Speed" value={`${result.airplane.stallSpeedKmh.toFixed(1)} km/h`} />
-                  <Row label="Max Speed" value={`${result.airplane.maxSpeedKmh.toFixed(1)} km/h`} />
-                  <Row label="Climb Rate" value={`${result.airplane.climbRateMs.toFixed(1)} m/s`} />
-                  <Row label="Flight Time" value={`${correctedFlightTimeMin.toFixed(1)} min`}
-                       warn={correctedFlightTimeMin < 6} />
-                </tbody>
-              </table>
-            </div>
-          </div>
         </div>
 
         {/* Performance Charts + Partial Load Table — side by side */}
@@ -523,6 +603,8 @@ export default function PropCalcPanel() {
                     <YAxis tick={{ fontSize: 9, fontFamily: "Michroma, sans-serif" }} />
                     <Tooltip contentStyle={TOOLTIP_STYLE} />
                     <Legend wrapperStyle={{ fontSize: 9, fontFamily: "Michroma, sans-serif" }} />
+                    {/* Optimal operating zone shading (60–80% throttle) */}
+                    <ReferenceArea x1="60%" x2="80%" fill="#ffc812" fillOpacity={0.08} stroke="#ffc812" strokeOpacity={0.25} strokeDasharray="4 2" />
                     <Line type="monotone" dataKey="Power (W)" stroke="#ffc812" strokeWidth={2} dot={{ r: 3 }} />
                     <Line type="monotone" dataKey="Thrust (g)" stroke="#111" strokeWidth={2} dot={{ r: 3 }} />
                     <Line type="monotone" dataKey="Eff (%)" stroke="#22c55e" strokeWidth={2} dot={{ r: 3 }} />

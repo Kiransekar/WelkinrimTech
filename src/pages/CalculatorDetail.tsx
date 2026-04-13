@@ -16,16 +16,14 @@ import Footer from "@/components/Footer";
 import PropCalcPanel from "@/components/calculators/PropCalcPanel";
 import XcopterCalcPanel from "@/components/calculators/XcopterCalcPanel";
 import SetupFinder from "@/components/calculators/SetupFinder";
-import CgCalc from "@/components/calculators/CgCalc";
-import WbCalc from "@/components/calculators/WbCalc";
 import BladeCalc from "@/components/calculators/BladeCalc";
-import FanCalcPanel from "@/components/calculators/FanCalc";
-import HeliCalcPanel from "@/components/calculators/HeliCalc";
-import PerfCalcPanel from "@/components/calculators/PerfCalc";
-import TorqueCalc from "@/components/calculators/TorqueCalc";
-import CarCalc from "@/components/calculators/CarCalc";
 import EvCalc from "@/components/calculators/EvCalc";
 import ToolboxCalc from "@/components/calculators/ToolboxCalc";
+import ShrinkFitCalc from "@/components/calculators/ShrinkFitCalc";
+import AwgCalc from "@/components/calculators/AwgCalc";
+import RectifierCalc from "@/components/calculators/RectifierCalc";
+import PrechargeCalc from "@/components/calculators/PrechargeCalc";
+import TractionCalc from "@/components/calculators/TractionCalc";
 import { CALCULATORS, getCalculatorById } from "@/data/calculators";
 
 // ─── Page-level styles injected once ────────────────────────────────────────
@@ -461,16 +459,14 @@ export default function CalculatorDetail() {
           {current.id === "propcalc"      && <PropCalcPanel />}
           {current.id === "xcoptercalc"   && <XcopterCalcPanel />}
           {current.id === "setupfinder"   && <SetupFinder />}
-          {current.id === "cgcalc"        && <CgCalc />}
-          {current.id === "wbcalc"        && <WbCalc />}
           {current.id === "bladecalc"     && <BladeCalc />}
-          {current.id === "fancalc"       && <FanCalcPanel />}
-          {current.id === "helicalc"      && <HeliCalcPanel />}
-          {current.id === "perfcalc"      && <PerfCalcPanel />}
-          {current.id === "torquecalc"    && <TorqueCalc />}
-          {current.id === "carcalc"       && <CarCalc />}
           {current.id === "evcalc"        && <EvCalc />}
           {current.id === "motortoolbox"  && <ToolboxCalc />}
+          {current.id === "shrinkfit"     && <ShrinkFitCalc />}
+          {current.id === "awgwinding"    && <AwgCalc />}
+          {current.id === "rectifier"     && <RectifierCalc />}
+          {current.id === "precharge"     && <PrechargeCalc />}
+          {current.id === "tractioncalc"  && <TractionCalc />}
 
           {/* ── Info bar */}
           {current.status === "live" && current.inputCount && current.outputCount && (

@@ -163,8 +163,8 @@ export default function BladeCalc() {
     if (!calcBladeElements) return [];
     return calcBladeElements.elements1.map((e1, i) => ({
       station: `${(e1.station * 100).toFixed(0)}%`,
-      [`${calcBladeElements.prop1.brand} ${calcBladeElements.prop1.model}`]: e1.localThrust,
-      [`${calcBladeElements.prop2.brand} ${calcBladeElements.prop2.model}`]: calcBladeElements.elements2[i].localThrust,
+      [`${calcBladeElements.prop1.type} ${calcBladeElements.prop1.diameterInch}×${calcBladeElements.prop1.pitchInch}`]: e1.localThrust,
+      [`${calcBladeElements.prop2.type} ${calcBladeElements.prop2.diameterInch}×${calcBladeElements.prop2.pitchInch}`]: calcBladeElements.elements2[i].localThrust,
     }));
   }, [calcBladeElements]);
 
@@ -173,8 +173,8 @@ export default function BladeCalc() {
     if (!calcBladeElements) return [];
     return calcBladeElements.elements1.map((e1, i) => ({
       station: `${(e1.station * 100).toFixed(0)}%`,
-      [`${calcBladeElements.prop1.brand} ${calcBladeElements.prop1.model}`]: e1.localPower,
-      [`${calcBladeElements.prop2.brand} ${calcBladeElements.prop2.model}`]: calcBladeElements.elements2[i].localPower,
+      [`${calcBladeElements.prop1.type} ${calcBladeElements.prop1.diameterInch}×${calcBladeElements.prop1.pitchInch}`]: e1.localPower,
+      [`${calcBladeElements.prop2.type} ${calcBladeElements.prop2.diameterInch}×${calcBladeElements.prop2.pitchInch}`]: calcBladeElements.elements2[i].localPower,
     }));
   }, [calcBladeElements]);
 
@@ -215,7 +215,7 @@ export default function BladeCalc() {
             style={{ fontFamily: "Michroma, sans-serif" }}
           >
             {PROPELLERS.filter(p => p.application === "airplane" || p.application === "both").map(p => (
-              <option key={p.id} value={p.id}>{p.brand} {p.model} ({p.diameterInch}×{p.pitchInch})</option>
+              <option key={p.id} value={p.id}>{p.type} {p.diameterInch}×{p.pitchInch} {p.blades}-blade</option>
             ))}
           </select>
         </div>
@@ -232,7 +232,7 @@ export default function BladeCalc() {
             style={{ fontFamily: "Michroma, sans-serif" }}
           >
             {PROPELLERS.filter(p => p.application === "airplane" || p.application === "both").map(p => (
-              <option key={p.id} value={p.id}>{p.brand} {p.model} ({p.diameterInch}×{p.pitchInch})</option>
+              <option key={p.id} value={p.id}>{p.type} {p.diameterInch}×{p.pitchInch} {p.blades}-blade</option>
             ))}
           </select>
         </div>
@@ -242,11 +242,11 @@ export default function BladeCalc() {
         <Section title="Propeller Specs">
           <div className="col-span-2 space-y-2 text-xs" style={{ fontFamily: "Michroma, sans-serif" }}>
             <div className="flex justify-between">
-              <span className="text-gray-500">{calcBladeElements.prop1.brand} {calcBladeElements.prop1.model}</span>
+              <span className="text-gray-500">{calcBladeElements.prop1.type} {calcBladeElements.prop1.diameterInch}×{calcBladeElements.prop1.pitchInch}</span>
               <span className="font-bold">CT: {calcBladeElements.prop1.ct}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-gray-500">{calcBladeElements.prop2.brand} {calcBladeElements.prop2.model}</span>
+              <span className="text-gray-500">{calcBladeElements.prop2.type} {calcBladeElements.prop2.diameterInch}×{calcBladeElements.prop2.pitchInch}</span>
               <span className="font-bold">CT: {calcBladeElements.prop2.ct}</span>
             </div>
             <div className="flex justify-between border-t pt-2">
@@ -305,8 +305,8 @@ export default function BladeCalc() {
                   <YAxis tick={{ fontSize: 9, fontFamily: "Michroma, sans-serif" }} unit=" N" />
                   <Tooltip contentStyle={{ fontSize: 10, fontFamily: "Michroma, sans-serif" }} />
                   <Legend wrapperStyle={{ fontSize: 9, fontFamily: "Michroma, sans-serif" }} />
-                  <Bar dataKey={`${calcBladeElements.prop1.brand} ${calcBladeElements.prop1.model}`} fill="#ffc812" radius={[2, 2, 0, 0]} />
-                  <Bar dataKey={`${calcBladeElements.prop2.brand} ${calcBladeElements.prop2.model}`} fill="#22c55e" radius={[2, 2, 0, 0]} />
+                  <Bar dataKey={`${calcBladeElements.prop1.type} ${calcBladeElements.prop1.diameterInch}×${calcBladeElements.prop1.pitchInch}`} fill="#ffc812" radius={[2, 2, 0, 0]} />
+                  <Bar dataKey={`${calcBladeElements.prop2.type} ${calcBladeElements.prop2.diameterInch}×${calcBladeElements.prop2.pitchInch}`} fill="#22c55e" radius={[2, 2, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -325,8 +325,8 @@ export default function BladeCalc() {
                   <YAxis tick={{ fontSize: 9, fontFamily: "Michroma, sans-serif" }} unit=" W" />
                   <Tooltip contentStyle={{ fontSize: 10, fontFamily: "Michroma, sans-serif" }} />
                   <Legend wrapperStyle={{ fontSize: 9, fontFamily: "Michroma, sans-serif" }} />
-                  <Bar dataKey={`${calcBladeElements.prop1.brand} ${calcBladeElements.prop1.model}`} fill="#ffc812" radius={[2, 2, 0, 0]} />
-                  <Bar dataKey={`${calcBladeElements.prop2.brand} ${calcBladeElements.prop2.model}`} fill="#3b82f6" radius={[2, 2, 0, 0]} />
+                  <Bar dataKey={`${calcBladeElements.prop1.type} ${calcBladeElements.prop1.diameterInch}×${calcBladeElements.prop1.pitchInch}`} fill="#ffc812" radius={[2, 2, 0, 0]} />
+                  <Bar dataKey={`${calcBladeElements.prop2.type} ${calcBladeElements.prop2.diameterInch}×${calcBladeElements.prop2.pitchInch}`} fill="#3b82f6" radius={[2, 2, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </div>

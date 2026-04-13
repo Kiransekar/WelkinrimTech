@@ -17,24 +17,24 @@ const MILESTONES = [
   },
   {
     year: "2019",
-    title: "Incubation & First Patents",
+    title: "Bootstrapped & Growing",
     description:
-      "Incubated at Forge Incubator (CIBI, Coimbatore). Developed initial motor prototypes and filed first patents in propulsion technology.",
-    highlight: "3 Patents Filed",
+      "Bootstrapped and growing. Worked on motor control for automotive applications, building foundational expertise in drive systems.",
+    highlight: "Motor Control · Automotive",
   },
   {
     year: "2020",
-    title: "First UAV Motor",
+    title: "First Revenue & UAV Motor",
     description:
-      "Designed and built the first BLDC motor prototype purpose-built for aerial drone propulsion — marking the shift from general power electronics to drone-specific solutions.",
-    highlight: "BLDC Prototype",
+      "Progressed to work with listed companies and generated revenue. Designed and built the first BLDC motor prototype purpose-built for aerial drone propulsion — marking the shift from general power electronics to drone-specific solutions.",
+    highlight: "First Revenue · BLDC Prototype",
   },
   {
     year: "2021",
-    title: "IIT Madras & R&D Scale-up",
+    title: "Team & R&D Scale-up",
     description:
-      "Associated with IIT Madras incubation program. Expanded R&D team and deepened expertise in FOC algorithms, thermal management, and magnet design.",
-    highlight: "IIT Madras Incubation",
+      "Expanded team and scaled R&D. Deepened expertise in FOC algorithms, thermal management, and magnet design.",
+    highlight: "R&D Scaled",
   },
   {
     year: "2022",
@@ -45,24 +45,24 @@ const MILESTONES = [
   },
   {
     year: "2023",
-    title: "Manufacturing Operations",
+    title: "IITM Association & Qualification",
     description:
-      "Oragadam manufacturing facility became operational in the heart of India's industrial corridor. Supplied 860+ propulsion units to Daksha Unmanned Systems.",
-    highlight: "860+ Units Delivered",
+      "Associated with IIT Madras for testing and qualification. Received Meity MSH Grant, advancing product validation and certification.",
+    highlight: "Meity MSH Grant",
   },
   {
     year: "2024",
-    title: "Defence Qualification",
+    title: "Oragadam Facility & Scale",
     description:
-      "Selected products tested at the Dr. Kalam Advanced UAV Research Center. JSS 55555 and MIL STD 810G testing initiated. 3 motor variants passed 500-hour endurance testing.",
-    highlight: "MIL STD 810G Testing",
+      "Moved to Oragadam manufacturing facility. Delivered 960+ propulsion units. Revenue scaled. Received TN SIPCOT Grant.",
+    highlight: "960+ Units · TN SIPCOT Grant",
   },
   {
     year: "2025",
-    title: "Multi-Domain Expansion",
+    title: "Institutional Funding & Qualification",
     description:
-      "Secured institutional funding. Expanded product line to 20 drone motor variants. Entered underwater propulsion and robotics domains with dedicated product lines.",
-    highlight: "20+ Motor Variants",
+      "Secured institutional funding from GSF, CAN, and MSH. Motors tested at 5000m altitude and qualified. Expanded client base.",
+    highlight: "5000m Alt Qualified",
   },
   {
     year: "2026",
@@ -80,22 +80,25 @@ const TEAM = [
     bio: "Masters in Power Electronics · 10+ yrs R&D & commercialization · Ex CTO Swadha Energies · 2017 National Entrepreneur Award",
     initials: "DN",
     expertise: "Power Electronics · Motor Drives",
-    image: "/src/assets/team/dinesh.jpg"
+    image: "/src/assets/team/dinesh.jpg",
+    linkedin: "https://www.linkedin.com/in/dinesh-natarajan-41b71bb3/",
   },
   {
     name: "Govindraj",
-    role: "Head of Projects & Motors",
+    role: "Co Founder & Head of Projects & Motors",
     bio: "Masters in Power Electronics · 10+ yrs R&D · Specialist in machine design and motor drives",
     initials: "GR",
     expertise: "Machine Design · Special Motors",
-    image: "/src/assets/team/govindraj.jpg"
+    image: "/src/assets/team/govindraj.jpg",
+    linkedin: "https://www.linkedin.com/in/govindaraj1290/",
   },
   {
     name: "Keerthiga Dinesh",
-    role: "Head of Operations",
+    role: "Co Founder & Head of Operations",
     bio: "Bachelors in Electronics · 8+ yrs hardware design · Leads operations and production workflows",
     initials: "KD",
     expertise: "Hardware Design · Operations",
+    linkedin: "https://www.linkedin.com/in/keerthiga-dinesh-36793575/",
   },
   {
     name: "Akilesh Kumar",
@@ -103,7 +106,8 @@ const TEAM = [
     bio: "Master's from Madras Institute of Technology (MIT) · 5+ yrs in motor control algorithms · FOC and sensorless control",
     initials: "AK",
     expertise: "FOC Algorithms · Sensorless Control",
-    image: "/src/assets/team/akilesh.jpg"
+    image: "/src/assets/team/akilesh.jpg",
+    linkedin: "https://www.linkedin.com/in/akileshkumar/",
   },
 ];
 
@@ -114,9 +118,11 @@ const EXPERTISE_AREAS = [
   { title: "Motion Control", items: ["Sine & FOC Control", "Motion Algorithms", "System Simulation", "Performance Optimization"] },
 ];
 
-const CLIENTS = [
-  "Bharat Forge", "IdeaForge", "Daksha", "IDR",
-  "The E Plane Co.", "Superbee", "BonV", "Yoktek",
+const INVESTORS: { name: string; full: string; logo?: string }[] = [
+  { name: "GSF", full: "Global Super Fund", logo: "investors/GSF.jpg" },
+  { name: "CAN", full: "Chennai Angels Network", logo: "investors/CAN.jpg" },
+  { name: "MSH", full: "Meity Startup Hub", logo: "investors/MeitY.jpg" },
+  { name: "Forge", full: "Forge Accelerator", logo: "investors/Forge.jpg" },
 ];
 
 const USP_ITEMS = [
@@ -333,11 +339,11 @@ export default function About() {
           {/* Stats strip */}
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8 pt-10 border-t border-white/[0.08] mt-10">
             <StatCard value={2018} label="Founded" />
-            <StatCard value={16} suffix="+" label="Engineers" />
+            <StatCard value={25} label="Engineers" />
             <StatCard value={3} label="Patents Filed" />
-            <StatCard value={25} suffix="+" label="Product Variants" />
-            <StatCard value={860} suffix="+" label="Units Delivered" />
-            <StatCard value={4} label="Industries" />
+            <StatCard value={35} suffix="+" label="Product Variants" />
+            <StatCard value={1200} suffix="+" label="Drone Components" />
+            <StatCard value={15000} suffix="+" label="Units to Other Industries" />
           </div>
         </div>
       </section>
@@ -467,7 +473,7 @@ export default function About() {
                 The <span className="text-[#ffc812]">Core</span> Team
               </h2>
               <p className="text-sm text-[#888] mt-3 max-w-lg mx-auto" style={{ fontFamily: "Lexend, sans-serif" }}>
-                16 passionate engineers driven by a shared mission to indigenize propulsion technology.
+                Passionate engineers driven by a shared mission to indigenize propulsion technology.
               </p>
             </div>
           </Reveal>
@@ -513,6 +519,16 @@ export default function About() {
                     <p className="text-xs text-[#888] leading-relaxed" style={{ fontFamily: "Lexend, sans-serif" }}>
                       {member.bio}
                     </p>
+                    {member.linkedin && (
+                      <a href={member.linkedin} target="_blank" rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 mt-3 text-[9px] text-[#808080] tracking-wider uppercase hover:text-[#ffc812] transition-colors"
+                        style={{ fontFamily: "Michroma, sans-serif" }}>
+                        <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                        </svg>
+                        LinkedIn
+                      </a>
+                    )}
                   </div>
                 </div>
               </Reveal>
@@ -521,28 +537,48 @@ export default function About() {
         </div>
       </section>
 
-      {/* ── TRUSTED BY ─────────────────────────────────────────────────── */}
-      <section className="bg-white py-14 md:py-20 border-t border-gray-100">
-        <div className="max-w-7xl mx-auto px-4 md:px-12">
+      {/* ── BACKED BY ──────────────────────────────────────────────────── */}
+      <section className="bg-[#0a0a0a] py-14 md:py-20 relative overflow-hidden">
+        {/* Subtle grid texture */}
+        <div className="absolute inset-0 opacity-[0.02]" style={{
+          backgroundImage: `linear-gradient(#ffc812 1px, transparent 1px), linear-gradient(90deg, #ffc812 1px, transparent 1px)`,
+          backgroundSize: "48px 48px",
+        }} />
+
+        <div className="max-w-7xl mx-auto px-4 md:px-12 relative">
           <Reveal>
-            <div className="text-center mb-10">
-              <span className="text-[#808080] text-[10px] tracking-[0.4em] uppercase" style={{ fontFamily: "Michroma, sans-serif" }}>
-                Flight Tested & Trusted By
-              </span>
+            <div className="text-center mb-12">
+              <div className="inline-flex items-center gap-4 mb-4">
+                <div className="h-px w-12 bg-gradient-to-r from-transparent to-[#ffc812]/60" />
+                <span className="text-[#808080] text-[10px] tracking-[0.4em] uppercase" style={{ fontFamily: "Michroma, sans-serif" }}>
+                  Backed By
+                </span>
+                <div className="h-px w-12 bg-gradient-to-l from-transparent to-[#ffc812]/60" />
+              </div>
             </div>
           </Reveal>
-          <div className="flex flex-wrap items-center justify-center gap-4 md:gap-5">
-            {CLIENTS.map((client, i) => (
-              <Reveal key={client} delay={i * 50}>
-                <div className="bg-[#f8f8f8] border border-gray-100 px-7 py-4 hover:bg-black hover:border-black hover:shadow-lg transition-all duration-300 group cursor-default">
-                  <span className="text-[10px] font-bold text-black/60 tracking-[0.2em] uppercase group-hover:text-[#ffc812] transition-colors"
-                        style={{ fontFamily: "Michroma, sans-serif" }}>
-                    {client}
-                  </span>
+          <div className="flex flex-wrap items-center justify-center gap-5 md:gap-8">
+            {INVESTORS.map((inv, i) => (
+              <Reveal key={inv.name} delay={i * 80}>
+                <div className="border border-white/[0.08] bg-white/[0.03] backdrop-blur-sm px-8 py-5 hover:border-[#ffc812]/30 hover:bg-white/[0.06] transition-all duration-300 group cursor-default flex items-center justify-center min-h-[60px]">
+                  {inv.logo ? (
+                    <img
+                      src={`${import.meta.env.BASE_URL}${inv.logo}`}
+                      alt={inv.full}
+                      className="h-8 md:h-10 w-auto max-w-[140px] object-contain opacity-80 group-hover:opacity-100 transition-opacity"
+                      style={{ mixBlendMode: "screen" }}
+                    />
+                  ) : (
+                    <span className="text-sm md:text-base font-black text-white/80 tracking-[0.15em] uppercase group-hover:text-[#ffc812] transition-colors"
+                          style={{ fontFamily: "Michroma, sans-serif" }}>
+                      {inv.name}
+                    </span>
+                  )}
                 </div>
               </Reveal>
             ))}
           </div>
+
         </div>
       </section>
 

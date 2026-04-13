@@ -13,12 +13,13 @@
 
 import { useState, useMemo, useCallback } from "react";
 import {
-  LineChart, Line, BarChart, Bar, ScatterChart, Scatter,
+  LineChart, Line, BarChart, Bar, ScatterChart, Scatter, ReferenceArea,
   XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ZAxis
 } from "recharts";
 import GaugeMeter from "./GaugeMeter";
 import { calcXcopter, XcopterCalcInput, XcopterCalcResult } from "@/lib/calculators/xcopterCalc";
-import { useMotorPresets, getPresetById } from "@/hooks/useMotorPresets";
+import { useMotorPresets, getPresetById, suggestProps, suggestBattery } from "@/hooks/useMotorPresets";
+import { suggestESCs } from "@/data/escs";
 import { DownloadReportButton, PdfTemplateHeader } from "./PdfExport";
 import SplitLayout from "./SplitLayout";
 
@@ -195,6 +196,18 @@ function WarningBar({ warnings }: { warnings: Warning[] }) {
 }
 
 // ─────────────────────────────────────────────────────────────
+// ISA atmosphere: estimate air density from altitude (MSL)
+// ─────────────────────────────────────────────────────────────
+function airDensityFromAltitude(altM: number, tempC: number): { density: number; pressure: number; temp: number } {
+  const T0 = 288.15, P0 = 101325, L = 0.0065, g = 9.80665, M = 0.0289644, R = 8.31447;
+  const T = T0 - L * altM;
+  const P = P0 * Math.pow(T / T0, g * M / (R * L));
+  const Tk = tempC + 273.15;
+  const rho = (P * M) / (R * Tk);
+  return { density: rho, pressure: P / 100, temp: T - 273.15 };
+}
+
+// ─────────────────────────────────────────────────────────────
 // Main Panel
 // ─────────────────────────────────────────────────────────────
 export default function XcopterCalcPanel() {
@@ -219,6 +232,52 @@ export default function XcopterCalcPanel() {
       motorRmMohm: preset.estimatedRmMohm,
     }));
     setSelectedPreset(presetId);
+  };
+
+  // Suggested ESCs, propellers, and battery configs based on selected motor
+  const currentPreset = selectedPreset ? getPresetById(selectedPreset) : null;
+  const suggestedESCs = useMemo(() => {
+    if (!currentPreset) return [];
+    return suggestESCs(currentPreset.peakCurrent, inputs.batteryCells, "multicopter");
+  }, [currentPreset, inputs.batteryCells]);
+  const suggestedPropellers = useMemo(() => {
+    if (!currentPreset) return [];
+    return suggestProps(currentPreset, "multicopter");
+  }, [currentPreset]);
+  const suggestedBatteries = useMemo(() => {
+    if (!currentPreset) return [];
+    return suggestBattery(currentPreset);
+  }, [currentPreset]);
+
+  const applyProp = (propId: string) => {
+    const prop = suggestedPropellers.find(p => p.id === propId);
+    if (!prop) return;
+    setInputs(prev => ({
+      ...prev,
+      propDiameterInch: prop.diameterInch,
+      propPitchInch: prop.pitchInch,
+      ct: prop.ct,
+      cp: prop.cp,
+    }));
+  };
+
+  const applyBattery = (label: string) => {
+    const bat = suggestedBatteries.find(b => b.label === label);
+    if (!bat) return;
+    setInputs(prev => ({
+      ...prev,
+      batteryCells: bat.cells,
+      batteryCapacityMah: bat.capacityMah,
+    }));
+  };
+
+  const applyMSL = (altM: number) => {
+    const atm = airDensityFromAltitude(altM, inputs.temperatureC);
+    setInputs(prev => ({
+      ...prev,
+      elevationM: altM,
+      pressureHpa: Math.round(atm.pressure * 10) / 10,
+    }));
   };
 
   const result: XcopterCalcResult = useMemo(() => calcXcopter(inputs), [inputs]);
@@ -324,6 +383,61 @@ export default function XcopterCalcPanel() {
         </select>
       </div>
 
+      {/* ESC Suggestion */}
+      {suggestedESCs.length > 0 && (
+        <div className="border border-gray-200 bg-gray-50 px-3 py-2">
+          <label className="text-[8px] tracking-widest uppercase text-[#808080] block mb-1"
+                 style={{ fontFamily: "Michroma, sans-serif" }}>Suggested ESC</label>
+          <div className="space-y-1">
+            {suggestedESCs.slice(0, 3).map(e => (
+              <div key={e.id} className="flex items-center justify-between text-[10px] border border-gray-200 bg-white px-2 py-1"
+                   style={{ fontFamily: "Lexend, sans-serif" }}>
+                <span className="font-medium">{e.model}</span>
+                <span className="text-gray-400">{e.continuousA}A / {e.minCells}–{e.maxCells}S</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Compatible Propeller */}
+      {suggestedPropellers.length > 0 && (
+        <div className="border border-gray-200 bg-gray-50 px-3 py-2">
+          <label className="text-[8px] tracking-widest uppercase text-[#808080] block mb-1"
+                 style={{ fontFamily: "Michroma, sans-serif" }}>Compatible Propeller</label>
+          <select
+            onChange={e => applyProp(e.target.value)}
+            className="w-full border border-gray-200 text-[11px] px-2 py-1 focus:outline-none focus:border-[#ffc812] bg-white"
+            style={{ fontFamily: "Michroma, sans-serif" }}
+            defaultValue=""
+          >
+            <option value="" disabled>— Select Propeller —</option>
+            {suggestedPropellers.map(p => (
+              <option key={p.id} value={p.id}>{p.type} {p.diameterInch}×{p.pitchInch} {p.blades}-blade</option>
+            ))}
+          </select>
+        </div>
+      )}
+
+      {/* Battery Config Suggestion */}
+      {suggestedBatteries.length > 0 && (
+        <div className="border border-gray-200 bg-gray-50 px-3 py-2">
+          <label className="text-[8px] tracking-widest uppercase text-[#808080] block mb-1"
+                 style={{ fontFamily: "Michroma, sans-serif" }}>Suggested Battery</label>
+          <select
+            onChange={e => applyBattery(e.target.value)}
+            className="w-full border border-gray-200 text-[11px] px-2 py-1 focus:outline-none focus:border-[#ffc812] bg-white"
+            style={{ fontFamily: "Michroma, sans-serif" }}
+            defaultValue=""
+          >
+            <option value="" disabled>— Select Battery —</option>
+            {suggestedBatteries.map(b => (
+              <option key={b.label} value={b.label}>{b.label}</option>
+            ))}
+          </select>
+        </div>
+      )}
+
       <CollapsibleSection title="Multirotor Config" defaultOpen>
         <Field label="# Rotors" id="xnr" value={inputs.numRotors} onChange={set("numRotors")} step="1"
                hint="Number of rotors (4 = quad, 6 = hex, 8 = octo)." />
@@ -370,6 +484,12 @@ export default function XcopterCalcPanel() {
       <CollapsibleSection title="Environment" defaultOpen={false}>
         <Field label="Elevation (m)" id="xel" value={inputs.elevationM} onChange={set("elevationM")}
                hint="Flight altitude above sea level." />
+        <button
+          type="button"
+          onClick={() => applyMSL(inputs.elevationM)}
+          className="w-full text-[8px] tracking-widest uppercase bg-black text-[#ffc812] py-1 mb-1 hover:bg-gray-800 transition-colors"
+          style={{ fontFamily: "Michroma, sans-serif" }}
+        >Estimate from MSL</button>
         <Field label="Temp (°C)" id="xtc" value={inputs.temperatureC} onChange={set("temperatureC")}
                hint="Ambient air temperature." />
         <Field label="Pressure (hPa)" id="xph" value={inputs.pressureHpa} onChange={set("pressureHpa")}
@@ -381,6 +501,10 @@ export default function XcopterCalcPanel() {
   const resultsPanel = (
       <div id="xcopter-report-area" className="relative">
         <PdfTemplateHeader calculatorName="Multi-Rotor Drive" />
+        {/* Description */}
+        <p className="text-[11px] text-gray-500 border-l-2 border-[#ffc812] pl-3 py-1 mb-3" style={{ fontFamily: "Lexend, sans-serif" }}>
+          Hover power, disc loading, TWR, flight time and throttle curve for multi-rotor drones. Select motor, propeller and battery to calculate operating zones at hover and maximum thrust.
+        </p>
         {/* Action bar */}
         <div className="flex items-center justify-between mb-2">
           <p className="text-[9px] tracking-[0.3em] uppercase pdf-no-hide"
@@ -512,6 +636,8 @@ export default function XcopterCalcPanel() {
                     <YAxis tick={{ fontSize: 9, fontFamily: "Michroma, sans-serif" }} />
                     <Tooltip contentStyle={TOOLTIP_STYLE} />
                     <Legend wrapperStyle={{ fontSize: 9, fontFamily: "Michroma, sans-serif" }} />
+                    {/* Efficiency operating zone: hover ±10% throttle */}
+                    <ReferenceArea x1={`${Math.max(0, Math.round(result.hover.throttlePercent - 10))}%`} x2={`${Math.min(100, Math.round(result.hover.throttlePercent + 10))}%`} fill="#ffc812" fillOpacity={0.08} stroke="#ffc812" strokeOpacity={0.25} strokeDasharray="4 2" />
                     <Line type="monotone" dataKey="Thrust (g)" stroke="#ffc812" strokeWidth={2} dot={{ r: 3 }} />
                     <Line type="monotone" dataKey="Power (W)" stroke="#111" strokeWidth={2} dot={{ r: 3 }} />
                     <Line type="monotone" dataKey="Current (A)" stroke="#22c55e" strokeWidth={2} dot={{ r: 3 }} />

@@ -3,6 +3,7 @@
 
 import { useMemo } from "react";
 import { PRODUCTS } from "@/data/products";
+import { PROPELLERS, Propeller } from "@/data/propellers";
 
 export interface MotorPreset {
   id: string;
@@ -128,6 +129,53 @@ export function useMotorPresets(seriesFilter?: string) {
   }, [seriesFilter]);
 
   return presets;
+}
+
+// Suggest compatible propellers for a given motor preset
+export function suggestProps(
+  preset: MotorPreset,
+  application?: "airplane" | "multicopter" | "both"
+): Propeller[] {
+  return PROPELLERS
+    .filter(p =>
+      p.diameterInch >= preset.recommendedPropMin &&
+      p.diameterInch <= preset.recommendedPropMax &&
+      (application ? (p.application === application || p.application === "both") : true)
+    )
+    .sort((a, b) => a.diameterInch - b.diameterInch || a.pitchInch - b.pitchInch);
+}
+
+// Suggest battery configuration based on motor specs
+export interface BatterySuggestion {
+  cells: number;
+  capacityMah: number;
+  cRating: number;
+  label: string;
+}
+
+export function suggestBattery(preset: MotorPreset): BatterySuggestion[] {
+  const cells = preset.recommendedVoltage;
+  const peakA = preset.peakCurrent;
+  // Min capacity to supply peak current at a safe C rating
+  const suggestions: BatterySuggestion[] = [];
+  const cRatings = [25, 45, 65];
+  for (const c of cRatings) {
+    const minCapMah = Math.ceil((peakA / c) * 1000 / 100) * 100;
+    const capacities = [minCapMah, minCapMah + 500, minCapMah + 1000].filter(v => v >= 1000 && v <= 20000);
+    for (const cap of capacities) {
+      suggestions.push({
+        cells,
+        capacityMah: cap,
+        cRating: c,
+        label: `${cells}S ${cap}mAh ${c}C`,
+      });
+    }
+  }
+  // Remove duplicates and sort by capacity
+  const unique = suggestions.filter((s, i, arr) =>
+    arr.findIndex(x => x.cells === s.cells && x.capacityMah === s.capacityMah && x.cRating === s.cRating) === i
+  );
+  return unique.sort((a, b) => a.capacityMah - b.capacityMah);
 }
 
 export function getPresetById(id: string): MotorPreset | null {

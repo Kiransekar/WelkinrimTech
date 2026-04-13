@@ -1,6 +1,5 @@
 import { useState, useMemo } from "react";
 import { DownloadReportButton, PdfTemplateHeader } from "./PdfExport";
-import SplitLayout from "./SplitLayout";
 
 // --- Sub-calculator State Interfaces ---
 
@@ -60,14 +59,6 @@ interface AWGState {
 }
 
 // UI Helpers
-const SectionHeader = ({ title }: { title: string }) => (
-  <div className="bg-black px-3 py-1 mb-1.5 mt-3">
-    <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812]" style={{ fontFamily: "Michroma, sans-serif" }}>
-      {title}
-    </p>
-  </div>
-);
-
 const FieldDef = ({ label, value, onChange, unit, disabled = false, hint }: any) => (
   <div className="w-full py-0">
     <label className="text-[8px] uppercase text-[#808080] tracking-wider block mb-0.5" style={{ fontFamily: "Michroma, sans-serif" }} title={hint}>{label}</label>
@@ -88,7 +79,7 @@ const FieldDef = ({ label, value, onChange, unit, disabled = false, hint }: any)
 const RadioTarget = ({ options, selected, onChange }: any) => (
   <div className="w-full pt-0.5 pb-0.5 mb-0.5">
     <label className="text-[8px] uppercase text-[#808080] tracking-wider block mb-0.5" style={{ fontFamily: "Michroma, sans-serif" }}>Solve For:</label>
-    <div className="flex gap-2">
+    <div className="flex flex-wrap gap-x-2 gap-y-1">
       {options.map((opt: any) => (
         <label key={opt.value} className="flex items-center gap-1 cursor-pointer">
           <input type="radio" checked={selected === opt.value} onChange={() => onChange(opt.value)} className="accent-[#ffc812]" />
@@ -96,6 +87,48 @@ const RadioTarget = ({ options, selected, onChange }: any) => (
         </label>
       ))}
     </div>
+  </div>
+);
+
+// Grid card wrapper for each sub-calculator
+const ToolCard = ({ num, title, formula, inputs, outputs }: {
+  num: number;
+  title: string;
+  formula: string;
+  inputs: React.ReactNode;
+  outputs: React.ReactNode;
+}) => (
+  <div className="border border-gray-100 bg-white shadow-sm flex flex-col">
+    {/* Card header */}
+    <div className="bg-black px-3 py-1.5 flex items-center gap-2">
+      <span className="text-[9px] font-black text-[#ffc812] tracking-wider" style={{ fontFamily: "Michroma, sans-serif" }}>{num}.</span>
+      <p className="text-[9px] tracking-[0.2em] uppercase text-[#ffc812]" style={{ fontFamily: "Michroma, sans-serif" }}>
+        {title}
+      </p>
+    </div>
+    {/* Formula strip */}
+    <div className="px-3 py-1 bg-gray-50 border-b border-gray-100">
+      <p className="text-[10px] italic text-gray-400" style={{ fontFamily: "Lexend, sans-serif" }}>{formula}</p>
+    </div>
+    {/* Inputs */}
+    <div className="px-3 py-2 flex-1">
+      {inputs}
+    </div>
+    {/* Output */}
+    <div className="px-3 py-2 bg-[#ffc812]/5 border-t border-[#ffc812]/20 mt-auto">
+      <p className="text-[8px] uppercase text-[#808080] tracking-wider mb-1" style={{ fontFamily: "Michroma, sans-serif" }}>Output</p>
+      {outputs}
+    </div>
+  </div>
+);
+
+// Output row helper
+const OutRow = ({ label, value, unit }: { label: string; value: string; unit?: string }) => (
+  <div className="flex items-baseline justify-between gap-2">
+    <span className="text-[9px] text-gray-500 uppercase tracking-wider" style={{ fontFamily: "Michroma, sans-serif" }}>{label}</span>
+    <span className="text-[12px] font-black text-black" style={{ fontFamily: "Michroma, sans-serif" }}>
+      {value}{unit && <span className="text-[9px] text-gray-400 ml-1 font-normal">{unit}</span>}
+    </span>
   </div>
 );
 
@@ -210,162 +243,222 @@ export default function ToolboxCalc() {
     return { dia: d, area: a };
   }, [awg]);
 
-  const inputsPanel = (
-    <div className="space-y-4">
-      <SectionHeader title="1. Torque – Speed – Power" />
-      <div className="p-2 border border-gray-100 bg-gray-50/30">
-        <RadioTarget options={[{label: "Power", value:"power"}, {label: "Torque", value:"torque"}, {label: "Speed", value:"speed"}]} selected={tsp.solveFor} onChange={(v:any) => setTsp({...tsp, solveFor: v})} />
-        <div className="grid grid-cols-2 gap-1.5 mt-1">
-          <FieldDef label="Torque" value={tsp.solveFor === "torque" ? tspRes.torqueNm.toFixed(4) : tsp.torqueNm} disabled={tsp.solveFor === "torque"} onChange={(v:any) => setTsp({...tsp, torqueNm: v})} unit="Nm" />
-          <FieldDef label="Speed" value={tsp.solveFor === "speed" ? tspRes.speedRpm.toFixed(1) : tsp.speedRpm} disabled={tsp.solveFor === "speed"} onChange={(v:any) => setTsp({...tsp, speedRpm: v})} unit="RPM" />
-          <FieldDef label="Mech Power" value={tsp.solveFor === "power" ? tspRes.powerW.toFixed(2) : tsp.powerW} disabled={tsp.solveFor === "power"} onChange={(v:any) => setTsp({...tsp, powerW: v})} unit="W" />
-        </div>
-      </div>
-
-      <SectionHeader title="2. Speed – Voltage – Ke" />
-      <div className="p-2 border border-gray-100 bg-gray-50/30">
-        <RadioTarget options={[{label: "Ke", value:"ke"}, {label: "Speed", value:"speed"}, {label: "Voltage", value:"voltage"}]} selected={svk.solveFor} onChange={(v:any) => setSvk({...svk, solveFor: v})} />
-        <div className="grid grid-cols-2 gap-1.5 mt-1">
-          <FieldDef label="Voltage (L-L)" value={svk.solveFor === "voltage" ? svkRes.voltage.toFixed(2) : svk.voltage} disabled={svk.solveFor === "voltage"} onChange={(v:any) => setSvk({...svk, voltage: v})} unit="V" />
-          <FieldDef label="Speed" value={svk.solveFor === "speed" ? svkRes.speed.toFixed(1) : svk.speed} disabled={svk.solveFor === "speed"} onChange={(v:any) => setSvk({...svk, speed: v})} unit="RPM" />
-          <FieldDef label="Ke" value={svk.solveFor === "ke" ? svkRes.ke.toFixed(4) : svk.ke} disabled={svk.solveFor === "ke"} onChange={(v:any) => setSvk({...svk, ke: v})} unit="V/kRPM" />
-        </div>
-      </div>
-
-      <SectionHeader title="3. Torque – Current – Kt" />
-      <div className="p-2 border border-gray-100 bg-gray-50/30">
-        <RadioTarget options={[{label: "Kt", value:"kt"}, {label: "Torque", value:"torque"}, {label: "Current", value:"current"}]} selected={tck.solveFor} onChange={(v:any) => setTck({...tck, solveFor: v})} />
-        <div className="grid grid-cols-2 gap-1.5 mt-1">
-          <FieldDef label="Torque" value={tck.solveFor === "torque" ? tckRes.torque.toFixed(4) : tck.torque} disabled={tck.solveFor === "torque"} onChange={(v:any) => setTck({...tck, torque: v})} unit="Nm" />
-          <FieldDef label="Current (Iq)" value={tck.solveFor === "current" ? tckRes.current.toFixed(2) : tck.current} disabled={tck.solveFor === "current"} onChange={(v:any) => setTck({...tck, current: v})} unit="Arms" />
-          <FieldDef label="Kt" value={tck.solveFor === "kt" ? tckRes.kt.toFixed(4) : tck.kt} disabled={tck.solveFor === "kt"} onChange={(v:any) => setTck({...tck, kt: v})} unit="Nm/A" />
-        </div>
-      </div>
-
-      <SectionHeader title="4. Motor Constant (Km)" />
-      <div className="p-2 border border-gray-100 bg-gray-50/30 grid grid-cols-2 gap-1.5">
-        <FieldDef label="Kt" value={kmState.kt} onChange={(v:any) => setKmState({...kmState, kt: v})} unit="Nm/A" />
-        <FieldDef label="Resistance (L-L)" value={kmState.resistanceOmh} onChange={(v:any) => setKmState({...kmState, resistanceOmh: v})} unit="Ω" />
-      </div>
-
-      <SectionHeader title="5. Constant Relationships" />
-      <div className="p-2 border border-gray-100 bg-gray-50/30">
-        <RadioTarget options={[{label: "Kv (RPM/V)", value:"kv"}, {label: "Ke (V/kRPM)", value:"ke"}, {label: "Kt (Nm/A)", value:"kt"}]} selected={kkk.inputMode} onChange={(v:any) => setKkk({...kkk, inputMode: v})} />
-        <div className="mt-1">
-          <FieldDef label={`Input ${kkk.inputMode.toUpperCase()}`} value={kkk.val} onChange={(v:any) => setKkk({...kkk, val: v})} />
-        </div>
-      </div>
-
-      <SectionHeader title="6. RPM Conversions" />
-      <div className="p-2 border border-gray-100 bg-gray-50/30">
-        <FieldDef label="Speed" value={rpmVal.rpm} onChange={(v:any) => setRpmVal({rpm: v})} unit="RPM" />
-      </div>
-
-      <SectionHeader title="7. eRPM & Frequency" />
-      <div className="p-2 border border-gray-100 bg-gray-50/30">
-        <RadioTarget options={[{label: "Mech RPM", value:"rpm"}, {label: "eRPM", value:"erpm"}]} selected={erp.solveFor === "rpm" ? "rpm" : "erpm"} onChange={(v:any) => setErp({...erp, solveFor: v})} />
-        <div className="grid grid-cols-2 gap-1.5 mt-1">
-          <FieldDef label="Stator Poles" value={erp.poles} onChange={(v:any) => setErp({...erp, poles: v})} />
-          <FieldDef label="Mech RPM" value={erp.solveFor === "rpm" ? erpRes.rpm.toFixed(0) : erp.rpm} disabled={erp.solveFor === "rpm"} onChange={(v:any) => setErp({...erp, rpm: v})} unit="RPM" />
-          <FieldDef label="eRPM" value={erp.solveFor !== "rpm" ? erpRes.erpm.toFixed(0) : erp.erpm} disabled={erp.solveFor !== "rpm"} onChange={(v:any) => setErp({...erp, erpm: v})} unit="RPM" />
-        </div>
-      </div>
-
-      <SectionHeader title="8. Angle Conversions" />
-      <div className="p-2 border border-gray-100 bg-gray-50/30">
-        <FieldDef label="Angle" value={angle.degrees} onChange={(v:any) => setAngle({degrees: v})} unit="°" />
-      </div>
-
-      <SectionHeader title="9. Encoder Resolution" />
-      <div className="p-2 border border-gray-100 bg-gray-50/30">
-        <FieldDef label="Encoder Bits" value={enc.bits} onChange={(v:any) => setEnc({...enc, bits: v})} unit="Bits" />
-      </div>
-
-      <SectionHeader title="10. AWG Wire Size" />
-      <div className="p-2 border border-gray-100 bg-gray-50/30">
-        <FieldDef label="Gauge" value={awg.awg} onChange={(v:any) => setAwg({awg: v})} unit="AWG" />
-      </div>
-    </div>
-  );
-
-  const resultsPanel = (
-    <div id="toolboxcalc-report-area" className="relative space-y-6">
+  return (
+    <div id="calculator-capture-area" className="bg-white">
       <PdfTemplateHeader calculatorName="Engineering Toolbox" />
 
-      <div className="flex items-center justify-between mb-4">
+      {/* Top bar: description + PDF download */}
+      <div className="flex items-center justify-between mb-5">
         <p className="text-[11px] text-gray-500 border-l-2 border-[#ffc812] pl-3 py-1 pdf-no-hide" style={{ fontFamily: "Lexend, sans-serif" }}>
           Complete reference of standard electric motor relations.
         </p>
         <DownloadReportButton targetElementId="calculator-capture-area" filename="WelkinRim_Toolbox_Report.pdf" />
       </div>
 
-      <div className="border border-gray-100 p-4 bg-white shadow-sm">
-        <h3 className="text-[10px] uppercase font-bold tracking-[0.2em] mb-4 border-b pb-2" style={{ fontFamily: "Michroma, sans-serif" }}>Reference Summary & Formulas</h3>
-        
-        <div className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-1">
-              <p className="text-[9px] text-[#ffc812] uppercase font-bold">1. Power Relation</p>
-              <p className="text-[10px] italic text-gray-400">P = τ · ω</p>
-              <p className="text-xs font-bold">{tspRes.powerW.toFixed(2)} W</p>
-            </div>
-            <div className="space-y-1">
-              <p className="text-[9px] text-[#ffc812] uppercase font-bold">2. Speed/Voltage</p>
-              <p className="text-[10px] italic text-gray-400">ω = V / Ke</p>
-              <p className="text-xs font-bold">{svkRes.speed.toFixed(0)} RPM</p>
-            </div>
-            <div className="space-y-1">
-              <p className="text-[9px] text-[#ffc812] uppercase font-bold">3. Torque/Current</p>
-              <p className="text-[10px] italic text-gray-400">τ = Kt · I</p>
-              <p className="text-xs font-bold">{tckRes.torque.toFixed(4)} Nm</p>
-            </div>
-            <div className="space-y-1">
-              <p className="text-[9px] text-[#ffc812] uppercase font-bold">4. Motor Constant</p>
-              <p className="text-[10px] italic text-gray-400">Km = Kt / √R</p>
-              <p className="text-xs font-bold">{kmRes.toFixed(5)} Nm/√W</p>
-            </div>
-          </div>
+      {/* ── Grid of tool cards ── */}
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
 
-          <div className="border-t pt-4 grid grid-cols-2 gap-4">
-            <div className="space-y-1">
-               <p className="text-[9px] text-[#ffc812] uppercase font-bold">5. Constants</p>
-               <div className="text-[10px] space-y-0.5">
-                  <p>Kv: {kkkRes.kv.toFixed(1)}</p>
-                  <p>Ke: {kkkRes.ke.toFixed(4)}</p>
-                  <p>Kt: {kkkRes.kt.toFixed(4)}</p>
-               </div>
-            </div>
-            <div className="space-y-1">
-               <p className="text-[9px] text-[#ffc812] uppercase font-bold">6/7. Speed</p>
-               <div className="text-[10px] space-y-0.5">
-                  <p>ω: {rpmRes.rad.toFixed(2)} rad/s</p>
-                  <p>eRPM: {erpRes.erpm.toFixed(0)}</p>
-                  <p>Freq: {erpRes.freq.toFixed(2)} Hz</p>
-               </div>
-            </div>
-          </div>
+        {/* 1. Torque – Speed – Power */}
+        <ToolCard
+          num={1}
+          title="Torque – Speed – Power"
+          formula="P = (τ × n × 2π) / 60"
+          inputs={
+            <>
+              <RadioTarget options={[{label: "Power", value:"power"}, {label: "Torque", value:"torque"}, {label: "Speed", value:"speed"}]} selected={tsp.solveFor} onChange={(v:any) => setTsp({...tsp, solveFor: v})} />
+              <div className="grid grid-cols-2 gap-1.5 mt-1">
+                <FieldDef label="Torque" value={tsp.solveFor === "torque" ? tspRes.torqueNm.toFixed(4) : tsp.torqueNm} disabled={tsp.solveFor === "torque"} onChange={(v:any) => setTsp({...tsp, torqueNm: v})} unit="Nm" />
+                <FieldDef label="Speed" value={tsp.solveFor === "speed" ? tspRes.speedRpm.toFixed(1) : tsp.speedRpm} disabled={tsp.solveFor === "speed"} onChange={(v:any) => setTsp({...tsp, speedRpm: v})} unit="RPM" />
+                <FieldDef label="Mech Power" value={tsp.solveFor === "power" ? tspRes.powerW.toFixed(2) : tsp.powerW} disabled={tsp.solveFor === "power"} onChange={(v:any) => setTsp({...tsp, powerW: v})} unit="W" />
+              </div>
+            </>
+          }
+          outputs={
+            <>
+              <OutRow label="Torque" value={tspRes.torqueNm.toFixed(4)} unit="Nm" />
+              <OutRow label="Speed" value={tspRes.speedRpm.toFixed(1)} unit="RPM" />
+              <OutRow label="Power" value={tspRes.powerW.toFixed(2)} unit="W" />
+            </>
+          }
+        />
 
-          <div className="border-t pt-4 grid grid-cols-2 gap-4">
-            <div className="space-y-1">
-               <p className="text-[9px] text-[#ffc812] uppercase font-bold">8/9. Precision</p>
-               <div className="text-[10px] space-y-0.5">
-                  <p>Arcsec: {angleRes.arcsec.toFixed(0)}</p>
-                  <p>Res: {encRes.deg.toFixed(6)}°</p>
-                  <p>CPR: {encRes.cpr.toLocaleString()}</p>
-               </div>
+        {/* 2. Speed – Voltage – Ke */}
+        <ToolCard
+          num={2}
+          title="Speed – Voltage – Ke"
+          formula="ω = (V × 1000) / Ke"
+          inputs={
+            <>
+              <RadioTarget options={[{label: "Ke", value:"ke"}, {label: "Speed", value:"speed"}, {label: "Voltage", value:"voltage"}]} selected={svk.solveFor} onChange={(v:any) => setSvk({...svk, solveFor: v})} />
+              <div className="grid grid-cols-2 gap-1.5 mt-1">
+                <FieldDef label="Voltage (L-L)" value={svk.solveFor === "voltage" ? svkRes.voltage.toFixed(2) : svk.voltage} disabled={svk.solveFor === "voltage"} onChange={(v:any) => setSvk({...svk, voltage: v})} unit="V" />
+                <FieldDef label="Speed" value={svk.solveFor === "speed" ? svkRes.speed.toFixed(1) : svk.speed} disabled={svk.solveFor === "speed"} onChange={(v:any) => setSvk({...svk, speed: v})} unit="RPM" />
+                <FieldDef label="Ke" value={svk.solveFor === "ke" ? svkRes.ke.toFixed(4) : svk.ke} disabled={svk.solveFor === "ke"} onChange={(v:any) => setSvk({...svk, ke: v})} unit="V/kRPM" />
+              </div>
+            </>
+          }
+          outputs={
+            <>
+              <OutRow label="Ke" value={svkRes.ke.toFixed(4)} unit="V/kRPM" />
+              <OutRow label="Speed" value={svkRes.speed.toFixed(1)} unit="RPM" />
+              <OutRow label="Voltage" value={svkRes.voltage.toFixed(2)} unit="V" />
+            </>
+          }
+        />
+
+        {/* 3. Torque – Current – Kt */}
+        <ToolCard
+          num={3}
+          title="Torque – Current – Kt"
+          formula="τ = Kt × I"
+          inputs={
+            <>
+              <RadioTarget options={[{label: "Kt", value:"kt"}, {label: "Torque", value:"torque"}, {label: "Current", value:"current"}]} selected={tck.solveFor} onChange={(v:any) => setTck({...tck, solveFor: v})} />
+              <div className="grid grid-cols-2 gap-1.5 mt-1">
+                <FieldDef label="Torque" value={tck.solveFor === "torque" ? tckRes.torque.toFixed(4) : tck.torque} disabled={tck.solveFor === "torque"} onChange={(v:any) => setTck({...tck, torque: v})} unit="Nm" />
+                <FieldDef label="Current (Iq)" value={tck.solveFor === "current" ? tckRes.current.toFixed(2) : tck.current} disabled={tck.solveFor === "current"} onChange={(v:any) => setTck({...tck, current: v})} unit="Arms" />
+                <FieldDef label="Kt" value={tck.solveFor === "kt" ? tckRes.kt.toFixed(4) : tck.kt} disabled={tck.solveFor === "kt"} onChange={(v:any) => setTck({...tck, kt: v})} unit="Nm/A" />
+              </div>
+            </>
+          }
+          outputs={
+            <>
+              <OutRow label="Kt" value={tckRes.kt.toFixed(4)} unit="Nm/A" />
+              <OutRow label="Torque" value={tckRes.torque.toFixed(4)} unit="Nm" />
+              <OutRow label="Current" value={tckRes.current.toFixed(2)} unit="Arms" />
+            </>
+          }
+        />
+
+        {/* 4. Motor Constant (Km) */}
+        <ToolCard
+          num={4}
+          title="Motor Constant (Km)"
+          formula="Km = Kt / √(1.5 × R)"
+          inputs={
+            <div className="grid grid-cols-2 gap-1.5">
+              <FieldDef label="Kt" value={kmState.kt} onChange={(v:any) => setKmState({...kmState, kt: v})} unit="Nm/A" />
+              <FieldDef label="Resistance (L-L)" value={kmState.resistanceOmh} onChange={(v:any) => setKmState({...kmState, resistanceOmh: v})} unit="Ω" />
             </div>
-            <div className="space-y-1">
-               <p className="text-[9px] text-[#ffc812] uppercase font-bold">10. Wire</p>
-               <div className="text-[10px] space-y-0.5">
-                  <p>Dia: {awgRes.dia.toFixed(3)} mm</p>
-                  <p>Area: {awgRes.area.toFixed(3)} mm²</p>
-               </div>
-            </div>
-          </div>
-        </div>
+          }
+          outputs={
+            <OutRow label="Km" value={kmRes.toFixed(5)} unit="Nm/√W" />
+          }
+        />
+
+        {/* 5. Constant Relationships */}
+        <ToolCard
+          num={5}
+          title="Constant Relationships"
+          formula="Kv = 1000/Ke · Kt = Ke/85.6"
+          inputs={
+            <>
+              <RadioTarget options={[{label: "Kv", value:"kv"}, {label: "Ke", value:"ke"}, {label: "Kt", value:"kt"}]} selected={kkk.inputMode} onChange={(v:any) => setKkk({...kkk, inputMode: v})} />
+              <div className="mt-1">
+                <FieldDef label={`Input ${kkk.inputMode.toUpperCase()}`} value={kkk.val} onChange={(v:any) => setKkk({...kkk, val: v})} />
+              </div>
+            </>
+          }
+          outputs={
+            <>
+              <OutRow label="Kv" value={kkkRes.kv.toFixed(1)} unit="RPM/V" />
+              <OutRow label="Ke" value={kkkRes.ke.toFixed(4)} unit="V/kRPM" />
+              <OutRow label="Kt" value={kkkRes.kt.toFixed(4)} unit="Nm/A" />
+            </>
+          }
+        />
+
+        {/* 6. RPM Conversions */}
+        <ToolCard
+          num={6}
+          title="RPM Conversions"
+          formula="ω = RPM × 2π / 60"
+          inputs={
+            <FieldDef label="Speed" value={rpmVal.rpm} onChange={(v:any) => setRpmVal({rpm: v})} unit="RPM" />
+          }
+          outputs={
+            <>
+              <OutRow label="rad/s" value={rpmRes.rad.toFixed(2)} unit="rad/s" />
+              <OutRow label="deg/s" value={rpmRes.deg.toFixed(1)} unit="°/s" />
+            </>
+          }
+        />
+
+        {/* 7. eRPM & Frequency */}
+        <ToolCard
+          num={7}
+          title="eRPM & Frequency"
+          formula="eRPM = RPM × P/2 · f = RPM × P/60"
+          inputs={
+            <>
+              <RadioTarget options={[{label: "Mech RPM", value:"rpm"}, {label: "eRPM", value:"erpm"}]} selected={erp.solveFor === "rpm" ? "rpm" : "erpm"} onChange={(v:any) => setErp({...erp, solveFor: v})} />
+              <div className="grid grid-cols-2 gap-1.5 mt-1">
+                <FieldDef label="Stator Poles" value={erp.poles} onChange={(v:any) => setErp({...erp, poles: v})} />
+                <FieldDef label="Mech RPM" value={erp.solveFor === "rpm" ? erpRes.rpm.toFixed(0) : erp.rpm} disabled={erp.solveFor === "rpm"} onChange={(v:any) => setErp({...erp, rpm: v})} unit="RPM" />
+                <FieldDef label="eRPM" value={erp.solveFor !== "rpm" ? erpRes.erpm.toFixed(0) : erp.erpm} disabled={erp.solveFor !== "rpm"} onChange={(v:any) => setErp({...erp, erpm: v})} unit="RPM" />
+              </div>
+            </>
+          }
+          outputs={
+            <>
+              <OutRow label="Mech RPM" value={erpRes.rpm.toFixed(0)} unit="RPM" />
+              <OutRow label="eRPM" value={erpRes.erpm.toFixed(0)} />
+              <OutRow label="Freq" value={erpRes.freq.toFixed(2)} unit="Hz" />
+            </>
+          }
+        />
+
+        {/* 8. Angle Conversions */}
+        <ToolCard
+          num={8}
+          title="Angle Conversions"
+          formula="rad = deg × π/180 · arcsec = deg × 3600"
+          inputs={
+            <FieldDef label="Angle" value={angle.degrees} onChange={(v:any) => setAngle({degrees: v})} unit="°" />
+          }
+          outputs={
+            <>
+              <OutRow label="Radians" value={angleRes.rad.toFixed(6)} unit="rad" />
+              <OutRow label="μrad" value={angleRes.urad.toFixed(1)} unit="μrad" />
+              <OutRow label="Arcsec" value={angleRes.arcsec.toFixed(0)} unit="″" />
+            </>
+          }
+        />
+
+        {/* 9. Encoder Resolution */}
+        <ToolCard
+          num={9}
+          title="Encoder Resolution"
+          formula="CPR = 2^bits · res = 360° / CPR"
+          inputs={
+            <FieldDef label="Encoder Bits" value={enc.bits} onChange={(v:any) => setEnc({...enc, bits: v})} unit="Bits" />
+          }
+          outputs={
+            <>
+              <OutRow label="CPR" value={encRes.cpr.toLocaleString()} />
+              <OutRow label="Resolution" value={encRes.deg.toFixed(6)} unit="°" />
+              <OutRow label="Arcsec/step" value={encRes.arcsec.toFixed(2)} unit="″" />
+            </>
+          }
+        />
+
+        {/* 10. AWG Wire Size */}
+        <ToolCard
+          num={10}
+          title="AWG Wire Size"
+          formula="d = 0.127 × 92^((36−AWG)/39)"
+          inputs={
+            <FieldDef label="Gauge" value={awg.awg} onChange={(v:any) => setAwg({awg: v})} unit="AWG" />
+          }
+          outputs={
+            <>
+              <OutRow label="Diameter" value={awgRes.dia.toFixed(3)} unit="mm" />
+              <OutRow label="Area" value={awgRes.area.toFixed(3)} unit="mm²" />
+            </>
+          }
+        />
+
       </div>
     </div>
   );
-
-  return <SplitLayout inputs={inputsPanel} results={resultsPanel} />;
 }
