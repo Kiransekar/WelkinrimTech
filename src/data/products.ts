@@ -1656,7 +1656,6 @@ export const PRODUCTS: Product[] = [
     id: "maelard-4101",
     series: "maelard", seriesLabel: "Maelard Series",
     model: "MAELARD 4101", name: "MAELARD 4101", tag: "MAELARD", application: "Multi-Mission",
-    thumbnailUrl: "/assets/products/maelard_4101.png",
     keySpecs: [ { "label": "KV Rating", "value": "700" }, { "label": "Peak Thrust", "value": "2 kg" }, { "label": "Voltage", "value": "3 – 4S" } ],
     allSpecs: [
       { "label": "KV Rating",             "value": "700" },

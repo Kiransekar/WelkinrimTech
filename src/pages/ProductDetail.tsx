@@ -91,28 +91,21 @@ export default function ProductDetail() {
             <div className="absolute inset-0 z-10 pointer-events-none select-none hidden lg:block">
               <div className="max-w-7xl mx-auto h-full relative px-6 md:px-12">
                 {/* Flex column: motor image on top, series logo directly underneath */}
-              <div className="absolute right-[4%] top-0 bottom-0 w-[40%] flex flex-col items-center justify-center">
-                  {/* Motor image — centered, slightly larger */}
-                  <div className="relative">
+              <div className="absolute right-[4%] top-0 bottom-0 w-[40%] flex flex-col items-center justify-center overflow-visible">
+                  {/* Motor image container - scaled wrapper for Maelard */}
+                  <div className={`relative flex items-center justify-center ${product.series === 'maelard' ? 'scale-[2.2]' : ''}`}>
                     {/* The motor photo */}
-                    <div
+                    <img
+                      src={heroImageSrc}
+                      alt={product.seriesLabel}
+                      draggable={false}
+                      className="w-auto h-auto object-contain"
                       style={{
-                        WebkitMaskImage: 'radial-gradient(ellipse 92% 92% at 50% 48%, black 55%, rgba(0,0,0,0.7) 72%, transparent 94%)',
-                        maskImage:       'radial-gradient(ellipse 92% 92% at 50% 48%, black 55%, rgba(0,0,0,0.7) 72%, transparent 94%)',
+                        maxHeight: product.series === 'maelard' ? '160px' : '360px',
+                        maxWidth: '100%',
+                        filter: 'drop-shadow(-4px 6px 24px rgba(0,0,0,0.5))',
                       }}
-                    >
-                      <img
-                        src={heroImageSrc}
-                        alt={product.seriesLabel}
-                        draggable={false}
-                        className="w-auto h-auto object-contain"
-                        style={{
-                          maxHeight: '300px',
-                          maxWidth: '100%',
-                          filter: 'drop-shadow(-4px 6px 24px rgba(0,0,0,0.5))',
-                        }}
-                      />
-                    </div>
+                    />
 
                     {/* Series logo — bottom center of motor, overlapping onto it */}
                     {seriesLogoSrc && (
@@ -126,7 +119,7 @@ export default function ProductDetail() {
                           }}
                         />
                         {/* SVG logo positioned at bottom center */}
-                        <div className="absolute bottom-[8%] left-[40%] -translate-x-1/2 pointer-events-none z-10">
+                        <div className="absolute bottom-[8%] left-1/2 -translate-x-1/2 pointer-events-none z-10">
                           <img
                             src={seriesLogoSrc}
                             alt={product.seriesLabel}
