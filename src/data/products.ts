@@ -91,62 +91,6 @@ export const PRODUCTS: Product[] = [
     ],
   },
   {
-    id: "haemng-axn8bed5g",
-    series: "haemng", seriesLabel: "Haemng Series",
-    model: "HAEMNG 2121 II", name: "HAEMNG 2121 II", tag: "HAEMNG", application: "UAV / eVTOL",
-    keySpecs: [ { "label": "KV Rating", "value": "380"  }, { "label": "Peak Thrust", "value": "550 g"  }, { "label": "Voltage", "value": "6S"  }
-],
-    allSpecs: [
-      {
-            "label": "KV Rating",
-            "value": "380"
-      },
-      {
-            "label": "Rated Voltage (LiPo)",
-            "value": "6S"
-      },
-      {
-            "label": "Peak Current",
-            "value": "16 A"
-      },
-      {
-            "label": "Recommended Thrust",
-            "value": "550 g"
-      },
-      {
-            "label": "Peak Thrust",
-            "value": "1,650 g"
-      },
-      {
-            "label": "Recommended Propeller",
-            "value": "15 x 5 inch"
-      },
-      {
-            "label": "Dimension",
-            "value": "Φ46x20 mm"
-      },
-      {
-            "label": "Weight",
-            "value": "86 g"
-      }
-],
-    perf: [
-      { throttle:"30%", voltage:"24.87 V", power:"18.95 W", thrust:"231 g", current:"0.76 A", speed:"2,267 RPM", efficiency:"12.19 g/W" },
-      { throttle:"35%", voltage:"24.85 V", power:"24.95 W", thrust:"299 g", current:"1.00 A", speed:"2,544 RPM", efficiency:"11.98 g/W" },
-      { throttle:"40%", voltage:"24.82 V", power:"31.52 W", thrust:"369 g", current:"1.27 A", speed:"2,789 RPM", efficiency:"11.71 g/W" },
-      { throttle:"45%", voltage:"24.77 V", power:"40.62 W", thrust:"450 g", current:"1.64 A", speed:"3,064 RPM", efficiency:"11.08 g/W" },
-      { throttle:"50%", voltage:"24.73 V", power:"50.05 W", thrust:"523 g", current:"2.02 A", speed:"3,298 RPM", efficiency:"10.45 g/W" },
-      { throttle:"55%", voltage:"24.67 V", power:"62.17 W", thrust:"631 g", current:"2.52 A", speed:"3,567 RPM", efficiency:"10.15 g/W" },
-      { throttle:"60%", voltage:"24.60 V", power:"78.23 W", thrust:"751 g", current:"3.18 A", speed:"3,860 RPM", efficiency:"9.60 g/W" },
-      { throttle:"65%", voltage:"24.53 V", power:"94.93 W", thrust:"823 g", current:"3.87 A", speed:"4,111 RPM", efficiency:"8.67 g/W" },
-      { throttle:"70%", voltage:"24.45 V", power:"115.89 W", thrust:"951 g", current:"4.74 A", speed:"4,351 RPM", efficiency:"8.21 g/W" },
-      { throttle:"75%", voltage:"24.34 V", power:"143.61 W", thrust:"1,085 g", current:"5.90 A", speed:"4,627 RPM", efficiency:"7.56 g/W" },
-      { throttle:"80%", voltage:"24.24 V", power:"169.92 W", thrust:"1,204 g", current:"7.01 A", speed:"4,937 RPM", efficiency:"7.09 g/W" },
-      { throttle:"90%", voltage:"23.97 V", power:"231.79 W", thrust:"1,484 g", current:"9.67 A", speed:"5,424 RPM", efficiency:"6.40 g/W" },
-      { throttle:"100%", voltage:"23.73 V", power:"377.54 W", thrust:"1,650 g", current:"15.91 A", speed:"5,734 RPM", efficiency:"4.37 g/W" },
-    ],
-  },
-  {
     id: "haemng-p7ofe6dco",
     series: "haemng", seriesLabel: "Haemng Series",
     model: "HAEMNG 4143 II", name: "HAEMNG 4143 II", tag: "HAEMNG", application: "UAV / eVTOL",
@@ -318,316 +262,170 @@ export const PRODUCTS: Product[] = [
     id: "haemng-79588b9hf",
     series: "haemng", seriesLabel: "Haemng Series",
     model: "HAEMNG 7010", name: "HAEMNG 7010", tag: "HAEMNG", application: "UAV / eVTOL",
-    keySpecs: [ { "label": "KV Rating", "value": "150"  }, { "label": "Peak Thrust", "value": "5 kg"  }, { "label": "Voltage", "value": "12S"  }
-],
+    keySpecs: [ { "label": "KV Rating", "value": "150" }, { "label": "Peak Thrust", "value": "13 kg" }, { "label": "Voltage", "value": "12S" } ],
     allSpecs: [
-      {
-            "label": "KV Rating",
-            "value": "150"
-      },
-      {
-            "label": "Rated Voltage (LiPo)",
-            "value": "12S"
-      },
-      {
-            "label": "Peak Current",
-            "value": "110 A"
-      },
-      {
-            "label": "Recommended Thrust",
-            "value": "5 kg"
-      },
-      {
-            "label": "Peak Thrust",
-            "value": "14.5 kg"
-      },
-      {
-            "label": "Recommended Propeller",
-            "value": "23 x 8.8 inch"
-      },
-      {
-            "label": "Dimension",
-            "value": "Φ70x39.3 mm"
-      },
-      {
-            "label": "Weight",
-            "value": "468 g"
-      }
-],
+      { "label": "KV Rating",               "value": "150" },
+      { "label": "Rated Voltage (LiPo)",    "value": "12S" },
+      { "label": "Peak Current",            "value": "55 A" },
+      { "label": "Recommended Thrust",      "value": "4.5 – 6 kg" },
+      { "label": "Peak Thrust",             "value": "13 kg" },
+      { "label": "Recommended Propeller",   "value": "24 x 8 inch" },
+      { "label": "Dimension",               "value": "Φ70x33.50 mm" },
+      { "label": "Weight",                  "value": "468 g" },
+    ],
     perf: [
-      { throttle:"30%", voltage:"49.25 V", power:"465.91 W", thrust:"3.22 kg", current:"9.46 A", speed:"3,386 RPM", efficiency:"6.91 g/W" },
-      { throttle:"35%", voltage:"48.96 V", power:"637.95 W", thrust:"4.14 kg", current:"13.03 A", speed:"3,828 RPM", efficiency:"6.49 g/W" },
-      { throttle:"40%", voltage:"48.61 V", power:"799.15 W", thrust:"4.90 kg", current:"16.44 A", speed:"4,155 RPM", efficiency:"6.13 g/W" },
-      { throttle:"45%", voltage:"48.25 V", power:"983.82 W", thrust:"5.62 kg", current:"20.39 A", speed:"4,448 RPM", efficiency:"5.71 g/W" },
-      { throttle:"50%", voltage:"47.90 V", power:"1,184.57 W", thrust:"6.44 kg", current:"24.73 A", speed:"4,745 RPM", efficiency:"5.44 g/W" },
-      { throttle:"55%", voltage:"47.46 V", power:"1,409.09 W", thrust:"7.20 kg", current:"29.69 A", speed:"4,997 RPM", efficiency:"5.11 g/W" },
-      { throttle:"60%", voltage:"47.60 V", power:"1,775.96 W", thrust:"8.52 kg", current:"37.31 A", speed:"5,311 RPM", efficiency:"4.80 g/W" },
-      { throttle:"65%", voltage:"46.71 V", power:"1,987.04 W", thrust:"9.56 kg", current:"42.54 A", speed:"5,596 RPM", efficiency:"4.81 g/W" },
-      { throttle:"70%", voltage:"46.45 V", power:"2,286.73 W", thrust:"10.48 kg", current:"49.23 A", speed:"5,855 RPM", efficiency:"4.58 g/W" },
-      { throttle:"75%", voltage:"45.99 V", power:"2,571.30 W", thrust:"11.00 kg", current:"55.91 A", speed:"6,057 RPM", efficiency:"4.28 g/W" },
-      { throttle:"80%", voltage:"45.47 V", power:"3,001.02 W", thrust:"11.68 kg", current:"66.00 A", speed:"6,264 RPM", efficiency:"3.89 g/W" },
-      { throttle:"90%", voltage:"44.78 V", power:"3,706.44 W", thrust:"13.26 kg", current:"82.77 A", speed:"6,613 RPM", efficiency:"3.58 g/W" },
-      { throttle:"100%", voltage:"44.08 V", power:"4,487.34 W", thrust:"14.66 kg", current:"101.80 A", speed:"6,918 RPM", efficiency:"3.27 g/W" },
+      { throttle:"30%",  voltage:"47.3 V", power:"76 W",     thrust:"1.7 kg",  current:"3.6 A",  speed:"2,258 RPM", efficiency:"10.2 g/W" },
+      { throttle:"35%",  voltage:"47.3 V", power:"124 W",    thrust:"2.4 kg",  current:"5.0 A",  speed:"2,532 RPM", efficiency:"10.1 g/W" },
+      { throttle:"40%",  voltage:"47.3 V", power:"173 W",    thrust:"3.0 kg",  current:"6.7 A",  speed:"2,812 RPM", efficiency:"9.6 g/W" },
+      { throttle:"45%",  voltage:"47.2 V", power:"429 W",    thrust:"3.8 kg",  current:"9.0 A",  speed:"3,119 RPM", efficiency:"8.9 g/W" },
+      { throttle:"50%",  voltage:"47.2 V", power:"557 W",    thrust:"4.8 kg",  current:"11.8 A", speed:"3,410 RPM", efficiency:"8.7 g/W" },
+      { throttle:"55%",  voltage:"47.1 V", power:"701 W",    thrust:"5.6 kg",  current:"14.8 A", speed:"3,686 RPM", efficiency:"8.0 g/W" },
+      { throttle:"60%",  voltage:"47.0 V", power:"851 W",    thrust:"6.2 kg",  current:"18.0 A", speed:"3,917 RPM", efficiency:"7.2 g/W" },
+      { throttle:"65%",  voltage:"46.9 V", power:"965 W",    thrust:"6.8 kg",  current:"20.5 A", speed:"4,160 RPM", efficiency:"7.1 g/W" },
+      { throttle:"70%",  voltage:"46.9 V", power:"1,159 W",  thrust:"7.9 kg",  current:"24.7 A", speed:"4,363 RPM", efficiency:"6.8 g/W" },
+      { throttle:"75%",  voltage:"46.8 V", power:"1,370 W",  thrust:"9.0 kg",  current:"29.2 A", speed:"4,566 RPM", efficiency:"6.5 g/W" },
+      { throttle:"80%",  voltage:"46.7 V", power:"1,596 W",  thrust:"9.8 kg",  current:"34.1 A", speed:"4,803 RPM", efficiency:"6.1 g/W" },
+      { throttle:"90%",  voltage:"46.5 V", power:"2,069 W",  thrust:"10.9 kg", current:"44.4 A", speed:"5,223 RPM", efficiency:"5.3 g/W" },
+      { throttle:"100%", voltage:"46.3 V", power:"2,491 W",  thrust:"12.9 kg", current:"53.8 A", speed:"5,544 RPM", efficiency:"5.2 g/W" },
     ],
   },
   {
     id: "haemng-ixtod385i",
     series: "haemng", seriesLabel: "Haemng Series",
     model: "HAEMNG 1536", name: "HAEMNG 1536", tag: "HAEMNG", application: "UAV / eVTOL",
-    keySpecs: [ { "label": "KV Rating", "value": "80"  }, { "label": "Peak Thrust", "value": "15 kg"  }, { "label": "Voltage", "value": "24S"  }
-],
+    keySpecs: [ { "label": "KV Rating", "value": "80" }, { "label": "Peak Thrust", "value": "44 kg" }, { "label": "Voltage", "value": "24S" } ],
     allSpecs: [
-      {
-            "label": "KV Rating",
-            "value": "80"
-      },
-      {
-            "label": "Rated Voltage (LiPo)",
-            "value": "24S"
-      },
-      {
-            "label": "Peak Current",
-            "value": "85 A"
-      },
-      {
-            "label": "Recommended Thrust",
-            "value": "15 kg"
-      },
-      {
-            "label": "Peak Thrust",
-            "value": "36 kg"
-      },
-      {
-            "label": "Recommended Propeller",
-            "value": "40 x 13.1 inch"
-      },
-      {
-            "label": "Dimension",
-            "value": "Φ145x47 mm"
-      },
-      {
-            "label": "Weight",
-            "value": "1,854 g"
-      }
-],
+      { "label": "KV Rating",             "value": "80" },
+      { "label": "Rated Voltage (LiPo)",  "value": "24S" },
+      { "label": "Peak Current",          "value": "105 A" },
+      { "label": "Recommended Thrust",    "value": "14 – 19 kg" },
+      { "label": "Peak Thrust",           "value": "44 kg" },
+      { "label": "Recommended Propeller", "value": "40 x 13.1 inch" },
+      { "label": "Dimension",             "value": "Φ145x60 mm" },
+      { "label": "Weight",                "value": "1,854 g" },
+    ],
     perf: [
-      { throttle:"30%", voltage:"99.91 V", power:"684.38 W", thrust:"6.02 kg", current:"6.85 A", speed:"1,520 RPM", efficiency:"8.80 g/W" },
-      { throttle:"35%", voltage:"99.60 V", power:"901.38 W", thrust:"7.72 kg", current:"9.05 A", speed:"1,717 RPM", efficiency:"8.56 g/W" },
-      { throttle:"40%", voltage:"99.40 V", power:"1,166.96 W", thrust:"9.38 kg", current:"11.74 A", speed:"1,885 RPM", efficiency:"8.04 g/W" },
-      { throttle:"45%", voltage:"98.80 V", power:"1,578.82 W", thrust:"11.92 kg", current:"15.98 A", speed:"2,114 RPM", efficiency:"7.55 g/W" },
-      { throttle:"50%", voltage:"98.66 V", power:"1,931.76 W", thrust:"13.82 kg", current:"19.58 A", speed:"2,286 RPM", efficiency:"7.15 g/W" },
-      { throttle:"55%", voltage:"98.30 V", power:"2,316.93 W", thrust:"15.91 kg", current:"23.57 A", speed:"2,452 RPM", efficiency:"6.87 g/W" },
-      { throttle:"60%", voltage:"97.70 V", power:"2,725.83 W", thrust:"18.61 kg", current:"27.90 A", speed:"2,589 RPM", efficiency:"6.83 g/W" },
-      { throttle:"65%", voltage:"97.21 V", power:"3,170.99 W", thrust:"19.96 kg", current:"32.62 A", speed:"2,726 RPM", efficiency:"6.29 g/W" },
-      { throttle:"70%", voltage:"96.71 V", power:"3,697.22 W", thrust:"21.88 kg", current:"38.23 A", speed:"2,763 RPM", efficiency:"5.92 g/W" },
-      { throttle:"75%", voltage:"96.16 V", power:"4,169.50 W", thrust:"23.90 kg", current:"43.36 A", speed:"2,994 RPM", efficiency:"5.73 g/W" },
-      { throttle:"80%", voltage:"95.55 V", power:"4,798.52 W", thrust:"26.40 kg", current:"50.22 A", speed:"3,133 RPM", efficiency:"5.50 g/W" },
-      { throttle:"90%", voltage:"94.65 V", power:"6,271.51 W", thrust:"31.08 kg", current:"66.26 A", speed:"3,446 RPM", efficiency:"4.96 g/W" },
-      { throttle:"100%", voltage:"93.29 V", power:"7,824.23 W", thrust:"36.46 kg", current:"83.87 A", speed:"3,640 RPM", efficiency:"4.66 g/W" },
+      { throttle:"30%",  voltage:"99.42 V", power:"711.85 W",   thrust:"7.22 kg",  current:"7.16 A",   speed:"1,626 RPM", efficiency:"10.14 g/W" },
+      { throttle:"35%",  voltage:"99.36 V", power:"1,000.56 W", thrust:"9.28 kg",  current:"10.07 A",  speed:"1,834 RPM", efficiency:"9.27 g/W" },
+      { throttle:"40%",  voltage:"99.28 V", power:"1,350.21 W", thrust:"10.97 kg", current:"13.60 A",  speed:"2,061 RPM", efficiency:"8.12 g/W" },
+      { throttle:"45%",  voltage:"99.19 V", power:"1,828.07 W", thrust:"14.08 kg", current:"18.43 A",  speed:"2,289 RPM", efficiency:"7.70 g/W" },
+      { throttle:"50%",  voltage:"99.11 V", power:"2,312.24 W", thrust:"16.28 kg", current:"23.33 A",  speed:"2,480 RPM", efficiency:"7.04 g/W" },
+      { throttle:"55%",  voltage:"98.98 V", power:"2,851.61 W", thrust:"18.90 kg", current:"28.81 A",  speed:"2,671 RPM", efficiency:"6.63 g/W" },
+      { throttle:"60%",  voltage:"98.86 V", power:"3,326.64 W", thrust:"21.08 kg", current:"33.65 A",  speed:"2,813 RPM", efficiency:"6.34 g/W" },
+      { throttle:"65%",  voltage:"98.75 V", power:"3,970.74 W", thrust:"23.32 kg", current:"40.21 A",  speed:"3,019 RPM", efficiency:"5.87 g/W" },
+      { throttle:"70%",  voltage:"98.57 V", power:"4,622.93 W", thrust:"26.18 kg", current:"46.90 A",  speed:"3,127 RPM", efficiency:"5.66 g/W" },
+      { throttle:"75%",  voltage:"98.79 V", power:"5,314.90 W", thrust:"28.72 kg", current:"53.80 A",  speed:"3,324 RPM", efficiency:"5.40 g/W" },
+      { throttle:"80%",  voltage:"98.49 V", power:"6,392.00 W", thrust:"32.50 kg", current:"64.90 A",  speed:"3,480 RPM", efficiency:"5.08 g/W" },
+      { throttle:"90%",  voltage:"98.05 V", power:"8,275.42 W", thrust:"38.22 kg", current:"84.40 A",  speed:"3,814 RPM", efficiency:"4.62 g/W" },
+      { throttle:"100%", voltage:"97.87 V", power:"10,227.42 W",thrust:"43.60 kg", current:"104.50 A", speed:"4,020 RPM", efficiency:"4.26 g/W" },
     ],
   },
   {
     id: "haemng-3lcfswn25",
     series: "haemng", seriesLabel: "Haemng Series",
     model: "HAEMNG 1550", name: "HAEMNG 1550", tag: "HAEMNG", application: "UAV / eVTOL",
-    keySpecs: [ { "label": "KV Rating", "value": "50"  }, { "label": "Peak Thrust", "value": "25 kg"  }, { "label": "Voltage", "value": "24S"  }
-],
+    keySpecs: [ { "label": "KV Rating", "value": "50" }, { "label": "Peak Thrust", "value": "46 kg" }, { "label": "Voltage", "value": "24S" } ],
     allSpecs: [
-      {
-            "label": "KV Rating",
-            "value": "50"
-      },
-      {
-            "label": "Rated Voltage (LiPo)",
-            "value": "24S"
-      },
-      {
-            "label": "Peak Current",
-            "value": "200 A"
-      },
-      {
-            "label": "Recommended Thrust",
-            "value": "25 kg"
-      },
-      {
-            "label": "Peak Thrust",
-            "value": "52 kg"
-      },
-      {
-            "label": "Recommended Propeller",
-            "value": "40 x 13.1 inch"
-      },
-      {
-            "label": "Dimension",
-            "value": "Φ145x60 mm"
-      },
-      {
-            "label": "Weight",
-            "value": "2,250 g"
-      }
-],
+      { "label": "KV Rating",             "value": "50" },
+      { "label": "Rated Voltage (LiPo)",  "value": "24S" },
+      { "label": "Peak Current",          "value": "90 A" },
+      { "label": "Recommended Thrust",    "value": "15 – 20 kg" },
+      { "label": "Peak Thrust",           "value": "46.06 kg" },
+      { "label": "Recommended Propeller", "value": "48 x 17.5 inch" },
+      { "label": "Dimension",             "value": "Φ145x54 mm" },
+      { "label": "Weight",                "value": "2,250 g" },
+    ],
     perf: [
-      { throttle:"30%", voltage:"102.40 V", power:"1,966.08 W", thrust:"12.44 kg", current:"19.20 A", speed:"2,194 RPM", efficiency:"6.33 g/W" },
-      { throttle:"35%", voltage:"101.90 V", power:"2,644.31 W", thrust:"16.66 kg", current:"25.95 A", speed:"2,595 RPM", efficiency:"6.30 g/W" },
-      { throttle:"40%", voltage:"101.20 V", power:"3,592.60 W", thrust:"20.48 kg", current:"35.50 A", speed:"2,782 RPM", efficiency:"5.70 g/W" },
-      { throttle:"45%", voltage:"100.40 V", power:"4,478.84 W", thrust:"24.24 kg", current:"44.61 A", speed:"3,080 RPM", efficiency:"5.10 g/W" },
-      { throttle:"50%", voltage:"99.13 V", power:"5,565.16 W", thrust:"27.86 kg", current:"56.14 A", speed:"3,188 RPM", efficiency:"5.01 g/W" },
-      { throttle:"55%", voltage:"97.31 V", power:"6,785.43 W", thrust:"31.24 kg", current:"69.73 A", speed:"3,480 RPM", efficiency:"4.60 g/W" },
-      { throttle:"60%", voltage:"97.99 V", power:"8,019.50 W", thrust:"35.55 kg", current:"81.84 A", speed:"3,585 RPM", efficiency:"4.43 g/W" },
-      { throttle:"65%", voltage:"96.84 V", power:"9,586.19 W", thrust:"40.24 kg", current:"98.99 A", speed:"3,720 RPM", efficiency:"4.20 g/W" },
-      { throttle:"70%", voltage:"94.89 V", power:"11,329.87 W", thrust:"43.28 kg", current:"119.40 A", speed:"3,931 RPM", efficiency:"3.82 g/W" },
-      { throttle:"75%", voltage:"90.67 V", power:"11,542.29 W", thrust:"45.74 kg", current:"127.30 A", speed:"4,050 RPM", efficiency:"3.96 g/W" },
-      { throttle:"80%", voltage:"89.27 V", power:"14,024.32 W", thrust:"48.46 kg", current:"157.10 A", speed:"4,110 RPM", efficiency:"3.46 g/W" },
-      { throttle:"90%", voltage:"87.20 V", power:"14,867.60 W", thrust:"49.34 kg", current:"170.50 A", speed:"4,175 RPM", efficiency:"3.32 g/W" },
-      { throttle:"100%", voltage:"85.20 V", power:"16,895.16 W", thrust:"51.80 kg", current:"198.30 A", speed:"4,230 RPM", efficiency:"3.07 g/W" },
+      { throttle:"30%",  voltage:"99.39 V", power:"520.80 W",   thrust:"6.92 kg",  current:"5.24 A",   speed:"1,206 RPM", efficiency:"13.29 g/W" },
+      { throttle:"35%",  voltage:"99.35 V", power:"767.98 W",   thrust:"9.68 kg",  current:"7.73 A",   speed:"1,305 RPM", efficiency:"12.60 g/W" },
+      { throttle:"40%",  voltage:"99.30 V", power:"1,008.89 W", thrust:"12.34 kg", current:"10.16 A",  speed:"1,513 RPM", efficiency:"12.23 g/W" },
+      { throttle:"45%",  voltage:"99.24 V", power:"1,319.89 W", thrust:"14.10 kg", current:"13.30 A",  speed:"1,659 RPM", efficiency:"10.68 g/W" },
+      { throttle:"50%",  voltage:"99.17 V", power:"1,622.42 W", thrust:"16.74 kg", current:"16.36 A",  speed:"1,781 RPM", efficiency:"10.32 g/W" },
+      { throttle:"55%",  voltage:"99.07 V", power:"2,037.87 W", thrust:"20.64 kg", current:"20.57 A",  speed:"1,950 RPM", efficiency:"10.13 g/W" },
+      { throttle:"60%",  voltage:"98.96 V", power:"2,635.30 W", thrust:"22.40 kg", current:"26.63 A",  speed:"2,083 RPM", efficiency:"8.50 g/W" },
+      { throttle:"65%",  voltage:"98.87 V", power:"3,197.46 W", thrust:"23.94 kg", current:"32.34 A",  speed:"2,215 RPM", efficiency:"7.49 g/W" },
+      { throttle:"70%",  voltage:"98.77 V", power:"3,713.75 W", thrust:"27.16 kg", current:"37.60 A",  speed:"2,324 RPM", efficiency:"7.31 g/W" },
+      { throttle:"75%",  voltage:"98.64 V", power:"4,251.38 W", thrust:"30.38 kg", current:"43.10 A",  speed:"2,434 RPM", efficiency:"7.15 g/W" },
+      { throttle:"80%",  voltage:"98.51 V", power:"5,092.97 W", thrust:"34.26 kg", current:"51.70 A",  speed:"2,563 RPM", efficiency:"6.73 g/W" },
+      { throttle:"90%",  voltage:"98.14 V", power:"6,722.59 W", thrust:"41.56 kg", current:"68.50 A",  speed:"2,784 RPM", efficiency:"6.18 g/W" },
+      { throttle:"100%", voltage:"98.02 V", power:"8,743.38 W", thrust:"46.06 kg", current:"89.20 A",  speed:"3,004 RPM", efficiency:"5.27 g/W" },
     ],
   },
   {
     id: "maelard-a4w2jf3t2",
     series: "maelard", seriesLabel: "Maelard Series",
     model: "MAELARD 1026", name: "MAELARD 1026", tag: "MAELARD", application: "Multi-Mission",
-    keySpecs: [ { "label": "KV Rating", "value": "100"  }, { "label": "Peak Thrust", "value": "6 kg"  }, { "label": "Voltage", "value": "14S"  }
-],
+    keySpecs: [ { "label": "KV Rating", "value": "100" }, { "label": "Peak Thrust", "value": "35 kg" }, { "label": "Voltage", "value": "14S" } ],
     allSpecs: [
-      {
-            "label": "KV Rating",
-            "value": "100"
-      },
-      {
-            "label": "Rated Voltage (LiPo)",
-            "value": "14S"
-      },
-      {
-            "label": "Peak Current",
-            "value": "70 A"
-      },
-      {
-            "label": "Recommended Thrust",
-            "value": "6 kg"
-      },
-      {
-            "label": "Peak Thrust",
-            "value": "18 kg"
-      },
-      {
-            "label": "Recommended Propeller",
-            "value": "36 x 19 inch"
-      },
-      {
-            "label": "Dimension",
-            "value": "Φ105x39 mm"
-      },
-      {
-            "label": "Weight",
-            "value": "842 g"
-      }
-],
+      { "label": "KV Rating",             "value": "100" },
+      { "label": "Rated Voltage (LiPo)",  "value": "14S" },
+      { "label": "Peak Current",          "value": "179 A" },
+      { "label": "Recommended Thrust",    "value": "14 – 18 kg" },
+      { "label": "Peak Thrust",           "value": "35 kg" },
+      { "label": "Recommended Propeller", "value": "32 x 10.5 inch" },
+      { "label": "Dimension",             "value": "Φ105x39 mm" },
+      { "label": "Weight",                "value": "850 g" },
+    ],
     perf: [
-      { throttle:"30%", voltage:"58.04 V", power:"329.44 W", thrust:"3.34 kg", current:"5.68 A", speed:"1,532 RPM", efficiency:"10.14 g/W" },
-      { throttle:"35%", voltage:"57.87 V", power:"437.15 W", thrust:"4.02 kg", current:"7.55 A", speed:"1,671 RPM", efficiency:"9.20 g/W" },
-      { throttle:"40%", voltage:"57.72 V", power:"531.20 W", thrust:"4.64 kg", current:"9.20 A", speed:"1,810 RPM", efficiency:"8.73 g/W" },
-      { throttle:"45%", voltage:"57.54 V", power:"636.97 W", thrust:"5.38 kg", current:"11.07 A", speed:"1,940 RPM", efficiency:"8.45 g/W" },
-      { throttle:"50%", voltage:"57.27 V", power:"749.09 W", thrust:"6.16 kg", current:"13.08 A", speed:"2,084 RPM", efficiency:"8.22 g/W" },
-      { throttle:"55%", voltage:"57.06 V", power:"892.42 W", thrust:"6.90 kg", current:"15.64 A", speed:"2,217 RPM", efficiency:"7.73 g/W" },
-      { throttle:"60%", voltage:"56.82 V", power:"1,051.74 W", thrust:"7.90 kg", current:"18.51 A", speed:"2,355 RPM", efficiency:"7.51 g/W" },
-      { throttle:"65%", voltage:"56.42 V", power:"1,235.03 W", thrust:"9.10 kg", current:"21.89 A", speed:"2,495 RPM", efficiency:"7.37 g/W" },
-      { throttle:"70%", voltage:"56.09 V", power:"1,439.83 W", thrust:"10.16 kg", current:"25.67 A", speed:"2,634 RPM", efficiency:"7.06 g/W" },
-      { throttle:"75%", voltage:"55.84 V", power:"1,662.36 W", thrust:"11.32 kg", current:"29.77 A", speed:"2,776 RPM", efficiency:"6.81 g/W" },
-      { throttle:"80%", voltage:"55.40 V", power:"1,958.39 W", thrust:"12.38 kg", current:"35.35 A", speed:"2,895 RPM", efficiency:"6.32 g/W" },
-      { throttle:"90%", voltage:"54.86 V", power:"2,651.93 W", thrust:"14.96 kg", current:"48.34 A", speed:"3,170 RPM", efficiency:"5.64 g/W" },
-      { throttle:"100%", voltage:"53.41 V", power:"3,759.00 W", thrust:"18.08 kg", current:"70.38 A", speed:"3,451 RPM", efficiency:"4.81 g/W" },
+      { throttle:"30%",  voltage:"57.17 V", power:"818.10 W",   thrust:"7.24 kg",  current:"14.31 A",  speed:"2,440 RPM", efficiency:"8.85 g/W" },
+      { throttle:"35%",  voltage:"57.05 V", power:"1,195.20 W", thrust:"9.46 kg",  current:"20.95 A",  speed:"2,796 RPM", efficiency:"7.92 g/W" },
+      { throttle:"40%",  voltage:"56.90 V", power:"1,607.43 W", thrust:"11.60 kg", current:"28.25 A",  speed:"3,071 RPM", efficiency:"7.22 g/W" },
+      { throttle:"45%",  voltage:"56.76 V", power:"2,168.80 W", thrust:"14.16 kg", current:"38.21 A",  speed:"3,371 RPM", efficiency:"6.53 g/W" },
+      { throttle:"50%",  voltage:"56.59 V", power:"2,625.78 W", thrust:"15.98 kg", current:"46.40 A",  speed:"3,584 RPM", efficiency:"6.09 g/W" },
+      { throttle:"55%",  voltage:"56.35 V", power:"3,200.68 W", thrust:"18.76 kg", current:"56.80 A",  speed:"3,790 RPM", efficiency:"5.86 g/W" },
+      { throttle:"60%",  voltage:"56.15 V", power:"3,842.34 W", thrust:"20.40 kg", current:"68.43 A",  speed:"3,963 RPM", efficiency:"5.31 g/W" },
+      { throttle:"65%",  voltage:"56.10 V", power:"4,409.46 W", thrust:"22.78 kg", current:"78.60 A",  speed:"4,181 RPM", efficiency:"5.17 g/W" },
+      { throttle:"70%",  voltage:"55.74 V", power:"5,284.15 W", thrust:"24.94 kg", current:"94.80 A",  speed:"4,354 RPM", efficiency:"4.72 g/W" },
+      { throttle:"75%",  voltage:"55.59 V", power:"6,009.28 W", thrust:"28.14 kg", current:"108.10 A", speed:"4,662 RPM", efficiency:"4.68 g/W" },
+      { throttle:"80%",  voltage:"55.38 V", power:"6,939.11 W", thrust:"29.80 kg", current:"125.30 A", speed:"4,594 RPM", efficiency:"4.29 g/W" },
+      { throttle:"90%",  voltage:"54.59 V", power:"8,903.63 W", thrust:"33.96 kg", current:"163.10 A", speed:"5,147 RPM", efficiency:"3.81 g/W" },
+      { throttle:"100%", voltage:"50.72 V", power:"9,048.45 W", thrust:"34.13 kg", current:"178.40 A", speed:"5,153 RPM", efficiency:"3.77 g/W" },
     ],
   },
   {
     id: "maelard-vnu49pfqo",
     series: "maelard", seriesLabel: "Maelard Series",
     model: "MAELARD 1026", name: "MAELARD 1026", tag: "MAELARD", application: "Multi-Mission",
-    keySpecs: [ { "label": "KV Rating", "value": "100"  }, { "label": "Peak Thrust", "value": "12 kg"  }, { "label": "Voltage", "value": "14S"  }
-],
+    keySpecs: [ { "label": "KV Rating", "value": "100" }, { "label": "Peak Thrust", "value": "31 kg" }, { "label": "Voltage", "value": "12S" } ],
     allSpecs: [
-      {
-            "label": "KV Rating",
-            "value": "100"
-      },
-      {
-            "label": "Rated Voltage (LiPo)",
-            "value": "14S"
-      },
-      {
-            "label": "Peak Current",
-            "value": "150 A"
-      },
-      {
-            "label": "Recommended Thrust",
-            "value": "12 kg"
-      },
-      {
-            "label": "Peak Thrust",
-            "value": "24 kg"
-      },
-      {
-            "label": "Recommended Propeller",
-            "value": "36 x 19 inch"
-      },
-      {
-            "label": "Dimension",
-            "value": "Φ105x39 mm"
-      },
-      {
-            "label": "Weight",
-            "value": "850 g"
-      }
-],
+      { "label": "KV Rating",             "value": "100" },
+      { "label": "Rated Voltage (LiPo)",  "value": "12S" },
+      { "label": "Peak Current",          "value": "179 A" },
+      { "label": "Recommended Thrust",    "value": "13 – 17 kg" },
+      { "label": "Peak Thrust",           "value": "31 kg" },
+      { "label": "Recommended Propeller", "value": "36 x 19 inch" },
+      { "label": "Dimension",             "value": "Φ105x39 mm" },
+      { "label": "Weight",                "value": "850 g" },
+    ],
     perf: [
-      { throttle:"30%", voltage:"57.24 V", power:"1,043.49 W", thrust:"8.16 kg", current:"18.23 A", speed:"2,357 RPM", efficiency:"7.82 g/W" },
-      { throttle:"35%", voltage:"56.76 V", power:"1,432.62 W", thrust:"10.40 kg", current:"25.24 A", speed:"2,606 RPM", efficiency:"7.26 g/W" },
-      { throttle:"40%", voltage:"56.27 V", power:"1,846.22 W", thrust:"12.06 kg", current:"32.81 A", speed:"2,820 RPM", efficiency:"6.53 g/W" },
-      { throttle:"45%", voltage:"55.67 V", power:"2,283.58 W", thrust:"13.76 kg", current:"41.02 A", speed:"3,038 RPM", efficiency:"6.03 g/W" },
-      { throttle:"50%", voltage:"55.23 V", power:"2,693.57 W", thrust:"14.16 kg", current:"48.77 A", speed:"3,149 RPM", efficiency:"5.26 g/W" },
-      { throttle:"55%", voltage:"54.54 V", power:"3,216.77 W", thrust:"16.28 kg", current:"58.98 A", speed:"3,307 RPM", efficiency:"5.06 g/W" },
-      { throttle:"60%", voltage:"55.09 V", power:"4,041.40 W", thrust:"18.72 kg", current:"73.36 A", speed:"3,549 RPM", efficiency:"4.63 g/W" },
-      { throttle:"65%", voltage:"54.26 V", power:"4,616.98 W", thrust:"20.52 kg", current:"85.09 A", speed:"3,671 RPM", efficiency:"4.44 g/W" },
-      { throttle:"70%", voltage:"54.11 V", power:"5,416.41 W", thrust:"21.92 kg", current:"100.10 A", speed:"3,807 RPM", efficiency:"4.05 g/W" },
-      { throttle:"75%", voltage:"53.71 V", power:"6,063.86 W", thrust:"23.28 kg", current:"112.90 A", speed:"3,912 RPM", efficiency:"3.84 g/W" },
-      { throttle:"90%", voltage:"52.06 V", power:"6,996.86 W", thrust:"24.00 kg", current:"134.40 A", speed:"4,104 RPM", efficiency:"3.43 g/W" },
-      { throttle:"100%", voltage:"51.40 V", power:"7,098.34 W", thrust:"23.58 kg", current:"138.10 A", speed:"4,098 RPM", efficiency:"3.32 g/W" },
+      { throttle:"30%",  voltage:"47.23 V", power:"656.50 W",   thrust:"7.44 kg",  current:"13.90 A",  speed:"2,048 RPM", efficiency:"11.33 g/W" },
+      { throttle:"35%",  voltage:"47.12 V", power:"921.20 W",   thrust:"9.24 kg",  current:"19.55 A",  speed:"2,298 RPM", efficiency:"10.03 g/W" },
+      { throttle:"40%",  voltage:"47.02 V", power:"1,177.38 W", thrust:"10.88 kg", current:"25.04 A",  speed:"2,490 RPM", efficiency:"9.24 g/W" },
+      { throttle:"45%",  voltage:"46.92 V", power:"1,580.73 W", thrust:"13.02 kg", current:"33.69 A",  speed:"2,742 RPM", efficiency:"8.24 g/W" },
+      { throttle:"50%",  voltage:"46.76 V", power:"1,977.95 W", thrust:"15.10 kg", current:"42.30 A",  speed:"2,966 RPM", efficiency:"7.63 g/W" },
+      { throttle:"55%",  voltage:"46.59 V", power:"2,473.93 W", thrust:"17.16 kg", current:"53.10 A",  speed:"3,144 RPM", efficiency:"6.94 g/W" },
+      { throttle:"60%",  voltage:"46.41 V", power:"2,928.47 W", thrust:"18.72 kg", current:"63.10 A",  speed:"3,250 RPM", efficiency:"6.39 g/W" },
+      { throttle:"65%",  voltage:"46.25 V", power:"3,473.38 W", thrust:"20.82 kg", current:"75.10 A",  speed:"3,423 RPM", efficiency:"5.99 g/W" },
+      { throttle:"70%",  voltage:"46.03 V", power:"4,055.24 W", thrust:"23.06 kg", current:"88.10 A",  speed:"3,619 RPM", efficiency:"5.69 g/W" },
+      { throttle:"75%",  voltage:"45.82 V", power:"4,524.73 W", thrust:"23.84 kg", current:"98.75 A",  speed:"3,654 RPM", efficiency:"5.27 g/W" },
+      { throttle:"80%",  voltage:"45.60 V", power:"5,193.84 W", thrust:"25.80 kg", current:"113.90 A", speed:"3,748 RPM", efficiency:"4.97 g/W" },
+      { throttle:"90%",  voltage:"44.73 V", power:"7,027.08 W", thrust:"30.20 kg", current:"157.10 A", speed:"3,896 RPM", efficiency:"4.30 g/W" },
+      { throttle:"100%", voltage:"42.81 V", power:"7,628.74 W", thrust:"30.44 kg", current:"178.20 A", speed:"3,983 RPM", efficiency:"3.99 g/W" },
     ],
   },
   {
     id: "maelard-wkapubmc7",
     series: "maelard", seriesLabel: "Maelard Series",
     model: "MAELARD 1240", name: "MAELARD 1240", tag: "MAELARD", application: "Multi-Mission",
-    keySpecs: [ { "label": "KV Rating", "value": "60"  }, { "label": "Peak Thrust", "value": "15 kg"  }, { "label": "Voltage", "value": "14S"  }
-],
+    keySpecs: [ { "label": "KV Rating", "value": "60" }, { "label": "Peak Thrust", "value": "43 kg" }, { "label": "Voltage", "value": "12S" } ],
     allSpecs: [
-      {
-            "label": "KV Rating",
-            "value": "60"
-      },
-      {
-            "label": "Rated Voltage (LiPo)",
-            "value": "14S"
-      },
-      {
-            "label": "Peak Current",
-            "value": "150 A"
-      },
-      {
-            "label": "Recommended Thrust",
-            "value": "15 kg"
-      },
-      {
-            "label": "Peak Thrust",
-            "value": "34 kg"
-      },
-      {
-            "label": "Recommended Propeller",
-            "value": "48 x 17.5 inch"
-      },
-      {
-            "label": "Dimension",
-            "value": "Φ120x43 mm"
-      },
+      { "label": "KV Rating",             "value": "60" },
+      { "label": "Rated Voltage (LiPo)",  "value": "12S" },
+      { "label": "Peak Current",          "value": "145 A" },
+      { "label": "Recommended Thrust",    "value": "14 – 19 kg" },
+      { "label": "Peak Thrust",           "value": "43 kg" },
+      { "label": "Recommended Propeller", "value": "48 x 17.5 inch" },
+      { "label": "Dimension",             "value": "Φ120x43 mm" },
       {
             "label": "Weight",
             "value": "1,280 g"
@@ -648,67 +446,6 @@ export const PRODUCTS: Product[] = [
       { throttle:"90%", voltage:"53.77 V", power:"5,484.54 W", thrust:"30.72 kg", current:"102.00 A", speed:"2,508 RPM", efficiency:"5.60 g/W" },
       { throttle:"100%", voltage:"53.12 V", power:"6,618.75 W", thrust:"33.91 kg", current:"124.60 A", speed:"2,641 RPM", efficiency:"5.12 g/W" },
     ],
-  },
-  {
-    id: "fc-hs6o2ke3i",
-    series: "fc", seriesLabel: "Flight Controller",
-    model: "Auto Pilot", name: "Auto Pilot", tag: "FC", application: "Multi-Mission",
-    keySpecs: [ { "label": "Core", "value": "Triple IMU"  }
-],
-    allSpecs: [
-      {
-            "label": "Operating Voltage",
-            "value": "4.5 – 5.5 V"
-      },
-      {
-            "label": "Operating Temperature",
-            "value": "-20 to 70 C"
-      },
-      {
-            "label": "Size",
-            "value": "95.1 x 62 x 23 mm"
-      },
-      {
-            "label": "Weight",
-            "value": "155 g"
-      },
-      {
-            "label": "PWM Output",
-            "value": "8 PWM + 6 AUX (PWM/GPIO)"
-      },
-      {
-            "label": "RC IN",
-            "value": "PPM / SBUS"
-      },
-      {
-            "label": "USB",
-            "value": "Type C"
-      },
-      {
-            "label": "Power Monitor",
-            "value": "2 (Analog / CAN)"
-      },
-      {
-            "label": "Power Input",
-            "value": "8 pin ClickMate Molex"
-      },
-      {
-            "label": "Output Connector",
-            "value": "J30J – 51 Pin MIL Std connector"
-      },
-      {
-            "label": "Software Support",
-            "value": "Mission Planner / Q Ground Control"
-      },
-      {
-            "label": "Sensors",
-            "value": "Triple IMU, Dual Barometer, Compass"
-      },
-      {
-            "label": "Communication",
-            "value": "5 UART, 3 I2C, 2 CAN, 2 ADC"
-      }
-],
   },
   {
     id: "ips-k992ry3bg",
@@ -753,7 +490,7 @@ export const PRODUCTS: Product[] = [
   },
   {
     id: "maelard-4irvoyh8l",
-    series: "maelard", seriesLabel: "Maelard Series",
+    series: "ips", seriesLabel: "Integrated Power Systems",
     model: "MAELARD 1026 & E150 12S ESC", name: "MAELARD 1026 & E150 12S ESC", tag: "MAELARD", application: "Multi-Mission",
     keySpecs: [ { "label": "KV Rating", "value": "100"  }, { "label": "Peak Thrust", "value": "12 kg"  }, { "label": "Voltage", "value": "14S"  }
 ],
@@ -794,7 +531,7 @@ export const PRODUCTS: Product[] = [
   },
   {
     id: "maelard-svex1f94t",
-    series: "maelard", seriesLabel: "Maelard Series",
+    series: "ips", seriesLabel: "Integrated Power Systems",
     model: "MAELARD 1026 & F120 14S ESC", name: "MAELARD 1026 & F120 14S ESC", tag: "MAELARD", application: "Multi-Mission",
     keySpecs: [ { "label": "KV Rating", "value": "100"  }, { "label": "Peak Thrust", "value": "6 kg"  }, { "label": "Voltage", "value": "14S"  }
 ],
@@ -835,7 +572,7 @@ export const PRODUCTS: Product[] = [
   },
   {
     id: "maelard-bvszvpczv",
-    series: "maelard", seriesLabel: "Maelard Series",
+    series: "ips", seriesLabel: "Integrated Power Systems",
     model: "MAELARD 1240 & E260 14S ESC", name: "MAELARD 1240 & E260 14S ESC", tag: "MAELARD", application: "Multi-Mission",
     keySpecs: [ { "label": "KV Rating", "value": "60"  }, { "label": "Peak Thrust", "value": "26 kg"  }, { "label": "Voltage", "value": "14S"  }
 ],
@@ -876,7 +613,7 @@ export const PRODUCTS: Product[] = [
   },
   {
     id: "maelard-sz6lpwgd0",
-    series: "maelard", seriesLabel: "Maelard Series",
+    series: "ips", seriesLabel: "Integrated Power Systems",
     model: "MAELARD 1536 & EH200 24S ESC", name: "MAELARD 1536 & EH200 24S ESC", tag: "MAELARD", application: "Multi-Mission",
     keySpecs: [ { "label": "KV Rating", "value": "80"  }, { "label": "Peak Thrust", "value": "24 kg"  }, { "label": "Voltage", "value": "24S"  }
 ],
@@ -1777,21 +1514,356 @@ export const PRODUCTS: Product[] = [
       }
 ],
   },
+  // ─── Haemng 8808 Variant 1: 28x9.2" 6S-12S KV160 ───
   {
-    id: "esc-eepf86ho2",
-    series: "esc", seriesLabel: "ESCs",
-    model: "E40 V2 12S", name: "E40 V2 12S", tag: "ESC", application: "UAV / Multi-Rotor",
-    keySpecs: [ { "label": "Continuous", "value": "40 A"  }, { "label": "Battery", "value": "12S"  }, { "label": "Weight", "value": "115 g"  }
-],
+    id: "haemng-8808v1",
+    series: "haemng", seriesLabel: "Haemng Series",
+    model: "HAEMNG 8808", name: "HAEMNG 8808", tag: "HAEMNG", application: "UAV / eVTOL",
+    keySpecs: [ { "label": "KV Rating", "value": "160" }, { "label": "Peak Thrust", "value": "5 kg" }, { "label": "Voltage", "value": "6S – 12S" } ],
     allSpecs: [
-      { "label": "BEC", "value": "No" },
-      { "label": "Size (L x W x H)", "value": "82 x 34 x 19 mm" },
-      { "label": "Continuous Current", "value": "40 A" },
-      { "label": "Peak Current", "value": "60 A" },
-      { "label": "Recommended Battery", "value": "12S" },
-      { "label": "Weight", "value": "115 g" },
-      { "label": "Throttle Pulse Width", "value": "1050 us – 1940 us" },
-      { "label": "Protection Grade", "value": "IP67" }
+      { "label": "KV Rating",             "value": "160" },
+      { "label": "Rated Voltage (LiPo)",  "value": "6S – 12S" },
+      { "label": "Peak Current",          "value": "25 A" },
+      { "label": "Recommended Thrust",    "value": "1.5 – 2 kg" },
+      { "label": "Peak Thrust",           "value": "5 kg" },
+      { "label": "Recommended Propeller", "value": "28 x 9.2 inch" },
+      { "label": "Dimension",             "value": "Φ88x21 mm" },
+      { "label": "Weight",                "value": "265 g" },
+    ],
+    perf: [
+      { throttle:"30%",  voltage:"23.24 V", power:"35.56 W",  thrust:"0.68 kg", current:"1.53 A",  speed:"1,104 RPM", efficiency:"19.12 g/W" },
+      { throttle:"35%",  voltage:"23.22 V", power:"51.08 W",  thrust:"0.88 kg", current:"2.20 A",  speed:"1,260 RPM", efficiency:"17.23 g/W" },
+      { throttle:"40%",  voltage:"23.20 V", power:"67.05 W",  thrust:"1.08 kg", current:"2.89 A",  speed:"1,387 RPM", efficiency:"16.11 g/W" },
+      { throttle:"45%",  voltage:"23.18 V", power:"88.32 W",  thrust:"1.30 kg", current:"3.81 A",  speed:"1,512 RPM", efficiency:"14.72 g/W" },
+      { throttle:"50%",  voltage:"23.15 V", power:"110.89 W", thrust:"1.54 kg", current:"4.79 A",  speed:"1,632 RPM", efficiency:"13.89 g/W" },
+      { throttle:"55%",  voltage:"23.11 V", power:"140.74 W", thrust:"1.80 kg", current:"6.09 A",  speed:"1,781 RPM", efficiency:"12.79 g/W" },
+      { throttle:"60%",  voltage:"23.07 V", power:"165.87 W", thrust:"2.12 kg", current:"7.19 A",  speed:"1,901 RPM", efficiency:"12.78 g/W" },
+      { throttle:"65%",  voltage:"22.98 V", power:"211.65 W", thrust:"2.40 kg", current:"9.21 A",  speed:"2,020 RPM", efficiency:"11.34 g/W" },
+      { throttle:"70%",  voltage:"22.92 V", power:"245.47 W", thrust:"2.66 kg", current:"10.71 A", speed:"2,120 RPM", efficiency:"10.84 g/W" },
+      { throttle:"75%",  voltage:"22.89 V", power:"284.29 W", thrust:"2.96 kg", current:"12.42 A", speed:"2,233 RPM", efficiency:"10.41 g/W" },
+      { throttle:"80%",  voltage:"22.85 V", power:"337.95 W", thrust:"3.30 kg", current:"14.79 A", speed:"2,352 RPM", efficiency:"9.76 g/W" },
+      { throttle:"90%",  voltage:"22.77 V", power:"444.02 W", thrust:"3.92 kg", current:"19.50 A", speed:"2,560 RPM", efficiency:"8.83 g/W" },
+      { throttle:"100%", voltage:"22.67 V", power:"538.64 W", thrust:"4.44 kg", current:"23.76 A", speed:"2,719 RPM", efficiency:"8.24 g/W" },
+    ],
+  },
+  // ─── Haemng 8808 Variant 2: 30x10.5" 6S-12S KV160 ───
+  {
+    id: "haemng-8808v2",
+    series: "haemng", seriesLabel: "Haemng Series",
+    model: "HAEMNG 8808", name: "HAEMNG 8808", tag: "HAEMNG", application: "UAV / eVTOL",
+    keySpecs: [ { "label": "KV Rating", "value": "160" }, { "label": "Peak Thrust", "value": "6 kg" }, { "label": "Voltage", "value": "6S – 12S" } ],
+    allSpecs: [
+      { "label": "KV Rating",             "value": "160" },
+      { "label": "Rated Voltage (LiPo)",  "value": "6S – 12S" },
+      { "label": "Peak Current",          "value": "30 A" },
+      { "label": "Recommended Thrust",    "value": "2 – 3 kg" },
+      { "label": "Peak Thrust",           "value": "6 kg" },
+      { "label": "Recommended Propeller", "value": "30 x 10.5 inch" },
+      { "label": "Dimension",             "value": "Φ88x21 mm" },
+      { "label": "Weight",                "value": "265 g" },
+    ],
+    perf: [
+      { throttle:"30%",  voltage:"23.27 V", power:"49.33 W",  thrust:"0.88 kg", current:"2.12 A",  speed:"1,069 RPM", efficiency:"17.84 g/W" },
+      { throttle:"35%",  voltage:"23.25 V", power:"71.84 W",  thrust:"1.16 kg", current:"3.09 A",  speed:"1,218 RPM", efficiency:"16.15 g/W" },
+      { throttle:"40%",  voltage:"23.24 V", power:"93.89 W",  thrust:"1.44 kg", current:"4.04 A",  speed:"1,329 RPM", efficiency:"15.34 g/W" },
+      { throttle:"45%",  voltage:"23.21 V", power:"120.92 W", thrust:"1.78 kg", current:"5.21 A",  speed:"1,448 RPM", efficiency:"14.72 g/W" },
+      { throttle:"50%",  voltage:"23.18 V", power:"149.51 W", thrust:"2.06 kg", current:"6.45 A",  speed:"1,553 RPM", efficiency:"13.78 g/W" },
+      { throttle:"55%",  voltage:"23.15 V", power:"188.67 W", thrust:"2.42 kg", current:"8.15 A",  speed:"1,681 RPM", efficiency:"12.83 g/W" },
+      { throttle:"60%",  voltage:"23.10 V", power:"234.00 W", thrust:"2.76 kg", current:"10.13 A", speed:"1,799 RPM", efficiency:"11.79 g/W" },
+      { throttle:"65%",  voltage:"23.10 V", power:"278.12 W", thrust:"3.08 kg", current:"12.04 A", speed:"1,897 RPM", efficiency:"11.07 g/W" },
+      { throttle:"70%",  voltage:"23.03 V", power:"323.11 W", thrust:"3.44 kg", current:"14.03 A", speed:"1,995 RPM", efficiency:"10.65 g/W" },
+      { throttle:"75%",  voltage:"22.97 V", power:"371.42 W", thrust:"3.76 kg", current:"16.17 A", speed:"2,076 RPM", efficiency:"10.12 g/W" },
+      { throttle:"80%",  voltage:"22.92 V", power:"432.50 W", thrust:"4.12 kg", current:"18.87 A", speed:"2,178 RPM", efficiency:"9.53 g/W" },
+      { throttle:"90%",  voltage:"22.84 V", power:"563.23 W", thrust:"4.78 kg", current:"24.66 A", speed:"2,349 RPM", efficiency:"8.49 g/W" },
+      { throttle:"100%", voltage:"22.67 V", power:"678.06 W", thrust:"5.40 kg", current:"29.91 A", speed:"2,473 RPM", efficiency:"7.96 g/W" },
+    ],
+  },
+  // ─── Haemng 8808 Variant 3: 28x9.2" 12S KV130 ───
+  {
+    id: "haemng-8808v3",
+    series: "haemng", seriesLabel: "Haemng Series",
+    model: "HAEMNG 8808", name: "HAEMNG 8808", tag: "HAEMNG", application: "UAV / eVTOL",
+    keySpecs: [ { "label": "KV Rating", "value": "130" }, { "label": "Peak Thrust", "value": "11 kg" }, { "label": "Voltage", "value": "12S" } ],
+    allSpecs: [
+      { "label": "KV Rating",             "value": "130" },
+      { "label": "Rated Voltage (LiPo)",  "value": "12S" },
+      { "label": "Peak Current",          "value": "46 A" },
+      { "label": "Recommended Thrust",    "value": "3.5 – 5 kg" },
+      { "label": "Peak Thrust",           "value": "11 kg" },
+      { "label": "Recommended Propeller", "value": "28 x 9.2 inch" },
+      { "label": "Dimension",             "value": "Φ88x21 mm" },
+      { "label": "Weight",                "value": "275 g" },
+    ],
+    perf: [
+      { throttle:"30%",  voltage:"47.38 V", power:"135.51 W",   thrust:"1.98 kg",  current:"2.86 A",  speed:"1,729 RPM", efficiency:"14.61 g/W" },
+      { throttle:"35%",  voltage:"47.31 V", power:"186.87 W",   thrust:"2.48 kg",  current:"3.95 A",  speed:"1,911 RPM", efficiency:"13.27 g/W" },
+      { throttle:"40%",  voltage:"47.24 V", power:"265.49 W",   thrust:"3.14 kg",  current:"5.62 A",  speed:"2,164 RPM", efficiency:"11.83 g/W" },
+      { throttle:"45%",  voltage:"47.20 V", power:"357.78 W",   thrust:"3.76 kg",  current:"7.58 A",  speed:"2,380 RPM", efficiency:"10.51 g/W" },
+      { throttle:"50%",  voltage:"47.17 V", power:"454.25 W",   thrust:"4.38 kg",  current:"9.63 A",  speed:"2,564 RPM", efficiency:"9.64 g/W" },
+      { throttle:"55%",  voltage:"47.16 V", power:"564.98 W",   thrust:"5.06 kg",  current:"11.98 A", speed:"2,719 RPM", efficiency:"8.96 g/W" },
+      { throttle:"60%",  voltage:"47.07 V", power:"657.66 W",   thrust:"5.52 kg",  current:"13.96 A", speed:"2,895 RPM", efficiency:"8.39 g/W" },
+      { throttle:"65%",  voltage:"47.06 V", power:"797.67 W",   thrust:"6.24 kg",  current:"16.95 A", speed:"3,042 RPM", efficiency:"7.82 g/W" },
+      { throttle:"70%",  voltage:"46.98 V", power:"937.25 W",   thrust:"6.62 kg",  current:"19.95 A", speed:"3,202 RPM", efficiency:"7.06 g/W" },
+      { throttle:"75%",  voltage:"46.91 V", power:"1,083.62 W", thrust:"7.12 kg",  current:"23.10 A", speed:"3,324 RPM", efficiency:"6.57 g/W" },
+      { throttle:"80%",  voltage:"46.82 V", power:"1,250.56 W", thrust:"7.66 kg",  current:"26.71 A", speed:"3,416 RPM", efficiency:"6.13 g/W" },
+      { throttle:"90%",  voltage:"47.07 V", power:"1,773.13 W", thrust:"9.20 kg",  current:"37.67 A", speed:"3,743 RPM", efficiency:"5.19 g/W" },
+      { throttle:"100%", voltage:"46.91 V", power:"2,131.12 W", thrust:"10.60 kg", current:"45.43 A", speed:"3,884 RPM", efficiency:"4.97 g/W" },
+    ],
+  },
+  // ─── Haemng 1015 ───
+  {
+    id: "haemng-1015",
+    series: "haemng", seriesLabel: "Haemng Series",
+    model: "HAEMNG 1015", name: "HAEMNG 1015", tag: "HAEMNG", application: "UAV / eVTOL",
+    keySpecs: [ { "label": "KV Rating", "value": "136" }, { "label": "Peak Thrust", "value": "18 kg" }, { "label": "Voltage", "value": "12S" } ],
+    allSpecs: [
+      { "label": "KV Rating",             "value": "136" },
+      { "label": "Rated Voltage (LiPo)",  "value": "12S" },
+      { "label": "Peak Current",          "value": "90 A" },
+      { "label": "Recommended Thrust",    "value": "8 – 9 kg" },
+      { "label": "Peak Thrust",           "value": "18 kg" },
+      { "label": "Recommended Propeller", "value": "30 inch" },
+      { "label": "Dimension",             "value": "Φ99x37.50 mm" },
+      { "label": "Weight",                "value": "636 g" },
+    ],
+    perf: [
+      { throttle:"30%",  voltage:"47.27 V", power:"209.88 W",   thrust:"2.48 kg",  current:"4.44 A",  speed:"1,691 RPM", efficiency:"11.82 g/W" },
+      { throttle:"35%",  voltage:"47.24 V", power:"310.37 W",   thrust:"3.68 kg",  current:"6.57 A",  speed:"1,971 RPM", efficiency:"11.86 g/W" },
+      { throttle:"40%",  voltage:"47.19 V", power:"456.80 W",   thrust:"4.68 kg",  current:"9.68 A",  speed:"2,253 RPM", efficiency:"10.25 g/W" },
+      { throttle:"45%",  voltage:"47.11 V", power:"606.31 W",   thrust:"5.72 kg",  current:"12.87 A", speed:"2,492 RPM", efficiency:"9.43 g/W" },
+      { throttle:"50%",  voltage:"47.03 V", power:"775.05 W",   thrust:"6.70 kg",  current:"16.48 A", speed:"2,698 RPM", efficiency:"8.64 g/W" },
+      { throttle:"55%",  voltage:"46.94 V", power:"976.35 W",   thrust:"7.90 kg",  current:"20.80 A", speed:"2,919 RPM", efficiency:"8.09 g/W" },
+      { throttle:"60%",  voltage:"46.80 V", power:"1,190.12 W", thrust:"8.94 kg",  current:"25.43 A", speed:"3,110 RPM", efficiency:"7.51 g/W" },
+      { throttle:"65%",  voltage:"46.73 V", power:"1,420.12 W", thrust:"9.96 kg",  current:"30.39 A", speed:"3,278 RPM", efficiency:"7.01 g/W" },
+      { throttle:"70%",  voltage:"46.50 V", power:"1,692.14 W", thrust:"11.20 kg", current:"36.39 A", speed:"3,460 RPM", efficiency:"6.62 g/W" },
+      { throttle:"75%",  voltage:"46.48 V", power:"1,966.10 W", thrust:"12.32 kg", current:"42.30 A", speed:"3,625 RPM", efficiency:"6.27 g/W" },
+      { throttle:"80%",  voltage:"46.36 V", power:"2,345.82 W", thrust:"13.62 kg", current:"50.60 A", speed:"3,817 RPM", efficiency:"5.81 g/W" },
+      { throttle:"90%",  voltage:"46.10 V", power:"3,014.94 W", thrust:"16.20 kg", current:"65.40 A", speed:"4,069 RPM", efficiency:"5.37 g/W" },
+      { throttle:"100%", voltage:"45.86 V", power:"4,086.13 W", thrust:"17.36 kg", current:"89.10 A", speed:"4,335 RPM", efficiency:"4.25 g/W" },
+    ],
+  },
+  // ─── Maelard 4101 ───
+  {
+    id: "maelard-4101",
+    series: "maelard", seriesLabel: "Maelard Series",
+    model: "MAELARD 4101", name: "MAELARD 4101", tag: "MAELARD", application: "Multi-Mission",
+    keySpecs: [ { "label": "KV Rating", "value": "700" }, { "label": "Peak Thrust", "value": "2 kg" }, { "label": "Voltage", "value": "3 – 4S" } ],
+    allSpecs: [
+      { "label": "KV Rating",             "value": "700" },
+      { "label": "Rated Voltage (LiPo)",  "value": "3 – 4S" },
+      { "label": "Peak Current",          "value": "21 A" },
+      { "label": "Recommended Thrust",    "value": "0.55 – 0.75 kg" },
+      { "label": "Peak Thrust",           "value": "2 kg" },
+      { "label": "Recommended Propeller", "value": "13 x 4.4 inch" },
+      { "label": "Dimension",             "value": "Φ41x30.80 mm" },
+      { "label": "Weight",                "value": "99 g" },
+    ],
+    perf: [
+      { throttle:"30%",  voltage:"14.02 V", power:"21.59 W",  thrust:"0.32 kg", current:"1.54 A",  speed:"3,380 RPM", efficiency:"14.82 g/W" },
+      { throttle:"35%",  voltage:"14.01 V", power:"31.66 W",  thrust:"0.40 kg", current:"2.26 A",  speed:"3,860 RPM", efficiency:"12.63 g/W" },
+      { throttle:"40%",  voltage:"14.00 V", power:"41.58 W",  thrust:"0.48 kg", current:"2.97 A",  speed:"4,233 RPM", efficiency:"11.54 g/W" },
+      { throttle:"45%",  voltage:"13.99 V", power:"53.02 W",  thrust:"0.57 kg", current:"3.79 A",  speed:"4,577 RPM", efficiency:"10.75 g/W" },
+      { throttle:"50%",  voltage:"13.96 V", power:"67.57 W",  thrust:"0.67 kg", current:"4.84 A",  speed:"4,966 RPM", efficiency:"9.92 g/W" },
+      { throttle:"55%",  voltage:"13.93 V", power:"84.42 W",  thrust:"0.77 kg", current:"6.06 A",  speed:"5,341 RPM", efficiency:"9.12 g/W" },
+      { throttle:"60%",  voltage:"13.89 V", power:"102.79 W", thrust:"0.87 kg", current:"7.40 A",  speed:"5,700 RPM", efficiency:"8.46 g/W" },
+      { throttle:"65%",  voltage:"13.85 V", power:"122.16 W", thrust:"0.95 kg", current:"8.82 A",  speed:"6,006 RPM", efficiency:"7.78 g/W" },
+      { throttle:"70%",  voltage:"13.79 V", power:"141.07 W", thrust:"1.08 kg", current:"10.23 A", speed:"6,280 RPM", efficiency:"7.66 g/W" },
+      { throttle:"75%",  voltage:"13.74 V", power:"162.41 W", thrust:"1.16 kg", current:"11.82 A", speed:"6,617 RPM", efficiency:"7.14 g/W" },
+      { throttle:"80%",  voltage:"13.71 V", power:"188.10 W", thrust:"1.31 kg", current:"13.72 A", speed:"6,861 RPM", efficiency:"6.96 g/W" },
+      { throttle:"90%",  voltage:"13.62 V", power:"244.62 W", thrust:"1.31 kg", current:"17.96 A", speed:"7,474 RPM", efficiency:"5.36 g/W" },
+      { throttle:"100%", voltage:"13.51 V", power:"291.82 W", thrust:"1.51 kg", current:"21.60 A", speed:"7,764 RPM", efficiency:"5.17 g/W" },
+    ],
+  },
+  // ─── Maelard 4102 Variant 1: 15x5" ───
+  {
+    id: "maelard-4102v1",
+    series: "maelard", seriesLabel: "Maelard Series",
+    model: "MAELARD 4102", name: "MAELARD 4102", tag: "MAELARD", application: "Multi-Mission",
+    keySpecs: [ { "label": "KV Rating", "value": "580" }, { "label": "Peak Thrust", "value": "4 kg" }, { "label": "Voltage", "value": "6S" } ],
+    allSpecs: [
+      { "label": "KV Rating",             "value": "580" },
+      { "label": "Rated Voltage (LiPo)",  "value": "6S" },
+      { "label": "Peak Current",          "value": "35 A" },
+      { "label": "Recommended Thrust",    "value": "1.20 – 1.40 kg" },
+      { "label": "Peak Thrust",           "value": "4 kg" },
+      { "label": "Recommended Propeller", "value": "15 x 5 inch" },
+      { "label": "Dimension",             "value": "Φ42x33.80 mm" },
+      { "label": "Weight",                "value": "145 g" },
+    ],
+    perf: [
+      { throttle:"30%",  voltage:"23.20 V", power:"54.75 W",  thrust:"0.58 kg", current:"2.36 A",  speed:"3,611 RPM", efficiency:"10.65 g/W" },
+      { throttle:"35%",  voltage:"23.18 V", power:"80.20 W",  thrust:"0.71 kg", current:"3.46 A",  speed:"4,073 RPM", efficiency:"8.89 g/W" },
+      { throttle:"40%",  voltage:"23.15 V", power:"104.18 W", thrust:"0.79 kg", current:"4.50 A",  speed:"4,439 RPM", efficiency:"7.61 g/W" },
+      { throttle:"45%",  voltage:"23.11 V", power:"133.11 W", thrust:"1.05 kg", current:"5.76 A",  speed:"4,797 RPM", efficiency:"7.89 g/W" },
+      { throttle:"50%",  voltage:"23.08 V", power:"165.02 W", thrust:"1.24 kg", current:"7.15 A",  speed:"5,153 RPM", efficiency:"7.51 g/W" },
+      { throttle:"55%",  voltage:"23.04 V", power:"209.20 W", thrust:"1.42 kg", current:"9.08 A",  speed:"5,532 RPM", efficiency:"6.79 g/W" },
+      { throttle:"60%",  voltage:"22.98 V", power:"253.01 W", thrust:"1.79 kg", current:"11.01 A", speed:"5,850 RPM", efficiency:"7.07 g/W" },
+      { throttle:"65%",  voltage:"22.95 V", power:"298.81 W", thrust:"2.14 kg", current:"13.02 A", speed:"6,172 RPM", efficiency:"7.16 g/W" },
+      { throttle:"70%",  voltage:"22.91 V", power:"352.81 W", thrust:"2.23 kg", current:"15.40 A", speed:"6,455 RPM", efficiency:"6.31 g/W" },
+      { throttle:"75%",  voltage:"22.83 V", power:"411.40 W", thrust:"2.60 kg", current:"18.02 A", speed:"6,689 RPM", efficiency:"6.32 g/W" },
+      { throttle:"80%",  voltage:"22.78 V", power:"461.75 W", thrust:"2.70 kg", current:"20.27 A", speed:"6,942 RPM", efficiency:"5.85 g/W" },
+      { throttle:"90%",  voltage:"22.70 V", power:"590.43 W", thrust:"2.96 kg", current:"26.01 A", speed:"7,354 RPM", efficiency:"5.01 g/W" },
+      { throttle:"100%", voltage:"22.79 V", power:"764.83 W", thrust:"3.41 kg", current:"33.56 A", speed:"7,980 RPM", efficiency:"4.46 g/W" },
+    ],
+  },
+  // ─── Maelard 4102 Variant 2: 16x5.4" ───
+  {
+    id: "maelard-4102v2",
+    series: "maelard", seriesLabel: "Maelard Series",
+    model: "MAELARD 4102", name: "MAELARD 4102", tag: "MAELARD", application: "Multi-Mission",
+    keySpecs: [ { "label": "KV Rating", "value": "580" }, { "label": "Peak Thrust", "value": "3 kg" }, { "label": "Voltage", "value": "6S" } ],
+    allSpecs: [
+      { "label": "KV Rating",             "value": "580" },
+      { "label": "Rated Voltage (LiPo)",  "value": "6S" },
+      { "label": "Peak Current",          "value": "45 A" },
+      { "label": "Recommended Thrust",    "value": "1.40 – 1.70 kg" },
+      { "label": "Peak Thrust",           "value": "3 kg" },
+      { "label": "Recommended Propeller", "value": "16 x 5.4 inch" },
+      { "label": "Dimension",             "value": "Φ42x33.80 mm" },
+      { "label": "Weight",                "value": "145 g" },
+    ],
+    perf: [
+      { throttle:"30%",  voltage:"23.17 V", power:"66.73 W",  thrust:"0.64 kg", current:"2.88 A",  speed:"3,352 RPM", efficiency:"9.53 g/W" },
+      { throttle:"35%",  voltage:"23.14 V", power:"102.97 W", thrust:"0.89 kg", current:"4.45 A",  speed:"3,874 RPM", efficiency:"8.68 g/W" },
+      { throttle:"40%",  voltage:"23.09 V", power:"130.46 W", thrust:"1.04 kg", current:"5.65 A",  speed:"4,168 RPM", efficiency:"7.97 g/W" },
+      { throttle:"45%",  voltage:"23.05 V", power:"167.11 W", thrust:"1.25 kg", current:"7.25 A",  speed:"4,490 RPM", efficiency:"7.48 g/W" },
+      { throttle:"50%",  voltage:"23.01 V", power:"202.72 W", thrust:"1.45 kg", current:"8.81 A",  speed:"4,781 RPM", efficiency:"7.15 g/W" },
+      { throttle:"55%",  voltage:"22.95 V", power:"260.48 W", thrust:"1.69 kg", current:"11.35 A", speed:"5,136 RPM", efficiency:"6.49 g/W" },
+      { throttle:"60%",  voltage:"22.90 V", power:"305.03 W", thrust:"1.85 kg", current:"13.32 A", speed:"5,446 RPM", efficiency:"6.07 g/W" },
+      { throttle:"65%",  voltage:"22.84 V", power:"368.18 W", thrust:"2.03 kg", current:"16.12 A", speed:"5,610 RPM", efficiency:"5.51 g/W" },
+      { throttle:"70%",  voltage:"22.78 V", power:"428.26 W", thrust:"2.01 kg", current:"18.80 A", speed:"5,725 RPM", efficiency:"4.69 g/W" },
+      { throttle:"75%",  voltage:"22.77 V", power:"498.44 W", thrust:"2.16 kg", current:"21.89 A", speed:"5,925 RPM", efficiency:"4.33 g/W" },
+      { throttle:"80%",  voltage:"22.92 V", power:"596.38 W", thrust:"2.69 kg", current:"26.02 A", speed:"6,360 RPM", efficiency:"4.51 g/W" },
+      { throttle:"90%",  voltage:"21.06 V", power:"632.43 W", thrust:"2.70 kg", current:"30.03 A", speed:"6,526 RPM", efficiency:"4.27 g/W" },
+      { throttle:"100%", voltage:"21.08 V", power:"946.49 W", thrust:"2.81 kg", current:"44.90 A", speed:"6,610 RPM", efficiency:"2.97 g/W" },
+    ],
+  },
+  // ─── Maelard 1560 Variant 1: 24S ───
+  {
+    id: "maelard-1560v1",
+    series: "maelard", seriesLabel: "Maelard Series",
+    model: "MAELARD 1560", name: "MAELARD 1560", tag: "MAELARD", application: "Multi-Mission",
+    keySpecs: [ { "label": "KV Rating", "value": "36" }, { "label": "Peak Thrust", "value": "68 kg" }, { "label": "Voltage", "value": "14S – 28S" } ],
+    allSpecs: [
+      { "label": "KV Rating",             "value": "36" },
+      { "label": "Rated Voltage (LiPo)",  "value": "14S – 28S" },
+      { "label": "Peak Current",          "value": "110 A" },
+      { "label": "Recommended Thrust",    "value": "24 – 30 kg" },
+      { "label": "Peak Thrust",           "value": "68 kg" },
+      { "label": "Recommended Propeller", "value": "56 x 20 inch" },
+      { "label": "Dimension",             "value": "Φ150x58.5 mm" },
+      { "label": "Weight",                "value": "2,320 g" },
+    ],
+    perf: [
+      { throttle:"30%",  voltage:"99.36 V",  power:"706.45 W",    thrust:"9.65 kg",  current:"7.11 A",   speed:"1,001 RPM", efficiency:"13.66 g/W" },
+      { throttle:"35%",  voltage:"99.31 V",  power:"1,011.97 W",  thrust:"13.04 kg", current:"10.19 A",  speed:"1,138 RPM", efficiency:"12.89 g/W" },
+      { throttle:"40%",  voltage:"99.22 V",  power:"1,377.17 W",  thrust:"17.02 kg", current:"13.88 A",  speed:"1,278 RPM", efficiency:"12.36 g/W" },
+      { throttle:"45%",  voltage:"99.13 V",  power:"1,801.19 W",  thrust:"20.60 kg", current:"18.17 A",  speed:"1,391 RPM", efficiency:"11.44 g/W" },
+      { throttle:"50%",  voltage:"99.04 V",  power:"2,243.26 W",  thrust:"24.04 kg", current:"22.65 A",  speed:"1,497 RPM", efficiency:"10.72 g/W" },
+      { throttle:"55%",  voltage:"98.89 V",  power:"2,834.19 W",  thrust:"28.10 kg", current:"28.66 A",  speed:"1,622 RPM", efficiency:"9.91 g/W" },
+      { throttle:"60%",  voltage:"98.78 V",  power:"3,400.01 W",  thrust:"32.58 kg", current:"34.42 A",  speed:"1,722 RPM", efficiency:"9.58 g/W" },
+      { throttle:"65%",  voltage:"98.64 V",  power:"4,182.34 W",  thrust:"38.58 kg", current:"42.40 A",  speed:"1,853 RPM", efficiency:"9.22 g/W" },
+      { throttle:"70%",  voltage:"98.49 V",  power:"4,954.05 W",  thrust:"43.24 kg", current:"50.30 A",  speed:"1,954 RPM", efficiency:"8.73 g/W" },
+      { throttle:"75%",  voltage:"98.37 V",  power:"5,725.13 W",  thrust:"47.82 kg", current:"58.20 A",  speed:"2,050 RPM", efficiency:"8.35 g/W" },
+      { throttle:"80%",  voltage:"98.18 V",  power:"6,528.97 W",  thrust:"52.08 kg", current:"66.50 A",  speed:"2,139 RPM", efficiency:"7.98 g/W" },
+      { throttle:"90%",  voltage:"97.89 V",  power:"8,565.38 W",  thrust:"58.82 kg", current:"87.50 A",  speed:"2,350 RPM", efficiency:"6.87 g/W" },
+      { throttle:"100%", voltage:"97.52 V",  power:"10,580.92 W", thrust:"67.28 kg", current:"108.50 A", speed:"2,542 RPM", efficiency:"6.36 g/W" },
+    ],
+  },
+  // ─── Maelard 1560 Variant 2: 28S ───
+  {
+    id: "maelard-1560v2",
+    series: "maelard", seriesLabel: "Maelard Series",
+    model: "MAELARD 1560", name: "MAELARD 1560", tag: "MAELARD", application: "Multi-Mission",
+    keySpecs: [ { "label": "KV Rating", "value": "36" }, { "label": "Peak Thrust", "value": "73 kg" }, { "label": "Voltage", "value": "14S – 28S" } ],
+    allSpecs: [
+      { "label": "KV Rating",             "value": "36" },
+      { "label": "Rated Voltage (LiPo)",  "value": "14S – 28S" },
+      { "label": "Peak Current",          "value": "130 A" },
+      { "label": "Recommended Thrust",    "value": "30 – 42 kg" },
+      { "label": "Peak Thrust",           "value": "73 kg" },
+      { "label": "Recommended Propeller", "value": "56 x 20 inch" },
+      { "label": "Dimension",             "value": "Φ150x58.5 mm" },
+      { "label": "Weight",                "value": "2,320 g" },
+    ],
+    perf: [
+      { throttle:"30%",  voltage:"117.30 V", power:"1,115.52 W",  thrust:"15.36 kg", current:"9.51 A",   speed:"1,167 RPM", efficiency:"13.77 g/W" },
+      { throttle:"35%",  voltage:"117.20 V", power:"1,593.92 W",  thrust:"19.82 kg", current:"13.60 A",  speed:"1,325 RPM", efficiency:"12.43 g/W" },
+      { throttle:"40%",  voltage:"117.10 V", power:"2,091.41 W",  thrust:"23.92 kg", current:"17.86 A",  speed:"1,451 RPM", efficiency:"11.44 g/W" },
+      { throttle:"45%",  voltage:"117.00 V", power:"2,710.89 W",  thrust:"28.46 kg", current:"23.17 A",  speed:"1,587 RPM", efficiency:"10.50 g/W" },
+      { throttle:"50%",  voltage:"116.90 V", power:"3,335.16 W",  thrust:"32.54 kg", current:"28.53 A",  speed:"1,706 RPM", efficiency:"9.76 g/W" },
+      { throttle:"55%",  voltage:"116.70 V", power:"4,285.22 W",  thrust:"38.84 kg", current:"36.72 A",  speed:"1,846 RPM", efficiency:"9.06 g/W" },
+      { throttle:"60%",  voltage:"116.60 V", power:"5,142.06 W",  thrust:"43.46 kg", current:"44.10 A",  speed:"1,976 RPM", efficiency:"8.45 g/W" },
+      { throttle:"65%",  voltage:"116.40 V", power:"6,157.56 W",  thrust:"48.82 kg", current:"52.90 A",  speed:"2,100 RPM", efficiency:"7.93 g/W" },
+      { throttle:"70%",  voltage:"116.20 V", power:"7,111.44 W",  thrust:"54.56 kg", current:"61.20 A",  speed:"2,207 RPM", efficiency:"7.67 g/W" },
+      { throttle:"75%",  voltage:"116.20 V", power:"8,203.72 W",  thrust:"58.40 kg", current:"70.60 A",  speed:"2,309 RPM", efficiency:"7.12 g/W" },
+      { throttle:"80%",  voltage:"115.70 V", power:"9,830.52 W",  thrust:"65.16 kg", current:"84.60 A",  speed:"2,458 RPM", efficiency:"6.63 g/W" },
+      { throttle:"90%",  voltage:"113.30 V", power:"12,576.59 W", thrust:"70.52 kg", current:"108.70 A", speed:"2,712 RPM", efficiency:"5.61 g/W" },
+      { throttle:"100%", voltage:"113.30 V", power:"14,298.46 W", thrust:"72.22 kg", current:"126.20 A", speed:"2,901 RPM", efficiency:"5.05 g/W" },
+    ],
+  },
+  // ─── Maelard 1780 ───
+  {
+    id: "maelard-1780",
+    series: "maelard", seriesLabel: "Maelard Series",
+    model: "MAELARD 1780", name: "MAELARD 1780", tag: "MAELARD", application: "Multi-Mission",
+    keySpecs: [ { "label": "KV Rating", "value": "48" }, { "label": "Peak Thrust", "value": "79 kg" }, { "label": "Voltage", "value": "14S – 28S" } ],
+    allSpecs: [
+      { "label": "KV Rating",             "value": "48" },
+      { "label": "Rated Voltage (LiPo)",  "value": "14S – 28S" },
+      { "label": "Peak Current",          "value": "161 A" },
+      { "label": "Recommended Thrust",    "value": "40 – 50 kg" },
+      { "label": "Peak Thrust",           "value": "79 kg" },
+      { "label": "Recommended Propeller", "value": "56 inch" },
+      { "label": "Dimension",             "value": "Φ70x35.80 mm" },
+      { "label": "Weight",                "value": "3,509 g" },
+    ],
+    perf: [
+      { throttle:"30%",  voltage:"99.17 V", power:"1,614 W",     thrust:"18.52 kg", current:"16.28 A",  speed:"1,299 RPM", efficiency:"11.47 g/W" },
+      { throttle:"35%",  voltage:"99.09 V", power:"2,182 W",     thrust:"22.96 kg", current:"22.02 A",  speed:"1,446 RPM", efficiency:"10.52 g/W" },
+      { throttle:"40%",  voltage:"98.90 V", power:"2,925 W",     thrust:"26.20 kg", current:"29.58 A",  speed:"1,601 RPM", efficiency:"8.96 g/W" },
+      { throttle:"45%",  voltage:"98.77 V", power:"3,688 W",     thrust:"32.50 kg", current:"37.34 A",  speed:"1,759 RPM", efficiency:"8.81 g/W" },
+      { throttle:"50%",  voltage:"98.55 V", power:"4,671 W",     thrust:"39.36 kg", current:"47.40 A",  speed:"1,891 RPM", efficiency:"8.43 g/W" },
+      { throttle:"55%",  voltage:"98.36 V", power:"5,823 W",     thrust:"45.64 kg", current:"59.20 A",  speed:"2,055 RPM", efficiency:"7.84 g/W" },
+      { throttle:"60%",  voltage:"98.15 V", power:"7,008 W",     thrust:"52.28 kg", current:"71.40 A",  speed:"2,200 RPM", efficiency:"7.46 g/W" },
+      { throttle:"65%",  voltage:"97.88 V", power:"8,241 W",     thrust:"56.98 kg", current:"84.20 A",  speed:"2,345 RPM", efficiency:"6.91 g/W" },
+      { throttle:"70%",  voltage:"97.64 V", power:"9,383 W",     thrust:"63.02 kg", current:"96.10 A",  speed:"2,486 RPM", efficiency:"6.72 g/W" },
+      { throttle:"75%",  voltage:"97.46 V", power:"10,555 W",    thrust:"64.22 kg", current:"108.30 A", speed:"2,647 RPM", efficiency:"6.08 g/W" },
+      { throttle:"80%",  voltage:"97.59 V", power:"12,228 W",    thrust:"66.10 kg", current:"125.30 A", speed:"2,750 RPM", efficiency:"5.41 g/W" },
+      { throttle:"90%",  voltage:"95.40 V", power:"13,909.32 W", thrust:"72.20 kg", current:"145.80 A", speed:"2,897 RPM", efficiency:"5.19 g/W" },
+      { throttle:"100%", voltage:"93.80 V", power:"15,017.38 W", thrust:"78.40 kg", current:"160.10 A", speed:"3,056 RPM", efficiency:"5.22 g/W" },
+    ],
+  },
+  // ─── Maelard 9007 ───
+  {
+    id: "maelard-9007",
+    series: "maelard", seriesLabel: "Maelard Series",
+    model: "MAELARD 9007", name: "MAELARD 9007", tag: "MAELARD", application: "Multi-Mission",
+    keySpecs: [ { "label": "KV Rating", "value": "200" }, { "label": "Peak Thrust", "value": "35 kg" }, { "label": "Voltage", "value": "12S" } ],
+    allSpecs: [
+      { "label": "KV Rating",             "value": "200" },
+      { "label": "Rated Voltage (LiPo)",  "value": "12S" },
+      { "label": "Peak Current",          "value": "220 A" },
+      { "label": "Recommended Thrust",    "value": "13 – 16 kg" },
+      { "label": "Peak Thrust",           "value": "35 kg" },
+      { "label": "Recommended Propeller", "value": "28 x 9.2 inch" },
+      { "label": "Dimension",             "value": "Φ90x67 mm" },
+      { "label": "Weight",                "value": "1,268 g" },
+    ],
+    perf: [
+      { throttle:"30%",  voltage:"47.09 V", power:"739.31 W",   thrust:"5.68 kg",  current:"15.70 A",  speed:"2,958 RPM", efficiency:"7.68 g/W" },
+      { throttle:"35%",  voltage:"46.98 V", power:"982.82 W",   thrust:"7.10 kg",  current:"20.92 A",  speed:"3,271 RPM", efficiency:"7.22 g/W" },
+      { throttle:"40%",  voltage:"46.83 V", power:"1,329.04 W", thrust:"8.82 kg",  current:"28.38 A",  speed:"3,642 RPM", efficiency:"6.64 g/W" },
+      { throttle:"45%",  voltage:"46.70 V", power:"1,790.01 W", thrust:"11.26 kg", current:"38.33 A",  speed:"4,054 RPM", efficiency:"6.29 g/W" },
+      { throttle:"50%",  voltage:"46.50 V", power:"2,269.20 W", thrust:"13.58 kg", current:"48.80 A",  speed:"4,398 RPM", efficiency:"5.98 g/W" },
+      { throttle:"55%",  voltage:"46.25 V", power:"2,835.59 W", thrust:"15.86 kg", current:"61.31 A",  speed:"4,712 RPM", efficiency:"5.59 g/W" },
+      { throttle:"60%",  voltage:"46.07 V", power:"3,399.97 W", thrust:"18.04 kg", current:"73.80 A",  speed:"5,015 RPM", efficiency:"5.31 g/W" },
+      { throttle:"65%",  voltage:"45.78 V", power:"4,010.33 W", thrust:"21.12 kg", current:"87.60 A",  speed:"5,266 RPM", efficiency:"5.27 g/W" },
+      { throttle:"70%",  voltage:"45.57 V", power:"4,570.67 W", thrust:"23.04 kg", current:"100.30 A", speed:"5,488 RPM", efficiency:"5.04 g/W" },
+      { throttle:"75%",  voltage:"45.21 V", power:"5,348.34 W", thrust:"24.98 kg", current:"118.30 A", speed:"5,758 RPM", efficiency:"4.67 g/W" },
+      { throttle:"80%",  voltage:"44.98 V", power:"6,171.26 W", thrust:"27.18 kg", current:"137.20 A", speed:"6,020 RPM", efficiency:"4.40 g/W" },
+      { throttle:"90%",  voltage:"44.43 V", power:"7,717.49 W", thrust:"30.68 kg", current:"173.70 A", speed:"6,392 RPM", efficiency:"3.98 g/W" },
+      { throttle:"100%", voltage:"43.70 V", power:"9,456.68 W", thrust:"35.24 kg", current:"216.40 A", speed:"6,760 RPM", efficiency:"3.73 g/W" },
     ],
   },
 ];

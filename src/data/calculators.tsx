@@ -51,7 +51,7 @@ export const CALCULATORS: CalculatorConfig[] = [
     id: "propcalc",
     label: "propCalc",
     tag: "Airplane",
-    description: "Propeller thrust, power, RPM, efficiency, flight time and partial-load analysis for fixed-wing RC aircraft.",
+    description: "Propeller thrust, power, RPM, efficiency, and partial-load analysis for RC aircraft.",
     status: "live",
     accent: "#ffc812",
     textColor: "#000",

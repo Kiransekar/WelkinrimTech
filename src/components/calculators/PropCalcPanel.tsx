@@ -461,7 +461,7 @@ export default function PropCalcPanel() {
         <PdfTemplateHeader calculatorName="Propeller Airplane" />
         {/* Description */}
         <p className="text-[11px] text-gray-500 border-l-2 border-[#ffc812] pl-3 py-1 mb-3" style={{ fontFamily: "Lexend, sans-serif" }}>
-          Estimate propeller thrust, motor power draw, RPM, efficiency and flight time for fixed-wing aircraft. Select your motor, battery and propeller to size the drive system and identify the optimal operating point.
+          Estimate propeller thrust, motor power draw, RPM, efficiency and partial-load analysis for RC aircraft. Select your motor, battery and propeller to size the drive system and identify the optimal operating point.
         </p>
         {/* Action bar */}
         <div className="flex items-center justify-between mb-2">

@@ -83,10 +83,10 @@ function estimateMotorRmMohm(_kv: number, _voltage: number, peakCurrent: number)
 
 export function useMotorPresets(seriesFilter?: string) {
   const presets = useMemo(() => {
-    const haemngMotors = PRODUCTS.filter(p => p.series === "haemng");
+    const allMotors = PRODUCTS.filter(p => p.series === "haemng" || p.series === "maelard");
 
     if (seriesFilter && seriesFilter !== "all") {
-      return haemngMotors
+      return allMotors
         .filter(p => p.series === seriesFilter)
         .map(p => {
           const [propMin, propMax] = parsePropFromSpec(p.allSpecs);
@@ -108,7 +108,7 @@ export function useMotorPresets(seriesFilter?: string) {
         });
     }
 
-    return haemngMotors.map(p => {
+    return allMotors.map(p => {
       const [propMin, propMax] = parsePropFromSpec(p.allSpecs);
       const kv = parseKVFromSpec(p.allSpecs);
       const voltage = parseVoltageFromSpec(p.allSpecs);
