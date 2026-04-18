@@ -1,6 +1,7 @@
 // Rectifier Design Calculator
 // SEC Design Tool + Sinusoidal Waveform Conversions + Bridge Rectifier + Capacitor Bank + LC Filter
 import { useState, useMemo } from "react";
+
 import { DownloadReportButton, PdfTemplateHeader } from "./PdfExport";
 import SplitLayout from "./SplitLayout";
 
@@ -171,211 +172,247 @@ export default function RectifierCalc() {
   const [inputs, setInputs] = useState<RectifierInput>(DEFAULTS);
   const result = useMemo(() => calculate(inputs), [inputs]);
 
-  const Field = ({ label, value, onChange, unit, step = 1 }: any) => (
-    <div className="w-full py-0.5">
-      <label className="text-[8px] uppercase text-[#808080] tracking-wider block mb-0.5" style={{ fontFamily: "Michroma, sans-serif" }}>
-        {label}
-      </label>
-      <div className="flex items-center border border-gray-200 focus-within:border-[#ffc812] transition-colors">
+// ─────────────────────────────────────────────────────────────
+// Shared UI primitives
+// ─────────────────────────────────────────────────────────────
+
+
+
+interface FieldProps {
+  label: string; id: string; value: number;
+  onChange: (v: number) => void;
+  step?: string; hint?: string; className?: string;
+  unit?: string;
+}
+
+function Field({ label, id, value, onChange, step = "any", hint, className = "", unit }: FieldProps) {
+  const [showHint, setShowHint] = useState(false);
+  return (
+    <div className={`w-full py-0.5 relative ${className}`}>
+      <div className="flex items-center gap-1 mb-0.5">
+        <label className="text-[8px] tracking-widest uppercase text-[#808080]"
+               style={{ fontFamily: "Michroma, sans-serif" }} htmlFor={id} title={label}>
+          {label}
+        </label>
+        {hint && (
+          <button
+            type="button"
+            onMouseEnter={() => setShowHint(true)}
+            onMouseLeave={() => setShowHint(false)}
+            className="w-3 h-3 rounded-full bg-gray-200 text-[7px] text-gray-500 flex items-center justify-center flex-shrink-0 hover:bg-[#ffc812] hover:text-black transition-colors"
+          >?</button>
+        )}
+      </div>
+      {showHint && hint && (
+        <div className="absolute top-full left-0 mt-1 z-50 bg-black text-[#ffc812] text-[9px] px-2 py-1.5 w-48 leading-relaxed"
+             style={{ fontFamily: "Lexend, sans-serif" }}>
+          {hint}
+        </div>
+      )}
+      <div className="flex items-center border border-gray-200 bg-white focus-within:border-[#ffc812] transition-colors overflow-hidden">
         <input
-          type="number"
-          step={step}
-          value={value}
-          onChange={(e) => onChange(parseFloat(e.target.value) || 0)}
-          className="w-full px-2 py-1 text-[11px] outline-none"
+          id={id} type="number" step={step} value={value}
+          onChange={e => onChange(parseFloat(e.target.value) || 0)}
+          className="w-full text-[11px] px-2 py-1 focus:outline-none bg-white font-bold"
           style={{ fontFamily: "Lexend, sans-serif" }}
         />
-        {unit && <span className="text-[9px] text-gray-400 px-2 whitespace-nowrap" style={{ fontFamily: "Lexend, sans-serif" }}>{unit}</span>}
+        {unit && <span className="bg-gray-50 text-[8px] text-gray-400 px-1.5 py-1.5 border-l border-gray-100 font-Michroma uppercase">{unit}</span>}
       </div>
     </div>
   );
+}
 
-  const Section = ({ title, children }: { title: string; children: React.ReactNode }) => (
-    <div className="border border-gray-100 p-2 bg-gray-50/30">
-      <p className="text-[9px] uppercase text-[#ffc812] tracking-wider mb-2 border-b border-gray-100 pb-1" style={{ fontFamily: "Michroma, sans-serif" }}>
-        {title}
-      </p>
-      <div className="space-y-1.5">{children}</div>
+function CollapsibleSection({ title, children, defaultOpen = true, icon }: { title: string; children: React.ReactNode; defaultOpen?: boolean; icon?: string }) {
+  const [isOpen, setIsOpen] = useState(defaultOpen);
+  return (
+    <div className="border border-gray-100 mb-2 overflow-hidden bg-white shadow-sm transition-all">
+      <div 
+        className="bg-black px-3 py-2 flex items-center justify-between cursor-pointer group hover:bg-neutral-900"
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        <div className="flex items-center gap-2">
+          {icon && <span className="text-[#ffc812] text-xs">{icon}</span>}
+          <p className="text-[9px] tracking-[0.2em] uppercase text-[#ffc812] font-bold"
+             style={{ fontFamily: "Michroma, sans-serif" }}>{title}</p>
+        </div>
+        <span className={`text-[#ffc812] text-[10px] transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`}>▼</span>
+      </div>
+      <div className={`transition-all duration-300 ease-in-out ${isOpen ? "max-h-[1000px] opacity-100 p-2" : "max-h-0 opacity-0 p-0"}`}>
+        <div className="space-y-1">{children}</div>
+      </div>
     </div>
   );
+}
 
-  const StatCard = ({ label, value, unit, sub, warn }: any) => (
-    <div className={`border p-2 bg-white ${warn ? "border-amber-400 bg-amber-50" : "border-gray-200"}`}>
-      <p className="text-[8px] uppercase text-[#ffc812] tracking-wider">{label}</p>
-      <p className="text-base font-black" style={{ fontFamily: "Michroma, sans-serif" }}>
-        {value} <span className="text-xs font-medium text-gray-400">{unit}</span>
-      </p>
-      {sub && <p className="text-[9px] text-gray-400 mt-0.5">{sub}</p>}
+const StatCard = ({ label, value, unit, sub, type = "normal" }: any) => {
+  const isDanger = type === "danger";
+  const isWarn = type === "warn";
+  return (
+    <div className={`border p-2.5 bg-white transition-all hover:shadow-md ${isDanger ? "border-red-500 shadow-red-50" : isWarn ? "border-amber-400 shadow-amber-50" : "border-gray-200"}`}>
+      <p className="text-[8px] tracking-[0.15em] uppercase text-[#808080] mb-1 font-bold font-Michroma">{label}</p>
+      <div className="flex items-baseline gap-1">
+        <span className="text-lg font-black text-black font-Michroma">{value}</span>
+        {unit && <span className="text-[9px] font-bold text-gray-400 uppercase font-Michroma">{unit}</span>}
+      </div>
+      {sub && <p className="text-[9px] text-gray-400 mt-1 font-Lexend italic border-t border-gray-50 pt-1">{sub}</p>}
     </div>
   );
+};
 
-  const Row = ({ label, value }: { label: string; value: string }) => (
-    <div className="flex justify-between border-b border-gray-200 py-0.5">
-      <span className="text-gray-500">{label}</span>
-      <span className="font-medium">{value}</span>
-    </div>
-  );
+const Row = ({ label, value, color }: { label: string; value: string; color?: string }) => (
+  <div className="flex justify-between border-b border-gray-50 py-1 font-Lexend text-[10px]">
+    <span className="text-gray-400">{label}</span>
+    <span className={`font-bold ${color || "text-black"}`}>{value}</span>
+  </div>
+);
 
   const inputsPanel = (
     <div className="space-y-3">
-      <Section title="Input Electrical">
-        <Field label="Input Voltage (RMS)" value={inputs.vinRms} onChange={(v: number) => setInputs({ ...inputs, vinRms: v })} unit="V" step={0.1} />
-        <Field label="Input Power" value={inputs.inputPower} onChange={(v: number) => setInputs({ ...inputs, inputPower: v })} unit="W" />
-        <Field label="Output Power" value={inputs.outputPower} onChange={(v: number) => setInputs({ ...inputs, outputPower: v })} unit="W" />
-        <Field label="Line Frequency" value={inputs.frequency} onChange={(v: number) => setInputs({ ...inputs, frequency: v })} unit="Hz" />
-        <Field label="Voltage Ripple Factor" value={inputs.rippleFactor} onChange={(v: number) => setInputs({ ...inputs, rippleFactor: v })} unit="%" step={0.1} />
-        <Field label="Switching Frequency" value={inputs.switchFreqMHz} onChange={(v: number) => setInputs({ ...inputs, switchFreqMHz: v })} unit="MHz" step={0.1} />
-      </Section>
+  const inputsPanel = (
+    <div className="space-y-3">
+      <CollapsibleSection title="Input Electrical" icon="🔌">
+        <Field label="Input RMS" id="irms" value={inputs.vinRms} onChange={(v: number) => setInputs({ ...inputs, vinRms: v })} unit="V" step="0.1" hint="AC line voltage (e.g. 230V)" />
+        <Field label="Input Power" id="ip" value={inputs.inputPower} onChange={(v: number) => setInputs({ ...inputs, inputPower: v })} unit="W" />
+        <Field label="Output Power" id="op" value={inputs.outputPower} onChange={(v: number) => setInputs({ ...inputs, outputPower: v })} unit="W" />
+        <Field label="Frequency" id="fr" value={inputs.frequency} onChange={(v: number) => setInputs({ ...inputs, frequency: v })} unit="Hz" />
+        <Field label="Voltage Ripple" id="vr" value={inputs.rippleFactor} onChange={(v: number) => setInputs({ ...inputs, rippleFactor: v })} unit="%" step="0.1" hint="Allowable ripple percentage" />
+        <Field label="Switch Freq" id="sf" value={inputs.switchFreqMHz} onChange={(v: number) => setInputs({ ...inputs, switchFreqMHz: v })} unit="MHz" step="0.1" />
+      </CollapsibleSection>
 
-      <Section title="Thermal Parameters">
-        <Field label="Max Junction Temp" value={inputs.tjMax} onChange={(v: number) => setInputs({ ...inputs, tjMax: v })} unit="°C" />
-        <Field label="R (Junction→Case)" value={inputs.rjc} onChange={(v: number) => setInputs({ ...inputs, rjc: v })} unit="K/W" step={0.1} />
-        <Field label="R (Case→Heatsink)" value={inputs.rch} onChange={(v: number) => setInputs({ ...inputs, rch: v })} unit="K/W" step={0.1} />
-        <Field label="Ambient Temperature" value={inputs.ambientTemp} onChange={(v: number) => setInputs({ ...inputs, ambientTemp: v })} unit="°C" />
-      </Section>
+      <CollapsibleSection title="Thermal Parameters" icon="🌡" defaultOpen={false}>
+        <Field label="Max Junction" id="tj" value={inputs.tjMax} onChange={(v: number) => setInputs({ ...inputs, tjMax: v })} unit="°C" />
+        <Field label="R (J→C)" id="rjc" value={inputs.rjc} onChange={(v: number) => setInputs({ ...inputs, rjc: v })} unit="K/W" step="0.1" />
+        <Field label="R (C→H)" id="rch" value={inputs.rch} onChange={(v: number) => setInputs({ ...inputs, rch: v })} unit="K/W" step="0.1" />
+        <Field label="Ambient" id="at" value={inputs.ambientTemp} onChange={(v: number) => setInputs({ ...inputs, ambientTemp: v })} unit="°C" />
+      </CollapsibleSection>
 
-      <Section title="Capacitor Bank">
-        <Field label="Chosen Capacitance" value={inputs.chosenCapF} onChange={(v: number) => setInputs({ ...inputs, chosenCapF: v })} unit="F" step={0.0001} />
-        <Field label="No. of Capacitors" value={inputs.numCaps} onChange={(v: number) => setInputs({ ...inputs, numCaps: Math.max(1, v) })} />
-        <Field label="ESR @ 20kHz" value={inputs.esrOhm} onChange={(v: number) => setInputs({ ...inputs, esrOhm: v })} unit="Ω" step={0.001} />
-      </Section>
+      <CollapsibleSection title="Capacitor Bank" icon="🔋">
+        <Field label="Capacitance" id="cf" value={inputs.chosenCapF} onChange={(v: number) => setInputs({ ...inputs, chosenCapF: v })} unit="F" step="0.0001" />
+        <Field label="Count" id="nc" value={inputs.numCaps} onChange={(v: number) => setInputs({ ...inputs, numCaps: Math.max(1, v) })} />
+        <Field label="ESR" id="esr" value={inputs.esrOhm} onChange={(v: number) => setInputs({ ...inputs, esrOhm: v })} unit="Ω" step="0.001" hint="Resistance @ 20kHz" />
+      </CollapsibleSection>
 
-      <Section title="LC Filter">
-        <Field label="Harmonic Current" value={inputs.harmonics} onChange={(v: number) => setInputs({ ...inputs, harmonics: v })} unit="A" step={0.1} />
-      </Section>
+      <CollapsibleSection title="Filter Config" icon="🛡" defaultOpen={false}>
+        <Field label="Harmonic Curr" id="hc" value={inputs.harmonics} onChange={(v: number) => setInputs({ ...inputs, harmonics: v })} unit="A" step="0.1" />
+      </CollapsibleSection>
+    </div>
+  );
     </div>
   );
 
   const resultsPanel = (
     <div id="rectifiercalc-report-area" className="relative space-y-3">
-      <PdfTemplateHeader calculatorName="Rectifier Design Calculator" />
-      <div className="flex items-center justify-between">
-        <p className="text-[11px] text-gray-500 border-l-2 border-[#ffc812] pl-3 py-1 pdf-no-hide" style={{ fontFamily: "Lexend, sans-serif" }}>
-          SEC design tool with bridge rectifier, capacitor bank, and LC filter calculations.
-        </p>
-        <DownloadReportButton targetElementId="calculator-capture-area" filename="WelkinRim_Rectifier_Report.pdf" />
-      </div>
-
-      {/* ── Waveform Conversions ── */}
-      <div className="border border-gray-100 p-3 bg-gray-50/30">
-        <p className="text-[9px] uppercase text-[#ffc812] tracking-wider mb-2" style={{ fontFamily: "Michroma, sans-serif" }}>
-          Sinusoidal Waveform Conversions
-        </p>
-        <div className="space-y-1 text-[10px]" style={{ fontFamily: "Lexend, sans-serif" }}>
-          <Row label="Input RMS" value={`${inputs.vinRms.toFixed(2)} V`} />
-          <Row label="Peak Voltage" value={`${result.vinPeak.toFixed(2)} V`} />
-          <Row label="Peak-to-Peak" value={`${result.vinPkPk.toFixed(2)} V`} />
-          <Row label="Average Voltage" value={`${result.vinAvg.toFixed(2)} V`} />
+      <PdfTemplateHeader calculatorName="Power Rectifier Analysis" />
+      <div className="flex items-center justify-between gap-4 py-2 border-b border-gray-100">
+        <div className="flex-1">
+          <p className="text-[11px] text-gray-500 italic font-Lexend">
+            AC-DC conversion efficiency, thermal management, and output filtration metrics.
+          </p>
         </div>
+        <DownloadReportButton targetElementId="calculator-capture-area" filename="WelkinRim_Rectifier_Analysis.pdf" />
       </div>
 
-      {/* ── Rectifier I/O ── */}
-      <div className="grid grid-cols-2 gap-2">
-        <StatCard label="Input Current" value={result.inputCurrent.toFixed(2)} unit="A" />
-        <StatCard label="Output Voltage" value={result.vout.toFixed(2)} unit="V" />
-        <StatCard label="Output Current" value={result.iout.toFixed(2)} unit="A" />
-        <StatCard label="Ripple Voltage" value={result.rippleVoltage.toFixed(2)} unit="V" />
+      {/* Key Metrics */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2">
+        <StatCard label="DC Output" value={result.vout.toFixed(1)} unit="V" sub={`Pk-Pk: ${result.vinPkPk.toFixed(0)} V`} />
+        <StatCard label="Load Current" value={result.iout.toFixed(2)} unit="A" sub={`Avg: ${result.vinAvg.toFixed(1)} V`} />
+        <StatCard label="Efficiency" value={((result.vout * result.iout) / inputs.inputPower * 100).toFixed(1)} unit="%" type="good" />
+        <StatCard label="Ripple" value={result.rippleVoltage.toFixed(2)} unit="V" type={inputs.rippleFactor > 5 ? "warn" : "normal"} />
       </div>
 
-      {/* ── Bridge Rectifier ── */}
-      <div className="border border-gray-100 p-3 bg-gray-50/30">
-        <p className="text-[9px] uppercase text-[#ffc812] tracking-wider mb-2" style={{ fontFamily: "Michroma, sans-serif" }}>
-          Bridge Rectifier
-        </p>
-        <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-[10px]" style={{ fontFamily: "Lexend, sans-serif" }}>
-          <Row label="Full Bridge DC" value={`${result.fbDc.toFixed(2)} V`} />
-          <Row label="Half Bridge DC" value={`${result.hbDc.toFixed(2)} V`} />
-          <Row label="FB Vac" value={`${result.fbVac.toFixed(2)} V`} />
-          <Row label="Iac (from Idc)" value={`${result.iac.toFixed(2)} A`} />
-          <Row label="Pac (from Pdc)" value={`${result.pac.toFixed(1)} W`} />
-          <Row label="Fuse Rating" value={`${result.fuseRating.toFixed(1)} A`} />
-        </div>
-      </div>
-
-      {/* ── Thermal / Heat Sink ── */}
-      <div className="border border-gray-100 p-3 bg-gray-50/30">
-        <p className="text-[9px] uppercase text-[#ffc812] tracking-wider mb-2" style={{ fontFamily: "Michroma, sans-serif" }}>
-          Heat Sink Thermal
-        </p>
-        <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-[10px]" style={{ fontFamily: "Lexend, sans-serif" }}>
-          <Row label="Power Dissipation" value={`${result.pdTotal.toFixed(2)} W`} />
-          <Row label="Required Rsa" value={`${result.rsaRequired.toFixed(2)} K/W`} />
-          <Row label="Loss %" value={`${result.powerLossPercent.toFixed(2)}%`} />
-        </div>
-      </div>
-
-      {/* ── Capacitor Bank ── */}
-      <div className="border border-gray-100 p-3 bg-gray-50/30">
-        <p className="text-[9px] uppercase text-[#ffc812] tracking-wider mb-2" style={{ fontFamily: "Michroma, sans-serif" }}>
-          Capacitor Bank Sizing
-        </p>
-        <div className="space-y-1 text-[10px]" style={{ fontFamily: "Lexend, sans-serif" }}>
-          <Row label="Avg DC Value" value={`${result.vavg.toFixed(2)} V`} />
-          <Row label="Min Voltage (${inputs.rippleFactor}%)" value={`${result.vmin.toFixed(2)} V`} />
-          <Row label="Ripple Voltage" value={`${result.rippleV.toFixed(2)} V`} />
-          <Row label="Half-cycle Time" value={eng(result.fon, "s")} />
-          <div className="border-t border-gray-300 mt-1 pt-1">
-            <p className="text-[8px] uppercase text-[#808080] tracking-wider mb-1" style={{ fontFamily: "Michroma, sans-serif" }}>Calculated Capacitance (3 Methods)</p>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+        {/* Bridge & Waveform */}
+        <div className="border border-gray-200 bg-white overflow-hidden">
+          <div className="bg-neutral-900 px-3 py-1.5 flex items-center justify-between font-Michroma">
+            <span className="text-[9px] uppercase tracking-wider text-[#ffc812] font-bold">Rectifier Topology</span>
           </div>
-          <Row label="Method 1 (I×t/ΔV)" value={eng(result.ocap1, "F")} />
-          <Row label="Method 2 (Energy)" value={eng(result.ocap2, "F")} />
-          <Row label="Method 3 (Simplified)" value={eng(result.ocap3, "F")} />
-        </div>
-      </div>
-
-      {/* ── Energy & Power ── */}
-      <div className="grid grid-cols-2 gap-2">
-        <StatCard label="Energy / Cap" value={result.eCap.toFixed(2)} unit="J" />
-        <StatCard label="Total Energy" value={result.eTotal.toFixed(2)} unit="J" sub={`${inputs.numCaps} caps`} />
-        <StatCard label="Charge / Cap" value={result.qStored.toFixed(3)} unit="C" />
-        <StatCard label="Total Charge" value={result.qTotal.toFixed(3)} unit="C" />
-      </div>
-
-      <div className="border border-gray-100 p-3 bg-gray-50/30">
-        <p className="text-[9px] uppercase text-[#ffc812] tracking-wider mb-2" style={{ fontFamily: "Michroma, sans-serif" }}>
-          Load & Dissipation
-        </p>
-        <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-[10px]" style={{ fontFamily: "Lexend, sans-serif" }}>
-          <Row label="Load Resistance" value={`${result.rLoad.toFixed(2)} Ω`} />
-          <Row label="I @ Full Load" value={`${result.iLoadFull.toFixed(2)} A`} />
-          <Row label="I @ 50% Load" value={`${result.iLoad50.toFixed(2)} A`} />
-          <Row label="I @ 10% Load" value={`${result.iLoad10.toFixed(2)} A`} />
-          <div className="col-span-2 border-t border-gray-300 mt-1 pt-1">
-            <p className="text-[8px] uppercase text-[#808080] tracking-wider mb-1" style={{ fontFamily: "Michroma, sans-serif" }}>Power Dissipation (ESR)</p>
+          <div className="p-3 space-y-1">
+            <Row label="Full Bridge DC" value={`${result.fbDc.toFixed(2)} V`} />
+            <Row label="Half Bridge DC" value={`${result.hbDc.toFixed(2)} V`} />
+            <Row label="FB Vac Equivalent" value={`${result.fbVac.toFixed(2)} V`} />
+            <Row label="AC Current (Idc)" value={`${result.iac.toFixed(2)} A`} />
+            <Row label="AC Power (Pdc)" value={`${result.pac.toFixed(0)} W`} />
+            <div className="pt-2 border-t border-gray-50 mt-1">
+               <Row label="Fuse Rating (80%)" value={`${result.fuseRating.toFixed(1)} A`} color="text-[#ffc812]" />
+            </div>
           </div>
-          <Row label="P @ Full Load" value={`${result.pCapFull.toFixed(3)} W`} />
-          <Row label="P @ 50% Load" value={`${result.pCap50.toFixed(3)} W`} />
-          <Row label="P @ 10% Load" value={`${result.pCap10.toFixed(3)} W`} />
-          <Row label="Total P Dissipation" value={`${result.pCapTotal.toFixed(3)} W`} />
+        </div>
+
+        {/* Thermal */}
+        <div className="bg-neutral-50 border border-gray-200 p-3">
+          <p className="text-[9px] uppercase tracking-[0.2em] text-[#ffc812] font-bold font-Michroma mb-3">Thermal Analysis</p>
+          <div className="space-y-3">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="border-l-2 border-black pl-3 pt-1">
+                <p className="text-[8px] uppercase text-gray-400 font-bold font-Michroma">Dissipation</p>
+                <p className="text-xl font-black text-black font-Michroma">{result.pdTotal.toFixed(2)} <span className="text-[10px] uppercase font-normal">W</span></p>
+              </div>
+              <div className="border-l-2 border-amber-400 pl-3 pt-1">
+                <p className="text-[8px] uppercase text-gray-400 font-bold font-Michroma">Heatsink Req</p>
+                <p className="text-xl font-black text-black font-Michroma">{result.rsaRequired.toFixed(2)} <span className="text-[10px] uppercase font-normal">K/W</span></p>
+              </div>
+            </div>
+            <div className="pt-2 border-t border-gray-200 flex items-center justify-between text-[11px] font-Lexend">
+               <span className="text-gray-500 italic">Total thermal loss factor:</span>
+               <span className="font-bold text-red-600">{result.powerLossPercent.toFixed(2)}%</span>
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* ── LC Filter ── */}
-      <div className="border border-gray-100 p-3 bg-gray-50/30">
-        <p className="text-[9px] uppercase text-[#ffc812] tracking-wider mb-2" style={{ fontFamily: "Michroma, sans-serif" }}>
-          LC Filter Design
-        </p>
-        <div className="space-y-1 text-[10px]" style={{ fontFamily: "Lexend, sans-serif" }}>
-          <Row label="Load Resistance" value={`${result.rLoadLC.toFixed(2)} Ω`} />
-          <Row label="Load Inductance" value={eng(result.lLoad, "H")} />
-          <Row label="Filter Capacitor" value={eng(result.cFilter, "F")} />
-          <Row label="Filter Inductor" value={eng(result.lFilter, "H")} />
-          <Row label="Ripple Factor (γ)" value={`${(result.gammaRipple * 100).toFixed(3)}%`} />
+      {/* Capacitor Bank */}
+      <div className="border border-gray-200 bg-white">
+        <div className="bg-neutral-900 px-3 py-1.5 flex items-center justify-between font-Michroma">
+          <span className="text-[9px] uppercase tracking-wider text-[#ffc812] font-bold">Capacitance Strategy</span>
+          <span className="text-[8px] text-gray-400 italic font-Lexend tracking-tighter">(T₀ = {eng(result.fon, "s")})</span>
+        </div>
+        <div className="p-3">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+            <div className="space-y-1">
+              <p className="text-[8px] uppercase text-gray-400 font-bold font-Michroma mb-2">Estimation Methods</p>
+              <Row label="Time Const (I·t/ΔV)" value={eng(result.ocap1, "F")} />
+              <Row label="Energy Balance" value={eng(result.ocap2, "F")} />
+              <Row label="Simplified Idc/f" value={eng(result.ocap3, "F")} />
+            </div>
+            <div className="space-y-1">
+              <p className="text-[8px] uppercase text-gray-400 font-bold font-Michroma mb-2">Energy Storage</p>
+              <Row label="U per Cap" value={`${result.eCap.toFixed(2)} J`} />
+              <Row label="Total Bank Energy" value={`${result.eTotal.toFixed(1)} J`} />
+              <Row label="Total Charge (Q)" value={`${result.qTotal.toFixed(3)} C`} />
+            </div>
+            <div className="space-y-1">
+              <p className="text-[8px] uppercase text-gray-400 font-bold font-Michroma mb-2">Inrush / ESR Loss</p>
+              <Row label="Load R" value={`${result.rLoad.toFixed(2)} Ω`} />
+              <Row label="P @ 100% Load" value={`${result.pCapFull.toFixed(3)} W`} />
+              <Row label="Total ESR P Loss" value={`${result.pCapTotal.toFixed(3)} W`} />
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Formulas */}
-      <div className="border border-gray-100 p-3 bg-gray-50/30">
-        <p className="text-[9px] uppercase text-[#ffc812] tracking-wider mb-2" style={{ fontFamily: "Michroma, sans-serif" }}>
-          Key Formulas
-        </p>
-        <div className="space-y-1 text-[10px] text-gray-600" style={{ fontFamily: "Lexend, sans-serif" }}>
-          <p>V<sub>peak</sub> = V<sub>rms</sub> × √2</p>
-          <p>V<sub>avg</sub> = V<sub>peak</sub> × 2/π</p>
-          <p>FB: V<sub>dc</sub> = V<sub>peak</sub> × 0.637</p>
-          <p>R<sub>sa</sub> = (T<sub>j</sub> - T<sub>a</sub>) / P<sub>d</sub> - R<sub>jc</sub> - R<sub>ch</sub></p>
-          <p>C = I<sub>out</sub> × t / ΔV</p>
-          <p>γ = 1 / (4√2 × π² × f² × L × C)</p>
+      {/* LC Filter */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 mt-3">
+        <div className="border border-gray-200 p-3 bg-white">
+          <p className="text-[9px] uppercase tracking-[0.2em] text-[#ffc812] font-bold font-Michroma mb-3">Harmonic Filtration</p>
+          <div className="grid grid-cols-2 gap-3">
+            <StatCard label="Capacitor (Cf)" value={eng(result.cFilter, "F").split(" ")[0]} unit={eng(result.cFilter, "F").split(" ")[1]} />
+            <StatCard label="Inductor (Lf)" value={eng(result.lFilter, "H").split(" ")[0]} unit={eng(result.lFilter, "H").split(" ")[1]} />
+            <StatCard label="Filter Ripple" value={(result.gammaRipple * 100).toFixed(4)} unit="%" sub="Residual Factor" />
+            <StatCard label="Load Induct" value={eng(result.lLoad, "H").split(" ")[0]} unit={eng(result.lLoad, "H").split(" ")[1]} />
+          </div>
+        </div>
+
+        <div className="bg-neutral-900 border border-black p-3 text-white">
+          <p className="text-[9px] uppercase tracking-[0.2em] text-[#ffc812] font-bold font-Michroma mb-3">Process Physics</p>
+          <div className="space-y-2 text-[10px] font-Lexend opacity-80 leading-relaxed italic">
+            <p>Vₚₑₐₖ = Vᵣₘₛ × √2 <span className="text-[8px] opacity-40 ml-2">(Peak to peak)</span></p>
+            <p>Vₐᵥₑ = Vₚₑₐₖ × 2/π <span className="text-[8px] opacity-40 ml-2">(Mean DC value)</span></p>
+            <p>Rₛₐ = (Tⱼ - Tₐ)/P - Rⱼ꜀ - R꜀ₕ <span className="text-[8px] opacity-40 ml-2">(Thermal sink)</span></p>
+            <div className="pt-2 border-t border-white/10 mt-2 not-italic">
+              <p className="text-[8px] text-[#ffc812] uppercase font-bold font-Michroma mb-1">Filter Law</p>
+              <p className="text-[9px] leading-tight">γ = 1 / (4√2 π² f² L C). Ensure resonant frequency is well below switching threshold.</p>
+            </div>
+          </div>
         </div>
       </div>
     </div>

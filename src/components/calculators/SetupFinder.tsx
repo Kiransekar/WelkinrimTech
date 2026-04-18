@@ -7,17 +7,27 @@ import {
   XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ScatterChart, Scatter, ZAxis,
 } from "recharts";
 import { calcProp, PropCalcInput, PropCalcResult } from "@/lib/calculators/propCalc";
-import { calcXcopter, XcopterCalcInput, XcopterCalcResult } from "@/lib/calculators/xcopterCalc";
+import { calculateMulticopter, MulticopterCalcInput, MulticopterCalcResult } from "@/lib/calculators/multicopterConfig";
 import { PROPELLERS, Propeller } from "@/data/propellers";
 import { suggestESCs, ESC } from "@/data/escs";
 import { getPresetById, useMotorPresets } from "@/hooks/useMotorPresets";
 import SplitLayout from "./SplitLayout";
 
-type AircraftMode = "fixedwing" | "multicopter";
+type AircraftMode = "airplane" | "multicopter";
+type MCProfile = "balanced" | "racing" | "survey" | "cargo";
 interface Warning { level: "warn" | "danger"; message: string }
 
+// Mission-specific weight profiles (sum to 1.0) — from Calculations.md
+const WEIGHT_PROFILES: Record<MCProfile, { eta: number; time: number; margin: number }> = {
+  racing:   { eta: 0.25, time: 0.15, margin: 0.60 },
+  survey:   { eta: 0.50, time: 0.40, margin: 0.10 },
+  cargo:    { eta: 0.30, time: 0.20, margin: 0.50 },
+  balanced: { eta: 0.40, time: 0.35, margin: 0.25 },
+};
+
 const DEFAULTS = {
-  mode: "fixedwing" as AircraftMode,
+  mode: "airplane" as AircraftMode,
+  mcProfile: "balanced" as MCProfile,
   modelWeightG: 1500,
   numMotors: 1,
   numRotors: 4,
@@ -28,16 +38,28 @@ const DEFAULTS = {
   batteryCapacityMah: 5000,
   batteryMaxDischarge: 0.75,
   batteryResistanceMohm: 10,
+  cellMinV: 3.3,
+  cellNomV: 3.7,
+  cellMaxV: 4.2,
   motorKv: 380,
   motorIo: 1.2,
   motorRmMohm: 35,
   motorMaxPowerW: 800,
   motorMaxCurrentA: 30,
+  escBrand: "Welkinrim",
+  maxPropDiameterInch: 16,
   mission: "sport" as "sport" | "racer" | "aerobatic" | "3d" | "scale" | "glider" | "glider_tow",
   gliderTowWeightG: 1000,
   minFlightTimeMin: 10,
   maxThrottleHover: 55,
 };
+
+// Min-max normalize an array of values (returns neutral 0.5 when all identical)
+function minMaxNorm(values: number[]): number[] {
+  const mn = Math.min(...values), mx = Math.max(...values);
+  if (mx === mn) return values.map(() => 0.5);
+  return values.map(v => (v - mn) / (mx - mn));
+}
 
 function Field({
   label, id, value, onChange, step = "any", hint, className = "",
@@ -107,7 +129,8 @@ interface ComboResult {
   mode: AircraftMode;
   // Raw results for detail view
   fwResult?: PropCalcResult;
-  mcResult?: XcopterCalcResult;
+  mcResult?: MulticopterCalcResult;
+  preferenceBadge?: string;
 }
 
 function deriveFWWarnings(result: PropCalcResult, inputs: PropCalcInput): Warning[] {
@@ -128,7 +151,7 @@ function deriveFWWarnings(result: PropCalcResult, inputs: PropCalcInput): Warnin
   return w;
 }
 
-function deriveMCWarnings(result: XcopterCalcResult, totalWeightG: number): Warning[] {
+function deriveMCWarnings(result: MulticopterCalcResult, totalWeightG: number): Warning[] {
   const w: Warning[] = [];
   const twr = result.performance.totalThrustG / totalWeightG;
   if (twr < 1.2) w.push({ level: "danger", message: `TWR ${twr.toFixed(2)}:1 — unsafe, need ≥1.5.` });
@@ -187,14 +210,12 @@ export default function SetupFinder() {
       (p.application === appFilter || p.application === "both")
     );
 
-    const escApp = isMC ? "multicopter" : "airplane";
     const results: ComboResult[] = [];
 
     for (const prop of candidates) {
       try {
         if (isMC) {
-          // Multicopter mode — use xcopterCalc
-          const mcInput: XcopterCalcInput = {
+          const mcInput: MulticopterCalcInput = {
             numRotors: inputs.numRotors,
             auwG: inputs.modelWeightG,
             payloadG: 0,
@@ -205,35 +226,32 @@ export default function SetupFinder() {
             batteryCapacityMah: inputs.batteryCapacityMah,
             batteryMaxDischarge: inputs.batteryMaxDischarge,
             batteryResistanceMohm: inputs.batteryResistanceMohm,
+            cellMinV: inputs.cellMinV,
+            cellNomV: inputs.cellNomV,
+            cellMaxV: inputs.cellMaxV,
             motorKv: inputs.motorKv,
             motorIo: inputs.motorIo,
             motorRmMohm: inputs.motorRmMohm,
             motorMaxCurrentA: inputs.motorMaxCurrentA,
+            escRatingA: inputs.motorMaxCurrentA * 1.2,
+            escResistanceOhm: 0.005,
+            escMassG: 20,
+            escBrand: inputs.escBrand,
             propDiameterInch: prop.diameterInch,
             propPitchInch: prop.pitchInch,
             ct: prop.ct,
             cp: prop.cp,
           };
-          const mcResult = calcXcopter(mcInput);
+          const mcResult = calculateMulticopter(mcInput);
           const warnings = deriveMCWarnings(mcResult, inputs.modelWeightG);
-          const dangerCount = warnings.filter(w => w.level === "danger").length;
-
-          let score = 100 - dangerCount * 30 - warnings.filter(w => w.level === "warn").length * 10;
           const twr = mcResult.performance.totalThrustG / inputs.modelWeightG;
-          if (twr >= 2.0) score += 25; else if (twr >= 1.5) score += 10;
-          if (mcResult.hover.throttlePercent <= 60) score += 20;
-          else if (mcResult.hover.throttlePercent <= 70) score += 10;
-          if (mcResult.flightTime.hoverMin >= inputs.minFlightTimeMin) score += 15;
-          else score -= (inputs.minFlightTimeMin - mcResult.flightTime.hoverMin) * 3;
-          score += mcResult.hover.efficiencyPercent * 0.2;
-
-          const escs = suggestESCs(inputs.motorMaxCurrentA, inputs.batteryCells, escApp as any);
+          const escs = suggestESCs(inputs.motorMaxCurrentA, inputs.batteryCells, "multicopter");
 
           results.push({
             id: `mc-${prop.id}`,
             prop,
             esc: escs.length > 0 ? escs[0] : null,
-            score: Math.max(0, score),
+            score: 0, // filled after normalization pass
             warnings,
             thrustG: mcResult.performance.totalThrustG,
             hoverThrottle: mcResult.hover.throttlePercent,
@@ -247,7 +265,7 @@ export default function SetupFinder() {
             mcResult,
           });
         } else {
-          // Fixed-wing mode — use propCalc
+          // Airplane mode
           const fwInput: PropCalcInput = {
             modelWeightG: inputs.modelWeightG,
             numMotors: inputs.numMotors,
@@ -256,14 +274,22 @@ export default function SetupFinder() {
             elevationM: inputs.elevationM,
             temperatureC: inputs.temperatureC,
             pressureHpa: inputs.pressureHpa,
+            headWindMs: 0,
             batteryCells: inputs.batteryCells,
             batteryCapacityMah: inputs.batteryCapacityMah,
             batteryMaxDischarge: inputs.batteryMaxDischarge,
             batteryResistanceMohm: inputs.batteryResistanceMohm,
+            cellMinV: inputs.cellMinV,
+            cellNomV: inputs.cellNomV,
+            cellMaxV: inputs.cellMaxV,
             motorKv: inputs.motorKv,
             motorIo: inputs.motorIo,
             motorRmMohm: inputs.motorRmMohm,
             motorMaxPowerW: inputs.motorMaxPowerW,
+            escRatingA: 40,
+            escResistanceOhm: 0.005,
+            escMassG: 40,
+            escBrand: inputs.escBrand,
             propDiameterInch: prop.diameterInch,
             propPitchInch: prop.pitchInch,
             propBlades: prop.blades,
@@ -272,38 +298,18 @@ export default function SetupFinder() {
           };
           const fwResult = calcProp(fwInput);
           const warnings = deriveFWWarnings(fwResult, fwInput);
-          const dangerCount = warnings.filter(w => w.level === "danger").length;
-
-          let score = 100 - dangerCount * 30 - warnings.filter(w => w.level === "warn").length * 10;
-          const totalWeight = inputs.mission === "glider_tow" ? inputs.modelWeightG + inputs.gliderTowWeightG : inputs.modelWeightG;
-          const thrustRatio = fwResult.propeller.staticThrustG / totalWeight;
-          const pitchSpeed = fwResult.propeller.pitchSpeedKmh;
-          let reqTR = 0.5, reqPS = 60;
-          switch (inputs.mission) {
-            case "sport": reqTR = 0.5; reqPS = 70; break;
-            case "racer": reqTR = 0.8; reqPS = 150; break;
-            case "aerobatic": reqTR = 1.0; reqPS = 80; break;
-            case "3d": reqTR = 1.5; reqPS = 50; break;
-            case "scale": reqTR = 0.8; reqPS = 65; break;
-            case "glider": reqTR = 0.5; reqPS = 45; break;
-            case "glider_tow": reqTR = 0.8; reqPS = 70; break;
-          }
-          if (thrustRatio >= reqTR) score += 20; else score -= (reqTR - thrustRatio) * 100;
-          if (pitchSpeed >= reqPS) score += 15; else score -= (reqPS - pitchSpeed) * 2;
-          if (fwResult.battery.flightTimeMin >= inputs.minFlightTimeMin) score += 15;
-          else score -= (inputs.minFlightTimeMin - fwResult.battery.flightTimeMin) * 3;
-          score += fwResult.motorMaximum.efficiencyPercent * 0.3;
-
+          const totalWeight = inputs.mission === "glider_tow"
+            ? inputs.modelWeightG + inputs.gliderTowWeightG
+            : inputs.modelWeightG;
           const hoverThrottle = fwResult.propeller.staticThrustG > 0
-            ? (inputs.modelWeightG / fwResult.propeller.staticThrustG) * 100 : 100;
-
-          const escs = suggestESCs(inputs.motorMaxCurrentA || Math.ceil(inputs.motorMaxPowerW / (inputs.batteryCells * 3.7)), inputs.batteryCells, escApp as any);
+            ? (totalWeight / fwResult.propeller.staticThrustG) * 100 : 100;
+          const escs = suggestESCs(inputs.motorMaxCurrentA || Math.ceil(inputs.motorMaxPowerW / (inputs.batteryCells * 3.7)), inputs.batteryCells, "airplane");
 
           results.push({
             id: `fw-${prop.id}`,
             prop,
             esc: escs.length > 0 ? escs[0] : null,
-            score: Math.max(0, score),
+            score: 0,
             warnings,
             thrustG: fwResult.propeller.staticThrustG,
             hoverThrottle,
@@ -313,13 +319,41 @@ export default function SetupFinder() {
             powerW: fwResult.motorMaximum.electricPowerW,
             currentA: fwResult.motorMaximum.currentA,
             rpmMax: fwResult.propeller.rpm,
-            mode: "fixedwing",
+            mode: "airplane",
             fwResult,
           });
         }
-      } catch { /* skip */ }
+      } catch (e) { console.error(e); }
     }
-    return results.sort((a, b) => b.score - a.score);
+
+    // ── MADM scoring: min-max normalization across the pool then weighted sum ──
+    if (results.length > 0) {
+      const effNorm    = minMaxNorm(results.map(r => r.efficiency));
+      const timeNorm   = minMaxNorm(results.map(r => r.flightTimeMin));
+      const marginNorm = minMaxNorm(results.map(r => Math.max(0, r.twr - 1.5)));
+
+      const w = isMC
+        ? WEIGHT_PROFILES[inputs.mcProfile]
+        : { eta: 0.35, time: 0.35, margin: 0.30 };
+
+      results.forEach((r, i) => {
+        let base = w.eta * effNorm[i] + w.time * timeNorm[i] + w.margin * marginNorm[i];
+
+        // Penalty multipliers per Calculations.md §Step 5
+        const dangerCount = r.warnings.filter(x => x.level === "danger").length;
+        if (dangerCount > 0)           base *= Math.pow(0.70, dangerCount);
+        if (r.hoverThrottle > inputs.maxThrottleHover) base *= 0.80;
+        if (isMC && r.twr < 1.2)       base  = 0; // disqualify unsafe TWR
+
+        r.score = Math.round(Math.min(100, base * 100));
+      });
+    }
+
+    const sorted = results.sort((a, b) => b.score - a.score);
+    if (sorted[0]) sorted[0].preferenceBadge = "🥇 Preference 1";
+    if (sorted[1]) sorted[1].preferenceBadge = "🥈 Preference 2";
+    if (sorted[2]) sorted[2].preferenceBadge = "🥉 Preference 3";
+    return sorted;
   }, [inputs, propFilter, isMC]);
 
   // Comparison subset
@@ -339,17 +373,20 @@ export default function SetupFinder() {
   // ── Inputs Panel ──
   const inputsPanel = (
     <div className="space-y-3">
-      {/* Mode selector */}
-      <div className="grid grid-cols-2 border border-gray-200">
-        {(["fixedwing", "multicopter"] as AircraftMode[]).map(m => (
-          <button key={m}
-            onClick={() => setInputs(prev => ({ ...prev, mode: m, numMotors: m === "fixedwing" ? 1 : prev.numMotors, numRotors: m === "multicopter" ? 4 : prev.numRotors }))}
-            className={`text-[9px] tracking-widest uppercase py-2 transition-colors ${inputs.mode === m ? "bg-black text-[#ffc812]" : "bg-white text-gray-400 hover:text-gray-600"}`}
-            style={{ fontFamily: "Michroma, sans-serif" }}
-          >
-            {m === "fixedwing" ? "Fixed Wing" : "Multicopter"}
-          </button>
-        ))}
+      {/* Vehicle Type Toggle */}
+      <div className="space-y-1.5">
+        <label className="text-[9px] tracking-[0.2em] uppercase text-gray-400 font-bold" style={{ fontFamily: "Michroma, sans-serif" }}>Vehicle Type</label>
+        <div className="grid grid-cols-2 border border-gray-200 p-0.5 bg-gray-50 rounded-sm">
+          {(["airplane", "multicopter"] as AircraftMode[]).map(m => (
+            <button key={m}
+              onClick={() => setInputs(prev => ({ ...prev, mode: m, numMotors: m === "airplane" ? 1 : prev.numMotors, numRotors: m === "multicopter" ? 4 : prev.numRotors }))}
+              className={`text-[9px] tracking-widest uppercase py-2 transition-all rounded-[1px] ${inputs.mode === m ? "bg-black text-[#ffc812] shadow-sm" : "text-gray-400 hover:text-gray-600"}`}
+              style={{ fontFamily: "Michroma, sans-serif" }}
+            >
+              {m === "airplane" ? "Airplane" : "Multicopter"}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Motor Preset */}
@@ -369,44 +406,47 @@ export default function SetupFinder() {
         </select>
       </div>
 
-      <Section title={isMC ? "Multicopter" : "Aircraft"}>
-        <Field label="AUW / Weight (g)" id="mw" value={inputs.modelWeightG} onChange={set("modelWeightG")}
-               hint="All-up weight including battery" />
+      <Section title="Bird Specification">
+        <Field label="AUM (kg)" id="mw" value={inputs.modelWeightG / 1000} onChange={v => set("modelWeightG")(v * 1000)}
+               hint="All-Up Mass including battery in Kilograms." />
+        <Field label="Max Prop (inch)" id="pmax" value={inputs.maxPropDiameterInch} onChange={set("maxPropDiameterInch")} step="1"
+               hint="Maximum propeller diameter clearance." />
+        <Field label="Battery Config (S)" id="bc" value={inputs.batteryCells} onChange={set("batteryCells")} step="1" />
         {isMC ? (
           <Field label="# Rotors" id="nr" value={inputs.numRotors} onChange={set("numRotors")} step="1"
                  hint="4 = quad, 6 = hex, 8 = octo" />
         ) : (
-          <Field label="# Motors" id="nm" value={inputs.numMotors} onChange={set("numMotors")} step="1" />
-        )}
-        {!isMC && (
-          <div className="mt-1 relative">
-            <label className="text-[9px] tracking-widest uppercase text-[#808080] mb-1 block" style={{ fontFamily: "Michroma, sans-serif" }}>Mission</label>
-            <select
-              value={inputs.mission}
-              onChange={(e) => setInputs(prev => ({ ...prev, mission: e.target.value as any }))}
-              className="w-full border border-gray-200 text-[11px] px-2 py-1.5 focus:outline-none focus:border-[#ffc812] bg-white transition-colors"
-              style={{ fontFamily: "Michroma, sans-serif" }}
-            >
-              <option value="sport">Trainer / Sport</option>
-              <option value="racer">Racer</option>
-              <option value="aerobatic">Aerobatic</option>
-              <option value="3d">3D / Hover</option>
-              <option value="scale">Scale</option>
-              <option value="glider">Glider</option>
-              <option value="glider_tow">Glider Tow</option>
-            </select>
-          </div>
-        )}
-        {!isMC && inputs.mission === "glider_tow" && (
-          <Field label="Tow Wt (g)" id="towWeight" value={inputs.gliderTowWeightG} onChange={set("gliderTowWeightG")} />
+          <>
+            <Field label="# Motors" id="nm" value={inputs.numMotors} onChange={set("numMotors")} step="1" />
+            <div className="mt-1 relative">
+              <label className="text-[9px] tracking-widest uppercase text-[#808080] mb-1 block" style={{ fontFamily: "Michroma, sans-serif" }}>Mission</label>
+              <select
+                value={inputs.mission}
+                onChange={(e) => setInputs(prev => ({ ...prev, mission: e.target.value as any }))}
+                className="w-full border border-gray-200 text-[11px] px-2 py-1.5 focus:outline-none focus:border-[#ffc812] bg-white transition-colors"
+                style={{ fontFamily: "Michroma, sans-serif" }}
+              >
+                <option value="sport">Trainer / Sport</option>
+                <option value="racer">Racer</option>
+                <option value="aerobatic">Aerobatic</option>
+                <option value="3d">3D / Hover</option>
+                <option value="scale">Scale</option>
+                <option value="glider">Glider</option>
+                <option value="glider_tow">Glider Tow</option>
+              </select>
+            </div>
+            {inputs.mission === "glider_tow" && (
+              <Field label="Tow Wt (g)" id="towWeight" value={inputs.gliderTowWeightG} onChange={set("gliderTowWeightG")} />
+            )}
+          </>
         )}
       </Section>
 
-      <Section title="Battery">
-        <Field label="Cells (S)" id="bc" value={inputs.batteryCells} onChange={set("batteryCells")} step="1" />
-        <Field label="Capacity" id="bm" value={inputs.batteryCapacityMah} onChange={set("batteryCapacityMah")} step="100" />
-        <Field label="Max Disch (%)" id="bd" value={inputs.batteryMaxDischarge * 100} onChange={v => set("batteryMaxDischarge")(v / 100)} />
+      <Section title="Battery Specs">
+        <Field label="Capacity (mAh)" id="bm" value={inputs.batteryCapacityMah} onChange={set("batteryCapacityMah")} step="100" />
         <Field label="Resist (mΩ)" id="br" value={inputs.batteryResistanceMohm} onChange={set("batteryResistanceMohm")} />
+        <Field label="Cell Min (V)" id="cmin" value={inputs.cellMinV} onChange={set("cellMinV")} step="0.1" />
+        <Field label="Cell Nom (V)" id="cnom" value={inputs.cellNomV} onChange={set("cellNomV")} step="0.1" />
       </Section>
 
       <Section title="Motor">
@@ -422,6 +462,23 @@ export default function SetupFinder() {
 
       <Section title="Targets">
         <Field label="Min Flight (min)" id="mft" value={inputs.minFlightTimeMin} onChange={set("minFlightTimeMin")} />
+        {isMC && (
+          <div className="w-full py-0.5">
+            <label className="text-[8px] tracking-widest uppercase text-[#808080] mb-1 block"
+                   style={{ fontFamily: "Michroma, sans-serif" }}>Mission Profile</label>
+            <select
+              value={inputs.mcProfile}
+              onChange={e => setInputs(prev => ({ ...prev, mcProfile: e.target.value as MCProfile }))}
+              className="w-full border border-gray-200 text-[11px] px-2 py-1.5 focus:outline-none focus:border-[#ffc812] bg-white transition-colors"
+              style={{ fontFamily: "Michroma, sans-serif" }}
+            >
+              <option value="balanced">Balanced (η 40 / Time 35 / Margin 25)</option>
+              <option value="racing">Racing (η 25 / Time 15 / Margin 60)</option>
+              <option value="survey">Survey (η 50 / Time 40 / Margin 10)</option>
+              <option value="cargo">Cargo (η 30 / Time 20 / Margin 50)</option>
+            </select>
+          </div>
+        )}
         {isMC && <Field label="Max Hover (%)" id="mht" value={inputs.maxThrottleHover} onChange={set("maxThrottleHover")} hint="Maximum throttle for stable hover" />}
         <Field label="Prop Min (in)" id="pmin" value={propFilter.min} onChange={v => setPropFilter(prev => ({...prev, min: v}))} step="1" />
         <Field label="Prop Max (in)" id="pmax" value={propFilter.max} onChange={v => setPropFilter(prev => ({...prev, max: v}))} step="1" />
@@ -445,43 +502,56 @@ export default function SetupFinder() {
           : "Find the optimal propeller for your fixed-wing aircraft. Each combo includes a matched ESC suggestion. Click to expand details or select to compare."}
       </p>
 
-      {/* Comparison bar */}
+      {/* Comparison Drawer */}
       {compareIds.size > 0 && (
-        <div className="border-2 border-[#ffc812] bg-[#fffbe6] p-3">
-          <div className="flex items-center justify-between mb-2">
-            <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812] font-bold"
-               style={{ fontFamily: "Michroma, sans-serif" }}>
-              Comparing {compareIds.size} configuration{compareIds.size > 1 ? "s" : ""}
-            </p>
-            <button onClick={() => setCompareIds(new Set())}
-              className="text-[8px] tracking-widest uppercase text-gray-400 hover:text-red-500 transition-colors"
-              style={{ fontFamily: "Michroma, sans-serif" }}>Clear</button>
+        <div className="border-2 border-black bg-white shadow-xl p-4 sticky top-4 z-[100]">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-[10px] tracking-[0.3em] uppercase font-black text-black" style={{ fontFamily: "Michroma, sans-serif" }}>
+              Configuration Comparison ({compareIds.size})
+            </h3>
+            <button onClick={() => setCompareIds(new Set())} 
+                    className="text-[8px] tracking-widest uppercase px-2 py-1 bg-red-50 text-red-500 hover:bg-red-500 hover:text-white transition-all"
+                    style={{ fontFamily: "Michroma, sans-serif" }}>
+              Reset
+            </button>
           </div>
           <div className="overflow-x-auto">
-            <table className="w-full text-[10px]" style={{ fontFamily: "Michroma, sans-serif" }}>
+            <table className="w-full text-left" style={{ fontFamily: "Michroma, sans-serif" }}>
               <thead>
-                <tr className="bg-black text-[#ffc812]">
-                  <th className="px-2 py-1.5 text-left text-[8px] tracking-wider">Propeller</th>
-                  <th className="px-2 py-1.5 text-right text-[8px] tracking-wider">ESC</th>
-                  <th className="px-2 py-1.5 text-right text-[8px] tracking-wider">Thrust</th>
-                  <th className="px-2 py-1.5 text-right text-[8px] tracking-wider">TWR</th>
-                  <th className="px-2 py-1.5 text-right text-[8px] tracking-wider">{isMC ? "Hover" : "Flight"}</th>
-                  <th className="px-2 py-1.5 text-right text-[8px] tracking-wider">Eff %</th>
-                  <th className="px-2 py-1.5 text-right text-[8px] tracking-wider">Score</th>
+                <tr className="border-b-2 border-black">
+                  <th className="py-2 text-[8px] text-gray-400 uppercase tracking-widest">Parameter</th>
+                  {comparedCombos.map(c => (
+                    <th key={c.id} className="py-2 px-4 text-[9px] font-bold text-center border-l border-gray-100">
+                      {c.prop.diameterInch}x{c.prop.pitchInch}
+                    </th>
+                  ))}
                 </tr>
               </thead>
-              <tbody>
-                {comparedCombos.map((c, i) => (
-                  <tr key={c.id} className={i % 2 === 0 ? "bg-white" : "bg-gray-50/50"}>
-                    <td className="px-2 py-1.5 font-bold">{c.prop.type} {c.prop.diameterInch}×{c.prop.pitchInch}</td>
-                    <td className="px-2 py-1.5 text-right text-gray-500">{c.esc ? `${c.esc.model} ${c.esc.continuousA}A` : "—"}</td>
-                    <td className="px-2 py-1.5 text-right">{c.thrustG.toFixed(0)}g</td>
-                    <td className="px-2 py-1.5 text-right">{c.twr.toFixed(2)}</td>
-                    <td className="px-2 py-1.5 text-right">{c.flightTimeMin.toFixed(1)} min</td>
-                    <td className="px-2 py-1.5 text-right">{c.efficiency.toFixed(1)}</td>
-                    <td className="px-2 py-1.5 text-right font-bold text-[#ffc812]">{c.score.toFixed(0)}</td>
-                  </tr>
-                ))}
+              <tbody className="text-[10px]">
+                <tr className="border-b border-gray-100">
+                  <td className="py-2 text-gray-500">Weight (AUM)</td>
+                  {comparedCombos.map(c => <td key={c.id} className="py-2 text-center border-l border-gray-100 font-medium">{(inputs.modelWeightG/1000).toFixed(2)} kg</td>)}
+                </tr>
+                <tr className="border-b border-gray-100">
+                  <td className="py-2 text-gray-500">Total Thrust</td>
+                  {comparedCombos.map(c => <td key={c.id} className="py-2 text-center border-l border-gray-100 font-bold">{(c.thrustG * (isMC ? inputs.numRotors : inputs.numMotors)).toFixed(0)}g</td>)}
+                </tr>
+                <tr className="border-b border-gray-100">
+                  <td className="py-2 text-gray-500">Efficiency</td>
+                  {comparedCombos.map(c => <td key={c.id} className="py-2 text-center border-l border-gray-100 text-[#22c55e]">{c.efficiency.toFixed(1)} g/W</td>)}
+                </tr>
+                <tr className="border-b border-gray-100">
+                  <td className="py-2 text-gray-500">Flight Time</td>
+                  {comparedCombos.map(c => <td key={c.id} className="py-2 text-center border-l border-gray-100 font-bold">{c.flightTimeMin.toFixed(1)} min</td>)}
+                </tr>
+                <tr className="border-b border-gray-100">
+                  <td className="py-2 text-gray-500">Hover/Static RPM</td>
+                  {comparedCombos.map(c => <td key={c.id} className="py-2 text-center border-l border-gray-100">{c.rpmMax.toFixed(0)}</td>)}
+                </tr>
+                <tr className="border-b border-gray-100">
+                  <td className="py-2 text-gray-500">Match Score</td>
+                  {comparedCombos.map(c => <td key={c.id} className="py-2 text-center border-l border-gray-100 font-black text-[#ffc812]">{c.score.toFixed(0)}%</td>)}
+                </tr>
               </tbody>
             </table>
           </div>
@@ -499,95 +569,97 @@ export default function SetupFinder() {
           <p className="text-center text-gray-400 py-8" style={{ fontFamily: "Lexend, sans-serif" }}>No combinations match. Adjust prop range or inputs.</p>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-            {comboResults.slice(0, 9).map((c, i) => (
-              <div key={c.id} className={`border-2 p-3 transition-colors cursor-pointer ${
-                i === 0 ? "border-[#ffc812] bg-[#fffbe6]" : compareIds.has(c.id) ? "border-[#ffc812]/50 bg-[#fffbe6]/30" : "border-gray-200 hover:border-gray-300"
-              }`}>
-                <div className="flex items-start justify-between">
-                  <div className="flex-1" onClick={() => setExpandedId(expandedId === c.id ? null : c.id)}>
-                    {i === 0 && (
-                      <div className="text-[8px] tracking-widest uppercase text-[#ffc812] mb-1 font-bold"
-                           style={{ fontFamily: "Michroma, sans-serif" }}>Best Match</div>
-                    )}
-                    <p className="text-sm font-bold" style={{ fontFamily: "Michroma, sans-serif" }}>
-                      {c.prop.type} {c.prop.diameterInch}×{c.prop.pitchInch}
-                    </p>
-                    <div className="text-[10px] text-gray-500 mt-0.5" style={{ fontFamily: "Lexend, sans-serif" }}>
-                      {c.prop.blades}-blade
-                      {c.esc && <span className="ml-1 text-gray-400">+ {c.esc.model}</span>}
+            {comboResults.slice(0, 12).map((c) => {
+              const bgClass = c.score >= 90 ? "bg-green-50 border-green-200" 
+                           : c.score >= 60 ? "bg-orange-50 border-orange-200" 
+                           : "bg-red-50 border-red-200";
+              const accentColor = c.score >= 90 ? "#22c55e" : c.score >= 60 ? "#f59e0b" : "#ef4444";
+              
+              return (
+                <div key={c.id} className={`border-2 p-3 transition-all relative ${bgClass} ${compareIds.has(c.id) ? "ring-2 ring-black" : ""}`}>
+                  <div className="flex items-start justify-between mb-2">
+                    <div className="flex-1">
+                      {c.preferenceBadge && (
+                        <div className="text-[8px] tracking-widest uppercase mb-1 font-bold"
+                             style={{ fontFamily: "Michroma, sans-serif", color: accentColor }}>{c.preferenceBadge}</div>
+                      )}
+                      <p className="text-[11px] font-bold text-gray-900" style={{ fontFamily: "Michroma, sans-serif" }}>
+                        {inputs.motorKv}KV Motor
+                      </p>
+                    </div>
+                    <input 
+                      type="checkbox"
+                      checked={compareIds.has(c.id)}
+                      onChange={() => toggleCompare(c.id)}
+                      className="w-4 h-4 accent-black cursor-pointer"
+                    />
+                  </div>
+
+                  <div className="space-y-1 text-[10px]" style={{ fontFamily: "Michroma, sans-serif" }}>
+                    <div className="flex justify-between border-b border-black/5 pb-0.5">
+                      <span className="text-gray-500 uppercase text-[8px]">Motor</span>
+                      <span className="font-bold truncate max-w-[100px]">{selectedPreset || "Custom"}</span>
+                    </div>
+                    <div className="flex justify-between border-b border-black/5 pb-0.5">
+                      <span className="text-gray-500 uppercase text-[8px]">ESC</span>
+                      <span className="font-bold">{c.esc?.model || "Standard ESC"}</span>
+                    </div>
+                    <div className="flex justify-between border-b border-black/5 pb-0.5">
+                      <span className="text-gray-500 uppercase text-[8px]">Propeller</span>
+                      <span className="font-bold">{c.prop.diameterInch}×{c.prop.pitchInch}</span>
+                    </div>
+                    <div className="flex justify-between border-b border-black/5 pb-0.5">
+                      <span className="text-gray-500 uppercase text-[8px]">Hover Thrust</span>
+                      <span className="font-bold">{c.thrustG.toFixed(0)}g</span>
+                    </div>
+                    <div className="flex justify-between border-b border-black/5 pb-0.5">
+                      <span className="text-gray-500 uppercase text-[8px]">Efficiency</span>
+                      <span className="font-bold">{(c.thrustG / (c.powerW || 1)).toFixed(1)} g/W</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-500 uppercase text-[8px]">Flight Time</span>
+                      <span className="font-bold">{c.flightTimeMin.toFixed(1)} min</span>
                     </div>
                   </div>
-                  <button
-                    onClick={(e) => { e.stopPropagation(); toggleCompare(c.id); }}
-                    className={`text-[7px] tracking-widest uppercase px-1.5 py-0.5 border transition-colors flex-shrink-0 ${
-                      compareIds.has(c.id) ? "border-[#ffc812] bg-[#ffc812] text-black" : "border-gray-300 text-gray-400 hover:border-[#ffc812]"
-                    }`}
-                    style={{ fontFamily: "Michroma, sans-serif" }}
-                  >{compareIds.has(c.id) ? "CMP" : "+"}</button>
-                </div>
 
-                <div className="mt-2 grid grid-cols-2 gap-x-3 gap-y-1 text-[10px]" style={{ fontFamily: "Michroma, sans-serif" }}
-                     onClick={() => setExpandedId(expandedId === c.id ? null : c.id)}>
-                  <div className="flex justify-between"><span className="text-gray-500">Thrust:</span><span className="font-bold">{c.thrustG.toFixed(0)}g</span></div>
-                  <div className="flex justify-between"><span className="text-gray-500">TWR:</span><span className="font-bold">{c.twr.toFixed(2)}</span></div>
-                  <div className="flex justify-between"><span className="text-gray-500">{isMC ? "Hover:" : "Flight:"}</span><span className="font-bold">{c.flightTimeMin.toFixed(1)} min</span></div>
-                  <div className="flex justify-between"><span className="text-gray-500">Eff:</span><span className="font-bold">{c.efficiency.toFixed(1)}%</span></div>
-                  <div className="flex justify-between"><span className="text-gray-500">Score:</span><span className="font-bold text-[#ffc812]">{c.score.toFixed(0)}</span></div>
-                  <div className="flex justify-between"><span className="text-gray-500">Power:</span><span className="font-bold">{c.powerW.toFixed(0)}W</span></div>
-                </div>
+                  <div className="my-2 border-t border-dashed border-gray-300"></div>
 
-                {c.warnings.length > 0 && (
-                  <div className="mt-2 space-y-0.5">
-                    {c.warnings.slice(0, 2).map((w, wi) => (
-                      <p key={wi} className={`text-[9px] ${w.level === "danger" ? "text-red-500" : "text-amber-500"}`}
-                         style={{ fontFamily: "Lexend, sans-serif" }}>{w.message}</p>
-                    ))}
+                  <div className="grid grid-cols-2 gap-x-2 gap-y-1 text-[9px]" style={{ fontFamily: "Lexend, sans-serif" }}>
+                    <div className="text-gray-400">Match Score: <span className="font-bold" style={{ color: accentColor }}>{c.score.toFixed(0)}%</span></div>
+                    <div className="text-gray-400">Total Thrust: <span className="text-gray-600">{(c.thrustG * (isMC ? inputs.numRotors : inputs.numMotors)).toFixed(0)}g</span></div>
                   </div>
-                )}
 
-                {/* Expandable detail panel */}
-                {expandedId === c.id && (
-                  <div className="mt-3 pt-3 border-t border-gray-200 space-y-2 text-[10px]" style={{ fontFamily: "Michroma, sans-serif" }}>
-                    <p className="text-[8px] tracking-widest uppercase text-[#ffc812] font-bold">Detailed Analysis</p>
-                    <div className="grid grid-cols-2 gap-x-3 gap-y-1">
-                      <div className="flex justify-between"><span className="text-gray-400">Max RPM:</span><span>{c.rpmMax.toFixed(0)}</span></div>
-                      <div className="flex justify-between"><span className="text-gray-400">Current:</span><span>{c.currentA.toFixed(1)}A</span></div>
-                      {isMC && c.mcResult && (
+                  <button 
+                    onClick={() => setExpandedId(expandedId === c.id ? null : c.id)}
+                    className="w-full mt-2 py-1 text-[8px] tracking-widest uppercase bg-white/50 hover:bg-white border border-gray-200 transition-colors"
+                  >
+                    {expandedId === c.id ? "Close Details" : "View Specs"}
+                  </button>
+
+                  {expandedId === c.id && (
+                    <div className="mt-2 p-2 bg-white/80 rounded-sm text-[9px] space-y-1">
+                      {isMC ? (
                         <>
-                          <div className="flex justify-between"><span className="text-gray-400">Hover Thr:</span><span>{c.mcResult.hover.throttlePercent.toFixed(1)}%</span></div>
-                          <div className="flex justify-between"><span className="text-gray-400">Disc Load:</span><span>{c.mcResult.hover.discLoadingNm2.toFixed(1)} N/m²</span></div>
-                          <div className="flex justify-between"><span className="text-gray-400">Hover RPM:</span><span>{c.mcResult.hover.rpm.toFixed(0)}</span></div>
-                          <div className="flex justify-between"><span className="text-gray-400">Mixed Time:</span><span>{c.mcResult.flightTime.mixedMin.toFixed(1)} min</span></div>
+                          <div className="flex justify-between"><span className="text-gray-400">Max RPM:</span><span>{c.rpmMax.toFixed(0)}</span></div>
+                          <div className="flex justify-between"><span className="text-gray-400">Disc Loading:</span><span>{c.mcResult?.hover.discLoadingNm2.toFixed(1)} N/m²</span></div>
                         </>
-                      )}
-                      {!isMC && c.fwResult && (
+                      ) : (
                         <>
-                          <div className="flex justify-between"><span className="text-gray-400">Pitch Spd:</span><span>{c.fwResult.propeller.pitchSpeedKmh.toFixed(1)} km/h</span></div>
-                          <div className="flex justify-between"><span className="text-gray-400">g/W:</span><span>{c.fwResult.propeller.specificThrustGW.toFixed(2)}</span></div>
-                          <div className="flex justify-between"><span className="text-gray-400">Motor Eff:</span><span>{c.fwResult.motorOptimum.efficiencyPercent.toFixed(1)}%</span></div>
-                          <div className="flex justify-between"><span className="text-gray-400">Pwr/Wt:</span><span>{c.fwResult.totalDrive.powerWeightWKg.toFixed(0)} W/kg</span></div>
+                          <div className="flex justify-between"><span className="text-gray-400">Pitch Speed:</span><span>{c.fwResult?.propeller.pitchSpeedKmh.toFixed(1)} km/h</span></div>
+                          <div className="flex justify-between"><span className="text-gray-400">TWR:</span><span>{c.twr.toFixed(2)}</span></div>
                         </>
                       )}
                     </div>
-                    {c.esc && (
-                      <div className="bg-gray-50 border border-gray-200 px-2 py-1.5">
-                        <p className="text-[8px] tracking-widest uppercase text-gray-400 mb-0.5">Suggested ESC</p>
-                        <p className="font-bold text-[11px]">{c.esc.model}</p>
-                        <p className="text-gray-400 text-[9px]" style={{ fontFamily: "Lexend, sans-serif" }}>
-                          {c.esc.continuousA}A cont / {c.esc.burstA}A burst · {c.esc.minCells}–{c.esc.maxCells}S · {c.esc.weight}g
-                        </p>
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-            ))}
+                  )}
+                </div>
+              );
+            })}
           </div>
         )}
       </div>
 
-      {/* Scatter chart */}
-      {comboResults.length > 0 && (
+      {/* Scatter chart - HIDDEN per instructions */}
+      {false && comboResults.length > 0 && (
         <div className="border border-gray-100">
           <div className="bg-black px-3 py-1.5">
             <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812]"

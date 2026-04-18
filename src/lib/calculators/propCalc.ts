@@ -1,4 +1,4 @@
-import { airDensity, G, inToM, kphToMph } from "./baseCalc";
+import { airDensity, dynamicThrust, G, inToM, kphToMph } from "./baseCalc";
 
 export interface PropCalcInput {
   // General
@@ -10,16 +10,25 @@ export interface PropCalcInput {
   elevationM: number;
   temperatureC: number;
   pressureHpa: number;
+  headWindMs: number;
   // Battery
   batteryCells: number;
   batteryCapacityMah: number;
   batteryMaxDischarge: number; // 0–1
   batteryResistanceMohm: number;
+  cellMinV: number;
+  cellNomV: number;
+  cellMaxV: number;
   // Motor
   motorKv: number;
   motorIo: number;        // no-load current A
   motorRmMohm: number;    // winding resistance mΩ
   motorMaxPowerW: number;
+  // ESC
+  escRatingA: number;
+  escResistanceOhm: number;
+  escMassG: number;
+  escBrand: string;
   // Propeller
   propDiameterInch: number;
   propPitchInch: number;
@@ -102,6 +111,11 @@ export interface PropCalcResult {
     airDensityKgm3: number;
     elevationM: number;
     temperatureC: number;
+    headWindMs: number;
+  };
+  dynamicEstimation?: {
+    thrustG: number;
+    exitVelocityMs: number;
   };
   partialLoadStatic: PartialLoadRow[];
   partialLoadDynamic: DynamicLoadRow[];
@@ -115,9 +129,11 @@ export function calcProp(p: PropCalcInput): PropCalcResult {
   const propPitchM      = inToM(p.propPitchInch);
   const wingAreaM2      = p.wingAreaDm2 / 100;
 
-  const battVoltNominal = p.batteryCells * 3.7;
+  const battVoltNominal = p.batteryCells * (p.cellNomV || 3.7);
   const battResOhm      = (p.batteryResistanceMohm / 1000) * p.batteryCells;
   const motorRmOhm      = p.motorRmMohm / 1000;
+  const escResOhm       = p.escResistanceOhm || 0;
+  const totalResOhm     = battResOhm + motorRmOhm + escResOhm;
 
   const ct = p.ct * p.tconst;
   const cp = p.cp * p.pconst;
@@ -129,11 +145,10 @@ export function calcProp(p: PropCalcInput): PropCalcResult {
     const nRps         = rpm / 60;
     const powerPropW   = cp * rho * Math.pow(nRps, 3) * Math.pow(propDiamM, 5);
     const currentEst   = Math.max(0, powerPropW / Math.max(battVoltNominal, 1) + p.motorIo);
-    const voltageSag   = currentEst * battResOhm;
-    const voltAtMotor  = Math.max(1, battVoltNominal - voltageSag);          // clamp > 1V
-    const rpmLoaded    = p.motorKv * voltAtMotor
-                         - Math.max(0, currentEst - p.motorIo) * motorRmOhm * p.motorKv * 60 / (2 * Math.PI);
-    const rpmClamped   = Math.max(0, rpmLoaded);
+    const voltageSag   = currentEst * totalResOhm;
+    const voltAtMotor = Math.max(1, battVoltNominal - voltageSag);
+    const rpmLoaded   = p.motorKv * (voltAtMotor - currentEst * (motorRmOhm + escResOhm));
+    const rpmClamped  = Math.max(100, rpmLoaded);
     if (Math.abs(rpmClamped - rpm) < 5) { rpm = rpmClamped; break; }
     rpm = rpmClamped;
   }
@@ -145,7 +160,7 @@ export function calcProp(p: PropCalcInput): PropCalcResult {
   const thrustOz       = thrustG / 28.3495;
   const powerPropW     = cp  * rho * Math.pow(nRps, 3) * Math.pow(propDiamM, 5);
   const currentMotor   = powerPropW / battVoltNominal + p.motorIo;
-  const voltageSag     = currentMotor * battResOhm;
+  const voltageSag     = currentMotor * totalResOhm;
   const voltAtMotor    = battVoltNominal - voltageSag;
   const electricPowerW = voltAtMotor * currentMotor;
   const motorEff       = electricPowerW > 0 ? (powerPropW / electricPowerW) * 100 : 0;
@@ -265,6 +280,16 @@ export function calcProp(p: PropCalcInput): PropCalcResult {
       airDensityKgm3: rho,
       elevationM:     p.elevationM,
       temperatureC:   p.temperatureC,
+      headWindMs:     p.headWindMs || 0,
+    },
+    dynamicEstimation: {
+      thrustG: dynamicThrust(
+        thrustN,
+        rho,
+        p.headWindMs || 0,
+        diskArea,
+      ) / G * 1000,
+      exitVelocityMs: pitchSpeedMps,
     },
     partialLoadStatic,
     partialLoadDynamic,

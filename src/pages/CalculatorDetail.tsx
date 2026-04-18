@@ -14,16 +14,17 @@ import { useState, useEffect } from "react";
 import { useLocation, useRoute } from "wouter";
 import Footer from "@/components/Footer";
 import PropCalcPanel from "@/components/calculators/PropCalcPanel";
-import XcopterCalcPanel from "@/components/calculators/XcopterCalcPanel";
+import MulticopterPanel from "@/components/calculators/MulticopterConfig";
 import SetupFinder from "@/components/calculators/SetupFinder";
 import BladeCalc from "@/components/calculators/BladeCalc";
-import EvCalc from "@/components/calculators/EvCalc";
 import ToolboxCalc from "@/components/calculators/ToolboxCalc";
 import ShrinkFitCalc from "@/components/calculators/ShrinkFitCalc";
 import AwgCalc from "@/components/calculators/AwgCalc";
 import RectifierCalc from "@/components/calculators/RectifierCalc";
 import PrechargeCalc from "@/components/calculators/PrechargeCalc";
 import TractionCalc from "@/components/calculators/TractionCalc";
+import CgCalc from "@/components/calculators/CgCalc";
+import WireGaugeCalc from "@/components/calculators/WireGaugeCalc";
 import { CALCULATORS, getCalculatorById } from "@/data/calculators";
 
 // ─── Page-level styles injected once ────────────────────────────────────────
@@ -457,13 +458,15 @@ export default function CalculatorDetail() {
 
           {/* ── Calculator panel */}
           {current.id === "propcalc"      && <PropCalcPanel />}
-          {current.id === "xcoptercalc"   && <XcopterCalcPanel />}
+          {current.id === "multicopter"   && <MulticopterPanel />}
           {current.id === "setupfinder"   && <SetupFinder />}
           {current.id === "bladecalc"     && <BladeCalc />}
-          {current.id === "evcalc"        && <EvCalc />}
           {current.id === "motortoolbox"  && <ToolboxCalc />}
           {current.id === "shrinkfit"     && <ShrinkFitCalc />}
           {current.id === "awgwinding"    && <AwgCalc />}
+          {current.id === "awgswg"        && <WireGaugeCalc />}
+          {current.id === "cgcalc"        && <CgCalc />}
+          {current.id === "rectifier"     && <RectifierCalc />}
           {current.id === "rectifier"     && <RectifierCalc />}
           {current.id === "precharge"     && <PrechargeCalc />}
           {current.id === "tractioncalc"  && <TractionCalc />}

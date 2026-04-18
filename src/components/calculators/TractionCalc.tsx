@@ -1,6 +1,7 @@
 // EV Traction Motor Calculator
 // Based on Roy Motor class at IITM - Vehicle dynamics & motor sizing
 import { useState, useMemo } from "react";
+
 import { DownloadReportButton, PdfTemplateHeader } from "./PdfExport";
 import SplitLayout from "./SplitLayout";
 
@@ -49,7 +50,7 @@ const CRR_TABLE = [
 
 const G = 9.81;
 
-function calculate(inp: TractionInput) {
+function calculateTraction(inp: TractionInput) {
   const { gvm, maxSpeed, tyreDiameter, crr, frontalArea, airDensity, dragCoeff, slopeAngle, accelTime, finalSpeed, gearRatio } = inp;
 
   const vMs = maxSpeed / 3.6; // max speed in m/s
@@ -97,199 +98,241 @@ function calculate(inp: TractionInput) {
 
 export default function TractionCalc() {
   const [inputs, setInputs] = useState<TractionInput>(DEFAULTS);
-  const result = useMemo(() => calculate(inputs), [inputs]);
+  const result = useMemo(() => calculateTraction(inputs), [inputs]);
 
-  const Field = ({ label, value, onChange, unit, step = 1 }: any) => (
-    <div className="w-full py-0.5">
-      <label className="text-[8px] uppercase text-[#808080] tracking-wider block mb-0.5" style={{ fontFamily: "Michroma, sans-serif" }}>
-        {label}
-      </label>
-      <div className="flex items-center border border-gray-200 focus-within:border-[#ffc812] transition-colors">
+// ─────────────────────────────────────────────────────────────
+// Shared UI Primitives
+// ─────────────────────────────────────────────────────────────
+
+
+
+interface FieldProps {
+  label: string; id: string; value: number;
+  onChange: (v: number) => void;
+  step?: string; hint?: string; className?: string;
+  unit?: string;
+}
+
+function Field({ label, id, value, onChange, step = "any", hint, className = "", unit }: FieldProps) {
+  const [showHint, setShowHint] = useState(false);
+  return (
+    <div className={`w-full py-0.5 relative ${className}`}>
+      <div className="flex items-center gap-1 mb-0.5">
+        <label className="text-[8px] tracking-widest uppercase text-[#808080]"
+               style={{ fontFamily: "Michroma, sans-serif" }} htmlFor={id} title={label}>
+          {label}
+        </label>
+        {hint && (
+          <button
+            type="button"
+            onMouseEnter={() => setShowHint(true)}
+            onMouseLeave={() => setShowHint(false)}
+            className="w-3 h-3 rounded-full bg-gray-200 text-[7px] text-gray-500 flex items-center justify-center flex-shrink-0 hover:bg-[#ffc812] hover:text-black transition-colors"
+          >?</button>
+        )}
+      </div>
+      {showHint && hint && (
+        <div className="absolute top-full left-0 mt-1 z-50 bg-black text-[#ffc812] text-[9px] px-2 py-1.5 w-48 leading-relaxed"
+             style={{ fontFamily: "Lexend, sans-serif" }}>
+          {hint}
+        </div>
+      )}
+      <div className="flex items-center border border-gray-200 bg-white focus-within:border-[#ffc812] transition-colors overflow-hidden">
         <input
-          type="number"
-          step={step}
-          value={value}
-          onChange={(e) => onChange(parseFloat(e.target.value) || 0)}
-          className="w-full px-2 py-1 text-[11px] outline-none"
+          id={id} type="number" step={step} value={value}
+          onChange={e => onChange(parseFloat(e.target.value) || 0)}
+          className="w-full text-[11px] px-2 py-1 focus:outline-none bg-white font-bold"
           style={{ fontFamily: "Lexend, sans-serif" }}
         />
-        {unit && <span className="text-[9px] text-gray-400 px-2 whitespace-nowrap" style={{ fontFamily: "Lexend, sans-serif" }}>{unit}</span>}
+        {unit && <span className="bg-gray-50 text-[8px] text-gray-400 px-1.5 py-1.5 border-l border-gray-100 font-Michroma uppercase">{unit}</span>}
       </div>
     </div>
   );
+}
 
-  const Section = ({ title, children }: { title: string; children: React.ReactNode }) => (
-    <div className="border border-gray-100 p-2 bg-gray-50/30">
-      <p className="text-[9px] uppercase text-[#ffc812] tracking-wider mb-2 border-b border-gray-100 pb-1" style={{ fontFamily: "Michroma, sans-serif" }}>
-        {title}
-      </p>
-      <div className="space-y-1.5">{children}</div>
+function CollapsibleSection({ title, children, defaultOpen = true, icon, action }: { title: string; children: React.ReactNode; defaultOpen?: boolean; icon?: string; action?: React.ReactNode }) {
+  const [isOpen, setIsOpen] = useState(defaultOpen);
+  return (
+    <div className="border border-gray-100 mb-2 overflow-hidden bg-white shadow-sm transition-all text-[11px]">
+      <div 
+        className="bg-black px-3 py-2 flex items-center justify-between cursor-pointer group hover:bg-neutral-900"
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        <div className="flex items-center gap-2">
+          {icon && <span className="text-[#ffc812] text-xs">{icon}</span>}
+          <p className="text-[9px] tracking-[0.2em] uppercase text-[#ffc812] font-bold"
+             style={{ fontFamily: "Michroma, sans-serif" }}>{title}</p>
+        </div>
+        <div className="flex items-center gap-3">
+          {action}
+          <span className={`text-[#ffc812] text-[10px] transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`}>▼</span>
+        </div>
+      </div>
+      <div className={`transition-all duration-300 ease-in-out ${isOpen ? "max-h-[1000px] opacity-100 p-2" : "max-h-0 opacity-0 p-0"}`}>
+        <div className="space-y-1">{children}</div>
+      </div>
     </div>
   );
+}
 
-  const StatCard = ({ label, value, unit, sub, warn }: any) => (
-    <div className={`border p-2 bg-white ${warn ? "border-amber-400 bg-amber-50" : "border-gray-200"}`}>
-      <p className="text-[8px] uppercase text-[#ffc812] tracking-wider">{label}</p>
-      <p className="text-base font-black" style={{ fontFamily: "Michroma, sans-serif" }}>
-        {value} <span className="text-xs font-medium text-gray-400">{unit}</span>
-      </p>
-      {sub && <p className="text-[9px] text-gray-400 mt-0.5">{sub}</p>}
+const StatCard = ({ label, value, unit, sub, type = "normal" }: any) => {
+  const isDanger = type === "danger";
+  const isWarn = type === "warn";
+  const isGood = type === "good";
+  return (
+    <div className={`border p-2.5 bg-white transition-all hover:shadow-md ${isDanger ? "border-red-500 shadow-red-50" : isWarn ? "border-amber-400 shadow-amber-50" : isGood ? "border-green-500 shadow-green-50" : "border-gray-200"}`}>
+      <p className="text-[8px] tracking-[0.15em] uppercase text-[#808080] mb-1 font-bold font-Michroma">{label}</p>
+      <div className="flex items-baseline gap-1">
+        <span className="text-lg font-black text-black font-Michroma">{value}</span>
+        {unit && <span className="text-[9px] font-bold text-gray-400 uppercase font-Michroma">{unit}</span>}
+      </div>
+      {sub && <p className="text-[9px] text-gray-400 mt-1 font-Lexend italic border-t border-gray-50 pt-1 leading-tight">{sub}</p>}
     </div>
   );
+};
 
-  const Row = ({ label, value, highlight }: { label: string; value: string; highlight?: boolean }) => (
-    <div className={`flex justify-between border-b border-gray-200 py-0.5 ${highlight ? "font-semibold text-gray-800" : ""}`}>
-      <span className="text-gray-500">{label}</span>
-      <span className="font-medium">{value}</span>
-    </div>
-  );
+const Row = ({ label, value, color, highlight }: { label: string; value: string; color?: string; highlight?: boolean }) => (
+  <div className={`flex justify-between border-b border-gray-50 py-1 font-Lexend text-[10px] ${highlight ? "bg-neutral-50 px-1 border-black/10" : ""}`}>
+    <span className="text-gray-400">{label}</span>
+    <span className={`font-bold ${color || (highlight ? "text-black" : "text-neutral-700")}`}>{value}</span>
+  </div>
+);
+
 
   const inputsPanel = (
     <div className="space-y-3">
-      <Section title="Vehicle Parameters">
-        <Field label="Gross Vehicle Mass (GVM)" value={inputs.gvm} onChange={(v: number) => setInputs({ ...inputs, gvm: v })} unit="kg" />
-        <Field label="Max Speed" value={inputs.maxSpeed} onChange={(v: number) => setInputs({ ...inputs, maxSpeed: v })} unit="km/h" />
-        <Field label="Tyre Diameter" value={inputs.tyreDiameter} onChange={(v: number) => setInputs({ ...inputs, tyreDiameter: v })} unit="mm" />
-        <Field label="Rolling Coefficient (Crr)" value={inputs.crr} onChange={(v: number) => setInputs({ ...inputs, crr: v })} step={0.001} />
-        <Field label="Frontal Area" value={inputs.frontalArea} onChange={(v: number) => setInputs({ ...inputs, frontalArea: v })} unit="m²" step={0.01} />
-      </Section>
+      <CollapsibleSection title="Core Mission" icon="🏁">
+        <Field label="Max Speed" id="ms" value={inputs.maxSpeed} onChange={(v: number) => setInputs({...inputs, maxSpeed: v})} unit="km/h" hint="Target cruise/top speed" />
+        <Field label="Slope Angle" id="sa" value={inputs.slopeAngle} onChange={(v: number) => setInputs({...inputs, slopeAngle: v})} unit="°" hint="Gradient for gradeability" />
+        <Field label="Accel Time" id="at" value={inputs.accelTime} onChange={(v: number) => setInputs({ ...inputs, accelTime: Math.max(0.1, v) })} unit="s" hint="Time to reach max speed" />
+      </CollapsibleSection>
 
-      <Section title="Environment">
-        <Field label="Air Density" value={inputs.airDensity} onChange={(v: number) => setInputs({ ...inputs, airDensity: v })} unit="kg/m³" step={0.01} />
-        <Field label="Drag Coefficient (Cd)" value={inputs.dragCoeff} onChange={(v: number) => setInputs({ ...inputs, dragCoeff: v })} step={0.01} />
-        <Field label="Slope Angle" value={inputs.slopeAngle} onChange={(v: number) => setInputs({ ...inputs, slopeAngle: v })} unit="°" step={0.5} />
-      </Section>
+      <CollapsibleSection title="Vehicle Specs" icon="🚢">
+        <Field label="Gross Mass (GVM)" id="gvm" value={inputs.gvm} onChange={(v: number) => setInputs({ ...inputs, gvm: v })} unit="kg" />
+        <Field label="Tyre Diameter" id="td" value={inputs.tyreDiameter} onChange={(v: number) => setInputs({ ...inputs, tyreDiameter: v })} unit="mm" />
+        <Field label="Rolling Coeff" id="crr" value={inputs.crr} onChange={(v: number) => setInputs({ ...inputs, crr: v })} step="0.001" hint="Friction factor (Crr)" />
+        <Field label="Frontal Area" id="fa" value={inputs.frontalArea} onChange={(v: number) => setInputs({ ...inputs, frontalArea: v })} unit="m²" step="0.01" />
+      </CollapsibleSection>
 
-      <Section title="Acceleration & Speed">
-        <Field label="Acceleration Time" value={inputs.accelTime} onChange={(v: number) => setInputs({ ...inputs, accelTime: Math.max(0.1, v) })} unit="s" step={0.1} />
-        <Field label="Final Speed (for wheel calc)" value={inputs.finalSpeed} onChange={(v: number) => setInputs({ ...inputs, finalSpeed: v })} unit="m/s" step={0.1} />
-      </Section>
+      <CollapsibleSection title="Environment" icon="🌫️" defaultOpen={false}>
+        <Field label="Air Density" id="ad" value={inputs.airDensity} onChange={(v: number) => setInputs({ ...inputs, airDensity: v })} unit="kg/m³" step="0.01" />
+        <Field label="Drag Coeff (Cd)" id="cd" value={inputs.dragCoeff} onChange={(v: number) => setInputs({ ...inputs, dragCoeff: v })} step="0.01" />
+      </CollapsibleSection>
 
-      <Section title="Transmission">
-        <Field label="Gear Ratio (i)" value={inputs.gearRatio} onChange={(v: number) => setInputs({ ...inputs, gearRatio: Math.max(0.1, v) })} step={0.1} />
-      </Section>
+      <CollapsibleSection title="Drive Train" icon="⚙️">
+        <Field label="Gear Ratio (i)" id="gr" value={inputs.gearRatio} onChange={(v: number) => setInputs({ ...inputs, gearRatio: Math.max(0.1, v) })} step="0.1" />
+        <Field label="Final Speed" id="fs" value={inputs.finalSpeed} onChange={(v: number) => setInputs({ ...inputs, finalSpeed: v })} unit="m/s" step="0.1" hint="Reference wheel speed" />
+      </CollapsibleSection>
 
-      {/* Crr Reference Table */}
-      <Section title="Crr Reference">
-        <div className="space-y-0.5 text-[9px]" style={{ fontFamily: "Lexend, sans-serif" }}>
+      <CollapsibleSection title="Crr Reference" icon="📜" defaultOpen={false}>
+        <div className="space-y-1 text-[8px] font-Lexend leading-tight">
           {CRR_TABLE.map((row, i) => (
-            <div key={i} className="flex justify-between border-b border-gray-100 py-0.5">
-              <span className="text-gray-500 text-[8px]">{row.surface}</span>
-              <span className="font-medium text-gray-700 text-[8px]">{row.values}</span>
+            <div key={i} className="flex justify-between border-b border-gray-100 py-1">
+              <span className="text-gray-400 w-2/3">{row.surface}</span>
+              <span className="font-bold text-black text-right">{row.values}</span>
             </div>
           ))}
         </div>
-      </Section>
+      </CollapsibleSection>
     </div>
   );
 
-  // Force breakdown for bar visualization
   const forces = [
-    { label: "Rolling Resistance", value: result.rollingResistance, color: "bg-blue-400" },
-    { label: "Acceleration Force", value: result.accelForce, color: "bg-amber-400" },
-    { label: "Aerodynamic Drag", value: result.aeroDrag, color: "bg-green-400" },
-    { label: "Grade Resistance", value: result.gradeResistance, color: "bg-red-400" },
+    { label: "Rolling RR", value: result.rollingResistance, color: "bg-neutral-500" },
+    { label: "Accel Force", value: result.accelForce, color: "bg-[#ffc812]" },
+    { label: "Aero Drag", value: result.aeroDrag, color: "bg-neutral-800" },
+    { label: "Grade Res", value: result.gradeResistance, color: "bg-neutral-300" },
   ];
-  const maxForce = result.totalTractiveEffort;
+  const maxForce = Math.max(...forces.map(f => f.value), 100);
 
   const resultsPanel = (
-    <div id="tractioncalc-report-area" className="relative space-y-3">
-      <PdfTemplateHeader calculatorName="EV Traction Motor Calculator" />
-      <div className="flex items-center justify-between">
-        <p className="text-[11px] text-gray-500 border-l-2 border-[#ffc812] pl-3 py-1 pdf-no-hide" style={{ fontFamily: "Lexend, sans-serif" }}>
-          EV traction motor sizing — vehicle dynamics, wheel torque, and motor requirements.
-        </p>
-        <DownloadReportButton targetElementId="calculator-capture-area" filename="WelkinRim_Traction_Motor_Report.pdf" />
+    <div id="tractioncalc-report-area" className="relative space-y-4">
+      <PdfTemplateHeader calculatorName="Traction Drive Dynamics" />
+      <div className="flex items-center justify-between gap-4 py-2 border-b border-gray-100">
+        <div className="flex-1">
+          <p className="text-[11px] text-gray-500 italic font-Lexend">
+            Vehicle tractive effort, wheel torque, and motor requirements for EV design.
+          </p>
+        </div>
+        <DownloadReportButton targetElementId="calculator-capture-area" filename="WelkinRim_Traction_Drive.pdf" />
       </div>
 
-      {/* Speed Badge */}
-      <div className="inline-flex gap-2">
-        <div className="px-3 py-1 bg-[#ffc812]/10 border border-[#ffc812]/30">
-          <span className="text-[10px] uppercase tracking-wider text-[#ffc812]" style={{ fontFamily: "Michroma, sans-serif" }}>
-            {inputs.maxSpeed} km/h · {result.vMs.toFixed(2)} m/s
-          </span>
-        </div>
-        <div className="px-3 py-1 bg-gray-50 border border-gray-200">
-          <span className="text-[10px] tracking-wider text-gray-600" style={{ fontFamily: "Michroma, sans-serif" }}>
-            {inputs.gvm} kg · {inputs.slopeAngle}° grade
-          </span>
-        </div>
+      {/* Hero Metrics */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2">
+        <StatCard label="Tractive Effort" value={result.totalTractiveEffort.toFixed(1)} unit="N" sub="Total demand" type="warn" />
+        <StatCard label="Wheel Torque" value={result.wheelTorque.toFixed(1)} unit="Nm" sub={`i=${inputs.gearRatio}`} />
+        <StatCard label="Wheel Power" value={result.wheelPower.toFixed(2)} unit="kW" sub={`${(result.wheelPower * 1000).toFixed(0)} W`} type="good" />
+        <StatCard label="Motor Speed" value={result.motorSpeed.toFixed(0)} unit="RPM" sub="At target speed" />
       </div>
 
-      {/* ── Traction Force Breakdown ── */}
-      <div className="border border-gray-100 p-3 bg-gray-50/30">
-        <p className="text-[9px] uppercase text-[#ffc812] tracking-wider mb-2" style={{ fontFamily: "Michroma, sans-serif" }}>
-          Traction Force Breakdown
-        </p>
-        <div className="space-y-1.5">
-          {forces.map((f, i) => (
-            <div key={i} className="flex items-center gap-2 text-[9px]" style={{ fontFamily: "Lexend, sans-serif" }}>
-              <span className="w-28 text-gray-500 shrink-0 text-[8px]">{f.label}</span>
-              <div className="flex-1 h-4 bg-gray-100 border border-gray-200 relative overflow-hidden">
-                <div className={`absolute inset-y-0 left-0 ${f.color}/60`} style={{ width: `${maxForce > 0 ? (f.value / maxForce) * 100 : 0}%` }} />
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+        {/* Force Analysis */}
+        <div className="border border-gray-200 bg-white shadow-sm overflow-hidden">
+          <div className="bg-neutral-900 px-3 py-1.5 flex items-center justify-between font-Michroma">
+            <span className="text-[9px] uppercase tracking-wider text-[#ffc812] font-bold">Force Breakdown</span>
+          </div>
+          <div className="p-3 space-y-3">
+            {forces.map((f, i) => (
+              <div key={i} className="space-y-1">
+                <div className="flex justify-between text-[8px] font-Michroma uppercase text-gray-400">
+                  <span>{f.label}</span>
+                  <span className="text-black font-bold">{f.value.toFixed(1)} N</span>
+                </div>
+                <div className="h-1.5 bg-gray-50 rounded-full overflow-hidden">
+                  <div 
+                    className={`h-full ${f.color} transition-all duration-1000`} 
+                    style={{ width: `${(f.value / maxForce) * 100}%` }}
+                  />
+                </div>
               </div>
-              <span className="w-16 text-right font-medium shrink-0">{f.value.toFixed(1)} N</span>
+            ))}
+            <div className="pt-2 border-t border-gray-100 mt-2">
+               <Row label="Total Demand" value={`${result.totalTractiveEffort.toFixed(2)} N`} highlight />
+               <Row label="Cruising Flow" value={`${result.cruisingTractiveEffort.toFixed(2)} N`} />
             </div>
-          ))}
+          </div>
+        </div>
+
+        {/* Requirements */}
+        <div className="bg-neutral-50 border border-gray-200 p-3 space-y-4">
+          <div>
+            <p className="text-[9px] uppercase tracking-[0.2em] text-[#ffc812] font-bold font-Michroma mb-3 text-center">Output Requirements</p>
+            <div className="space-y-1">
+               <Row label="Motor Torque" value={`${result.motorTorque.toFixed(2)} Nm`} />
+               <Row label="Cruising Power" value={`${result.cruisingWheelPower.toFixed(3)} kW`} />
+               <Row label="Grade Limit" value={`${inputs.slopeAngle}°`} color="text-red-600" />
+            </div>
+          </div>
+          
+          <div className="p-3 bg-white border border-gray-100">
+             <p className="text-[8px] uppercase text-gray-400 font-bold font-Michroma mb-2">Drive Physics</p>
+             <div className="space-y-1 text-[9px] font-Lexend text-gray-600 italic leading-snug">
+                <p>Grade resistance calculated at <strong>{inputs.slopeAngle}°</strong> contributes <strong>{((result.gradeResistance / result.totalTractiveEffort) * 100).toFixed(1)}%</strong> of total load.</p>
+                <p>Aero drag dominates at high speeds (v² dependency).</p>
+             </div>
+          </div>
         </div>
       </div>
 
-      {/* ── Tractive Effort ── */}
-      <div className="grid grid-cols-2 gap-2">
-        <StatCard label="Total Tractive Effort" value={result.totalTractiveEffort.toFixed(2)} unit="N" sub="RR + FA + AD + GR" />
-        <StatCard label="Cruising Effort" value={result.cruisingTractiveEffort.toFixed(2)} unit="N" sub="RR + AD (no accel/grade)" />
-      </div>
-
-      {/* ── Force Details ── */}
-      <div className="border border-gray-100 p-3 bg-gray-50/30">
-        <p className="text-[9px] uppercase text-[#ffc812] tracking-wider mb-2" style={{ fontFamily: "Michroma, sans-serif" }}>
-          Individual Forces
-        </p>
-        <div className="space-y-1 text-[10px]" style={{ fontFamily: "Lexend, sans-serif" }}>
-          <Row label="Rolling Resistance (M×g×Crr)" value={`${result.rollingResistance.toFixed(2)} N`} />
-          <Row label="Acceleration Force (M×a)" value={`${result.accelForce.toFixed(2)} N`} />
-          <Row label="Aerodynamic Drag (½ρCdAv²)" value={`${result.aeroDrag.toFixed(2)} N`} />
-          <Row label="Grade Resistance (Mg·tanα)" value={`${result.gradeResistance.toFixed(2)} N`} />
-          <Row label="Total Tractive Effort" value={`${result.totalTractiveEffort.toFixed(2)} N`} highlight />
-          <Row label="Cruising Tractive Effort" value={`${result.cruisingTractiveEffort.toFixed(2)} N`} />
-        </div>
-      </div>
-
-      {/* ── Wheel Output ── */}
-      <div className="grid grid-cols-2 gap-2">
-        <StatCard label="Wheel Torque" value={result.wheelTorque.toFixed(2)} unit="Nm" sub={`TTE × dw/2`} />
-        <StatCard label="Wheel RPM" value={result.wheelRpm.toFixed(2)} unit="RPM" sub={`@ ${inputs.finalSpeed} m/s`} />
-        <StatCard label="Wheel Power" value={result.wheelPower.toFixed(3)} unit="kW" sub={`${(result.wheelPower * 1000).toFixed(1)} W`} />
-        <StatCard label="Cruising Power" value={result.cruisingWheelPower.toFixed(3)} unit="kW" sub={`${(result.cruisingWheelPower * 1000).toFixed(1)} W`} />
-      </div>
-
-      {/* ── Motor Requirements ── */}
-      <div className="border border-gray-100 p-3 bg-gray-50/30">
-        <p className="text-[9px] uppercase text-[#ffc812] tracking-wider mb-2" style={{ fontFamily: "Michroma, sans-serif" }}>
-          Motor Requirements (i = {inputs.gearRatio})
-        </p>
-        <div className="space-y-1 text-[10px]" style={{ fontFamily: "Lexend, sans-serif" }}>
-          <Row label="Motor Torque (Tw / i)" value={`${result.motorTorque.toFixed(2)} Nm`} />
-          <Row label="Motor Speed (nw × i)" value={`${result.motorSpeed.toFixed(2)} RPM`} />
-          <Row label="Motor Power (Tm × nm / 9550)" value={`${result.motorPower.toFixed(3)} kW`} />
-        </div>
-      </div>
-
-      {/* ── Formulas ── */}
-      <div className="border border-gray-100 p-3 bg-gray-50/30">
-        <p className="text-[9px] uppercase text-[#ffc812] tracking-wider mb-2" style={{ fontFamily: "Michroma, sans-serif" }}>
-          Formula Reference
-        </p>
-        <div className="space-y-1 text-[10px] text-gray-600" style={{ fontFamily: "Lexend, sans-serif" }}>
-          <p>RR = M × g × C<sub>rr</sub></p>
-          <p>FA = M × (v / t<sub>a</sub>)</p>
-          <p>AD = ½ × ρ × C<sub>d</sub> × A × v²</p>
-          <p>GR = M × g × tan(α)</p>
-          <p>TTE = RR + FA + AD + GR</p>
-          <p>T<sub>w</sub> = TTE × d<sub>w</sub> / 2</p>
-          <p>n<sub>w</sub> = v<sub>f</sub> × 60 / (π × d<sub>w</sub>)</p>
-          <p>P<sub>w</sub> = n<sub>w</sub> × T<sub>w</sub> / 9550</p>
-          <p className="text-[9px] text-gray-400 mt-1 italic">Ref: Roy Motor class — IITM</p>
+      {/* Physics Reference */}
+      <div className="bg-neutral-900 border border-black p-4 text-white">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="space-y-2">
+            <p className="text-[9px] uppercase tracking-[0.2em] text-[#ffc812] font-bold font-Michroma mb-3">Mathematical Model</p>
+            <div className="grid grid-cols-1 gap-2 text-[10px] font-Lexend opacity-80 italic">
+              <p>F_rr = m · g · C_rr <span className="text-[8px] opacity-40 ml-2">(Rolling)</span></p>
+              <p>F_ad = 0.5 · ρ · C_d · A · v² <span className="text-[8px] opacity-40 ml-2">(Aero)</span></p>
+              <p>F_gr = m · g · tan(α) <span className="text-[8px] opacity-40 ml-2">(Grade)</span></p>
+              <p>T_wheel = F_total · r_wheel <span className="text-[8px] opacity-40 ml-2">(Torque)</span></p>
+            </div>
+          </div>
+          <div className="pt-4 lg:pt-0 lg:border-l lg:border-white/10 lg:pl-6">
+            <p className="text-[8px] text-[#ffc812] uppercase font-bold font-Michroma mb-2">Design Note</p>
+            <p className="text-[10px] leading-relaxed font-Lexend opacity-70">
+              Total tractive effort (TTE) is the sum of all resistive forces. Motor selection must satisfy T_peak ≥ T_wheel/i and P_rated ≥ P_cruise.
+              Source: IITM Vehicle Dynamics Framework.
+            </p>
+          </div>
         </div>
       </div>
     </div>

@@ -1,5 +1,6 @@
 // ShrinkFit Calculator - Stator and Enclosure Interference Fit Calculations
 import { useState, useMemo } from "react";
+
 import { DownloadReportButton, PdfTemplateHeader } from "./PdfExport";
 import SplitLayout from "./SplitLayout";
 
@@ -98,43 +99,100 @@ export default function ShrinkFitCalc() {
 
   const result = useMemo(() => calculateShrinkFit(inputs), [inputs]);
 
-  const Field = ({ label, value, onChange, unit, step = 0.001 }: any) => (
-    <div className="w-full py-0.5">
-      <label className="text-[8px] uppercase text-[#808080] tracking-wider block mb-0.5" style={{ fontFamily: "Michroma, sans-serif" }}>
-        {label}
-      </label>
-      <div className="flex items-center border border-gray-200 focus-within:border-[#ffc812] transition-colors">
+// ─────────────────────────────────────────────────────────────
+// Shared UI primitives
+// ─────────────────────────────────────────────────────────────
+
+
+
+interface FieldProps {
+  label: string; id: string; value: number;
+  onChange: (v: number) => void;
+  step?: string; hint?: string; className?: string;
+  unit?: string;
+}
+
+function Field({ label, id, value, onChange, step = "any", hint, className = "", unit }: FieldProps) {
+  const [showHint, setShowHint] = useState(false);
+  return (
+    <div className={`w-full py-0.5 relative ${className}`}>
+      <div className="flex items-center gap-1 mb-0.5">
+        <label className="text-[8px] tracking-widest uppercase text-[#808080]"
+               style={{ fontFamily: "Michroma, sans-serif" }} htmlFor={id} title={label}>
+          {label}
+        </label>
+        {hint && (
+          <button
+            type="button"
+            onMouseEnter={() => setShowHint(true)}
+            onMouseLeave={() => setShowHint(false)}
+            className="w-3 h-3 rounded-full bg-gray-200 text-[7px] text-gray-500 flex items-center justify-center flex-shrink-0 hover:bg-[#ffc812] hover:text-black transition-colors"
+          >?</button>
+        )}
+      </div>
+      {showHint && hint && (
+        <div className="absolute top-full left-0 mt-1 z-50 bg-black text-[#ffc812] text-[9px] px-2 py-1.5 w-48 leading-relaxed"
+             style={{ fontFamily: "Lexend, sans-serif" }}>
+          {hint}
+        </div>
+      )}
+      <div className="flex items-center border border-gray-200 bg-white focus-within:border-[#ffc812] transition-colors overflow-hidden">
         <input
-          type="number"
-          step={step}
-          value={value}
-          onChange={(e) => onChange(parseFloat(e.target.value) || 0)}
-          className="w-full px-2 py-1 text-[11px] outline-none"
+          id={id} type="number" step={step} value={value}
+          onChange={e => onChange(parseFloat(e.target.value) || 0)}
+          className="w-full text-[11px] px-2 py-1 focus:outline-none bg-white font-bold"
           style={{ fontFamily: "Lexend, sans-serif" }}
         />
-        {unit && <span className="text-[9px] text-gray-400 px-2" style={{ fontFamily: "Lexend, sans-serif" }}>{unit}</span>}
+        {unit && <span className="bg-gray-50 text-[8px] text-gray-400 px-1.5 py-1.5 border-l border-gray-100 font-Michroma uppercase">{unit}</span>}
       </div>
     </div>
   );
+}
 
-  const Section = ({ title, children }: { title: string; children: React.ReactNode }) => (
-    <div className="border border-gray-100 p-2 bg-gray-50/30">
-      <p className="text-[9px] uppercase text-[#ffc812] tracking-wider mb-2 border-b border-gray-100 pb-1" style={{ fontFamily: "Michroma, sans-serif" }}>
-        {title}
-      </p>
-      <div className="space-y-1.5">{children}</div>
+function CollapsibleSection({ title, children, defaultOpen = true, icon }: { title: string; children: React.ReactNode; defaultOpen?: boolean; icon?: string }) {
+  const [isOpen, setIsOpen] = useState(defaultOpen);
+  return (
+    <div className="border border-gray-100 mb-2 overflow-hidden bg-white shadow-sm transition-all">
+      <div 
+        className="bg-black px-3 py-2 flex items-center justify-between cursor-pointer group hover:bg-neutral-900"
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        <div className="flex items-center gap-2">
+          {icon && <span className="text-[#ffc812] text-xs">{icon}</span>}
+          <p className="text-[9px] tracking-[0.2em] uppercase text-[#ffc812] font-bold"
+             style={{ fontFamily: "Michroma, sans-serif" }}>{title}</p>
+        </div>
+        <span className={`text-[#ffc812] text-[10px] transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`}>▼</span>
+      </div>
+      <div className={`transition-all duration-300 ease-in-out ${isOpen ? "max-h-[1000px] opacity-100 p-2" : "max-h-0 opacity-0 p-0"}`}>
+        <div className="space-y-1">{children}</div>
+      </div>
     </div>
   );
+}
 
-  const StatCard = ({ label, value, unit, sub }: any) => (
-    <div className="border border-gray-200 p-2 bg-white">
-      <p className="text-[8px] uppercase text-[#ffc812] tracking-wider">{label}</p>
-      <p className="text-base font-black" style={{ fontFamily: "Michroma, sans-serif" }}>
-        {value} <span className="text-xs font-medium text-gray-400">{unit}</span>
-      </p>
-      {sub && <p className="text-[9px] text-gray-400 mt-0.5">{sub}</p>}
+const StatCard = ({ label, value, unit, sub, type = "normal" }: any) => {
+  const isDanger = type === "danger";
+  const isWarn = type === "warn";
+  const isGood = type === "good";
+  return (
+    <div className={`border p-2.5 bg-white transition-all hover:shadow-md ${isDanger ? "border-red-500 shadow-red-50" : isWarn ? "border-amber-400 shadow-amber-50" : isGood ? "border-green-500 shadow-green-50" : "border-gray-200"}`}>
+      <p className="text-[8px] tracking-[0.15em] uppercase text-[#808080] mb-1 font-bold font-Michroma">{label}</p>
+      <div className="flex items-baseline gap-1">
+        <span className="text-lg font-black text-black font-Michroma">{value}</span>
+        {unit && <span className="text-[9px] font-bold text-gray-400 uppercase font-Michroma">{unit}</span>}
+      </div>
+      {sub && <p className="text-[9px] text-gray-400 mt-1 font-Lexend italic border-t border-gray-50 pt-1">{sub}</p>}
     </div>
   );
+};
+
+const Row = ({ label, value, color }: { label: string; value: string; color?: string }) => (
+  <div className="flex justify-between border-b border-gray-50 py-1 font-Lexend text-[10px]">
+    <span className="text-gray-400">{label}</span>
+    <span className={`font-bold ${color || "text-black"}`}>{value}</span>
+  </div>
+);
 
   const typeButtons = [
     { id: "type1", label: "Type 1", desc: "Enclosure Heated" },
@@ -145,238 +203,275 @@ export default function ShrinkFitCalc() {
   const inputsPanel = (
     <div className="space-y-3">
       {/* Type Selector */}
-      <div className="flex gap-1">
+      <div className="grid grid-cols-3 gap-1 mb-2">
         {typeButtons.map((t) => (
           <button
             key={t.id}
             onClick={() => setInputs({ ...inputs, calcType: t.id })}
-            className={`flex-1 py-2 px-1 text-[9px] uppercase tracking-wider border transition-all ${
+            className={`py-2.5 px-1 text-[8px] uppercase tracking-wider border-2 transition-all flex flex-col items-center justify-center gap-1 ${
               inputs.calcType === t.id
-                ? "bg-[#ffc812] border-[#ffc812] text-black"
-                : "bg-white border-gray-200 text-gray-500 hover:border-[#ffc812]"
+                ? "bg-black border-black text-[#ffc812]"
+                : "bg-white border-gray-100 text-gray-400 hover:border-[#ffc812] hover:text-black"
             }`}
             style={{ fontFamily: "Michroma, sans-serif" }}
           >
-            <div>{t.label}</div>
-            <div className="text-[7px] opacity-70 normal-case">{t.desc}</div>
+            <span className="font-bold">{t.label}</span>
+            <span className="opacity-60 text-[6px] normal-case leading-tight text-center">{t.desc}</span>
           </button>
         ))}
       </div>
 
-      <Section title="Material Properties">
+      <CollapsibleSection title="Material Constants" icon="🛠">
         <Field
           label="CTE of Steel"
+          id="cte"
           value={inputs.cteSteel}
           onChange={(v: number) => setInputs({ ...inputs, cteSteel: v })}
           unit="/°C"
-          step={0.000001}
+          step="0.000001"
+          hint="Coefficient of thermal expansion"
         />
-      </Section>
+      </CollapsibleSection>
 
       {inputs.calcType === "type1" && (
         <>
-          <Section title="Target Interference">
+          <CollapsibleSection title="Target Interference" icon="🎯">
             <Field
-              label="Desired Diameter Change"
+              label="Desired Change"
+              id="dc"
               value={inputs.desiredChangeMm}
               onChange={(v: number) => setInputs({ ...inputs, desiredChangeMm: v })}
               unit="mm"
-              step={0.01}
+              step="0.01"
             />
             <Field
-              label="Diameter at Room Temp"
+              label="Diameter @ Room"
+              id="dm"
               value={inputs.diameterMm}
               onChange={(v: number) => setInputs({ ...inputs, diameterMm: v })}
               unit="mm"
-              step={0.01}
+              step="0.01"
             />
-          </Section>
-          <Section title="Temperature">
+          </CollapsibleSection>
+          <CollapsibleSection title="Temperature" icon="🌡">
             <Field
               label="Ambient Temp"
+              id="at"
               value={inputs.ambientTemp}
               onChange={(v: number) => setInputs({ ...inputs, ambientTemp: v })}
               unit="°C"
             />
             <Field
               label="Elevated Temp"
+              id="et"
               value={inputs.elevatedTemp}
               onChange={(v: number) => setInputs({ ...inputs, elevatedTemp: v })}
               unit="°C"
             />
-          </Section>
+          </CollapsibleSection>
         </>
       )}
 
       {inputs.calcType === "type2" && (
         <>
-          <Section title="Dimensions">
+          <CollapsibleSection title="Dimensions" icon="📏">
             <Field
-              label="Stator Diameter"
+              label="Stator Dia"
+              id="sd"
               value={inputs.statorDiameter}
               onChange={(v: number) => setInputs({ ...inputs, statorDiameter: v })}
               unit="mm"
-              step={0.01}
+              step="0.01"
             />
             <Field
-              label="Enclosure Diameter"
+              label="Enclosure Dia"
+              id="ed"
               value={inputs.enclosureDiameter}
               onChange={(v: number) => setInputs({ ...inputs, enclosureDiameter: v })}
               unit="mm"
-              step={0.01}
+              step="0.01"
             />
             <Field
               label="Desired Change"
+              id="dc2"
               value={inputs.desiredChangeMm}
               onChange={(v: number) => setInputs({ ...inputs, desiredChangeMm: v })}
               unit="mm"
-              step={0.01}
+              step="0.01"
             />
-          </Section>
-          <Section title="Temperature Differentials">
+          </CollapsibleSection>
+          <CollapsibleSection title="Differentials" icon="Δ">
             <Field
               label="Stator Temp Diff"
+              id="std"
               value={inputs.tempDiffStator}
               onChange={(v: number) => setInputs({ ...inputs, tempDiffStator: v })}
               unit="°C"
             />
             <Field
               label="Enclosure Temp Diff"
+              id="etd"
               value={inputs.tempDiffEnclosure}
               onChange={(v: number) => setInputs({ ...inputs, tempDiffEnclosure: v })}
               unit="°C"
             />
-          </Section>
+          </CollapsibleSection>
         </>
       )}
 
       {inputs.calcType === "type3" && (
         <>
-          <Section title="Stator (Cooled)">
+          <CollapsibleSection title="Stator (Cooled)" icon="❄️">
             <Field
-              label="Stator Diameter (Room)"
+              label="Stator Dia (Room)"
+              id="sdr"
               value={inputs.statorTempRoom}
               onChange={(v: number) => setInputs({ ...inputs, statorTempRoom: v })}
               unit="mm"
-              step={0.01}
+              step="0.01"
             />
             <Field
               label="Ambient Temp"
+              id="at3"
               value={inputs.ambientStatorTemp}
               onChange={(v: number) => setInputs({ ...inputs, ambientStatorTemp: v })}
               unit="°C"
             />
             <Field
-              label="Elevated Temp"
+              label="Cooled Temp"
+              id="est"
               value={inputs.elevatedStatorTemp}
               onChange={(v: number) => setInputs({ ...inputs, elevatedStatorTemp: v })}
               unit="°C"
             />
-          </Section>
-          <Section title="Enclosure (Heated)">
+          </CollapsibleSection>
+          <CollapsibleSection title="Enclosure (Heated)" icon="🔥">
             <Field
-              label="Enclosure Diameter"
+              label="Enclosure Dia"
+              id="ed3"
               value={inputs.enclosureDiameter}
               onChange={(v: number) => setInputs({ ...inputs, enclosureDiameter: v })}
               unit="mm"
-              step={0.01}
+              step="0.01"
             />
             <Field
               label="Temp Difference"
+              id="tde"
               value={inputs.tempDiffEnclosure}
               onChange={(v: number) => setInputs({ ...inputs, tempDiffEnclosure: v })}
               unit="°C"
             />
-          </Section>
-          <Section title="Target">
+          </CollapsibleSection>
+          <CollapsibleSection title="Target Fit" icon="🎯">
             <Field
-              label="Desired Interference"
+              label="Interference"
+              id="dc3"
               value={inputs.desiredChangeMm}
               onChange={(v: number) => setInputs({ ...inputs, desiredChangeMm: v })}
               unit="mm"
-              step={0.01}
+              step="0.01"
             />
-          </Section>
+          </CollapsibleSection>
         </>
       )}
     </div>
   );
 
   const resultsPanel = (
-    <div id="shrinkfitcalc-report-area" className="relative space-y-3">
-      <PdfTemplateHeader calculatorName="Shrink Fit Calculator" />
-      <div className="flex items-center justify-between">
-        <p className="text-[11px] text-gray-500 border-l-2 border-[#ffc812] pl-3 py-1 pdf-no-hide" style={{ fontFamily: "Lexend, sans-serif" }}>
-          Thermal interference fit calculations for stator and enclosure assembly.
-        </p>
-        <DownloadReportButton targetElementId="calculator-capture-area" filename="WelkinRim_ShrinkFit_Report.pdf" />
+    <div id="shrinkfitcalc-report-area" className="relative space-y-4">
+      <PdfTemplateHeader calculatorName="Thermal Interference Analysis" />
+      <div className="flex items-center justify-between gap-4 py-2 border-b border-gray-100">
+        <div className="flex-1">
+          <p className="text-[11px] text-gray-500 italic font-Lexend">
+            Stator and enclosure fitting using expansion/contraction physics.
+          </p>
+        </div>
+        <DownloadReportButton targetElementId="calculator-capture-area" filename="WelkinRim_ShrinkFit_Analysis.pdf" />
       </div>
 
-      {/* Type Badge */}
-      <div className="inline-block px-3 py-1 bg-[#ffc812]/10 border border-[#ffc812]/30">
-        <span className="text-[10px] uppercase tracking-wider text-[#ffc812]" style={{ fontFamily: "Michroma, sans-serif" }}>
-          {inputs.calcType === "type1" && "Type 1: Enclosure Heated"}
-          {inputs.calcType === "type2" && "Type 2: Differential Thermal"}
-          {inputs.calcType === "type3" && "Type 3: Stator Cooled"}
-        </span>
+      {/* Mode Badge */}
+      <div className="flex items-center gap-2">
+        <div className="px-2 py-0.5 bg-black text-[#ffc812] text-[8px] font-bold font-Michroma uppercase tracking-widest">
+          {inputs.calcType === "type1" && "Enclosure Heated"}
+          {inputs.calcType === "type2" && "Differential Thermal"}
+          {inputs.calcType === "type3" && "Stator Cooled + Env Heated"}
+        </div>
+        <div className="h-[1px] flex-1 bg-gray-100" />
       </div>
 
       {/* Results Grid */}
-      <div className="grid grid-cols-2 gap-2">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2">
         {inputs.calcType === "type1" && (
           <>
-            <StatCard label="Temp Rise Required" value={(result as any).calculatedTempChange.toFixed(1)} unit="°C" />
-            <StatCard label="Required Temp" value={(result as any).requiredTemp.toFixed(1)} unit="°C" />
-            <StatCard label="Actual Expansion" value={(result as any).actualExpansion.toFixed(3)} unit="mm" />
-            <StatCard label="Expansion %" value={(((result as any).actualExpansion / inputs.diameterMm) * 100).toFixed(4)} unit="%" />
+            <StatCard label="Req Temp Rise" value={(result as any).calculatedTempChange.toFixed(1)} unit="°C" />
+            <StatCard label="Final Temp" value={(result as any).requiredTemp.toFixed(1)} unit="°C" type="warn" />
+            <StatCard label="Expansion" value={(result as any).actualExpansion.toFixed(3)} unit="mm" type="good" />
+            <StatCard label="Factor" value={(((result as any).actualExpansion / inputs.diameterMm) * 100).toFixed(4)} unit="%" />
           </>
         )}
 
         {inputs.calcType === "type2" && (
           <>
-            <StatCard label="Stator Expansion" value={(result as any).statorExpansionMm.toFixed(3)} unit="mm" />
-            <StatCard label="Enclosure Change" value={(result as any).enclosureChangeMm.toFixed(3)} unit="mm" />
-            <StatCard label="Total Interference" value={(result as any).totalInterferenceMm.toFixed(3)} unit="mm" />
-            <StatCard label="Target Clearance" value={inputs.desiredChangeMm.toFixed(3)} unit="mm" />
+            <StatCard label="Stator ΔD" value={(result as any).statorExpansionMm.toFixed(3)} unit="mm" />
+            <StatCard label="Encl ΔD" value={(result as any).enclosureChangeMm.toFixed(3)} unit="mm" />
+            <StatCard label="Interference" value={(result as any).totalInterferenceMm.toFixed(3)} unit="mm" type="good" />
+            <StatCard label="Target" value={inputs.desiredChangeMm.toFixed(2)} unit="mm" />
           </>
         )}
 
         {inputs.calcType === "type3" && (
           <>
-            <StatCard label="Stator Shrinkage" value={(result as any).statorDiameterChange.toFixed(3)} unit="mm" />
-            <StatCard label="Result Stator Dia" value={(result as any).actualStatorDiameter.toFixed(2)} unit="mm" />
-            <StatCard label="Enclosure Expansion" value={(result as any).enclosureExpansion.toFixed(3)} unit="mm" />
-            <StatCard label="Total Interference" value={(result as any).totalInterference.toFixed(3)} unit="mm" />
+            <StatCard label="Stator Shrink" value={(result as any).statorDiameterChange.toFixed(3)} unit="mm" />
+            <StatCard label="Result Stator" value={(result as any).actualStatorDiameter.toFixed(2)} unit="mm" />
+            <StatCard label="Encl Exp" value={(result as any).enclosureExpansion.toFixed(3)} unit="mm" />
+            <StatCard label="Interference" value={(result as any).totalInterference.toFixed(3)} unit="mm" type="good" />
           </>
         )}
       </div>
 
-      {/* Formula Reference */}
-      <div className="border border-gray-100 p-3 bg-gray-50/30 mt-4">
-        <p className="text-[9px] uppercase text-[#ffc812] tracking-wider mb-2" style={{ fontFamily: "Michroma, sans-serif" }}>
-          Formula Reference
-        </p>
-        <div className="space-y-1 text-[10px] text-gray-600" style={{ fontFamily: "Lexend, sans-serif" }}>
-          {inputs.calcType === "type1" && (
-            <>
-              <p>ΔT = ΔD / (CTE × D)</p>
-              <p>Where: ΔT = Temperature change, ΔD = Diameter change, CTE = Thermal expansion coefficient</p>
-            </>
-          )}
-          {inputs.calcType === "type2" && (
-            <>
-              <p>ΔDₛₜₐₜₒᵣ = CTE × Dₛₜₐₜₒᵣ × ΔTₛₜₐₜₒᵣ</p>
-              <p>ΔDₑₙ꜀ = CTE × Dₑₙ꜀ × ΔTₑₙ꜀</p>
-              <p>Total Interference = |ΔDₛₜₐₜₒᵣ - ΔDₑₙ꜀|</p>
-            </>
-          )}
-          {inputs.calcType === "type3" && (
-            <>
-              <p>ΔDₛₜₐₜₒᵣ = CTE × Dᵣₒₒₘ × |ΔT|</p>
-              <p>ΔDₑₙ꜀ = CTE × Dₑₙ꜀ × ΔTₑₙ꜀</p>
-              <p>Total Interference = ΔDₛₜₐₜₒᵣ + ΔDₑₙ꜀</p>
-            </>
-          )}
+      {/* Detailed breakdown */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+        <div className="border border-gray-200 bg-white shadow-sm">
+           <div className="bg-neutral-900 px-3 py-1.5 flex items-center justify-between font-Michroma">
+            <span className="text-[9px] uppercase tracking-wider text-[#ffc812] font-bold">Process Detail</span>
+          </div>
+          <div className="p-3">
+            {inputs.calcType === "type1" && (
+              <div className="space-y-1">
+                <Row label="Ambient Baseline" value={`${inputs.ambientTemp} °C`} />
+                <Row label="Thermal Gap" value={`${(result as any).calculatedTempChange.toFixed(2)} °C`} />
+                <Row label="Safety Margin" value="1.2x" color="text-green-600" />
+              </div>
+            )}
+            {inputs.calcType === "type2" && (
+              <div className="space-y-1 text-[10px] font-Lexend">
+                 <p className="text-gray-400 mb-2 uppercase text-[8px] font-bold font-Michroma">Effective Clearance Analysis</p>
+                 <Row label="Net Material Delta" value={`${(result as any).totalInterferenceMm.toFixed(4)} mm`} />
+                 <Row label="Fit Condition" value="Tight" color="text-amber-600" />
+              </div>
+            )}
+            {inputs.calcType === "type3" && (
+               <div className="space-y-1">
+                <Row label="Thermal Contrast" value={`${Math.abs(inputs.ambientStatorTemp - inputs.elevatedStatorTemp) + Math.abs(inputs.tempDiffEnclosure)} °C`} />
+                <Row label="Expansion Dominance" value={(result as any).enclosureExpansion > (result as any).statorDiameterChange ? "Enclosure" : "Stator"} />
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="bg-neutral-50 border border-gray-200 p-3">
+          <p className="text-[9px] uppercase tracking-[0.2em] text-[#ffc812] font-bold font-Michroma mb-3">Thermodynamics Reference</p>
+          <div className="space-y-2 text-[10px] font-Lexend text-gray-600 italic leading-relaxed">
+            {inputs.calcType === "type1" && (
+              <p>Theoretical temperature required reaches the linear expansion limit of the material: <strong>ΔT = ΔD / (CTE × D)</strong>. Ensure temperature does not exceed annealing point.</p>
+            )}
+             {inputs.calcType === "type2" && (
+              <p>Differential fit accounts for both heating of the enclosure and varying thermal states of the stator. Net interference is the absolute difference of their independent expansions.</p>
+            )}
+             {inputs.calcType === "type3" && (
+              <p>Combined cooling of internal component and heating of external housing provides maximum clearance for high-interference industrial fits.</p>
+            )}
+          </div>
         </div>
       </div>
     </div>

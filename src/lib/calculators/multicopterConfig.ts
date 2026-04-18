@@ -1,6 +1,6 @@
 import { airDensity, G, inToM } from "./baseCalc";
 
-export interface XcopterCalcInput {
+export interface MulticopterCalcInput {
   // Multirotor setup
   numRotors: number;
   auwG: number;           // all-up weight grams
@@ -14,11 +14,19 @@ export interface XcopterCalcInput {
   batteryCapacityMah: number;
   batteryMaxDischarge: number; // 0–1
   batteryResistanceMohm: number;
+  cellMinV: number;
+  cellNomV: number;
+  cellMaxV: number;
   // Motor
   motorKv: number;
   motorIo: number;
   motorRmMohm: number;
   motorMaxCurrentA: number;
+  // ESC
+  escRatingA: number;
+  escResistanceOhm: number;
+  escMassG: number;
+  escBrand: string;
   // Propeller
   propDiameterInch: number;
   propPitchInch: number;
@@ -26,7 +34,7 @@ export interface XcopterCalcInput {
   cp: number;
 }
 
-export interface XcopterCalcResult {
+export interface MulticopterCalcResult {
   hover: {
     currentA: number;
     voltageV: number;
@@ -43,6 +51,14 @@ export interface XcopterCalcResult {
     thrustOz: number;
     temperatureC: number;
     efficiencyPercent: number;
+  };
+  performance90: {
+    currentA: number;
+    voltageV: number;
+    rpm: number;
+    powerW: number;
+    efficiencyPercent: number;
+    thrustG: number;
   };
   flightTime: {
     hoverMin: number;
@@ -73,12 +89,13 @@ export interface XcopterCalcResult {
   throttleCurve: { throttle: number; thrustG: number; powerW: number; currentA: number; rpm: number }[];
 }
 
-export function calcXcopter(p: XcopterCalcInput): XcopterCalcResult {
+export function calculateMulticopter(p: MulticopterCalcInput): MulticopterCalcResult {
   const rho         = airDensity(p.elevationM, p.temperatureC, p.pressureHpa);
-  const auwKg       = p.auwG / 1000;
+  const auwKg       = (p.auwG + p.payloadG) / 1000;
   const propDiamM   = inToM(p.propDiameterInch);
   const battVolt    = p.batteryCells * 3.7;
   const battResOhm  = (p.batteryResistanceMohm / 1000) * p.batteryCells;
+  const escResOhm   = p.escResistanceOhm || 0.005;
   const motorRmOhm  = p.motorRmMohm / 1000;
   const diskArea    = Math.PI * Math.pow(propDiamM / 2, 2);
 
@@ -93,7 +110,7 @@ export function calcXcopter(p: XcopterCalcInput): XcopterCalcResult {
   for (let i = 0; i < 12; i++) {
     const pProp     = p.cp * rho * Math.pow(nRpsHover, 3) * Math.pow(propDiamM, 5);
     const estCur    = Math.max(0, pProp / Math.max(voltHover, 1) + p.motorIo);
-    const newVolt   = Math.max(1, battVolt - estCur * battResOhm);          // clamp > 1V
+    const newVolt   = Math.max(1, battVolt - estCur * (battResOhm + escResOhm));          // sag from batt + esc
     const rpmLoaded = p.motorKv * newVolt
                       - Math.max(0, estCur - p.motorIo) * motorRmOhm * p.motorKv * 60 / (2 * Math.PI);
     const newNRps   = Math.max(0, rpmLoaded / 60);
@@ -127,6 +144,14 @@ export function calcXcopter(p: XcopterCalcInput): XcopterCalcResult {
   const flightMixedMin   = (usableCapAh / (curMixed * p.numRotors)) * 60;
   const totalCurMax      = curMax * p.numRotors;
   const flightFullMin    = totalCurMax > 0 ? (usableCapAh / totalCurMax) * 60 : 0;
+
+  // ── Performance at 90% Throttle ───────────────────────────────────────────
+  const throttle90 = 0.9;
+  const rpm90      = p.motorKv * battVolt * throttle90; // Simplified; ideally should sag voltage
+  const nRps90     = rpm90 / 60;
+  const thrust90N  = p.ct * rho * Math.pow(nRps90, 2) * Math.pow(propDiamM, 4);
+  const power90W   = p.cp * rho * Math.pow(nRps90, 3) * Math.pow(propDiamM, 5);
+  const cur90      = power90W / battVolt + p.motorIo;
 
   // ── Temperature ───────────────────────────────────────────────────────────
   const powerLossHover   = Math.pow(curHover, 2) * motorRmOhm;
@@ -170,6 +195,14 @@ export function calcXcopter(p: XcopterCalcInput): XcopterCalcResult {
       thrustOz:          thrustMaxG / 28.3495,
       temperatureC:      estTempMaxC,
       efficiencyPercent: 65,
+    },
+    performance90: {
+      currentA:          cur90,
+      voltageV:          battVolt, // Simplified
+      rpm:               rpm90,
+      powerW:            power90W,
+      efficiencyPercent: 70, // Rough estimate
+      thrustG:           (thrust90N / G) * 1000,
     },
     flightTime: {
       hoverMin:         flightHoverMin,

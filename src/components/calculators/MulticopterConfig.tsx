@@ -1,5 +1,5 @@
-// src/components/calculators/XcopterCalcPanel.tsx
-// Multirotor / X-copter performance calculator — v2
+// src/components/calculators/MulticopterCalcPanel.tsx
+// Multirotor / Multicopter performance calculator — v2
 // Improvements (mirrors PropCalcPanel v2 for consistency):
 //  - Collapsible input sections
 //  - Tooltip hints on every input field
@@ -13,13 +13,13 @@
 
 import { useState, useMemo, useCallback } from "react";
 import {
-  LineChart, Line, BarChart, Bar, ScatterChart, Scatter, ReferenceArea,
+  LineChart, Line, BarChart, Bar, ScatterChart, Scatter, ReferenceLine,
   XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ZAxis
 } from "recharts";
 import GaugeMeter from "./GaugeMeter";
-import { calcXcopter, XcopterCalcInput, XcopterCalcResult } from "@/lib/calculators/xcopterCalc";
-import { useMotorPresets, getPresetById, suggestProps, suggestBattery } from "@/hooks/useMotorPresets";
-import { suggestESCs } from "@/data/escs";
+import { calculateMulticopter, MulticopterCalcInput, MulticopterCalcResult } from "@/lib/calculators/multicopterConfig";
+import { useMotorPresets, getPresetById, suggestProps } from "@/hooks/useMotorPresets";
+import { ESCS, suggestESCs } from "@/data/escs";
 import { DownloadReportButton, PdfTemplateHeader } from "./PdfExport";
 import SplitLayout from "./SplitLayout";
 
@@ -31,7 +31,7 @@ interface Warning { level: "warn" | "danger"; message: string }
 // ─────────────────────────────────────────────────────────────
 // Defaults
 // ─────────────────────────────────────────────────────────────
-const DEFAULTS: XcopterCalcInput = {
+const DEFAULTS: MulticopterCalcInput = {
   numRotors: 4,
   auwG: 900,
   payloadG: 0,
@@ -46,8 +46,15 @@ const DEFAULTS: XcopterCalcInput = {
   motorIo: 1.2,
   motorRmMohm: 28,
   motorMaxCurrentA: 25,
+  escRatingA: 30,
+  escResistanceOhm: 0.005,
+  escMassG: 15,
+  escBrand: "Welkinrim",
   propDiameterInch: 10,
   propPitchInch: 4.5,
+  cellMinV: 3.3,
+  cellNomV: 3.7,
+  cellMaxV: 4.2,
   ct: 0.11,
   cp: 0.045,
 };
@@ -55,7 +62,7 @@ const DEFAULTS: XcopterCalcInput = {
 // ─────────────────────────────────────────────────────────────
 // Warning engine
 // ─────────────────────────────────────────────────────────────
-function deriveWarnings(result: XcopterCalcResult, inputs: XcopterCalcInput, correctedTemp: number, correctedFlightMin: number): Warning[] {
+function deriveWarnings(result: MulticopterCalcResult, inputs: MulticopterCalcInput, correctedTemp: number, correctedFlightMin: number): Warning[] {
   const w: Warning[] = [];
 
   // FIXED TWR: total thrust vs total flying weight
@@ -210,64 +217,71 @@ function airDensityFromAltitude(altM: number, tempC: number): { density: number;
 // ─────────────────────────────────────────────────────────────
 // Main Panel
 // ─────────────────────────────────────────────────────────────
-export default function XcopterCalcPanel() {
-  const [inputs, setInputs] = useState<XcopterCalcInput>(DEFAULTS);
+export default function MulticopterPanel() {
+  const [inputs, setInputs] = useState<MulticopterCalcInput>(DEFAULTS);
   const [selectedPreset, setSelectedPreset] = useState("");
+  const [selectedEsc, setSelectedEsc] = useState("");
+  const [selectedProp, setSelectedProp] = useState("");
   const [activeChart, setActiveChart] = useState<"throttle" | "flighttime" | "efficiency">("throttle");
-  const presets = useMotorPresets();
 
-  const set = useCallback((key: keyof XcopterCalcInput) => (v: number) =>
+  const set = useCallback((key: keyof MulticopterCalcInput) => (v: number) =>
     setInputs(prev => ({ ...prev, [key]: v })), []);
 
-  const applyPreset = (presetId: string) => {
+  // --- Chained Dropdown Logic ---
+  const motorPresets = useMotorPresets("multicopter");
+  
+  const compatibleESCs = useMemo(() => {
+    const preset = getPresetById(selectedPreset);
+    if (!preset) return ESCS;
+    return suggestESCs(preset.peakCurrent, inputs.batteryCells, "multicopter");
+  }, [selectedPreset, inputs.batteryCells]);
+
+  const compatibleProps = useMemo(() => {
+    const preset = getPresetById(selectedPreset);
+    if (!preset) return [];
+    return suggestProps(preset, "multicopter");
+  }, [selectedPreset]);
+
+  const applyMotorPreset = (presetId: string) => {
     const preset = getPresetById(presetId);
     if (!preset) return;
+    setSelectedPreset(presetId);
+    setSelectedEsc(""); // Reset downstream
+    setSelectedProp("");
     setInputs(prev => ({
       ...prev,
       motorKv: preset.kv,
-      batteryCells: preset.recommendedVoltage,
-      motorMaxCurrentA: preset.peakCurrent,
-      propDiameterInch: preset.recommendedPropMin,
       motorIo: preset.estimatedIo,
       motorRmMohm: preset.estimatedRmMohm,
+      batteryCells: preset.recommendedVoltage,
+      escBrand: "Welkinrim"
     }));
-    setSelectedPreset(presetId);
   };
 
-  // Suggested ESCs, propellers, and battery configs based on selected motor
-  const currentPreset = selectedPreset ? getPresetById(selectedPreset) : null;
-  const suggestedESCs = useMemo(() => {
-    if (!currentPreset) return [];
-    return suggestESCs(currentPreset.peakCurrent, inputs.batteryCells, "multicopter");
-  }, [currentPreset, inputs.batteryCells]);
-  const suggestedPropellers = useMemo(() => {
-    if (!currentPreset) return [];
-    return suggestProps(currentPreset, "multicopter");
-  }, [currentPreset]);
-  const suggestedBatteries = useMemo(() => {
-    if (!currentPreset) return [];
-    return suggestBattery(currentPreset);
-  }, [currentPreset]);
+  const applyEscPreset = (escId: string) => {
+    const esc = ESCS.find((e: any) => e.id === escId);
+    if (!esc) return;
+    setSelectedEsc(escId);
+    setSelectedProp(""); // Reset prop
+    setInputs(prev => ({
+      ...prev,
+      escRatingA: esc.continuousA,
+      escResistanceOhm: 0.005,
+      escMassG: esc.weight,
+      escBrand: esc.brand
+    }));
+  };
 
-  const applyProp = (propId: string) => {
-    const prop = suggestedPropellers.find(p => p.id === propId);
+  const applyPropPreset = (propId: string) => {
+    const prop = compatibleProps.find(p => p.id === propId);
     if (!prop) return;
+    setSelectedProp(propId);
     setInputs(prev => ({
       ...prev,
       propDiameterInch: prop.diameterInch,
       propPitchInch: prop.pitchInch,
       ct: prop.ct,
       cp: prop.cp,
-    }));
-  };
-
-  const applyBattery = (label: string) => {
-    const bat = suggestedBatteries.find(b => b.label === label);
-    if (!bat) return;
-    setInputs(prev => ({
-      ...prev,
-      batteryCells: bat.cells,
-      batteryCapacityMah: bat.capacityMah,
     }));
   };
 
@@ -280,7 +294,7 @@ export default function XcopterCalcPanel() {
     }));
   };
 
-  const result: XcopterCalcResult = useMemo(() => calcXcopter(inputs), [inputs]);
+  const result: MulticopterCalcResult = useMemo(() => calculateMulticopter(inputs), [inputs]);
 
   // ── FIXED: Motor temperature via thermal resistance model ──
   // P_loss (hover) = P_copper + P_iron = I²·Rm + Io·V
@@ -364,94 +378,71 @@ export default function XcopterCalcPanel() {
 
   const inputsPanel = (
     <div className="space-y-3">
-      {/* Motor Preset */}
-      <div className="border border-[#ffc812]/30 bg-[#fffbe6] px-3 py-2 flex items-center gap-3">
-        <label className="text-[9px] tracking-widest uppercase text-[#ffc812] font-bold whitespace-nowrap"
-               style={{ fontFamily: "Michroma, sans-serif" }}>
-          ⚡ Motor Preset
-        </label>
-        <select
-          value={selectedPreset}
-          onChange={e => applyPreset(e.target.value)}
-          className="flex-1 border border-[#ffc812]/40 text-[11px] px-2.5 py-1 focus:outline-none focus:border-[#ffc812] bg-white"
-          style={{ fontFamily: "Michroma, sans-serif" }}
-        >
-          <option value="">— Select Motor —</option>
-          {presets.map(p => (
-            <option key={p.id} value={p.id}>{p.name} ({p.kv}KV, {p.recommendedVoltage}S)</option>
-          ))}
-        </select>
-      </div>
-
-      {/* ESC Suggestion */}
-      {suggestedESCs.length > 0 && (
-        <div className="border border-gray-200 bg-gray-50 px-3 py-2">
-          <label className="text-[8px] tracking-widest uppercase text-[#808080] block mb-1"
-                 style={{ fontFamily: "Michroma, sans-serif" }}>Suggested ESC</label>
-          <div className="space-y-1">
-            {suggestedESCs.slice(0, 3).map(e => (
-              <div key={e.id} className="flex items-center justify-between text-[10px] border border-gray-200 bg-white px-2 py-1"
-                   style={{ fontFamily: "Lexend, sans-serif" }}>
-                <span className="font-medium">{e.model}</span>
-                <span className="text-gray-400">{e.continuousA}A / {e.minCells}–{e.maxCells}S</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Compatible Propeller */}
-      {suggestedPropellers.length > 0 && (
-        <div className="border border-gray-200 bg-gray-50 px-3 py-2">
-          <label className="text-[8px] tracking-widest uppercase text-[#808080] block mb-1"
-                 style={{ fontFamily: "Michroma, sans-serif" }}>Compatible Propeller</label>
-          <select
-            onChange={e => applyProp(e.target.value)}
-            className="w-full border border-gray-200 text-[11px] px-2 py-1 focus:outline-none focus:border-[#ffc812] bg-white"
+      <CollapsibleSection title="Quick Presets" defaultOpen>
+        <div className="w-full py-0.5">
+          <label className="text-[8px] tracking-widest uppercase text-[#808080]" style={{ fontFamily: "Michroma, sans-serif" }}>Motor</label>
+          <select 
+            value={selectedPreset}
+            onChange={e => applyMotorPreset(e.target.value)}
+            className="w-full text-[11px] px-2 py-1 bg-white border border-gray-200 focus:border-[#ffc812] outline-none"
             style={{ fontFamily: "Michroma, sans-serif" }}
-            defaultValue=""
           >
-            <option value="" disabled>— Select Propeller —</option>
-            {suggestedPropellers.map(p => (
-              <option key={p.id} value={p.id}>{p.type} {p.diameterInch}×{p.pitchInch} {p.blades}-blade</option>
-            ))}
+            <option value="">Select Motor</option>
+            {motorPresets.map(p => <option key={p.id} value={p.id}>{p.name} ({p.kv}KV)</option>)}
           </select>
         </div>
-      )}
-
-      {/* Battery Config Suggestion */}
-      {suggestedBatteries.length > 0 && (
-        <div className="border border-gray-200 bg-gray-50 px-3 py-2">
-          <label className="text-[8px] tracking-widest uppercase text-[#808080] block mb-1"
-                 style={{ fontFamily: "Michroma, sans-serif" }}>Suggested Battery</label>
-          <select
-            onChange={e => applyBattery(e.target.value)}
-            className="w-full border border-gray-200 text-[11px] px-2 py-1 focus:outline-none focus:border-[#ffc812] bg-white"
+        <div className="w-full py-0.5">
+          <label className="text-[8px] tracking-widest uppercase text-[#808080]" style={{ fontFamily: "Michroma, sans-serif" }}>Match ESC</label>
+          <select 
+            value={selectedEsc}
+            disabled={!selectedPreset}
+            onChange={e => applyEscPreset(e.target.value)}
+            className="w-full text-[11px] px-2 py-1 bg-white border border-gray-200 focus:border-[#ffc812] outline-none disabled:bg-gray-50 disabled:text-gray-400"
             style={{ fontFamily: "Michroma, sans-serif" }}
-            defaultValue=""
           >
-            <option value="" disabled>— Select Battery —</option>
-            {suggestedBatteries.map(b => (
-              <option key={b.label} value={b.label}>{b.label}</option>
-            ))}
+            <option value="">{selectedPreset ? "Select ESC" : "First select Motor"}</option>
+            {compatibleESCs.map((e: any) => <option key={e.id} value={e.id}>{e.brand} {e.model}</option>)}
           </select>
         </div>
-      )}
+        <div className="w-full py-0.5">
+          <label className="text-[8px] tracking-widest uppercase text-[#808080]" style={{ fontFamily: "Michroma, sans-serif" }}>Match Prop</label>
+          <select 
+            value={selectedProp}
+            disabled={!selectedEsc}
+            onChange={e => applyPropPreset(e.target.value)}
+            className="w-full text-[11px] px-2 py-1 bg-white border border-gray-200 focus:border-[#ffc812] outline-none disabled:bg-gray-50 disabled:text-gray-400"
+            style={{ fontFamily: "Michroma, sans-serif" }}
+          >
+            <option value="">{selectedEsc ? "Select Propeller" : "First select ESC"}</option>
+            {compatibleProps.map(p => <option key={p.id} value={p.id}>{p.diameterInch}x{p.pitchInch}</option>)}
+          </select>
+        </div>
+      </CollapsibleSection>
 
-      <CollapsibleSection title="Multirotor Config" defaultOpen>
+      <CollapsibleSection title="Multicopter Config" defaultOpen>
         <Field label="# Rotors" id="xnr" value={inputs.numRotors} onChange={set("numRotors")} step="1"
                hint="Number of rotors (4 = quad, 6 = hex, 8 = octo)." />
-        <Field label="AUW (g)" id="xaw" value={inputs.auwG} onChange={set("auwG")}
-               hint="All-up weight without payload." />
+        <Field label="Base Weight (g)" id="xaw" value={inputs.auwG} onChange={set("auwG")}
+               hint="All-up weight of the frame + electronics without payload." />
         <Field label="Payload (g)" id="xpg" value={inputs.payloadG} onChange={set("payloadG")}
-               hint="Additional carried weight." className="col-span-2" />
+               hint="Weight of camera, gimbal, or other cargo." />
       </CollapsibleSection>
 
       <CollapsibleSection title="Battery" defaultOpen>
         <Field label="Cells (S)" id="xbc" value={inputs.batteryCells} onChange={set("batteryCells")} step="1"
-               hint="LiPo cells in series. Nominal voltage = cells × 3.7V." />
+               hint="LiPo cells in series." />
+        <div className="grid grid-cols-3 gap-1">
+          <Field label="Min (V)" id="bvmin" value={inputs.cellMinV} onChange={set("cellMinV")} step="0.1" />
+          <Field label="Nom (V)" id="bvnom" value={inputs.cellNomV} onChange={set("cellNomV")} step="0.1" />
+          <Field label="Max (V)" id="bvmax" value={inputs.cellMaxV} onChange={set("cellMaxV")} step="0.1" />
+        </div>
+        <div className="bg-neutral-50 p-1.5 border border-gray-100 mt-1">
+          <p className="text-[8px] text-gray-400 uppercase font-Michroma leading-tight">
+            Pack: {(inputs.batteryCells * inputs.cellMinV).toFixed(1)}V - {(inputs.batteryCells * inputs.cellNomV).toFixed(1)}V - {(inputs.batteryCells * inputs.cellMaxV).toFixed(1)}V
+          </p>
+        </div>
         <Field label="Capacity (mAh)" id="xbm" value={inputs.batteryCapacityMah} onChange={set("batteryCapacityMah")} step="100"
-               hint="Battery energy capacity." />
+               hint="Battery energy capacity." className="mt-2" />
         <Field label="Max Disch (%)" id="xbd" value={inputs.batteryMaxDischarge * 100}
                onChange={v => set("batteryMaxDischarge")(v / 100)}
                hint="Usable proportion. 80% is safe for LiPo." />
@@ -468,6 +459,16 @@ export default function XcopterCalcPanel() {
                hint="Winding resistance." />
         <Field label="Max Curr (A)" id="xmc" value={inputs.motorMaxCurrentA} onChange={set("motorMaxCurrentA")}
                hint="Continuous current limit." />
+      </CollapsibleSection>
+
+      <CollapsibleSection title="ESC Parameters" defaultOpen>
+        <div className="w-full py-0.5">
+          <label className="text-[8px] tracking-widest uppercase text-[#808080]" style={{ fontFamily: "Michroma, sans-serif" }}>ESC Brand</label>
+          <input type="text" value={inputs.escBrand} onChange={e => setInputs(prev => ({...prev, escBrand: e.target.value}))} className="border w-full text-[11px] px-2 py-1 focus:outline-none border-gray-200 focus:border-[#ffc812] bg-white" style={{ fontFamily: "Michroma, sans-serif" }} />
+        </div>
+        <Field label="Rating (A)" id="er" value={inputs.escRatingA} onChange={set("escRatingA")} step="1" hint="Continuous current rating." />
+        <Field label="Resistance (Ω)" id="eres" value={inputs.escResistanceOhm} onChange={set("escResistanceOhm")} step="0.001" hint="Internal resistance of the ESC." />
+        <Field label="Mass (g)" id="emase" value={inputs.escMassG} onChange={set("escMassG")} step="1" hint="Weight of the ESC." />
       </CollapsibleSection>
 
       <CollapsibleSection title="Propeller" defaultOpen>
@@ -499,8 +500,8 @@ export default function XcopterCalcPanel() {
   );
 
   const resultsPanel = (
-      <div id="xcopter-report-area" className="relative">
-        <PdfTemplateHeader calculatorName="Multi-Rotor Drive" />
+      <div id="multicopter-report-area" className="relative">
+        <PdfTemplateHeader calculatorName="Multicopter Drive" />
         {/* Description */}
         <p className="text-[11px] text-gray-500 border-l-2 border-[#ffc812] pl-3 py-1 mb-3" style={{ fontFamily: "Lexend, sans-serif" }}>
           Hover power, disc loading, TWR, flight time and throttle curve for multi-rotor drones. Select motor, propeller and battery to calculate operating zones at hover and maximum thrust.
@@ -513,7 +514,7 @@ export default function XcopterCalcPanel() {
               ? <span className="text-amber-500">{warnings.length} alert{warnings.length > 1 ? "s" : ""} — review below</span>
               : <span className="text-green-600">✓ All values within normal range</span>}
           </p>
-          <DownloadReportButton targetElementId="calculator-capture-area" filename="WelkinRim_Xcopter_Report.pdf" />
+          <DownloadReportButton targetElementId="calculator-capture-area" filename="WelkinRim_Multicopter_Report.pdf" />
         </div>
 
         {/* Warnings */}
@@ -551,48 +552,61 @@ export default function XcopterCalcPanel() {
                     sub="per rotor" />
         </div>
 
-        {/* Detail tables */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+        {/* Detail tables — 3 columns */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-1.5 mb-3">
           <div className="border border-gray-100">
-            <div className="bg-black px-3 py-1.5">
-              <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812]"
+            <div className="bg-black px-2 py-1">
+              <p className="text-[8px] tracking-[0.2em] uppercase text-[#ffc812]"
                  style={{ fontFamily: "Michroma, sans-serif" }}>Hover Point</p>
             </div>
-            <div className="p-3">
+            <div className="p-2">
               <table className="w-full">
                 <tbody>
-                  <Row label="RPM (per rotor)" value={result.hover.rpm.toFixed(0)} />
-                  <Row label="Current (per rotor)" value={`${result.hover.currentA.toFixed(1)} A`} />
-                  <Row label="Voltage (loaded)" value={`${loadedVoltageV.toFixed(2)} V`} />
-                  <Row label="Power (per rotor)" value={`${result.hover.powerW.toFixed(0)} W`} />
-                  <Row label="Power (total)" value={`${(result.hover.powerW * inputs.numRotors).toFixed(0)} W`} />
+                  <Row label="RPM" value={result.hover.rpm.toFixed(0)} />
+                  <Row label="Current" value={`${result.hover.currentA.toFixed(1)} A`} />
+                  <Row label="Voltage" value={`${result.hover.voltageV.toFixed(2)} V`} />
+                  <Row label="Power" value={`${result.hover.powerW.toFixed(0)} W`} />
                   <Row label="Throttle" value={`${result.hover.throttlePercent.toFixed(1)} %`}
                        warn={result.hover.throttlePercent > 65} />
-                  <Row label="Motor Temp (est.)" value={`${correctedHoverTempC.toFixed(0)} °C`}
-                       warn={correctedHoverTempC > 85} />
                 </tbody>
               </table>
             </div>
           </div>
 
           <div className="border border-gray-100">
-            <div className="bg-black px-3 py-1.5">
-              <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812]"
-                 style={{ fontFamily: "Michroma, sans-serif" }}>Maximum</p>
+            <div className="bg-black px-2 py-1">
+              <p className="text-[8px] tracking-[0.2em] uppercase text-[#ffc812]"
+                 style={{ fontFamily: "Michroma, sans-serif" }}>Max Performance (90%)</p>
             </div>
-            <div className="p-3">
+            <div className="p-2">
               <table className="w-full">
                 <tbody>
-                  <Row label="RPM per rotor" value={result.maximum.rpm.toFixed(0)} />
-                  <Row label="Current (per rotor)" value={`${result.maximum.currentA.toFixed(1)} A`}
-                       warn={result.maximum.currentA > inputs.motorMaxCurrentA * 0.9} />
-                  <Row label="Thrust (per rotor)" value={`${result.maximum.thrustG.toFixed(0)} g`} />
+                  <Row label="RPM" value={result.performance90.rpm.toFixed(0)} />
+                  <Row label="Current" value={`${result.performance90.currentA.toFixed(1)} A`}
+                       warn={result.performance90.currentA > inputs.motorMaxCurrentA * 0.9} />
+                  <Row label="Thrust" value={`${result.performance90.thrustG.toFixed(0)} g`} />
+                  <Row label="Power" value={`${result.performance90.powerW.toFixed(0)} W`} />
+                  <Row label="Efficiency" value={`${result.performance90.efficiencyPercent.toFixed(1)} %`} />
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div className="border border-gray-100">
+            <div className="bg-black px-2 py-1">
+              <p className="text-[8px] tracking-[0.2em] uppercase text-[#ffc812]"
+                 style={{ fontFamily: "Michroma, sans-serif" }}>Maximum (100%)</p>
+            </div>
+            <div className="p-2">
+              <table className="w-full">
+                <tbody>
+                  <Row label="RPM" value={result.maximum.rpm.toFixed(0)} />
+                  <Row label="Current" value={`${result.maximum.currentA.toFixed(1)} A`} />
                   <Row label="Total Thrust" value={`${result.performance.totalThrustG.toFixed(0)} g`} />
-                  <Row label="TWR (corrected)" value={`${correctedTWR.toFixed(2)} : 1`}
+                  <Row label="TWR" value={`${correctedTWR.toFixed(2)} : 1`}
                        warn={correctedTWR < 2.0} />
-                  <Row label="Motor Temp (max)" value={`${correctedMaxTempC.toFixed(0)} °C`}
+                  <Row label="Motor Temp" value={`${correctedMaxTempC.toFixed(0)} °C`}
                        warn={correctedMaxTempC > 85} />
-                  <Row label="Est. Range" value={`${result.performance.estimatedRangeKm.toFixed(1)} km`} />
                 </tbody>
               </table>
             </div>
@@ -636,11 +650,11 @@ export default function XcopterCalcPanel() {
                     <YAxis tick={{ fontSize: 9, fontFamily: "Michroma, sans-serif" }} />
                     <Tooltip contentStyle={TOOLTIP_STYLE} />
                     <Legend wrapperStyle={{ fontSize: 9, fontFamily: "Michroma, sans-serif" }} />
-                    {/* Efficiency operating zone: hover ±10% throttle */}
-                    <ReferenceArea x1={`${Math.max(0, Math.round(result.hover.throttlePercent - 10))}%`} x2={`${Math.min(100, Math.round(result.hover.throttlePercent + 10))}%`} fill="#ffc812" fillOpacity={0.08} stroke="#ffc812" strokeOpacity={0.25} strokeDasharray="4 2" />
-                    <Line type="monotone" dataKey="Thrust (g)" stroke="#ffc812" strokeWidth={2} dot={{ r: 3 }} />
-                    <Line type="monotone" dataKey="Power (W)" stroke="#111" strokeWidth={2} dot={{ r: 3 }} />
-                    <Line type="monotone" dataKey="Current (A)" stroke="#22c55e" strokeWidth={2} dot={{ r: 3 }} />
+                    <ReferenceLine x="90%" stroke="#ffc812" strokeDasharray="3 3" label={{ position: 'top', value: '90% Max', fontSize: 8, fill: '#ffc812' }} />
+                    <ReferenceLine x={`${result.hover.throttlePercent.toFixed(0)}%`} stroke="#22c55e" strokeDasharray="3 3" label={{ position: 'top', value: 'Hover', fontSize: 8, fill: '#22c55e' }} />
+                    <Line type="monotone" dataKey="Thrust (g)" stroke="#ffc812" strokeWidth={2} dot={false} />
+                    <Line type="monotone" dataKey="Power (W)" stroke="#111" strokeWidth={2} dot={false} />
+                    <Line type="monotone" dataKey="Current (A)" stroke="#22c55e" strokeWidth={2} dot={false} />
                   </LineChart>
                 ) : activeChart === "flighttime" ? (
                   <BarChart data={flightTimeData} margin={{ top: 4, right: 20, left: 0, bottom: 4 }}>

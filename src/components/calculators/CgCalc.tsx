@@ -38,12 +38,19 @@ const DEFAULT_COMPONENTS: Component[] = [
   { id: 3, name: "Fuselage", weightG: 600, armCm: 25, type: "fuselage" },
 ];
 
-function Field({
-  label, id, value, onChange, step = "any", hint, className = "",
-}: {
+// ─────────────────────────────────────────────────────────────
+// Shared UI primitives
+// ─────────────────────────────────────────────────────────────
+
+
+interface FieldProps {
   label: string; id: string; value: number;
-  onChange: (v: number) => void; step?: string; hint?: string; className?: string;
-}) {
+  onChange: (v: number) => void;
+  step?: string; hint?: string; className?: string;
+  unit?: string;
+}
+
+function Field({ label, id, value, onChange, step = "any", hint, className = "", unit }: FieldProps) {
   const [showHint, setShowHint] = useState(false);
   return (
     <div className={`w-full py-0.5 relative ${className}`}>
@@ -67,28 +74,64 @@ function Field({
           {hint}
         </div>
       )}
-      <input
-        id={id} type="number" step={step} value={value}
-        onChange={e => onChange(parseFloat(e.target.value) || 0)}
-        className="w-full border border-gray-200 text-[11px] px-2 py-1 focus:outline-none focus:border-[#ffc812] transition-colors bg-white"
-        style={{ fontFamily: "Michroma, sans-serif" }}
-      />
+      <div className="flex items-center border border-gray-200 bg-white focus-within:border-[#ffc812] transition-colors overflow-hidden">
+        <input
+          id={id} type="number" step={step} value={value}
+          onChange={e => onChange(parseFloat(e.target.value) || 0)}
+          className="w-full text-[11px] px-2 py-1 focus:outline-none bg-white font-bold"
+          style={{ fontFamily: "Lexend, sans-serif" }}
+        />
+        {unit && <span className="bg-gray-50 text-[8px] text-gray-400 px-1.5 py-1.5 border-l border-gray-100 font-Michroma uppercase">{unit}</span>}
+      </div>
     </div>
   );
 }
 
-function Section({ title, children, action }: { title: string; children: React.ReactNode; action?: React.ReactNode }) {
+function CollapsibleSection({ title, children, defaultOpen = true, icon, action }: { title: string; children: React.ReactNode; defaultOpen?: boolean; icon?: string; action?: React.ReactNode }) {
+  const [isOpen, setIsOpen] = useState(defaultOpen);
   return (
-    <div className="border border-gray-100 mb-3">
-      <div className="bg-black px-3 py-1.5 flex items-center justify-between">
-        <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812]"
-           style={{ fontFamily: "Michroma, sans-serif" }}>{title}</p>
-        {action}
+    <div className="border border-gray-100 mb-2 overflow-hidden bg-white shadow-sm transition-all">
+      <div 
+        className="bg-black px-3 py-2 flex items-center justify-between cursor-pointer group hover:bg-neutral-900"
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        <div className="flex items-center gap-2">
+          {icon && <span className="text-[#ffc812] text-xs">{icon}</span>}
+          <p className="text-[9px] tracking-[0.2em] uppercase text-[#ffc812] font-bold"
+             style={{ fontFamily: "Michroma, sans-serif" }}>{title}</p>
+        </div>
+        <div className="flex items-center gap-2">
+            {action && <div onClick={(e) => e.stopPropagation()}>{action}</div>}
+            <span className={`text-[#ffc812] text-[10px] transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`}>▼</span>
+        </div>
       </div>
-      <div className="p-2 space-y-0.5">{children}</div>
+      <div className={`transition-all duration-300 ease-in-out ${isOpen ? "max-h-[2000px] opacity-100 p-2" : "max-h-0 opacity-0 p-0"}`}>
+        <div className="space-y-1">{children}</div>
+      </div>
     </div>
   );
 }
+
+const StatCard = ({ label, value, unit, sub, type = "normal" }: any) => {
+  const isDanger = type === "danger";
+  const isGood = type === "good";
+  const isWarn = type === "warn";
+
+  return (
+    <div className={`border p-2.5 bg-white transition-all hover:shadow-md ${
+      isDanger ? "border-red-500 shadow-red-50" : 
+      isGood ? "border-green-500 shadow-green-50" : 
+      isWarn ? "border-amber-400 shadow-amber-50" : "border-gray-200"
+    }`}>
+      <p className="text-[8px] tracking-[0.15em] uppercase text-[#808080] mb-1 font-bold" style={{ fontFamily: "Michroma, sans-serif" }}>{label}</p>
+      <div className="flex items-baseline gap-1">
+        <span className="text-xl font-black text-black" style={{ fontFamily: "Michroma, sans-serif" }}>{value}</span>
+        {unit && <span className="text-[9px] font-bold text-gray-400 uppercase" style={{ fontFamily: "Michroma, sans-serif" }}>{unit}</span>}
+      </div>
+      {sub && <p className="text-[9px] text-gray-400 mt-1 font-medium italic border-t border-gray-50 pt-1" style={{ fontFamily: "Lexend, sans-serif" }}>{sub}</p>}
+    </div>
+  );
+};
 
 export default function CgCalc() {
   const [wingPanels, setWingPanels] = useState<WingPanel[]>(DEFAULT_WING_PANELS);
@@ -228,220 +271,208 @@ export default function CgCalc() {
   const inputsPanel = (
     <div className="space-y-3">
       {/* Wing Panels */}
-      <div className="border border-gray-100">
-        <div className="bg-black px-3 py-1.5 flex items-center justify-between">
-          <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812]"
-             style={{ fontFamily: "Michroma, sans-serif" }}>Wing Panels</p>
-          <button onClick={addWingPanel} className="pdf-hide text-[9px] bg-[#ffc812] text-black px-2 py-0.5 font-bold"
-                  style={{ fontFamily: "Michroma, sans-serif" }}>+ Add</button>
-        </div>
+      <CollapsibleSection 
+        title="Wing Panels" 
+        icon="✈"
+        action={
+          <button onClick={addWingPanel} className="pdf-hide text-[9px] bg-[#ffc812] text-black px-2 py-0.5 font-bold hover:bg-[#ffe082] transition-colors"
+                  style={{ fontFamily: "Michroma, sans-serif" }}>+ Add Panel</button>
+        }
+      >
         {wingPanels.map((panel, idx) => (
-          <div key={panel.id} className="p-2 border-b border-gray-100 bg-gray-50/50">
-            <div className="flex items-center justify-between mb-1">
+          <div key={panel.id} className="p-2 border border-gray-100 bg-gray-50/50 mb-2 rounded-sm last:mb-0">
+            <div className="flex items-center justify-between mb-2">
               <input type="text" value={panel.name}
                 onChange={e => { const newPanels = [...wingPanels]; newPanels[idx].name = e.target.value; setWingPanels(newPanels); }}
-                className="text-[10px] font-bold border-none bg-transparent focus:outline-none"
+                className="text-[10px] font-bold border-none bg-transparent focus:outline-none uppercase text-[#ffc812]"
                 style={{ fontFamily: "Michroma, sans-serif" }} />
-              <button onClick={() => removeWingPanel(panel.id)} className="pdf-hide text-red-500 text-xs hover:text-red-700">✕</button>
+              <button onClick={() => removeWingPanel(panel.id)} className="pdf-hide text-red-500 text-xs hover:text-red-700 transition-colors">✕</button>
             </div>
-            <div className="grid grid-cols-2 gap-1">
-              <Field label="Root (cm)" id={`wrc-${panel.id}`} value={panel.rootChordCm} onChange={v => { const p = [...wingPanels]; p[idx].rootChordCm = v; setWingPanels(p); }} />
-              <Field label="Tip (cm)" id={`wtc-${panel.id}`} value={panel.tipChordCm} onChange={v => { const p = [...wingPanels]; p[idx].tipChordCm = v; setWingPanels(p); }} />
-              <Field label="Span (cm)" id={`ws-${panel.id}`} value={panel.spanCm} onChange={v => { const p = [...wingPanels]; p[idx].spanCm = v; setWingPanels(p); }} />
-              <Field label="Sweep (cm)" id={`wsw-${panel.id}`} value={panel.sweepCm} onChange={v => { const p = [...wingPanels]; p[idx].sweepCm = v; setWingPanels(p); }} />
-              <Field label="Dist (cm)" id={`wd-${panel.id}`} value={panel.distanceFuselageCm} onChange={v => { const p = [...wingPanels]; p[idx].distanceFuselageCm = v; setWingPanels(p); }} hint="From datum to root LE" />
-              <Field label="Weight (g)" id={`ww-${panel.id}`} value={panel.weightG} onChange={v => { const p = [...wingPanels]; p[idx].weightG = v; setWingPanels(p); }} />
+            <div className="grid grid-cols-2 gap-x-3 gap-y-1">
+              <Field label="Root Chord" id={`wrc-${panel.id}`} value={panel.rootChordCm} onChange={v => { const p = [...wingPanels]; p[idx].rootChordCm = v; setWingPanels(p); }} unit="cm" />
+              <Field label="Tip Chord" id={`wtc-${panel.id}`} value={panel.tipChordCm} onChange={v => { const p = [...wingPanels]; p[idx].tipChordCm = v; setWingPanels(p); }} unit="cm" />
+              <Field label="Panel Span" id={`ws-${panel.id}`} value={panel.spanCm} onChange={v => { const p = [...wingPanels]; p[idx].spanCm = v; setWingPanels(p); }} unit="cm" />
+              <Field label="Sweep" id={`wsw-${panel.id}`} value={panel.sweepCm} onChange={v => { const p = [...wingPanels]; p[idx].sweepCm = v; setWingPanels(p); }} unit="cm" hint="LE sweep offset from root to tip" />
+              <Field label="Datum Distance" id={`wd-${panel.id}`} value={panel.distanceFuselageCm} onChange={v => { const p = [...wingPanels]; p[idx].distanceFuselageCm = v; setWingPanels(p); }} unit="cm" hint="Distance from Datum to root LE (+ = fwd)" />
+              <Field label="Panel Weight" id={`ww-${panel.id}`} value={panel.weightG} onChange={v => { const p = [...wingPanels]; p[idx].weightG = v; setWingPanels(p); }} unit="g" />
             </div>
           </div>
         ))}
-      </div>
+      </CollapsibleSection>
 
       {/* Horizontal Tail */}
-      <Section title="Horizontal Tail">
-        <Field label="Span (cm)" id="hts" value={htSpanCm} onChange={setHtSpanCm} />
-        <Field label="Root (cm)" id="htr" value={htRootChordCm} onChange={setHtRootChordCm} />
-        <Field label="Tip (cm)" id="htt" value={htTipChordCm} onChange={setHtTipChordCm} />
-        <Field label="Sweep (cm)" id="htsw" value={htSweepCm} onChange={setHtSweepCm} />
-        <Field label="Tail Arm (cm)" id="hta" value={tailArmCm} onChange={setTailArmCm} className="col-span-2" hint="Wing AC to HT AC" />
-      </Section>
+      <CollapsibleSection title="Horizontal Tail" icon="⛯" defaultOpen={false}>
+        <div className="grid grid-cols-2 gap-x-3 gap-y-1">
+          <Field label="Tail Span" id="hts" value={htSpanCm} onChange={setHtSpanCm} unit="cm" />
+          <Field label="Tail Arm" id="hta" value={tailArmCm} onChange={setTailArmCm} unit="cm" hint="Distance from Wing AC to HT AC" />
+          <Field label="Root Chord" id="htr" value={htRootChordCm} onChange={setHtRootChordCm} unit="cm" />
+          <Field label="Tip Chord" id="htt" value={htTipChordCm} onChange={setHtTipChordCm} unit="cm" />
+          <Field label="Sweep" id="htsw" value={htSweepCm} onChange={setHtSweepCm} unit="cm" />
+        </div>
+      </CollapsibleSection>
 
       {/* Components */}
-      <div className="border border-gray-100">
-        <div className="bg-black px-3 py-1.5 flex items-center justify-between">
-          <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812]"
-             style={{ fontFamily: "Michroma, sans-serif" }}>Components</p>
-          <button onClick={addComponent} className="pdf-hide text-[9px] bg-[#ffc812] text-black px-2 py-0.5 font-bold"
-                  style={{ fontFamily: "Michroma, sans-serif" }}>+ Add</button>
-        </div>
+      <CollapsibleSection 
+        title="Weights & Components" 
+        icon="⚖"
+        action={
+          <button onClick={addComponent} className="pdf-hide text-[9px] bg-[#ffc812] text-black px-2 py-0.5 font-bold hover:bg-[#ffe082] transition-colors"
+                  style={{ fontFamily: "Michroma, sans-serif" }}>+ Add Comp</button>
+        }
+      >
         {components.map((comp, idx) => (
-          <div key={comp.id} className="p-2 border-b border-gray-100 bg-gray-50/50">
-            <div className="flex items-center justify-between mb-1">
+          <div key={comp.id} className="p-2 border border-gray-100 bg-gray-50/50 mb-2 rounded-sm last:mb-0">
+            <div className="flex items-center justify-between mb-2">
               <input type="text" value={comp.name}
                 onChange={e => { const newComps = [...components]; newComps[idx].name = e.target.value; setComponents(newComps); }}
-                className="text-[10px] font-bold border-none bg-transparent focus:outline-none"
+                className="text-[10px] font-bold border-none bg-transparent focus:outline-none text-gray-700"
                 style={{ fontFamily: "Michroma, sans-serif" }} />
-              <button onClick={() => removeComponent(comp.id)} className="pdf-hide text-red-500 text-xs hover:text-red-700">✕</button>
+              <button onClick={() => removeComponent(comp.id)} className="pdf-hide text-red-500 text-xs hover:text-red-700 transition-colors">✕</button>
             </div>
-            <div className="grid grid-cols-2 gap-1">
-              <Field label="Weight (g)" id={`cw-${comp.id}`} value={comp.weightG} onChange={v => { const c = [...components]; c[idx].weightG = v; setComponents(c); }} />
-              <Field label="Arm (cm)" id={`ca-${comp.id}`} value={comp.armCm} onChange={v => { const c = [...components]; c[idx].armCm = v; setComponents(c); }} hint="From datum (+ fwd)" />
+            <div className="grid grid-cols-2 gap-x-3 gap-y-1">
+              <Field label="Weight" id={`cw-${comp.id}`} value={comp.weightG} onChange={v => { const c = [...components]; c[idx].weightG = v; setComponents(c); }} unit="g" />
+              <Field label="Arm" id={`ca-${comp.id}`} value={comp.armCm} onChange={v => { const c = [...components]; c[idx].armCm = v; setComponents(c); }} unit="cm" hint="Distance from Datum (+ fwd)" />
             </div>
           </div>
         ))}
-      </div>
+      </CollapsibleSection>
     </div>
   );
 
   const resultsPanel = (
-      <div id="cgcalc-report-area" className="relative space-y-2">
-      <PdfTemplateHeader calculatorName="CG Geometry" />
-      <div>
-        <div className="flex items-center justify-between mb-3 text-white">
-            <h3 className="text-xs uppercase font-bold tracking-widest pdf-no-hide" style={{ fontFamily: "Michroma, sans-serif" }}>Results</h3>
-            <DownloadReportButton targetElementId="calculator-capture-area" filename="WelkinRim_CG_Report.pdf" />
+    <div id="cgcalc-report-area" className="relative space-y-3">
+      <PdfTemplateHeader calculatorName="Center of Gravity Calculator" />
+      <div className="flex items-center justify-between gap-4 py-2 border-b border-gray-100">
+        <div className="flex-1">
+          <p className="text-[11px] text-gray-500 italic" style={{ fontFamily: "Lexend, sans-serif" }}>
+            Neutral Point, Static Margin, and Weight Balance analytics.
+          </p>
         </div>
-        {/* Summary Cards */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-3">
-          <div className="border border-gray-100 p-2 text-center">
-            <p className="text-[8px] tracking-widest uppercase text-[#808080] mb-0.5" style={{ fontFamily: "Michroma, sans-serif" }}>Total Weight</p>
-            <p className="text-base font-black text-black" style={{ fontFamily: "Michroma, sans-serif" }}>{cgCalculation.totalWeight.toFixed(0)} g</p>
-          </div>
-          <div className="border border-gray-100 p-2 text-center">
-            <p className="text-[8px] tracking-widest uppercase text-[#808080] mb-0.5" style={{ fontFamily: "Michroma, sans-serif" }}>CG Position</p>
-            <p className="text-base font-black text-black" style={{ fontFamily: "Michroma, sans-serif" }}>{cgCalculation.cgArm.toFixed(1)} cm</p>
-          </div>
-          <div className="border border-gray-100 p-2 text-center">
-            <p className="text-[8px] tracking-widest uppercase text-[#808080] mb-0.5" style={{ fontFamily: "Michroma, sans-serif" }}>Neutral Point</p>
-            <p className="text-base font-black text-black" style={{ fontFamily: "Michroma, sans-serif" }}>{neutralPoint.npX.toFixed(1)} cm</p>
-          </div>
-          <div className="border border-gray-100 p-2 text-center">
-            <p className="text-[8px] tracking-widest uppercase text-[#808080] mb-0.5" style={{ fontFamily: "Michroma, sans-serif" }}>Static Margin</p>
-            <p className={`text-base font-black ${neutralPoint.staticMarginPercent >= 10 && neutralPoint.staticMarginPercent <= 25 ? "text-green-500" : "text-red-500"}`}
-               style={{ fontFamily: "Michroma, sans-serif" }}>{neutralPoint.staticMarginPercent.toFixed(1)}%</p>
-          </div>
-        </div>
+        <DownloadReportButton targetElementId="calculator-capture-area" filename="WelkinRim_CG_Analysis.pdf" />
+      </div>
 
-        {/* Wing Geometry */}
-        <div className="border border-gray-100 mb-3">
-          <div className="bg-black px-3 py-1">
-            <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812]" style={{ fontFamily: "Michroma, sans-serif" }}>Wing Geometry</p>
-          </div>
-          <div className="p-3 grid grid-cols-2 md:grid-cols-4 gap-3">
-            <div>
-              <p className="text-[9px] uppercase text-[#ffc812]" style={{ fontFamily: "Michroma, sans-serif" }}>Wing Area</p>
-              <p className="text-sm font-bold" style={{ fontFamily: "Michroma, sans-serif" }}>{wingGeometry.wingAreaDm2.toFixed(1)} dm²</p>
-            </div>
-            <div>
-              <p className="text-[9px] uppercase text-[#ffc812]" style={{ fontFamily: "Michroma, sans-serif" }}>Mean Aero Chord</p>
-              <p className="text-sm font-bold" style={{ fontFamily: "Michroma, sans-serif" }}>{wingGeometry.mac.toFixed(1)} cm</p>
-            </div>
-            <div>
-              <p className="text-[9px] uppercase text-[#ffc812]" style={{ fontFamily: "Michroma, sans-serif" }}>Aerodynamic Center</p>
-              <p className="text-sm font-bold" style={{ fontFamily: "Michroma, sans-serif" }}>{wingGeometry.acX.toFixed(1)} cm</p>
-            </div>
-            <div>
-              <p className="text-[9px] uppercase text-[#ffc812]" style={{ fontFamily: "Michroma, sans-serif" }}>Tail Volume</p>
-              <p className="text-sm font-bold" style={{ fontFamily: "Michroma, sans-serif" }}>{neutralPoint.tailVolume.toFixed(2)}</p>
-            </div>
-          </div>
-        </div>
+      {/* Primary KPI Results */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2">
+        <StatCard label="Total Weight" value={cgCalculation.totalWeight.toFixed(0)} unit="g" sub={`${(cgCalculation.totalWeight / 1000).toFixed(3)} kg`} />
+        <StatCard label="CG Position" value={cgCalculation.cgArm.toFixed(1)} unit="cm" sub="Relative to Datum" />
+        <StatCard label="Neutral Point" value={neutralPoint.npX.toFixed(1)} unit="cm" sub="Stability Limit" />
+        <StatCard 
+          label="Static Margin" 
+          value={`${neutralPoint.staticMarginPercent.toFixed(1)}%`} 
+          type={cgStatus.status}
+          sub={cgStatus.message}
+        />
+      </div>
 
-        {/* CG Status */}
-        <div className={`border-2 p-2.5 mb-3 ${
-          cgStatus.status === "good" ? "border-green-400 bg-green-50" :
-          cgStatus.status === "warn" ? "border-amber-400 bg-amber-50" :
-          "border-red-400 bg-red-50"
-        }`}>
-          <div className="flex items-center gap-2">
-            <span className={`text-xl ${
-              cgStatus.status === "good" ? "text-green-500" :
-              cgStatus.status === "warn" ? "text-amber-500" : "text-red-500"
-            }`}>{cgStatus.status === "good" ? "✓" : "⚠"}</span>
+      {/* Status Warning Badge */}
+      <div className={`p-3 border-l-4 flex items-center gap-3 ${
+        cgStatus.status === "good" ? "bg-green-50 border-green-500 text-green-700" :
+        cgStatus.status === "warn" ? "bg-amber-50 border-amber-400 text-amber-700" :
+        "bg-red-50 border-red-500 text-red-700"
+      }`}>
+        <div className="text-xl">{cgStatus.status === "good" ? "✓" : "⚠"}</div>
+        <div style={{ fontFamily: "Lexend, sans-serif" }}>
+          <p className="font-bold text-xs uppercase tracking-wider">{cgStatus.status === "good" ? "STABLE CONFIGURATION" : "STABILITY WARNING"}</p>
+          <p className="text-[10px] opacity-80">{cgStatus.message}</p>
+        </div>
+      </div>
+
+      {/* Geometry & Envelope Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+        {/* Detail Specs */}
+        <div className="border border-gray-200 p-3 bg-white">
+          <p className="text-[9px] uppercase text-[#ffc812] tracking-[0.2em] mb-3 font-bold border-b border-gray-50 pb-1"
+             style={{ fontFamily: "Michroma, sans-serif" }}>Aero Detail</p>
+          <div className="grid grid-cols-2 gap-4">
             <div>
-              <p className="font-bold text-black text-sm" style={{ fontFamily: "Michroma, sans-serif" }}>
-                {cgStatus.status === "good" ? "CG in Optimal Range" :
-                 cgStatus.status === "warn" ? "CG Warning" : "CG Critical"}
-              </p>
-              <p className="text-[11px] text-gray-600" style={{ fontFamily: "Lexend, sans-serif" }}>{cgStatus.message}</p>
+              <p className="text-[8px] uppercase text-gray-400 font-bold" style={{ fontFamily: "Michroma, sans-serif" }}>Wing Area</p>
+              <p className="text-xs font-bold text-gray-800">{wingGeometry.wingAreaDm2.toFixed(1)} <span className="text-[10px] font-normal text-gray-400 font-Lexend tracking-tighter">dm²</span></p>
+            </div>
+            <div>
+              <p className="text-[8px] uppercase text-gray-400 font-bold" style={{ fontFamily: "Michroma, sans-serif" }}>MAC</p>
+              <p className="text-xs font-bold text-gray-800">{wingGeometry.mac.toFixed(1)} <span className="text-[10px] font-normal text-gray-400 font-Lexend tracking-tighter">cm</span></p>
+            </div>
+            <div>
+              <p className="text-[8px] uppercase text-gray-400 font-bold" style={{ fontFamily: "Michroma, sans-serif" }}>AC X-Pos</p>
+              <p className="text-xs font-bold text-gray-800">{wingGeometry.acX.toFixed(1)} <span className="text-[10px] font-normal text-gray-400 font-Lexend tracking-tighter">cm</span></p>
+            </div>
+            <div>
+              <p className="text-[8px] uppercase text-gray-400 font-bold" style={{ fontFamily: "Michroma, sans-serif" }}>V-Tail Vol</p>
+              <p className="text-xs font-bold text-gray-800">{neutralPoint.tailVolume.toFixed(2)}</p>
             </div>
           </div>
         </div>
 
-        {/* CG Envelope + Weight Breakdown — side by side */}
-        <div className="border border-gray-100">
-          {/* Shared header */}
-          <div className="bg-black grid grid-cols-2">
-            <div className="px-3 py-1 border-r border-white/10">
-              <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812]" style={{ fontFamily: "Michroma, sans-serif" }}>CG Envelope</p>
-            </div>
-            <div className="px-3 py-1">
-              <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812]" style={{ fontFamily: "Michroma, sans-serif" }}>Weight Breakdown</p>
-            </div>
+        {/* Envelope Chart */}
+        <div className="border border-gray-200 p-3 bg-white">
+          <p className="text-[9px] uppercase text-[#ffc812] tracking-[0.2em] mb-3 font-bold border-b border-gray-50 pb-1"
+             style={{ fontFamily: "Michroma, sans-serif" }}>Stability Envelope</p>
+          <div className="h-[120px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={envelopeData} layout="vertical" margin={{ top: 0, right: 30, left: 50, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" horizontal={false} />
+                <XAxis type="number" domain={[0, 100]} hide />
+                <YAxis dataKey="name" type="category" tick={{ fontSize: 7, fontFamily: "Michroma, sans-serif" }} width={60} />
+                <Tooltip cursor={{ fill: '#f8f9fa' }} contentStyle={{ fontSize: 9, fontFamily: "Lexend, sans-serif" }} />
+                <ReferenceLine x={neutralPoint.staticMarginPercent} stroke="#000" strokeWidth={2} label={{ value: "CG", fill: "#000", fontSize: 8, position: "top" }} />
+                <ReferenceLine x={10} stroke="#22c55e" strokeWidth={1} strokeDasharray="3 3" />
+                <ReferenceLine x={25} stroke="#22c55e" strokeWidth={1} strokeDasharray="3 3" />
+                <Bar dataKey="cg" fill="#ffc812" opacity={0.3} radius={[0, 2, 2, 0]} barSize={12} />
+              </BarChart>
+            </ResponsiveContainer>
           </div>
+        </div>
+      </div>
 
-          {/* Body: chart left, table right */}
-          <div className="grid grid-cols-2 divide-x divide-gray-100">
-            {/* Chart column */}
-            <div className="p-3 flex flex-col justify-between">
-              <ResponsiveContainer width="100%" height={170}>
-                <BarChart data={envelopeData} layout="vertical" margin={{ top: 4, right: 12, left: 56, bottom: 4 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                  <XAxis type="number" domain={[0, 100]} tick={{ fontSize: 8, fontFamily: "Michroma, sans-serif" }} unit="%" />
-                  <YAxis dataKey="name" type="category" tick={{ fontSize: 8, fontFamily: "Michroma, sans-serif" }} width={90} />
-                  <Tooltip contentStyle={{ fontSize: 10, fontFamily: "Michroma, sans-serif" }} />
-                  <ReferenceLine x={neutralPoint.staticMarginPercent} stroke="#22c55e" strokeWidth={2} label={{ value: "CG", fill: "#22c55e", fontSize: 8 }} />
-                  <ReferenceLine x={10} stroke="#ffc812" strokeWidth={1} strokeDasharray="3 3" />
-                  <ReferenceLine x={25} stroke="#ffc812" strokeWidth={1} strokeDasharray="3 3" />
-                  <Bar dataKey="cg" fill="#e5e7eb" radius={[2, 2, 2, 2]} />
-                </BarChart>
-              </ResponsiveContainer>
-              <p className="text-[8px] text-center text-gray-400 mt-1" style={{ fontFamily: "Lexend, sans-serif" }}>
-                Optimal: 10–25% MAC · Current: <strong className="text-black">{neutralPoint.staticMarginPercent.toFixed(1)}%</strong>
-              </p>
-            </div>
-
-            {/* Table column */}
-            <div className="overflow-x-auto">
-              <table className="w-full text-[10px]" style={{ fontFamily: "Michroma, sans-serif" }}>
-                <thead>
-                  <tr className="bg-gray-50">
-                    <th className="px-2 py-1.5 text-left">Component</th>
-                    <th className="px-2 py-1.5 text-right">Wt (g)</th>
-                    <th className="px-2 py-1.5 text-right">Arm</th>
-                    <th className="px-2 py-1.5 text-right">Moment</th>
-                    <th className="px-2 py-1.5 text-right">%</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {wingPanels.map((panel, i) => (
-                    <tr key={panel.id} className={i % 2 === 0 ? "bg-white" : "bg-gray-50/50"}>
-                      <td className="px-2 py-1.5">{panel.name}</td>
-                      <td className="px-2 py-1.5 text-right">{panel.weightG.toFixed(0)}</td>
-                      <td className="px-2 py-1.5 text-right">—</td>
-                      <td className="px-2 py-1.5 text-right">—</td>
-                      <td className="px-2 py-1.5 text-right">{((panel.weightG / cgCalculation.totalWeight) * 100).toFixed(1)}%</td>
-                    </tr>
-                  ))}
-                  {components.map((comp, i) => (
-                    <tr key={comp.id} className={i % 2 === 0 ? "bg-white" : "bg-gray-50/50"}>
-                      <td className="px-2 py-1.5">{comp.name}</td>
-                      <td className="px-2 py-1.5 text-right">{comp.weightG.toFixed(0)}</td>
-                      <td className="px-2 py-1.5 text-right">{comp.armCm.toFixed(1)}</td>
-                      <td className="px-2 py-1.5 text-right">{(comp.weightG * comp.armCm).toFixed(0)}</td>
-                      <td className="px-2 py-1.5 text-right">{((comp.weightG / cgCalculation.totalWeight) * 100).toFixed(1)}%</td>
-                    </tr>
-                  ))}
-                  <tr className="bg-black text-[#ffc812] font-bold">
-                    <td className="px-2 py-1.5">TOTAL</td>
-                    <td className="px-2 py-1.5 text-right">{cgCalculation.totalWeight.toFixed(0)}</td>
-                    <td className="px-2 py-1.5 text-right">—</td>
-                    <td className="px-2 py-1.5 text-right">{cgCalculation.totalMoment.toFixed(0)}</td>
-                    <td className="px-2 py-1.5 text-right">100%</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
+      {/* Mass Breakdown Table */}
+      <div className="border border-gray-200 overflow-hidden">
+        <div className="bg-black px-3 py-1.5 border-b border-gray-700">
+          <p className="text-[9px] tracking-[0.2em] uppercase text-[#ffc812] font-bold" 
+             style={{ fontFamily: "Michroma, sans-serif" }}>Weight & Balance Breakdown</p>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-[10px]" style={{ fontFamily: "Lexend, sans-serif" }}>
+            <thead className="bg-gray-50 text-gray-400 uppercase tracking-tighter">
+              <tr>
+                <th className="px-3 py-2">Component</th>
+                <th className="px-3 py-2 text-right">Mass (g)</th>
+                <th className="px-3 py-2 text-right">Arm (cm)</th>
+                <th className="px-3 py-2 text-right">Moment</th>
+                <th className="px-3 py-2 text-right">% Total</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-100">
+              {wingPanels.map((panel) => (
+                <tr key={panel.id} className="hover:bg-gray-50/50">
+                  <td className="px-3 py-1.5 font-medium text-gray-700 italic">{panel.name}</td>
+                  <td className="px-3 py-1.5 text-right text-gray-600">{panel.weightG.toFixed(0)}</td>
+                  <td className="px-3 py-1.5 text-right text-gray-400">—</td>
+                  <td className="px-3 py-1.5 text-right text-gray-400">—</td>
+                  <td className="px-3 py-1.5 text-right font-bold text-gray-800">
+                    {((panel.weightG / cgCalculation.totalWeight) * 100).toFixed(1)}%
+                  </td>
+                </tr>
+              ))}
+              {components.map((comp) => (
+                <tr key={comp.id} className="hover:bg-gray-50/50">
+                  <td className="px-3 py-1.5 font-medium text-gray-700 whitespace-nowrap">{comp.name}</td>
+                  <td className="px-3 py-1.5 text-right text-gray-600">{comp.weightG.toFixed(0)}</td>
+                  <td className="px-3 py-1.5 text-right text-gray-600">{comp.armCm.toFixed(1)}</td>
+                  <td className="px-3 py-1.5 text-right text-gray-500">{(comp.weightG * comp.armCm).toFixed(0)}</td>
+                  <td className="px-3 py-1.5 text-right font-bold text-gray-800">
+                    {((comp.weightG / cgCalculation.totalWeight) * 100).toFixed(1)}%
+                  </td>
+                </tr>
+              ))}
+              <tr className="bg-gray-900 text-[#ffc812] font-black uppercase text-[11px]">
+                <td className="px-3 py-2">Total System</td>
+                <td className="px-3 py-2 text-right">{cgCalculation.totalWeight.toFixed(0)}</td>
+                <td className="px-3 py-2 text-right">—</td>
+                <td className="px-3 py-2 text-right">{cgCalculation.totalMoment.toFixed(0)}</td>
+                <td className="px-3 py-2 text-right">100.0%</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>

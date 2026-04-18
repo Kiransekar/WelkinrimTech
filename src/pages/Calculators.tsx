@@ -196,19 +196,6 @@ export default function Calculators() {
     }
 
     return matchesFilter && matchesSearch;
-  })
-  // Sort: live first, then coming soon, then alphabetically by label
-  .sort((a, b) => {
-    // Status priority: live = 0, beta = 1, soon = 2
-    const statusOrder = { live: 0, beta: 1, soon: 2 };
-    const aOrder = statusOrder[a.status] ?? 3;
-    const bOrder = statusOrder[b.status] ?? 3;
-    if (aOrder !== bOrder) return aOrder - bOrder;
-    // Secondary sort by popularity (popular first)
-    if (a.popular && !b.popular) return -1;
-    if (!a.popular && b.popular) return 1;
-    // Tertiary sort alphabetically
-    return a.label.localeCompare(b.label);
   });
 
   return (
