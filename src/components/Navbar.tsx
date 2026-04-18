@@ -71,6 +71,19 @@ const PRODUCT_CATEGORIES = [
     ),
     products: PRODUCTS.filter(p => p.series === "ips"),
   },
+  {
+    id: "other",
+    label: "Other Systems & Custom Solutions",
+    menuLabel: "OTHER",
+    tagline: "Industrial, Marine & Custom Projects",
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-5 h-5">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M10.34 15.84c-.688-.06-1.386-.054-2.052.018l-1.076.115c-.454.048-.823-.314-.7-.754l.206-.777a10.875 10.875 0 01.353-1.066c.106-.277.067-.589-.107-.822L6.15 11.51c-.266-.364-.093-.896.34-.997l1.042-.244c.484-.113.945-.295 1.365-.54.218-.126.353-.356.335-.606l-.089-1.22c-.033-.45.362-.806.8-.755l.848.1a11.11 11.11 0 011.085.228c.31.092.65-.01.838-.266l.666-.893c.27-.36.837-.36 1.107 0l.666.893c.189.256.529.358.838.266a11.11 11.11 0 011.085-.228l.848-.1c.438-.051.833.305.8.755l-.089 1.22c-.018.25.117.48.335.606.42.245.881.427 1.365.54l1.042.244c.433.101.606.633.34.997l-.816 1.046c-.174.233-.213.545-.107.822.118.31.242.646.353 1.066l.206.777c.123.44-.246.802-.7.754l-1.076-.115c-.666-.072-1.364-.078-2.052-.018l-.51.046c-.445.04-.849.25-1.129.584l-1.35 1.62c-.37.444-1.046.444-1.416 0l-1.35-1.62c-.28-.334-.684-.544-1.129-.584l-.51-.046z" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+      </svg>
+    ),
+    products: PRODUCTS.filter(p => p.series === "other"),
+  },
 ];
 
 const SEGMENTS = [
@@ -266,7 +279,14 @@ export default function Navbar() {
               {SEGMENTS.map(seg => (
                 <button
                   key={seg.id}
-                  onClick={() => setActiveSegment(seg.id)}
+                  onClick={() => {
+                    setActiveSegment(seg.id);
+                    if (seg.id === "other") {
+                      setActiveCategory("other");
+                    } else if (seg.id === "uav") {
+                      setActiveCategory("haemng");
+                    }
+                  }}
                   className={`flex items-center gap-2 px-6 py-1.5 text-[8px] tracking-[0.15em] uppercase font-bold transition-all duration-300 ${
                     activeSegment === seg.id
                       ? "bg-[#ffc812] text-black shadow-sm"
@@ -286,7 +306,7 @@ export default function Navbar() {
               ))}
             </div>
 
-            {activeSegment === "uav" ? (
+            {activeSegment === "uav" || activeSegment === "other" ? (
               <div className="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-0">
                 {/* Left: category list */}
                 <div className="col-span-1 md:col-span-3 border-b md:border-b-0 md:border-r border-gray-100 pr-0 md:pr-4 pb-4 md:pb-0 mb-4 md:mb-0">
@@ -294,7 +314,7 @@ export default function Navbar() {
                     Product Lines
                   </p>
                   <div className="flex md:flex-col gap-1 overflow-x-auto md:overflow-visible pb-2 md:pb-0">
-                    {PRODUCT_CATEGORIES.map((cat) => (
+                    {PRODUCT_CATEGORIES.filter(c => activeSegment === "other" ? c.id === "other" : c.id !== "other").map((cat) => (
                       <button
                         key={cat.id}
                         onClick={() => setActiveCategory(cat.id)}

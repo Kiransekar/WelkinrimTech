@@ -76,6 +76,7 @@ export default function Products() {
     { id: "esc", label: "ESC", count: products.filter(p => p.series === "esc").length },
     { id: "fc", label: "FLIGHT CONTROLLER", count: products.filter(p => p.series === "fc").length },
     { id: "ips", label: "IPS", count: products.filter(p => p.series === "ips").length },
+    { id: "other", label: "OTHER", count: products.filter(p => p.series === "other").length },
   ];
 
   // Derive activeTab directly from hash
@@ -115,7 +116,7 @@ export default function Products() {
         <div className="sticky top-[60px] md:top-[72px] z-30 bg-white border-b border-gray-100 shadow-sm">
           <div className="max-w-7xl mx-auto px-4 md:px-12 flex flex-col lg:flex-row lg:items-center gap-3 md:gap-4 py-3">
             {/* Tabs */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-1 flex-1 w-full">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-1 flex-1 w-full">
               {TABS.map(tab => (
                 <button
                   key={tab.id}

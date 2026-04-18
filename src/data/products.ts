@@ -10,7 +10,7 @@ export type PerfRow = {
 
 export type Product = {
   id: string;
-  series: "haemng" | "maelard" | "esc" | "fc" | "ips";
+  series: "haemng" | "maelard" | "esc" | "fc" | "ips" | "other";
   seriesLabel: string;
   model: string;
   name: string;
@@ -31,6 +31,7 @@ export const SERIES_CFG = {
   esc:     { label: "Electronic Speed Controllers", accent: "#ffc812", textOnAccent: "#000" },
   fc:      { label: "Flight Controller",            accent: "#ffc812", textOnAccent: "#000" },
   ips:     { label: "Integrated Power Systems",     accent: "#ffc812", textOnAccent: "#000" },
+  other:   { label: "Other Systems & Custom Solutions", accent: "#ffc812", textOnAccent: "#000" },
 } as const;
 
 export const PRODUCTS: Product[] = [
@@ -1879,4 +1880,165 @@ export const PRODUCTS: Product[] = [
       { throttle:"100%", voltage:"43.70 V", power:"9,456.68 W", thrust:"35.24 kg", current:"216.40 A", speed:"6,760 RPM", efficiency:"3.73 g/W" },
     ],
   },
+  {
+    id: "portfolio-drdo-cvrde",
+    series: "other", seriesLabel: "Other Systems & Custom Solutions", model: "High Speed generator", name: "High Speed generator", tag: "PORTFOLIO", application: "Aircraft Main Power",
+    keySpecs: [{ label: "Client", value: "DRDO CVRDE" }, { label: "Type", value: "Generator" }],
+    allSpecs: [{ label: "Client", value: "DRDO CVRDE" }, { label: "Application", value: "Aircraft main power generator" }]
+  },
+  {
+    id: "portfolio-prestige",
+    series: "other", seriesLabel: "Other Systems & Custom Solutions", model: "PMSM motor & drive", name: "PMSM motor & drive", tag: "PORTFOLIO", application: "Kitchen Appliances",
+    keySpecs: [{ label: "Power", value: "1.5kW" }, { label: "Speed", value: "14000 RPM" }],
+    allSpecs: [{ label: "Client", value: "Prestige" }, { label: "Application", value: "Combined kitchen appliances" }, { label: "Power", value: "1.5kW" }, { label: "Speed", value: "14000 RPM" }]
+  },
+  {
+    id: "portfolio-lucas-tvs",
+    series: "other", seriesLabel: "Other Systems & Custom Solutions", model: "Compact BLDC Motor drive", name: "Compact BLDC Motor drive", tag: "PORTFOLIO", application: "Air Conditioner ODU",
+    keySpecs: [{ label: "Client", value: "Lucas TVS" }, { label: "Optimized for", value: "Manufacturing" }],
+    allSpecs: [{ label: "Client", value: "Lucas TVS" }, { label: "Application", value: "Air conditioner outdoor units" }]
+  },
+  {
+    id: "portfolio-tav-systems",
+    series: "other", seriesLabel: "Other Systems & Custom Solutions", model: "PMSM Motor drive", name: "PMSM Motor drive", tag: "PORTFOLIO", application: "e-Cycle",
+    keySpecs: [{ label: "Client", value: "TAV Systems" }, { label: "Type", value: "Mid drive" }],
+    allSpecs: [{ label: "Client", value: "TAV Systems" }, { label: "Application", value: "Electric all terrain cycles" }]
+  },
+  {
+    id: "portfolio-gremot",
+    series: "other", seriesLabel: "Other Systems & Custom Solutions", model: "PMSM Motor drive", name: "PMSM Motor drive", tag: "PORTFOLIO", application: "e-Cycle",
+    keySpecs: [{ label: "Voltage", value: "24-36V" }, { label: "Power", value: "250-500W" }],
+    allSpecs: [{ label: "Client", value: "GREMOT" }, { label: "Voltage", value: "24-36V" }, { label: "Power", value: "250-500W" }, { label: "Application", value: "e-cycle application" }]
+  },
+  {
+    id: "portfolio-aerostrovilos",
+    series: "other", seriesLabel: "Other Systems & Custom Solutions", model: "100kW converter", name: "100kW converter", tag: "PORTFOLIO", application: "Turbomachinery",
+    keySpecs: [{ label: "Power", value: "100kW" }, { label: "Client", value: "Aerostrovilos" }],
+    allSpecs: [{ label: "Client", value: "Aerostrovilos" }, { label: "Power", value: "100kW" }, { label: "Application", value: "High speed turbomachinery" }]
+  },
+  {
+    id: "motor-1-1kw",
+    series: "other", seriesLabel: "Other Systems & Custom Solutions", model: "1.1kW PMSM", name: "1.1kW PMSM", tag: "MOTOR", application: "Mixer & Wet Grinder",
+    keySpecs: [{ label: "Power", value: "1.1kW" }, { label: "Speed", value: "15000RPM" }],
+    allSpecs: [{ label: "Spec", value: "1.1kW PMSM" }, { label: "USP", value: "Multi phase motors 15000RPM @0.88Nm / 150RPM @11Nm" }, { label: "Application", value: "Single appliance for mixer and wet grinder" }]
+  },
+  {
+    id: "motor-1-2kw",
+    series: "other", seriesLabel: "Other Systems & Custom Solutions", model: "1.2kW PMSM", name: "1.2kW PMSM", tag: "MOTOR", application: "Home/Blower/Industrial",
+    keySpecs: [{ label: "Power", value: "1.2kW" }, { label: "USP", value: "Single series" }],
+    allSpecs: [{ label: "Spec", value: "1.2kW PMSM" }, { label: "USP", value: "Single series for multiple product category" }, { label: "Application", value: "Home Appliances/Blower/Industrial Fan" }]
+  },
+  {
+    id: "motor-1150w",
+    series: "other", seriesLabel: "Other Systems & Custom Solutions", model: "1150W PMSM", name: "1150W PMSM", tag: "MOTOR", application: "EC Motors, AHUs",
+    keySpecs: [{ label: "Power", value: "1150W" }, { label: "Integrated", value: "IoT / Drive" }],
+    allSpecs: [{ label: "Spec", value: "1150W PMSM" }, { label: "USP", value: "Integrated drive electronics, IoT, industry 4.0" }, { label: "Application", value: "EC Motors, for AHUs and Exhaust" }]
+  },
+  {
+    id: "motor-750w",
+    series: "other", seriesLabel: "Other Systems & Custom Solutions", model: "750W PMSM", name: "750W PMSM", tag: "MOTOR", application: "Home Appliances",
+    keySpecs: [{ label: "Power", value: "750W" }, { label: "Speed", value: "18000RPM" }],
+    allSpecs: [{ label: "Spec", value: "750W PMSM" }, { label: "USP", value: "18000RPM, 1.1Nm, Precise lower speeds" }, { label: "Application", value: "Home Appliances" }]
+  },
+  {
+    id: "motor-200w",
+    series: "other", seriesLabel: "Other Systems & Custom Solutions", model: "200W PMSM", name: "200W PMSM", tag: "MOTOR", application: "EC Motors, AHUs",
+    keySpecs: [{ label: "Power", value: "200W" }, { label: "Integrated", value: "IoT / Drive" }],
+    allSpecs: [{ label: "Spec", value: "200W PMSM" }, { label: "USP", value: "Integrated drive electronics, IoT, industry 4.0" }, { label: "Application", value: "EC Motors, for AHUs and Exhaust" }]
+  },
+  {
+    id: "motor-35w",
+    series: "other", seriesLabel: "Other Systems & Custom Solutions", model: "35W PMSM/BLDC", name: "35W PMSM/BLDC", tag: "MOTOR", application: "Domestic Ceiling Fan",
+    keySpecs: [{ label: "Power", value: "35W" }, { label: "Phase", value: "1φ High voltage" }],
+    allSpecs: [{ label: "Spec", value: "35W PMSM/BLDC" }, { label: "USP", value: "1φ High voltage" }, { label: "Application", value: "Domestic ceiling fan" }]
+  },
+  {
+    id: "motor-15kw",
+    series: "other", seriesLabel: "Other Systems & Custom Solutions", model: "72V 15kW PMSM", name: "72V 15kW PMSM", tag: "MOTOR", application: "Electric Traction",
+    keySpecs: [{ label: "Voltage", value: "72V" }, { label: "Power", value: "15kW" }],
+    allSpecs: [{ label: "Spec", value: "72V 15kW PMSM" }, { label: "USP", value: "Single series for multiple power 5-15kW" }, { label: "Application", value: "Electric Traction" }]
+  },
+  {
+    id: "hvdrive-1-1kw",
+    series: "other", seriesLabel: "Other Systems & Custom Solutions", model: "1.1kW PMSM Drive", name: "1.1kW PMSM Drive", tag: "HV DRIVE", application: "Mixer/Wet Grinder",
+    keySpecs: [{ label: "Spec", value: "1.1kW PMSM" }, { label: "Type", value: "Multi Motor drive" }],
+    allSpecs: [{ label: "Spec", value: "1.1kW PMSM" }, { label: "USP", value: "Multi Motor drive 2 x Motors" }, { label: "Application", value: "Single appliance for mixer and wet grinder" }]
+  },
+  {
+    id: "hvdrive-110w",
+    series: "other", seriesLabel: "Other Systems & Custom Solutions", model: "110W PMSM Drive", name: "110W PMSM Drive", tag: "HV DRIVE", application: "Home Appliances/ODU",
+    keySpecs: [{ label: "Spec", value: "110W PMSM" }, { label: "Feature", value: "400V DC / Small" }],
+    allSpecs: [{ label: "Spec", value: "110W PMSM" }, { label: "USP", value: "400V DC, Smallest formfactor" }, { label: "Application", value: "Home Appliances/ Aircon ODU" }]
+  },
+  {
+    id: "hvdrive-35w",
+    series: "other", seriesLabel: "Other Systems & Custom Solutions", model: "35W BLDC/PMSM Drive", name: "35W BLDC/PMSM Drive", tag: "HV DRIVE", application: "Ceiling Fan",
+    keySpecs: [{ label: "Spec", value: "35W BLDC" }, { label: "Feature", value: "IR/RF enabled" }],
+    allSpecs: [{ label: "Spec", value: "35W BLDC/PMSM" }, { label: "USP", value: "IR/RF enabled Wall regulator" }, { label: "Application", value: "Domestic Ceiling fan" }]
+  },
+  {
+    id: "hvdrive-120w",
+    series: "other", seriesLabel: "Other Systems & Custom Solutions", model: "120W PMSM Drive", name: "120W PMSM Drive", tag: "HV DRIVE", application: "Industrial Ventilations",
+    keySpecs: [{ label: "Spec", value: "120W PMSM" }, { label: "Feature", value: "IoT/Ind 4.0" }],
+    allSpecs: [{ label: "Spec", value: "120W PMSM" }, { label: "USP", value: "IoT, Industry 4.0" }, { label: "Application", value: "Industrial ventilations" }]
+  },
+  {
+    id: "hvdrive-5500w",
+    series: "other", seriesLabel: "Other Systems & Custom Solutions", model: "5500W BLDC Drive", name: "5500W BLDC Drive", tag: "HV DRIVE", application: "Irrigation/Industrial",
+    keySpecs: [{ label: "Spec", value: "5500W BLDC" }, { label: "Feature", value: "Grid+Solar MPPT" }],
+    allSpecs: [{ label: "Spec", value: "5500W BLDC" }, { label: "USP", value: "Grid + Solar MPPT, IoT, industry 4.0" }, { label: "Application", value: "Irrigation, industrial" }]
+  },
+  {
+    id: "hvdrive-750w",
+    series: "other", seriesLabel: "Other Systems & Custom Solutions", model: "750W PMSM/BLDC Drive", name: "750W PMSM/BLDC Drive", tag: "HV DRIVE", application: "Domestic Appliances",
+    keySpecs: [{ label: "Spec", value: "750W PMSM" }, { label: "Feature", value: "1φ HV" }],
+    allSpecs: [{ label: "Spec", value: "750W PMSM/BLDC" }, { label: "USP", value: "1φ High voltage, motor intertated" }, { label: "Application", value: "domestic appliances" }]
+  },
+  {
+    id: "lvdrive-350w",
+    series: "other", seriesLabel: "Other Systems & Custom Solutions", model: "24-48V 350W Drive", name: "24-48V 350W Drive", tag: "LV DRIVE", application: "LP e-Cycle/Kick scooter",
+    keySpecs: [{ label: "Spec", value: "24-48V 350W" }, { label: "Form", value: "Single PCB flat" }],
+    allSpecs: [{ label: "Spec", value: "24-48V 350W" }, { label: "USP", value: "Single PCB flat formfactor" }, { label: "Application", value: "LP e-Cycle, Kick scooter" }]
+  },
+  {
+    id: "lvdrive-500w",
+    series: "other", seriesLabel: "Other Systems & Custom Solutions", model: "48V 500W Drive", name: "48V 500W Drive", tag: "LV DRIVE", application: "AT e-Cycle/3W",
+    keySpecs: [{ label: "Spec", value: "48V 500W" }, { label: "Form", value: "Single PCB flat" }],
+    allSpecs: [{ label: "Spec", value: "48V 500W" }, { label: "USP", value: "Single PCB flat formfactor" }, { label: "Application", value: "All terrain e-Cycle, 3W with gear" }]
+  },
+  {
+    id: "lvdrive-750w-hp",
+    series: "other", seriesLabel: "Other Systems & Custom Solutions", model: "36-48V 750W HP Drive", name: "36-48V 750W HP Drive", tag: "LV DRIVE", application: "High power Mid drive",
+    keySpecs: [{ label: "Spec", value: "36-48V 750W" }, { label: "Form", value: "Custom narrow" }],
+    allSpecs: [{ label: "Spec", value: "36-48V 750W" }, { label: "USP", value: "Custom design to fit in narrow space" }, { label: "Application", value: "High power Mid drive Motors" }]
+  },
+  {
+    id: "lvdrive-750w-lp",
+    series: "other", seriesLabel: "Other Systems & Custom Solutions", model: "36-48V 750W LP Drive", name: "36-48V 750W LP Drive", tag: "LV DRIVE", application: "Low Power Mid drive",
+    keySpecs: [{ label: "Spec", value: "36-48V 750W" }, { label: "Form", value: "Custom narrow" }],
+    allSpecs: [{ label: "Spec", value: "36-48V 750W" }, { label: "USP", value: "Custom design to fit in narrow space" }, { label: "Application", value: "Low Power Mid Drive Motors" }]
+  },
+  {
+    id: "lvdrive-1500w",
+    series: "other", seriesLabel: "Other Systems & Custom Solutions", model: "48-72V 1500W Drive", name: "48-72V 1500W Drive", tag: "LV DRIVE", application: "3W / 1T payload",
+    keySpecs: [{ label: "Spec", value: "48-72 1500W" }, { label: "Form", value: "Single PCB flat" }],
+    allSpecs: [{ label: "Spec", value: "48-72 1500W" }, { label: "USP", value: "Singe PCB, Flat Formfactor" }, { label: "Application", value: "3W, 800 kg-1T payload" }]
+  },
+  {
+    id: "thruster-uw",
+    series: "other", seriesLabel: "Other Systems & Custom Solutions", model: "Underwater Thruster", name: "Underwater Thruster", tag: "THRUSTER", application: "ROV/AUV",
+    keySpecs: [{ label: "Voltage", value: "12-16V" }, { label: "Thrust", value: "5Kgf Fwd" }],
+    allSpecs: [
+      { label: "Voltage", value: "12-16V" },
+      { label: "Configuration", value: "12N14P" },
+      { label: "Winding Resistance", value: "126mΩ" },
+      { label: "Winding Inductance", value: "56uH" },
+      { label: "Peak Current (10s)", value: "20A" },
+      { label: "Peak Power (10s)", value: "600W" },
+      { label: "Thrust", value: "5Kgf Fwd & 4Kgf Rev" },
+      { label: "Weight", value: "250g" },
+      { label: "Dimension (Motor)", value: "38 x 50 mm" },
+      { label: "Dimension (Prop)", value: "~ 90-100mm" }
+    ]
+  }
 ];
