@@ -1920,7 +1920,14 @@ export const PRODUCTS: Product[] = [
     id: "motor-1-1kw",
     series: "other", seriesLabel: "Other Systems & Custom Solutions", model: "1.1kW PMSM", name: "1.1kW PMSM", tag: "MOTOR", application: "Mixer & Wet Grinder",
     keySpecs: [{ label: "Power", value: "1.1kW" }, { label: "Speed", value: "15000RPM" }],
-    allSpecs: [{ label: "Spec", value: "1.1kW PMSM" }, { label: "USP", value: "Multi phase motors 15000RPM @0.88Nm / 150RPM @11Nm" }, { label: "Application", value: "Single appliance for mixer and wet grinder" }]
+    allSpecs: [
+      { label: "Spec", value: "1.1kW PMSM" }, 
+      { label: "KV Rating", value: "100 KV" },
+      { label: "Rated Voltage", value: "220V AC" },
+      { label: "Peak Current", value: "10A" },
+      { label: "USP", value: "Multi phase motors 15000RPM @0.88Nm / 150RPM @11Nm" }, 
+      { label: "Application", value: "Single appliance for mixer and wet grinder" }
+    ]
   },
   {
     id: "motor-1-2kw",
@@ -2027,17 +2034,18 @@ export const PRODUCTS: Product[] = [
   {
     id: "thruster-uw",
     series: "other", seriesLabel: "Other Systems & Custom Solutions", model: "Underwater Thruster", name: "Underwater Thruster", tag: "THRUSTER", application: "ROV/AUV",
-    keySpecs: [{ label: "Voltage", value: "12-16V" }, { label: "Thrust", value: "5Kgf Fwd" }],
+    keySpecs: [{ label: "Rated Voltage", value: "4S (14.8V)" }, { label: "Thrust", value: "5Kgf Fwd" }],
     allSpecs: [
-      { label: "Voltage", value: "12-16V" },
+      { label: "Rated Voltage", value: "12-16V (3S-4S)" },
+      { label: "KV Rating", value: "300 KV" },
       { label: "Configuration", value: "12N14P" },
       { label: "Winding Resistance", value: "126mΩ" },
       { label: "Winding Inductance", value: "56uH" },
-      { label: "Peak Current (10s)", value: "20A" },
-      { label: "Peak Power (10s)", value: "600W" },
+      { label: "Peak Current", value: "20A" },
+      { label: "Peak Power", value: "600W" },
       { label: "Thrust", value: "5Kgf Fwd & 4Kgf Rev" },
       { label: "Weight", value: "250g" },
-      { label: "Dimension (Motor)", value: "38 x 50 mm" },
+      { label: "Dimension", value: "38 x 50 mm" },
       { label: "Dimension (Prop)", value: "~ 90-100mm" }
     ]
   }

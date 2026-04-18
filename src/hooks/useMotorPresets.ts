@@ -19,26 +19,32 @@ export interface MotorPreset {
 }
 
 function parseKVFromSpec(specs: { label: string; value: string }[]): number {
-  const kvSpec = specs.find(s => s.label === "KV Rating");
+  const kvSpec = specs.find(s => s.label === "KV Rating" || s.label.includes("KV"));
   if (!kvSpec) return 1000;
   const match = kvSpec.value.match(/(\d+)/);
   return match ? parseInt(match[1], 10) : 1000;
 }
 
 function parseVoltageFromSpec(specs: { label: string; value: string }[]): number {
-  const voltSpec = specs.find(s => s.label === "Rated Voltage");
+  const voltSpec = specs.find(s => s.label === "Rated Voltage" || s.label === "Voltage");
   if (!voltSpec) return 6;
-  // Handle voltage ranges like "6S–12S" or "24–28S" - use the higher value
-  const matches = voltSpec.value.match(/(\d+)S/g);
-  if (matches && matches.length > 0) {
-    const voltages = matches.map(m => parseInt(m, 10));
-    return Math.max(...voltages); // Use higher voltage for safety margin
+  
+  // Try to find S rating (e.g. "6S")
+  const sMatch = voltSpec.value.match(/(\d+)S/i);
+  if (sMatch) return parseInt(sMatch[1], 10);
+
+  // Fallback: if value is "12-16V", parse the max and convert to S (approx V/3.7)
+  const vMatch = voltSpec.value.match(/(\d+)V/i);
+  if (vMatch) {
+    const volts = parseInt(vMatch[1], 10);
+    return Math.max(1, Math.round(volts / 3.7));
   }
+
   return 6;
 }
 
 function parseCurrentFromSpec(specs: { label: string; value: string }[]): number {
-  const currSpec = specs.find(s => s.label === "Peak Current");
+  const currSpec = specs.find(s => s.label === "Peak Current" || s.label.includes("Current"));
   if (!currSpec) return 30;
   const match = currSpec.value.match(/(\d+)/);
   return match ? parseInt(match[1], 10) : 30;
@@ -83,7 +89,7 @@ function estimateMotorRmMohm(_kv: number, _voltage: number, peakCurrent: number)
 
 export function useMotorPresets(seriesFilter?: string) {
   const presets = useMemo(() => {
-    const allMotors = PRODUCTS.filter(p => p.series === "haemng" || p.series === "maelard");
+    const allMotors = PRODUCTS.filter(p => p.series === "haemng" || p.series === "maelard" || p.series === "other");
 
     if (seriesFilter && seriesFilter !== "all") {
       return allMotors

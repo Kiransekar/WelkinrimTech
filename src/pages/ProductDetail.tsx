@@ -45,12 +45,12 @@ export default function ProductDetail() {
   const seriesLogoSrc =
     product.series === "haemng" ? `${import.meta.env.BASE_URL}haemng.svg`
     : product.series === "maelard" ? `${import.meta.env.BASE_URL}Maelard.svg`
-    : null;
+    : `${import.meta.env.BASE_URL}favicon.svg`;
 
   /* ── series-level hero image (transparent PNG motor photo for Haemng & Maelard) ── */
   const seriesHeroImage =
     (product.series === "haemng" || product.series === "maelard") ? `${import.meta.env.BASE_URL}welkinrim-motor.png`
-    : null;
+    : `${import.meta.env.BASE_URL}favicon.svg`;
 
   /* Final hero image: prefer product-specific thumbnailUrl, then series hero, then wireframe */
   const heroImageSrc = product.thumbnailUrl || seriesHeroImage || null;

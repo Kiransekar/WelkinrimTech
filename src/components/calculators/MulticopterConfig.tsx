@@ -228,7 +228,7 @@ export default function MulticopterPanel() {
     setInputs(prev => ({ ...prev, [key]: v })), []);
 
   // --- Chained Dropdown Logic ---
-  const motorPresets = useMotorPresets("multicopter");
+  const motorPresets = useMotorPresets("all");
   
   const compatibleESCs = useMemo(() => {
     const preset = getPresetById(selectedPreset);

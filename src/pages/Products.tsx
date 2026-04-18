@@ -6,7 +6,7 @@ import Footer from "@/components/Footer";
 
 type Product = {
   id: string;
-  series: "haemng" | "maelard" | "esc" | "fc" | "ips";
+  series: "haemng" | "maelard" | "esc" | "fc" | "ips" | "other";
   seriesLabel: string;
   model: string;
   name: string;
