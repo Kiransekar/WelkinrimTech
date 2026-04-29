@@ -28,7 +28,7 @@ export type Product = {
 export const SERIES_CFG = {
   haemng:  { label: "Haemng Series", useSvgLogo: true, logoSrc: "haemng.svg", accent: "#ffc812", textOnAccent: "#000" },
   maelard: { label: "Maelard Series", useSvgLogo: true, logoSrc: "Maelard.svg", accent: "#ffc812", textOnAccent: "#000" },
-  esc:     { label: "Electronic Speed Controllers", accent: "#ffc812", textOnAccent: "#000" },
+  esc:     { label: "ESCs", accent: "#ffc812", textOnAccent: "#000" },
   fc:      { label: "Flight Controller",            accent: "#ffc812", textOnAccent: "#000" },
   ips:     { label: "Integrated Power Systems",     accent: "#ffc812", textOnAccent: "#000" },
   other:   { label: "Other Systems & Custom Solutions", accent: "#ffc812", textOnAccent: "#000" },

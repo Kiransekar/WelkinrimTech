@@ -32,7 +32,7 @@ function useHash() {
   return hash;
 }
 
-const USE_DATABASE = false; // Set to true to fetch from Supabase
+const USE_DATABASE = true; // Fetch from Supabase
 
 export default function Products() {
   const [, navigate] = useLocation();
