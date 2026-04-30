@@ -9,11 +9,11 @@ const PRODUCT_CATEGORIES = [
     menuLabel: "HAEMNG",
     tagline: "UAV & eVTOL Motors — 11 variants",
     icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-5 h-5">
-        <circle cx="12" cy="12" r="5" />
-        <circle cx="12" cy="12" r="10" strokeDasharray="3 2" />
-        <path d="M12 2v3M12 19v3M2 12h3M19 12h3" />
-      </svg>
+      <img 
+        src="/assets/prod_list/haemng_logo_128.svg" 
+        className="w-5 h-5 object-contain brightness-0 opacity-50 group-hover:opacity-100 transition-all"
+        alt=""
+      />
     ),
     products: PRODUCTS.filter(p => p.series === "haemng"),
   },
@@ -23,11 +23,11 @@ const PRODUCT_CATEGORIES = [
     menuLabel: "MAELARD",
     tagline: "Marine, UAV & Multi-mission — 10 variants",
     icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-5 h-5">
-        <ellipse cx="12" cy="12" rx="5" ry="9" />
-        <ellipse cx="12" cy="12" rx="10" ry="4" />
-        <circle cx="12" cy="12" r="1.5" fill="currentColor" />
-      </svg>
+      <img 
+        src="/assets/prod_list/maelard_logo_128.svg" 
+        className="w-5 h-5 object-contain brightness-0 opacity-50 group-hover:opacity-100 transition-all"
+        alt=""
+      />
     ),
     products: PRODUCTS.filter(p => p.series === "maelard"),
   },
@@ -72,6 +72,46 @@ const PRODUCT_CATEGORIES = [
     products: PRODUCTS.filter(p => p.series === "ips"),
   },
   {
+    id: "cellar",
+    label: "Cellar Series",
+    menuLabel: "CELLAR",
+    tagline: "High-Density Storage & Industrial — 4 models",
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-5 h-5">
+        <rect x="4" y="4" width="6" height="6" rx="1" />
+        <rect x="14" y="4" width="6" height="6" rx="1" />
+        <rect x="4" y="14" width="6" height="6" rx="1" />
+        <rect x="14" y="14" width="6" height="6" rx="1" />
+      </svg>
+    ),
+    products: PRODUCTS.filter(p => p.series === "cellar"),
+  },
+  {
+    id: "vagans",
+    label: "Vagans Series",
+    menuLabel: "VAGANS",
+    tagline: "Mobile & Robotic Platforms — 6 models",
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-5 h-5">
+        <path d="M4 12h16M12 4l8 8-8 8" />
+        <circle cx="12" cy="12" r="9" />
+      </svg>
+    ),
+    products: PRODUCTS.filter(p => p.series === "vagans"),
+  },
+  {
+    id: "sciatic",
+    label: "Sciatic Series",
+    menuLabel: "SCIATIC",
+    tagline: "High-Frequency & Precision Control — 3 models",
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-5 h-5">
+        <path d="M2 12h4l2-8 4 16 2-8h8" />
+      </svg>
+    ),
+    products: PRODUCTS.filter(p => p.series === "sciatic"),
+  },
+  {
     id: "other",
     label: "Other Systems & Custom Solutions",
     menuLabel: "OTHER",
@@ -87,21 +127,21 @@ const PRODUCT_CATEGORIES = [
 ];
 
 const SEGMENTS = [
-  { id: "uav",      label: "UAV" },
-  { id: "marine",   label: "Marine" },
-  { id: "land",     label: "Land" },
+  { id: "uav", label: "UAV" },
+  { id: "marine", label: "Marine" },
+  { id: "land", label: "Land" },
   { id: "robotics", label: "Robotics" },
-  { id: "other",    label: "Other Products" },
+  { id: "other", label: "Other Products" },
 ];
 
 export default function Navbar() {
-  const [scrolled, setScrolled]             = useState(false);
-  const [menuOpen, setMenuOpen]             = useState(false);
-  const [megaOpen, setMegaOpen]             = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [megaOpen, setMegaOpen] = useState(false);
   const [activeCategory, setActiveCategory] = useState(PRODUCT_CATEGORIES[0].id);
-  const [activeSegment, setActiveSegment]   = useState("uav");
+  const [activeSegment, setActiveSegment] = useState("uav");
 
-  const [location, navigate]               = useLocation();
+  const [location, navigate] = useLocation();
 
   const isHome = location === "/" || location === "";
 
@@ -153,29 +193,27 @@ export default function Navbar() {
   return (
     <>
       <nav
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-          isTransparent
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${isTransparent
             ? "bg-transparent"
             : forceDark
-            ? "bg-[#0a0a0a]/95 backdrop-blur-md shadow-sm"
-            : "bg-white/95 backdrop-blur-md shadow-sm"
-        }`}
+              ? "bg-[#0a0a0a]/95 backdrop-blur-md shadow-sm"
+              : "bg-white/95 backdrop-blur-md shadow-sm"
+          }`}
       >
-          <div className="max-w-7xl mx-auto px-4 md:px-6 py-3 md:py-4 flex items-center">
+        <div className="max-w-7xl mx-auto px-4 md:px-6 py-3 md:py-4 flex items-center">
 
           {/* ── Desktop Nav (left) ── */}
           <div className="hidden md:flex items-center gap-8">
             {[
-              { label: "Home",       action: () => scrollToSection("home")       },
-              { label: "About",      action: () => { setMenuOpen(false); navigate("/about"); } },
-              { label: "Calculators",action: () => { setMenuOpen(false); navigate("/calculators"); } },
+              { label: "Home", action: () => scrollToSection("home") },
+              { label: "About", action: () => { setMenuOpen(false); navigate("/about"); } },
+              { label: "Calculators", action: () => { setMenuOpen(false); navigate("/calculators"); } },
             ].map(({ label, action }) => (
               <button
                 key={label}
                 onClick={action}
-                className={`text-xs tracking-widest uppercase font-medium transition-all duration-300 hover:text-[#ffc812] relative group ${
-                  useDarkText ? "text-black" : "text-white"
-                }`}
+                className={`text-xs tracking-widest uppercase font-medium transition-all duration-300 hover:text-[#ffc812] relative group ${useDarkText ? "text-black" : "text-white"
+                  }`}
                 style={{ fontFamily: "Michroma, sans-serif" }}
               >
                 {label}
@@ -187,9 +225,8 @@ export default function Navbar() {
             <div className="relative">
               <button
                 onClick={() => setMegaOpen(!megaOpen)}
-                className={`text-xs tracking-widest uppercase font-medium transition-all duration-300 flex items-center gap-1 relative group ${
-                  useDarkText ? "text-black" : "text-white"
-                } ${megaOpen ? "text-[#ffc812]" : "hover:text-[#ffc812]"}`}
+                className={`text-xs tracking-widest uppercase font-medium transition-all duration-300 flex items-center gap-1 relative group ${useDarkText ? "text-black" : "text-white"
+                  } ${megaOpen ? "text-[#ffc812]" : "hover:text-[#ffc812]"}`}
                 style={{ fontFamily: "Michroma, sans-serif" }}
               >
                 <span>Products</span>
@@ -239,10 +276,10 @@ export default function Navbar() {
         <div className={`md:hidden transition-all duration-300 overflow-hidden ${menuOpen ? "max-h-[500px] bg-white/97 backdrop-blur-md border-t border-gray-100" : "max-h-0"}`}>
           <div className="px-4 py-4 flex flex-col gap-4">
             {[
-              { label: "Home",        action: () => scrollToSection("home")       },
-              { label: "Products",    action: () => goToProducts()                },
+              { label: "Home", action: () => scrollToSection("home") },
+              { label: "Products", action: () => goToProducts() },
               { label: "Calculators", action: () => { setMenuOpen(false); navigate("/calculators"); } },
-              { label: "About",       action: () => { setMenuOpen(false); navigate("/about"); } },
+              { label: "About", action: () => { setMenuOpen(false); navigate("/about"); } },
             ].map(({ label, action }) => (
               <button
                 key={label}
@@ -265,9 +302,8 @@ export default function Navbar() {
       </nav>
 
       <div
-        className={`fixed top-[60px] md:top-[72px] left-0 right-0 z-40 transition-all duration-300 ${
-          megaOpen ? "opacity-100 translate-y-0 pointer-events-auto" : "opacity-0 -translate-y-2 pointer-events-none"
-        }`}
+        className={`fixed top-[60px] md:top-[72px] left-0 right-0 z-40 transition-all duration-300 ${megaOpen ? "opacity-100 translate-y-0 pointer-events-auto" : "opacity-0 -translate-y-2 pointer-events-none"
+          }`}
       >
         <div className="bg-white border-b border-gray-100 shadow-2xl overflow-y-auto max-h-[80vh] md:max-h-none">
 
@@ -287,20 +323,18 @@ export default function Navbar() {
                       setActiveCategory("haemng");
                     }
                   }}
-                  className={`flex items-center gap-2 px-6 py-1.5 text-[8px] tracking-[0.15em] uppercase font-bold transition-all duration-300 ${
-                    activeSegment === seg.id
+                  className={`flex items-center gap-2 px-6 py-1.5 text-[8px] tracking-[0.15em] uppercase font-bold transition-all duration-300 ${activeSegment === seg.id
                       ? "bg-[#ffc812] text-black shadow-sm"
                       : "bg-gray-50 text-[#808080] hover:bg-gray-100 hover:text-black"
-                  }`}
+                    }`}
                   style={{ fontFamily: "Michroma, sans-serif", transform: "skewX(-10deg)" }}
                 >
                   <div className="flex items-center gap-2" style={{ transform: "skewX(10deg)" }}>
                     {seg.label}
-                    <span className={`w-1.5 h-1.5 rounded-full animate-pulse ${
-                      activeSegment === seg.id 
-                        ? "bg-black" 
+                    <span className={`w-1.5 h-1.5 rounded-full animate-pulse ${activeSegment === seg.id
+                        ? "bg-black"
                         : seg.id === "uav" ? "bg-[#22c55e]" : "bg-[#ffc812]"
-                    }`} />
+                      }`} />
                   </div>
                 </button>
               ))}
@@ -318,9 +352,8 @@ export default function Navbar() {
                       <button
                         key={cat.id}
                         onClick={() => setActiveCategory(cat.id)}
-                        className={`flex items-center gap-2 md:gap-3 px-2 md:px-3 py-2 rounded-sm text-left transition-all duration-200 group flex-shrink-0 ${
-                          activeCategory === cat.id ? "bg-[#ffc812]/10 text-black" : "text-[#444] hover:bg-gray-50"
-                        }`}
+                        className={`flex items-center gap-2 md:gap-3 px-2 md:px-3 py-2 rounded-sm text-left transition-all duration-200 group flex-shrink-0 ${activeCategory === cat.id ? "bg-[#ffc812]/10 text-black" : "text-[#444] hover:bg-gray-50"
+                          }`}
                       >
                         <span className={`transition-colors duration-200 flex-shrink-0 ${activeCategory === cat.id ? "text-[#ffc812]" : "text-[#808080] group-hover:text-black"}`}>
                           {cat.icon}
@@ -330,7 +363,7 @@ export default function Navbar() {
                             className="w-[190px] h-5 text-[11px] font-black leading-none tracking-[0.08em] uppercase whitespace-nowrap flex items-center"
                             style={{
                               fontFamily: "Michroma, sans-serif",
-                              fontWeight: 700,
+                              fontWeight: 400,
                               WebkitTextStroke: "0.25px currentColor",
                               textShadow: "0.2px 0 currentColor, -0.2px 0 currentColor",
                             }}
@@ -375,12 +408,21 @@ export default function Navbar() {
                       >
                         <div className="w-full h-12 md:h-16 bg-gray-50 mb-1 md:mb-2 flex items-center justify-center group-hover:bg-[#ffc812]/5 transition-colors duration-200">
                           <div className="flex flex-col items-center">
-                            <img src={`${import.meta.env.BASE_URL}favicon.svg`} alt="favicon" className="h-[10px] md:h-[12px] w-auto opacity-70 mb-0.5" />
-                            <span className="text-[7px] md:text-[9px] font-black text-black/30 uppercase" style={{ fontFamily: "Michroma, sans-serif" }}>{p.name}</span>
+                            {p.series === 'haemng' || p.series === 'maelard' ? (
+                              <img
+                                src={`${import.meta.env.BASE_URL}${p.series === 'maelard' ? 'Maelard.svg' : 'haemng.svg'}`}
+                                alt={p.series}
+                                className="h-5 md:h-7 w-auto opacity-80"
+                              />
+                            ) : (
+                              <img src={`${import.meta.env.BASE_URL}favicon.svg`} alt="favicon" className="h-4 md:h-5 w-auto opacity-70" />
+                            )}
                           </div>
                         </div>
-                        <p className="text-[7px] md:text-[8px] text-[#ffc812] tracking-widest uppercase font-bold mb-0.5 truncate" style={{ fontFamily: "Michroma, sans-serif" }}>{p.tag}</p>
-                        <p className="text-xs font-bold text-black truncate" style={{ fontFamily: "Michroma, sans-serif" }}>{p.model}</p>
+                        <p className="text-xs truncate" style={{ fontFamily: "Michroma, sans-serif", fontWeight: 400 }}>
+                          <span className="text-[#ffc812]">{p.model.split(' ')[0]}</span>{' '}
+                          <span className="text-black">{p.model.split(' ').slice(1).join(' ')}</span>
+                        </p>
                         <div className="flex flex-wrap gap-0.5 md:gap-1 mt-1 md:mt-1.5">
                           {p.keySpecs.map((s) => (
                             <span key={s.label} className="text-[6px] md:text-[7px] bg-gray-100 text-[#444] px-1 py-0.5" style={{ fontFamily: "Lexend, sans-serif" }}>{s.value}</span>
@@ -421,22 +463,22 @@ export default function Navbar() {
               /* ── Coming Soon panel for non-UAV segments ── */
               <div className="flex flex-col items-center justify-center gap-4 text-center py-12">
                 <p className="text-[9px] tracking-[0.3em] uppercase text-[#ffc812] mb-1"
-                   style={{ fontFamily: "Michroma, sans-serif" }}>
+                  style={{ fontFamily: "Michroma, sans-serif" }}>
                   Coming Soon
                 </p>
                 <h3 className="text-xl md:text-2xl font-bold text-black"
-                    style={{ fontFamily: "Michroma, sans-serif" }}>
+                  style={{ fontFamily: "Michroma, sans-serif" }}>
                   {SEGMENTS.find(s => s.id === activeSegment)?.label} Products
                 </h3>
                 <p className="text-sm text-[#808080] max-w-md"
-                   style={{ fontFamily: "Lexend, sans-serif" }}>
+                  style={{ fontFamily: "Lexend, sans-serif" }}>
                   We're expanding our electric drive solutions to this segment.
                   Contact us for early access or custom requirements.
                 </p>
                 <div className="flex items-center gap-2 mt-1">
                   <div className="w-1.5 h-1.5 rounded-full bg-[#ffc812] animate-pulse" />
                   <p className="text-[10px] tracking-widest uppercase text-[#555]"
-                     style={{ fontFamily: "Michroma, sans-serif" }}>In development</p>
+                    style={{ fontFamily: "Michroma, sans-serif" }}>In development</p>
                 </div>
                 <button
                   onClick={() => { setMegaOpen(false); scrollToSection("contact"); }}

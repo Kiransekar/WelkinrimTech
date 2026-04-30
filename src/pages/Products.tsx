@@ -40,6 +40,7 @@ export default function Products() {
   const [search, setSearch] = useState("");
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const [activeVoltage, setActiveVoltage] = useState("all");
 
   // Fetch products from database or use static data
   useEffect(() => {
@@ -68,29 +69,42 @@ export default function Products() {
     }, 100);
   };
 
-  // Generate tabs dynamically from products
-  const TABS = [
-    { id: "all", label: "ALL", count: products.length },
+  // Generate family tabs
+  const FAMILIES = [
+    { id: "all", label: "All", count: products.length },
     { id: "haemng", label: "HAEMNG", count: products.filter(p => p.series === "haemng").length },
     { id: "maelard", label: "MAELARD", count: products.filter(p => p.series === "maelard").length },
     { id: "esc", label: "ESC", count: products.filter(p => p.series === "esc").length },
-    { id: "fc", label: "FLIGHT CONTROLLER", count: products.filter(p => p.series === "fc").length },
+    { id: "fc", label: "Auto Pilot", count: products.filter(p => p.series === "fc").length },
     { id: "ips", label: "IPS", count: products.filter(p => p.series === "ips").length },
-    { id: "other", label: "OTHER", count: products.filter(p => p.series === "other").length },
+    { id: "other", label: "Other", count: products.filter(p => p.series === "other").length },
   ];
 
-  // Derive activeTab directly from hash
-  const activeTab = (hash && TABS.some(t => t.id === hash)) ? hash : "all";
+  // Extract unique voltages from products
+  const VOLTAGES = [
+    "all",
+    ...Array.from(new Set(products.map(p => {
+      const voltSpec = p.keySpecs.find(s => s.label === "Voltage" || s.label === "Battery");
+      return voltSpec ? voltSpec.value : null;
+    }).filter(v => v !== null))).sort()
+  ];
+
+  // Derive activeFamily directly from hash
+  const activeFamily = (hash && FAMILIES.some(t => t.id === hash)) ? hash : "all";
 
   const visible = products.filter(p => {
-    const matchTab = activeTab === "all" || p.series === activeTab;
+    const matchFamily = activeFamily === "all" || p.series === activeFamily;
+    
+    const voltSpec = p.keySpecs.find(s => s.label === "Voltage" || s.label === "Battery");
+    const matchVoltage = activeVoltage === "all" || (voltSpec && voltSpec.value === activeVoltage);
+
     const q = search.toLowerCase();
     const matchSearch = !q ||
       p.model.toLowerCase().includes(q) ||
       p.tag.toLowerCase().includes(q) ||
       p.application.toLowerCase().includes(q) ||
       p.keySpecs.some(s => s.value.toLowerCase().includes(q));
-    return matchTab && matchSearch;
+    return matchFamily && matchVoltage && matchSearch;
   });
 
   const grouped = Object.keys(SERIES_CFG).map(key => ({
@@ -103,52 +117,79 @@ export default function Products() {
     <>
       <div className="min-h-screen bg-white">
         {/* ── Page header ── */}
-        <div className="bg-black pt-24 md:pt-28 pb-8 md:pb-12">
-          <div className="max-w-7xl mx-auto px-4 md:px-12">
-            <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold text-white leading-tight" style={{ fontFamily: "Michroma, sans-serif" }}>
+        <div className="bg-black pt-16 md:pt-20 pb-4 md:pb-6">
+          <div className="max-w-7xl mx-auto px-6 md:px-12 flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <h1 className="text-2xl md:text-4xl lg:text-5xl font-bold text-white leading-tight" style={{ fontFamily: "Michroma, sans-serif" }}>
               Product <span className="text-[#ffc812]">Catalogue</span>
             </h1>
-
+            
+            {/* Search integrated in header */}
+            <div className="relative group w-full md:w-64 lg:w-80">
+              <input
+                type="text"
+                placeholder="Search models..."
+                value={search}
+                onChange={e => setSearch(e.target.value)}
+                className="w-full bg-white/10 border border-white/20 px-4 py-2.5 text-[10px] text-white focus:outline-none focus:border-[#ffc812] transition-all duration-300 rounded-sm"
+                style={{ fontFamily: "Michroma, sans-serif" }}
+              />
+              <div className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40">
+                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+              </div>
+            </div>
           </div>
         </div>
 
         {/* ── Sticky filter bar ── */}
-        <div className="sticky top-[60px] md:top-[72px] z-30 bg-white border-b border-gray-100 shadow-sm">
-          <div className="max-w-7xl mx-auto px-4 md:px-12 flex flex-col lg:flex-row lg:items-center gap-3 md:gap-4 py-3">
-            {/* Tabs */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-1 flex-1 w-full">
-              {TABS.map(tab => (
-                <button
-                  key={tab.id}
-                  onClick={() => { window.location.hash = tab.id; setSearch(""); }}
-                  className={`flex items-center justify-center gap-1 px-2 md:px-3 py-2 text-[9px] tracking-wide uppercase font-bold whitespace-nowrap transition-all duration-200 border-b-2 ${
-                    activeTab === tab.id
-                      ? "border-[#ffc812] text-black"
-                      : "border-transparent text-[#808080] hover:text-black hover:border-gray-200"
-                  }`}
-                  style={{ fontFamily: "Michroma, sans-serif", transform: "skewX(-10deg)" }}
-                >
-                  <span className="inline-flex items-center gap-1" style={{ transform: "skewX(10deg)" }}>
-                    {tab.label}
-                    <span className={`text-[8px] px-1.5 py-0.5 rounded-sm font-medium ${
-                      activeTab === tab.id ? "bg-[#ffc812] text-black" : "bg-gray-100 text-[#808080]"
-                    }`}>
-                      {tab.count}
-                    </span>
-                  </span>
-                </button>
-              ))}
+        <div className="sticky top-[60px] md:top-[72px] z-30 bg-[#0a0a0a] border-b border-white/5 py-3 md:py-4">
+          <div className="max-w-7xl mx-auto px-6 md:px-12 space-y-3">
+            
+            {/* Family Row */}
+            <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-4">
+              <span className="text-[9px] tracking-[0.2em] text-white/30 font-bold uppercase w-16" style={{ fontFamily: "Michroma, sans-serif" }}>
+                Family
+              </span>
+              <div className="flex flex-wrap gap-1.5">
+                {FAMILIES.map(tab => (
+                  <button
+                    key={tab.id}
+                    onClick={() => { window.location.hash = tab.id; }}
+                    className={`px-3 py-1.5 text-[8px] md:text-[9px] tracking-widest uppercase font-bold rounded-full transition-all duration-300 border ${
+                      activeFamily === tab.id
+                        ? "bg-white text-black border-white"
+                        : "bg-transparent text-white/60 border-white/10 hover:border-white/30 hover:text-white"
+                    }`}
+                    style={{ fontFamily: "Michroma, sans-serif" }}
+                  >
+                    {tab.label} <span className="opacity-40 ml-1">· {tab.count}</span>
+                  </button>
+                ))}
+              </div>
             </div>
-            {/* Search - fixed on right */}
-            <div className="flex-shrink-0 w-full lg:w-auto">
-              <input
-                type="text"
-                placeholder="Search..."
-                value={search}
-                onChange={e => setSearch(e.target.value)}
-                className="text-[10px] border border-gray-200 px-3 py-2 w-full lg:w-56 xl:w-64 focus:outline-none focus:border-[#ffc812] transition-colors duration-200"
-                style={{ fontFamily: "Michroma, sans-serif", transform: "skewX(-10deg)" }}
-              />
+
+            {/* Voltage Row */}
+            <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-4">
+              <span className="text-[9px] tracking-[0.2em] text-white/30 font-bold uppercase w-16" style={{ fontFamily: "Michroma, sans-serif" }}>
+                Voltage
+              </span>
+              <div className="flex flex-wrap gap-1.5">
+                {VOLTAGES.map(volt => (
+                  <button
+                    key={volt}
+                    onClick={() => setActiveVoltage(volt)}
+                    className={`px-3 py-1.5 text-[8px] md:text-[9px] tracking-widest uppercase font-bold rounded-full transition-all duration-300 border ${
+                      activeVoltage === volt
+                        ? "bg-white text-black border-white"
+                        : "bg-transparent text-white/60 border-white/10 hover:border-white/30 hover:text-white"
+                    }`}
+                    style={{ fontFamily: "Michroma, sans-serif" }}
+                  >
+                    {volt === "all" ? "All voltages" : volt}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
         </div>
@@ -167,7 +208,7 @@ export default function Products() {
                 No products match "{search}"
               </p>
             </div>
-          ) : activeTab === "all" ? (
+          ) : activeFamily === "all" ? (
             grouped.map(({ key, cfg, items }) => (
               <div key={key} className="mb-10 md:mb-16">
                 <div className="flex items-center gap-3 md:gap-4 mb-5 md:mb-7">
@@ -192,7 +233,7 @@ export default function Products() {
               </div>
             ))
           ) : (
-            <ProductGrid items={visible} cfg={SERIES_CFG[activeTab as keyof typeof SERIES_CFG] ?? SERIES_CFG.haemng} navigate={navigate} />
+            <ProductGrid items={visible} cfg={SERIES_CFG[activeFamily as keyof typeof SERIES_CFG] ?? SERIES_CFG.haemng} navigate={navigate} />
           )}
         </div>
 
@@ -284,10 +325,12 @@ function ProductGrid({
               </div>
             )}
             {p.allSpecs.find((s: { label: string; value: string }) => s.label === "Dimension") && (
-              <p className="relative z-10 text-[7px] md:text-[8px] tracking-widest text-[#808080] uppercase mt-0.5 md:mt-1"
-                 style={{ fontFamily: "Michroma, sans-serif" }}>
-                {p.allSpecs.find((s: { label: string; value: string }) => s.label === "Dimension")?.value}
-              </p>
+              <div className="absolute bottom-2 left-0 right-0 text-center z-10">
+                <p className="text-[8px] md:text-[9px] tracking-widest text-black/40 uppercase"
+                   style={{ fontFamily: "Michroma, sans-serif" }}>
+                  {p.allSpecs.find((s: { label: string; value: string }) => s.label === "Dimension")?.value}
+                </p>
+              </div>
             )}
             {/* Series badge */}
             <div className="absolute top-2.5 right-2.5 px-2 py-0.5" style={{ background: cfg.accent, transform: "skewX(-10deg)" }}>
@@ -297,15 +340,7 @@ function ProductGrid({
               </span>
             </div>
 
-            {/* Hover arrow */}
-            <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-                 style={{ background: `${cfg.accent}18` }}>
-              <div className="w-10 h-10 rounded-full border border-black/20 bg-white/90 flex items-center justify-center">
-                <svg className="w-4 h-4 text-black" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M5 12h14M12 5l7 7-7 7" />
-                </svg>
-              </div>
-            </div>
+
           </div>
 
           {/* Card body */}

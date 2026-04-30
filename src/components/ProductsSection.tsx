@@ -2,12 +2,12 @@ import { useState } from "react";
 import { PRODUCTS, SERIES_CFG, type Product } from "@/data/products";
 
 const TABS = [
-  { id: "all",     label: "All Products",               count: PRODUCTS.length },
-  { id: "haemng",  label: "Haemng Series",               count: PRODUCTS.filter(p=>p.series==="haemng").length },
-  { id: "maelard", label: "Maelard Series",              count: PRODUCTS.filter(p=>p.series==="maelard").length },
-  { id: "esc",     label: "ESCs",                        count: PRODUCTS.filter(p=>p.series==="esc").length },
-  { id: "fc",      label: "Flight Controller",           count: 1 },
-  { id: "ips",     label: "Integrated Systems",          count: PRODUCTS.filter(p=>p.series==="ips").length },
+  { id: "all", label: "All Products", count: PRODUCTS.length },
+  { id: "haemng", label: "Haemng Series", count: PRODUCTS.filter(p => p.series === "haemng").length },
+  { id: "maelard", label: "Maelard Series", count: PRODUCTS.filter(p => p.series === "maelard").length },
+  { id: "esc", label: "ESCs", count: PRODUCTS.filter(p => p.series === "esc").length },
+  { id: "fc", label: "Flight Controller", count: 1 },
+  { id: "ips", label: "Integrated Systems", count: PRODUCTS.filter(p => p.series === "ips").length },
 ];
 
 function ProductCard({ p, expanded, onToggle }: {
@@ -18,21 +18,20 @@ function ProductCard({ p, expanded, onToggle }: {
   const cfg = SERIES_CFG[p.series];
 
   return (
-    <div className={`flex flex-col border transition-all duration-300 ${
-      expanded ? "border-gray-300 shadow-xl" : "border-gray-100 hover:border-gray-300 hover:shadow-md"
-    }`}>
+    <div className={`flex flex-col border transition-all duration-300 ${expanded ? "border-gray-300 shadow-xl" : "border-gray-100 hover:border-gray-300 hover:shadow-md"
+      }`}>
 
       {/* Visual header */}
       <div className="relative flex flex-col items-center justify-center h-32 md:h-44 overflow-hidden"
-           style={{ background: "#ffffff" }}>
+        style={{ background: "#ffffff" }}>
 
         {/* Faint grid overlay */}
         <div className="absolute inset-0 opacity-10"
-             style={{
-               backgroundImage: `linear-gradient(${cfg.accent}33 1px, transparent 1px),
+          style={{
+            backgroundImage: `linear-gradient(${cfg.accent}33 1px, transparent 1px),
                                  linear-gradient(90deg, ${cfg.accent}33 1px, transparent 1px)`,
-               backgroundSize: "20px 20px",
-             }} />
+            backgroundSize: "20px 20px",
+          }} />
 
         {/* Series visual */}
         <div className="relative z-10 mb-1 md:mb-2">
@@ -51,19 +50,23 @@ function ProductCard({ p, expanded, onToggle }: {
 
         {/* Dimension badge */}
         {p.allSpecs.find(s => s.label === "Dimension") && (
-          <p className="relative z-10 text-[7px] md:text-[9px] tracking-widest text-[#808080] uppercase"
-             style={{ fontFamily: "Michroma, sans-serif" }}>
-            {p.allSpecs.find(s => s.label === "Dimension")?.value}
-          </p>
+          <div className="absolute bottom-2 left-0 right-0 text-center">
+            <p className="text-[9px] md:text-[10px] tracking-widest text-black/40 uppercase"
+              style={{ fontFamily: "Michroma, sans-serif" }}>
+              {p.allSpecs.find(s => s.label === "Dimension")?.value}
+            </p>
+          </div>
         )}
 
         {/* Series badge top-right */}
         <div className="absolute top-2 md:top-3 right-2 md:right-3 px-1.5 md:px-2 py-0.5"
-             style={{ background: cfg.accent, transform: "skewX(-10deg)" }}>
+          style={{ background: cfg.accent, transform: "skewX(-10deg)" }}>
           <span className="text-[6px] md:text-[8px] font-black tracking-widest uppercase"
-                style={{ fontFamily: "Michroma, sans-serif",
-                         color: cfg.textOnAccent,
-                         display: "inline-block", transform: "skewX(10deg)" }}>
+            style={{
+              fontFamily: "Michroma, sans-serif",
+              color: cfg.textOnAccent,
+              display: "inline-block", transform: "skewX(10deg)"
+            }}>
             {p.series === "ips" ? "IPS" : p.series === "fc" ? "FC" : p.series.toUpperCase()}
           </span>
         </div>
@@ -74,7 +77,7 @@ function ProductCard({ p, expanded, onToggle }: {
       {/* Card body */}
       <div className="flex flex-col flex-1 p-3 md:p-5">
         <p className="text-[8px] md:text-[9px] tracking-[0.25em] uppercase mb-0.5"
-           style={{ fontFamily: "Michroma, sans-serif", color: cfg.accent }}>
+          style={{ fontFamily: "Michroma, sans-serif", color: cfg.accent }}>
           {p.application}
         </p>
         <h3 className="text-sm font-bold text-black mb-3 md:mb-4 uppercase" style={{ fontFamily: "Michroma, sans-serif" }}>
@@ -97,7 +100,7 @@ function ProductCard({ p, expanded, onToggle }: {
         {expanded && (
           <div className="mb-4">
             <p className="text-[8px] tracking-[0.3em] uppercase text-[#808080] mb-2"
-               style={{ fontFamily: "Michroma, sans-serif" }}>
+              style={{ fontFamily: "Michroma, sans-serif" }}>
               Full Specifications
             </p>
             <div className="grid grid-cols-1 md:grid-cols-2 border-t border-l border-gray-100">
@@ -113,7 +116,7 @@ function ProductCard({ p, expanded, onToggle }: {
             {p.perf && p.perf.length > 0 && (
               <div className="mt-3">
                 <p className="text-[8px] tracking-[0.3em] uppercase text-[#808080] mb-2"
-                   style={{ fontFamily: "Michroma, sans-serif" }}>
+                  style={{ fontFamily: "Michroma, sans-serif" }}>
                   Bench Test Data *
                 </p>
                 <div className="overflow-x-auto">
@@ -160,10 +163,12 @@ function ProductCard({ p, expanded, onToggle }: {
           <button
             onClick={() => document.querySelector("#contact")?.scrollIntoView({ behavior: "smooth" })}
             className="flex-1 py-2 text-[9px] tracking-widest uppercase font-black transition-all duration-200"
-            style={{ fontFamily: "Michroma, sans-serif",
-                     background: cfg.accent,
-                     color: cfg.textOnAccent,
-                     transform: "skewX(-10deg)" }}
+            style={{
+              fontFamily: "Michroma, sans-serif",
+              background: cfg.accent,
+              color: cfg.textOnAccent,
+              transform: "skewX(-10deg)"
+            }}
           >
             <span style={{ display: "inline-block", transform: "skewX(10deg)" }}>Enquire</span>
           </button>
@@ -175,7 +180,7 @@ function ProductCard({ p, expanded, onToggle }: {
 
 export default function ProductsSection() {
   const [activeTab, setActiveTab] = useState("all");
-  const [expanded,  setExpanded]  = useState<string | null>(null);
+  const [expanded, setExpanded] = useState<string | null>(null);
 
   const visible = activeTab === "all"
     ? PRODUCTS
@@ -193,12 +198,12 @@ export default function ProductsSection() {
             <div className="flex items-center gap-3 mb-3">
               <div className="h-px w-10 bg-[#ffc812]" />
               <span className="text-[#808080] text-[10px] tracking-[0.3em] uppercase"
-                    style={{ fontFamily: "Michroma, sans-serif" }}>
+                style={{ fontFamily: "Michroma, sans-serif" }}>
                 Product Catalogue
               </span>
             </div>
             <h2 className="text-4xl md:text-5xl font-bold text-black leading-tight"
-                style={{ fontFamily: "Michroma, sans-serif" }}>
+              style={{ fontFamily: "Michroma, sans-serif" }}>
               Engineered for<br /><span className="text-[#ffc812]">Every Frontier</span>
             </h2>
           </div>
@@ -214,25 +219,23 @@ export default function ProductsSection() {
             <button
               key={tab.id}
               onClick={() => { setActiveTab(tab.id); setExpanded(null); }}
-              className={`flex items-center gap-2 px-4 py-2 text-[10px] tracking-widest uppercase font-bold transition-all duration-200 ${
-                activeTab === tab.id
+              className={`flex items-center gap-2 px-4 py-2 text-[10px] tracking-widest uppercase font-bold transition-all duration-200 ${activeTab === tab.id
                   ? "bg-black text-[#ffc812]"
                   : "bg-gray-100 text-[#808080] hover:bg-gray-200 hover:text-black"
-              }`}
+                }`}
               style={{ fontFamily: "Michroma, sans-serif", transform: "skewX(-10deg)" }}
             >
               <span className="inline-flex items-center gap-2" style={{ transform: "skewX(10deg)" }}>
                 {tab.label}
-                <span className={`text-[8px] px-1.5 py-0.5 rounded-sm font-medium ${
-                  activeTab === tab.id ? "bg-[#ffc812] text-black" : "bg-white text-[#808080]"
-                }`}>
+                <span className={`text-[8px] px-1.5 py-0.5 rounded-sm font-medium ${activeTab === tab.id ? "bg-[#ffc812] text-black" : "bg-white text-[#808080]"
+                  }`}>
                   {tab.count}
                 </span>
               </span>
             </button>
           ))}
           <div className="ml-auto hidden md:flex items-center gap-1 text-[10px] text-[#aaa]"
-               style={{ fontFamily: "Michroma, sans-serif" }}>
+            style={{ fontFamily: "Michroma, sans-serif" }}>
             {visible.length} / {PRODUCTS.length} shown
           </div>
         </div>
@@ -256,7 +259,7 @@ export default function ProductsSection() {
                       />
                     ) : (
                       <h3 className="text-lg font-bold text-black leading-none"
-                          style={{ fontFamily: "Michroma, sans-serif" }}>
+                        style={{ fontFamily: "Michroma, sans-serif" }}>
                         {cfg.label}
                       </h3>
                     )}
@@ -296,7 +299,7 @@ export default function ProductsSection() {
         <div className="mt-16 bg-black p-8 flex flex-col md:flex-row items-center justify-between gap-6">
           <div>
             <p className="text-[10px] text-[#ffc812] tracking-[0.3em] uppercase mb-1"
-               style={{ fontFamily: "Michroma, sans-serif" }}>
+              style={{ fontFamily: "Michroma, sans-serif" }}>
               IIT Madras Incubated
             </p>
             <h3 className="text-xl font-bold text-white" style={{ fontFamily: "Michroma, sans-serif" }}>

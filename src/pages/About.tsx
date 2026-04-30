@@ -430,9 +430,9 @@ export default function About() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {EXPERTISE_AREAS.map((area, i) => (
               <Reveal key={area.title} delay={i * 100}>
-                <div className="border border-gray-100 p-6 h-full hover:border-[#ffc812]/30 hover:shadow-xl transition-all duration-400 group relative overflow-hidden">
+                <div className="border border-gray-100 p-6 h-full hover:border-[#ffc812]/20 hover:shadow-lg transition-all duration-400 group relative overflow-hidden bg-white">
                   {/* Background number */}
-                  <span className="absolute -right-2 -top-4 text-[80px] font-black text-gray-50 leading-none select-none pointer-events-none group-hover:text-[#ffc812]/[0.06] transition-colors"
+                  <span className="absolute -right-2 -top-4 text-[80px] font-black text-gray-50 leading-none select-none pointer-events-none group-hover:text-[#ffc812]/[0.12] group-hover:-translate-y-2 transition-all duration-500"
                         style={{ fontFamily: "Michroma, sans-serif" }}>
                     {String(i + 1).padStart(2, "0")}
                   </span>

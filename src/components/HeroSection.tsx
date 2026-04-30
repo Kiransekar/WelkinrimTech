@@ -3,7 +3,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 const industries = [
   {
     id: "uav",
-    label: "UAV/eVTOL",
+    label: "UAV",
     bg: "/hero-uav-bg.jpeg",
     accent: "Autonomous Aerial Systems",
   },
@@ -83,9 +83,6 @@ export default function HeroSection() {
               className="w-full h-full object-cover object-center"
               loading={i === 0 ? "eager" : "lazy"}
             />
-            {/* Gradient overlays */}
-            <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/30 to-black/70" />
-            <div className="absolute inset-0 bg-gradient-to-r from-black/50 to-transparent" />
           </div>
         );
       })}
@@ -95,7 +92,7 @@ export default function HeroSection() {
         {/* Fixed headline */}
         <div className="mb-1">
           <p
-            className="text-[10px] md:text-xs tracking-widest uppercase transition-colors duration-700 text-white"
+            className="text-[10px] md:text-xs tracking-[0.4em] uppercase transition-colors duration-700 text-white/80"
             style={{ fontFamily: 'Michroma, sans-serif' }}
           >
             Precision Electric Propulsion For
@@ -115,10 +112,19 @@ export default function HeroSection() {
               style={{ top: 0 }}
             >
               <h1
-                className="text-[36px] md:text-[56px] lg:text-[72px] xl:text-[7vw] font-bold text-[#ffc812] leading-[1.1]"
+                className="text-[42px] md:text-[64px] lg:text-[86px] xl:text-[8vw] font-bold uppercase leading-[0.9] tracking-tighter"
                 style={{ fontFamily: 'Michroma, sans-serif' }}
               >
-                {ind.label}
+                <span className="text-white">
+                  {ind.label.split('/')[0].split(' ')[0]}
+                </span>
+                {(ind.label.includes(' ') || ind.label.includes('/')) && (
+                  <span className="text-[#ffc812] ml-4">
+                    {ind.label.includes('/') 
+                      ? ind.label.substring(ind.label.indexOf('/')) 
+                      : ind.label.split(' ').slice(1).join(' ')}
+                  </span>
+                )}
               </h1>
             </div>
           ))}
@@ -136,7 +142,7 @@ export default function HeroSection() {
               }`}
             >
               <p
-                className="text-xs tracking-[0.2em] uppercase text-white/60"
+                className="text-sm tracking-[0.5em] uppercase text-[#ffc812] font-semibold"
                 style={{ fontFamily: 'Michroma, sans-serif' }}
               >
                 {ind.accent}
