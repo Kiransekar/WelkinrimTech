@@ -3,19 +3,17 @@ import { useState, useEffect, useRef } from "react";
 const industries = [
   {
     id: "air",
-    label: "UAV/eVTOL",
-    tabLabel: "UAV/eVTOL",
+    label: "UAV/EVTOL",
+    tabLabel: "UAV/EVTOL",
     fullLabel: "UAV/eVTOL",
-    tags: ["FLUX DENSITY", "THERMAL", "EFFICIENCY", "STRESS", "COGGING", "FOC"],
     testedStatus: "JSS 55555 and MIL STD 810 G Tested",
     metrics: [
-      { label: "POWER",           display: "100W to 30kW" },
-      { label: "TORQUE",          display: "1 Nm to 100 Nm" },
-      { label: "MAX RPM",         display: "Upto 10,000 RPM" },
-      { label: "WEIGHT",          display: "50g to 5kg" },
-      { label: "DIAMETER",        display: "30 to 300mm" },
-      { label: "TORQUE DENSITY",  display: "20 to 30 Nm/kg" },
-
+      { label: "POWER",          display: "100W to 30kW" },
+      { label: "TORQUE",         display: "1 Nm to 100 Nm" },
+      { label: "MAX RPM",        display: "Upto 10,000 RPM" },
+      { label: "WEIGHT",         display: "50g to 5kg" },
+      { label: "DIAMETER",       display: "30 to 300mm" },
+      { label: "TORQUE DENSITY", display: "20 to 30 Nm/kg" },
     ],
   },
   {
@@ -23,16 +21,14 @@ const industries = [
     label: "MARINE",
     tabLabel: "MARINE",
     fullLabel: "Marine",
-    tags: ["WATERPROOFING", "CORROSION", "EFFICIENCY", "TORQUE", "THERMAL", "SEAL"],
     testedStatus: "JSS 55555 and MIL STD 810 G to be Tested",
     metrics: [
-      { label: "POWER",           display: "100W to 2.5kW" },
-      { label: "TORQUE",          display: "1 Nm to 10 Nm" },
-      { label: "MAX RPM",         display: "Upto 3,600 RPM" },
-      { label: "WEIGHT",          display: "150g to 5kg" },
-      { label: "DIAMETER",        display: "50mm to 300mm" },
-      { label: "TORQUE DENSITY",  display: "20 to 30 Nm/kg" },
-
+      { label: "POWER",          display: "100W to 2.5kW" },
+      { label: "TORQUE",         display: "1 Nm to 10 Nm" },
+      { label: "MAX RPM",        display: "Upto 3,600 RPM" },
+      { label: "WEIGHT",         display: "150g to 5kg" },
+      { label: "DIAMETER",       display: "50mm to 300mm" },
+      { label: "TORQUE DENSITY", display: "20 to 30 Nm/kg" },
     ],
   },
   {
@@ -40,16 +36,14 @@ const industries = [
     label: "LAND",
     tabLabel: "LAND",
     fullLabel: "Land Vehicles",
-    tags: ["TORQUE DENSITY", "THERMAL", "RESPONSE", "VOLTAGE", "RELIABILITY", "VECTOR"],
     testedStatus: "JSS 55555 and MIL STD 810 G to be Tested",
     metrics: [
-      { label: "POWER",           display: "50W to 15kW" },
-      { label: "TORQUE",          display: "Upto 60 Nm" },
-      { label: "MAX RPM",         display: "Upto 20,000 RPM" },
-      { label: "WEIGHT",          display: "2kg to 20kg" },
-      { label: "DIAMETER",        display: "150mm to 300mm" },
-      { label: "TORQUE DENSITY",  display: "4 to 8 Nm/kg" },
-
+      { label: "POWER",          display: "50W to 15kW" },
+      { label: "TORQUE",         display: "Upto 60 Nm" },
+      { label: "MAX RPM",        display: "Upto 20,000 RPM" },
+      { label: "WEIGHT",         display: "2kg to 20kg" },
+      { label: "DIAMETER",       display: "150mm to 300mm" },
+      { label: "TORQUE DENSITY", display: "4 to 8 Nm/kg" },
     ],
   },
   {
@@ -57,22 +51,19 @@ const industries = [
     label: "ROBOTICS",
     tabLabel: "ROBOTICS",
     fullLabel: "Robotics",
-    tags: ["PRECISION", "BACKDRIVABILITY", "BANDWIDTH", "COMPLIANCE", "STIFFNESS", "FOC"],
     testedStatus: "JSS 55555 and MIL STD 810 G to be Tested",
     metrics: [
-      { label: "POWER",           display: "100W to 30kW" },
-      { label: "TORQUE",          display: "1 Nm to 100 Nm" },
-      { label: "MAX RPM",         display: "Upto 10,000 RPM" },
-      { label: "WEIGHT",          display: "50g to 5kg" },
-      { label: "DIAMETER",        display: "30 to 300mm" },
-      { label: "TORQUE DENSITY",  display: "20 to 30 Nm/kg" },
-
+      { label: "POWER",          display: "100W to 30kW" },
+      { label: "TORQUE",         display: "1 Nm to 100 Nm" },
+      { label: "MAX RPM",        display: "Upto 10,000 RPM" },
+      { label: "WEIGHT",         display: "50g to 5kg" },
+      { label: "DIAMETER",       display: "30 to 300mm" },
+      { label: "TORQUE DENSITY", display: "20 to 30 Nm/kg" },
     ],
   },
 ];
 
-
-function MetricCell({
+function SpecRow({
   metric,
   active,
   idx,
@@ -84,31 +75,26 @@ function MetricCell({
   const [visible, setVisible] = useState(false);
   useEffect(() => {
     if (!active) { setVisible(false); return; }
-    const t = setTimeout(() => setVisible(true), idx * 60);
+    const t = setTimeout(() => setVisible(true), idx * 80);
     return () => clearTimeout(t);
   }, [active, idx]);
 
-  const row = Math.floor(idx / 3);
-  const col = idx % 3;
-  const isLastRow = row === 1;
-  const isLastCol = col === 2;
-
   return (
     <div
-      className={`flex flex-col justify-center py-4 px-2 lg:py-6 lg:px-4 ${
-        !isLastRow ? "border-b border-black/10" : ""
-      } ${!isLastCol ? "border-r border-black/10" : ""}`}
+      className={`flex items-baseline gap-4 pl-3 border-l transition-all duration-500 ${
+        visible
+          ? "border-[#ffc812]/60 opacity-100 translate-y-0"
+          : "border-white/5 opacity-0 translate-y-2"
+      }`}
     >
-      <p
-        className="text-xs tracking-[0.15em] text-black/40 uppercase mb-1"
+      <span
+        className="text-[8px] tracking-[0.25em] text-white/30 uppercase w-[108px] flex-shrink-0"
         style={{ fontFamily: "Michroma, sans-serif" }}
       >
         {metric.label}
-      </p>
+      </span>
       <span
-        className={`text-sm font-bold text-black leading-none transition-opacity duration-300 ${
-          visible ? "opacity-100" : "opacity-0"
-        }`}
+        className="text-[13px] font-bold text-white/90"
         style={{ fontFamily: "Michroma, sans-serif" }}
       >
         {metric.display}
@@ -124,7 +110,6 @@ export default function EngineeringDepth() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const active = industries[activeIdx];
 
-  // Trigger count-up when section enters viewport
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -142,157 +127,123 @@ export default function EngineeringDepth() {
     setMetricsActive(false);
     setActiveIdx(idx);
     setResetKey((k) => k + 1);
-    setTimeout(() => setMetricsActive(true), 80);
+    setTimeout(() => setMetricsActive(true), 100);
   };
 
   return (
-    <section id="technology" ref={sectionRef} className="w-full bg-white overflow-hidden scroll-mt-[60px] md:scroll-mt-[72px]">
-      <div className="relative flex flex-col lg:flex-row min-h-[100vh] lg:min-h-[calc(100vh-72px)]">
+    <section
+      id="technology"
+      ref={sectionRef}
+      className="w-full bg-[#050505] overflow-hidden scroll-mt-[60px] md:scroll-mt-[72px]"
+    >
+      <div className="max-w-[1600px] mx-auto px-4 md:px-8 lg:px-12 py-16 md:py-24">
 
-        {/* ══════════ LEFT WHITE PANEL ══════════ */}
-        <div className="relative flex flex-col justify-center bg-white z-10
-                        w-full lg:w-[45%] flex-shrink-0
-                        px-4 md:px-8 lg:pl-10 lg:pr-[180px] xl:pr-[200px] py-8 lg:py-10 gap-3">
-
-          {/* Tag */}
-          <p
-            className="text-xs tracking-[0.2em] text-[#808080] uppercase"
+        {/* ── Section header — matches FamiliesSection exactly ── */}
+        <div className="flex items-end justify-between mb-5">
+          <h2
+            className="text-3xl md:text-5xl lg:text-6xl text-white font-medium tracking-tight"
             style={{ fontFamily: "Michroma, sans-serif" }}
           >
-            Simulation-Validated
-          </p>
-
-          {/* Heading */}
-          <div className="leading-[0.95]">
-            <div
-              className="text-[28px] md:text-[40px] xl:text-[48px] font-black text-black uppercase tracking-tight"
-              style={{ fontFamily: "Michroma, sans-serif" }}
-            >
-              Engineering
-            </div>
-            <div
-              className="text-[28px] md:text-[40px] xl:text-[48px] font-black text-[#ffc812] uppercase tracking-tight"
-              style={{ fontFamily: "Michroma, sans-serif" }}
-            >
-              Depth
-            </div>
-          </div>
-
-          {/* Industry tabs with pipe separators */}
-          <div className="flex items-center flex-wrap gap-y-2">
-            {industries.map((ind, i) => (
-              <div key={ind.id} className="flex items-center">
-                <button
-                  onClick={() => handleTab(i)}
-                  className={`text-xs tracking-[0.15em] uppercase font-bold pb-1 transition-all duration-200 ${
-                    i === activeIdx
-                      ? "text-black border-b-2 border-[#ffc812]"
-                      : "text-[#aaa] border-b-2 border-transparent hover:text-black"
-                  }`}
-                  style={{ fontFamily: "Michroma, sans-serif" }}
-                >
-                  {ind.tabLabel}
-                </button>
-                {i < industries.length - 1 && (
-                  <span className="text-[#ccc] mx-3 text-xs select-none">|</span>
-                )}
-              </div>
-            ))}
-          </div>
-
-          {/* CTA */}
+            Engineering depth.
+          </h2>
           <button
             onClick={() =>
               document.querySelector("#contact")?.scrollIntoView({ behavior: "smooth" })
             }
-            className="self-start inline-flex items-center gap-2 px-6 py-3 bg-[#ffc812] text-black text-xs tracking-[0.22em] uppercase font-bold hover:bg-[#e0b212] transition-all duration-300 mt-2"
-            style={{ fontFamily: "Michroma, sans-serif", transform: "skewX(-10deg)" }}
+            className="text-[10px] text-white hover:text-[#ffc812] tracking-[0.2em] uppercase font-bold transition-colors flex items-center gap-2 group font-mono mb-2 md:mb-4"
           >
-            <span className="inline-flex items-center gap-2" style={{ transform: "skewX(10deg)" }}>
-              Explore Technology
-              <svg
-                width="11"
-                height="11"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.5"
-              >
-                <path d="M5 12h14M12 5l7 7-7 7" />
-              </svg>
-            </span>
+            EXPLORE TECH
+            <span className="transform group-hover:translate-x-1 transition-transform">→</span>
           </button>
         </div>
 
-        {/* ══════════ CENTER MOTOR IMAGE (overlapping both panels) ══════════ */}
-        <div
-          className="hidden lg:flex absolute z-30 items-center justify-center pointer-events-none"
-          style={{
-            left: "45%",
-            top: "50%",
-            transform: "translate(-50%, -50%)",
-            width: "380px",
-            height: "380px",
-          }}
-        >
-          <div className="w-[280px] h-[280px] xl:w-[380px] xl:h-[380px] rounded-full overflow-hidden border-[6px] border-white shadow-xl bg-[#1a1a1a]">
+        {/* ── Sub-label row — industry tabs ── */}
+        <div className="flex items-center gap-4 text-[9px] md:text-[10px] text-white/50 tracking-[0.3em] uppercase font-mono mb-10">
+          {industries.map((ind, i) => (
+            <button
+              key={ind.id}
+              onClick={() => handleTab(i)}
+              className={`transition-all duration-200 ${
+                i === activeIdx
+                  ? "text-[#ffc812]"
+                  : "hover:text-white/80"
+              }`}
+            >
+              {ind.tabLabel}
+            </button>
+          ))}
+        </div>
+
+        {/* ── Main two-column body ── */}
+        <div className="flex flex-col lg:flex-row gap-0 lg:gap-0 items-stretch">
+
+          {/* LEFT — dramatic motor card (same style as family cards) */}
+          <div className="relative w-full lg:w-[52%] flex-shrink-0 overflow-hidden bg-[#0a0a0a] border border-white/[0.06]"
+            style={{ minHeight: "420px" }}
+          >
+            {/* Active index badge */}
+            <div className="absolute top-4 left-4 z-20">
+              <span
+                className="text-[10px] text-[#ffc812] tracking-[0.2em] font-mono"
+              >
+                0{activeIdx + 1}
+              </span>
+            </div>
+
+            {/* Ghost label overlay */}
+            <div
+              className="absolute bottom-0 left-0 right-0 z-10 px-6 pb-6 pt-16"
+              style={{
+                background: "linear-gradient(to top, rgba(5,5,5,0.95) 0%, rgba(5,5,5,0.4) 60%, transparent 100%)",
+              }}
+            >
+              <h3
+                className="text-[28px] md:text-[36px] font-medium text-white tracking-tight leading-none mb-1"
+                style={{ fontFamily: "Michroma, sans-serif" }}
+              >
+                {active.fullLabel}
+              </h3>
+              <p className="text-[9px] text-white/40 tracking-[0.25em] uppercase font-mono">
+                Simulation-Validated
+              </p>
+            </div>
+
+            {/* Motor photo */}
             <img
               key={activeIdx}
               src={`${import.meta.env.BASE_URL}motor-hero.png`}
               alt={active.fullLabel}
-              className="w-full h-full object-cover"
+              className="absolute inset-0 w-full h-full object-cover object-center transition-opacity duration-700 opacity-60 hover:opacity-75"
             />
           </div>
-        </div>
 
-        {/* Mobile motor image */}
-        <div className="lg:hidden flex justify-center -mt-2 md:-mt-4 mb-3 md:mb-4 relative z-20">
-          <div className="w-[180px] h-[180px] md:w-[220px] md:h-[220px] rounded-full overflow-hidden border-4 border-white shadow-2xl bg-[#1a1a1a]">
-            <img
-              key={`mobile-${activeIdx}`}
-              src={`${import.meta.env.BASE_URL}motor-hero.png`}
-              alt={active.fullLabel}
-              className="w-full h-full object-cover"
-            />
-          </div>
-        </div>
+          {/* RIGHT — spec list panel */}
+          <div className="flex-1 flex flex-col justify-between bg-[#080808] border border-l-0 border-white/[0.06] px-8 md:px-10 py-8 md:py-10">
 
-        {/* ══════════ RIGHT YELLOW PANEL ══════════ */}
-        <div className="flex-1 relative flex flex-col justify-center z-20">
-          {/* Parallelogram shape using clip-path */}
-          <div
-            className="absolute inset-0 bg-[#ffc812]"
-            style={{
-              clipPath: "polygon(15% 0, 100% 0, 100% 100%, 0% 100%)",
-            }}
-          />
+            {/* Ghost oversized category label */}
+            <div className="mb-6 overflow-hidden">
+              <p
+                className="text-[9px] tracking-[0.3em] text-white/20 uppercase font-mono mb-2"
+              >
+                Product Range
+              </p>
+              <h4
+                key={activeIdx}
+                className="text-[38px] md:text-[52px] font-black uppercase leading-none tracking-tighter transition-all duration-500"
+                style={{
+                  fontFamily: "Michroma, sans-serif",
+                  color: "transparent",
+                  WebkitTextStroke: "1px rgba(255,200,18,0.15)",
+                }}
+              >
+                {active.label}
+              </h4>
+            </div>
 
-          {/* AIR/WATER label - on top of yellow and motor */}
-          <div className="relative z-40 px-4 md:px-6 lg:pl-[200px] xl:pl-[220px] lg:pr-8 xl:pr-10 pt-4 md:pt-6 lg:pt-8">
-            <h3
-              className="text-[32px] md:text-[48px] lg:text-[56px] xl:text-[72px] font-black text-black/30 uppercase leading-none whitespace-nowrap"
-              style={{ fontFamily: "Michroma, sans-serif" }}
-            >
-              {active.label}
-            </h3>
-          </div>
-
-          {/* Inner content - metrics grid on top of yellow */}
-          <div className="relative z-40 flex flex-col px-4 md:px-6 lg:pl-[200px] xl:pl-[220px] lg:pr-8 xl:pr-10 pb-4 md:pb-6 lg:pb-8">
-            <p
-              className="text-xs tracking-[0.25em] text-black/70 font-semibold uppercase mb-4 ml-[2px]"
-              style={{ fontFamily: "Michroma, sans-serif" }}
-            >
-              Product Range
-            </p>
-
-            {/* 2×3 Metric grid - larger cells */}
-            <div
-              key={resetKey}
-              className="grid grid-cols-3 gap-2 lg:gap-4"
-            >
+            {/* Spec rows — 2 column grid */}
+            <div key={resetKey} className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-5 flex-1">
               {active.metrics.map((metric, i) => (
-                <MetricCell
+                <SpecRow
                   key={`${activeIdx}-${i}`}
                   metric={metric}
                   active={metricsActive}
@@ -301,14 +252,14 @@ export default function EngineeringDepth() {
               ))}
             </div>
 
-            {/* Proprietary footer */}
-            <div className="mt-4 pt-3 border-t border-black/10">
-              <p
-                className="text-xs tracking-[0.2em] text-black/30 uppercase text-right"
-                style={{ fontFamily: "Michroma, sans-serif" }}
-              >
-                {active.testedStatus}
-              </p>
+            {/* Footer — same style as FamiliesSection footer */}
+            <div className="flex items-center justify-between mt-8 pt-5 border-t border-white/[0.06]">
+              <div className="flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#ffc812] animate-pulse flex-shrink-0" />
+                <p className="text-[8px] tracking-[0.25em] text-white/20 uppercase font-mono">
+                  {active.testedStatus}
+                </p>
+              </div>
             </div>
           </div>
         </div>
