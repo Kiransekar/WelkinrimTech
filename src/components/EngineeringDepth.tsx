@@ -138,7 +138,7 @@ export default function EngineeringDepth() {
 
   return (
     <section
-      id="technology"
+      id="depth"
       ref={sectionRef}
       className="w-full bg-[#050505] overflow-hidden scroll-mt-[60px] md:scroll-mt-[72px]"
     >

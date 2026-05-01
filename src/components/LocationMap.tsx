@@ -11,34 +11,34 @@ const WR = { lat: 12.8365, lng: 79.9212 };
 
 // ─── Neighbour companies (verified Oragadam Industrial Corridor) ──────────────
 const COMPANIES = [
-  { name: "Indospace",      sector: "Industrial Park",      lat: 12.8377226, lng: 79.9148144, km: 0.7 },
-  { name: "Danfoss",        sector: "Power Electronics",    lat: 12.8462873, lng: 79.9330221, km: 1.7 },
-  { name: "Royal Enfield",  sector: "Mobility OEM",         lat: 12.8459732, lng: 79.9350244, km: 1.8 },
-  { name: "Nokia",          sector: "Telecom / 5G",         lat: 12.8506847, lng: 79.9255661, km: 1.6 },
+  { name: "Indospace", sector: "Industrial Park", lat: 12.8377226, lng: 79.9148144, km: 0.7 },
+  { name: "Danfoss", sector: "Power Electronics", lat: 12.8462873, lng: 79.9330221, km: 1.7 },
+  { name: "Royal Enfield", sector: "Mobility OEM", lat: 12.8459732, lng: 79.9350244, km: 1.8 },
+  { name: "Nokia", sector: "Telecom / 5G", lat: 12.8506847, lng: 79.9255661, km: 1.6 },
   { name: "Renault Nissan", sector: "Vehicle Manufacturer", lat: 12.8457222, lng: 79.9435009, km: 2.6 },
-  { name: "Apollo Tyres",   sector: "Auto Components",      lat: 12.8527308, lng: 79.9449241, km: 3.1 },
-  { name: "Daimler India",  sector: "Commercial Vehicles",  lat: 12.8388173, lng: 79.9476815, km: 2.9 },
-  { name: "XIME Chennai",   sector: "Business School",      lat: 12.8462991, lng: 79.9361221, km: 1.9 },
-  { name: "Komatsu",        sector: "Machinery OEM",        lat: 12.8451262, lng: 79.9297637, km: 1.3 },
+  { name: "Apollo Tyres", sector: "Auto Components", lat: 12.8527308, lng: 79.9449241, km: 3.1 },
+  { name: "Daimler India", sector: "Commercial Vehicles", lat: 12.8388173, lng: 79.9476815, km: 2.9 },
+  { name: "XIME Chennai", sector: "Business School", lat: 12.8462991, lng: 79.9361221, km: 1.9 },
+  { name: "Komatsu", sector: "Machinery OEM", lat: 12.8451262, lng: 79.9297637, km: 1.3 },
 ];
 
 // ─── Custom SVG pin HTML ──────────────────────────────────────────────────────
 function pinSvg(big: boolean) {
   const w = big ? 38 : 26, h = big ? 50 : 36;
-  const color = big ? "#ffc812" : "#000000";
+  const color = big ? "#ffc812" : "#ffffff";
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">
     <filter id="sh${big ? "b" : "s"}" x="-40%" y="-20%" width="180%" height="160%">
-      <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="rgba(0,0,0,0.5)"/>
+      <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="rgba(0,0,0,0.8)"/>
     </filter>
-    <path d="M${w/2} ${h-2} C${w/2} ${h-2} 2 ${h*0.55} 2 ${w*0.45}
-             a${w/2-2} ${w/2-2} 0 1 1 ${w-4} 0
-             C${w-2} ${w*0.55} ${w/2} ${h-2} ${w/2} ${h-2}Z"
+    <path d="M${w / 2} ${h - 2} C${w / 2} ${h - 2} 2 ${h * 0.55} 2 ${w * 0.45}
+             a${w / 2 - 2} ${w / 2 - 2} 0 1 1 ${w - 4} 0
+             C${w - 2} ${w * 0.55} ${w / 2} ${h - 2} ${w / 2} ${h - 2}Z"
           fill="${color}" filter="url(#sh${big ? "b" : "s"})"/>
-    <circle cx="${w/2}" cy="${w*0.45}" r="${big ? 8 : 5}" fill="${big ? "#111" : "#ffc812"}" opacity="0.9"/>
+    <circle cx="${w / 2}" cy="${w * 0.45}" r="${big ? 8 : 5}" fill="${big ? "#111" : "#ffc812"}" opacity="0.9"/>
   </svg>`;
 }
 
-// ─── Map style: white background + yellow roads (no API key) ─────────────────
+// ─── Map style: Dark theme (no API key) ──────────────────────────────────────
 const MAP_STYLE: maplibregl.StyleSpecification = {
   version: 8,
   glyphs: "https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf",
@@ -49,107 +49,37 @@ const MAP_STYLE: maplibregl.StyleSpecification = {
     },
   },
   layers: [
-    // ── Background ──
-    { id: "background", type: "background", paint: { "background-color": "#ffffff" } },
-
-    // ── Water ──
+    { id: "background", type: "background", paint: { "background-color": "#0d1b2a" } },
     { id: "water-fill", type: "fill", source: "osm", "source-layer": "water",
-      paint: { "fill-color": "#d4e9f5", "fill-antialias": true } },
-
-    // ── Land cover ──
-    { id: "landcover-grass", type: "fill", source: "osm", "source-layer": "landcover",
-      filter: ["in", ["get", "class"], ["literal", ["grass", "scrub", "crop"]]],
-      paint: { "fill-color": "#f3f5ef" } },
-    { id: "landcover-wood", type: "fill", source: "osm", "source-layer": "landcover",
-      filter: ["==", ["get", "class"], "wood"],
-      paint: { "fill-color": "#eaf0e3" } },
-
-    // ── Land use ──
-    { id: "landuse-res", type: "fill", source: "osm", "source-layer": "landuse",
-      filter: ["in", ["get", "class"], ["literal", ["residential", "suburb"]]],
-      paint: { "fill-color": "#f9f9f9" } },
-    { id: "landuse-industrial", type: "fill", source: "osm", "source-layer": "landuse",
-      filter: ["==", ["get", "class"], "industrial"],
-      paint: { "fill-color": "#f4f0ea" } },
-    { id: "landuse-park", type: "fill", source: "osm", "source-layer": "landuse",
-      filter: ["in", ["get", "class"], ["literal", ["park", "pitch", "playground"]]],
-      paint: { "fill-color": "#ecf4e5" } },
-
-    // ── Buildings ──
+      paint: { "fill-color": "#1b263b", "fill-antialias": true } },
+    { id: "landcover", type: "fill", source: "osm", "source-layer": "landcover",
+      paint: { "fill-color": "#0b1521" } },
     { id: "building", type: "fill", source: "osm", "source-layer": "building",
       minzoom: 13,
-      paint: { "fill-color": "#f0f0f0", "fill-outline-color": "#e5e5e5" } },
-
-    // ── Roads — outline (slightly darker yellow) ──
-    { id: "road-motorway-case", type: "line", source: "osm", "source-layer": "transportation",
-      filter: ["==", ["get", "class"], "motorway"],
-      layout: { "line-cap": "round", "line-join": "round" },
-      paint: { "line-color": "#d4a800",
-               "line-width": ["interpolate", ["linear"], ["zoom"], 8, 3, 12, 6, 16, 10] } },
-    { id: "road-trunk-case", type: "line", source: "osm", "source-layer": "transportation",
-      filter: ["==", ["get", "class"], "trunk"],
-      layout: { "line-cap": "round", "line-join": "round" },
-      paint: { "line-color": "#d4a800",
-               "line-width": ["interpolate", ["linear"], ["zoom"], 8, 2, 12, 4, 16, 8] } },
-    { id: "road-primary-case", type: "line", source: "osm", "source-layer": "transportation",
-      filter: ["==", ["get", "class"], "primary"],
-      layout: { "line-cap": "round", "line-join": "round" },
-      paint: { "line-color": "#d4a800",
-               "line-width": ["interpolate", ["linear"], ["zoom"], 8, 1.5, 12, 3, 16, 6] } },
-
-    // ── Roads — fill ──
-    { id: "road-motorway", type: "line", source: "osm", "source-layer": "transportation",
-      filter: ["==", ["get", "class"], "motorway"],
-      layout: { "line-cap": "round", "line-join": "round" },
-      paint: { "line-color": "#ffc812",
-               "line-width": ["interpolate", ["linear"], ["zoom"], 8, 2, 12, 4, 16, 7] } },
-    { id: "road-trunk", type: "line", source: "osm", "source-layer": "transportation",
-      filter: ["==", ["get", "class"], "trunk"],
-      layout: { "line-cap": "round", "line-join": "round" },
-      paint: { "line-color": "#ffc812",
-               "line-width": ["interpolate", ["linear"], ["zoom"], 8, 1.5, 12, 3, 16, 6] } },
-    { id: "road-primary", type: "line", source: "osm", "source-layer": "transportation",
-      filter: ["==", ["get", "class"], "primary"],
-      layout: { "line-cap": "round", "line-join": "round" },
-      paint: { "line-color": "#ffc812",
-               "line-width": ["interpolate", ["linear"], ["zoom"], 8, 1, 12, 2.5, 16, 5] } },
-    { id: "road-secondary", type: "line", source: "osm", "source-layer": "transportation",
-      filter: ["in", ["get", "class"], ["literal", ["secondary", "tertiary"]]],
-      layout: { "line-cap": "round", "line-join": "round" },
-      paint: { "line-color": "#FFD633",
-               "line-width": ["interpolate", ["linear"], ["zoom"], 10, 0.5, 12, 1.5, 16, 3] } },
-    { id: "road-minor", type: "line", source: "osm", "source-layer": "transportation",
-      filter: ["in", ["get", "class"], ["literal", ["minor", "residential", "service"]]],
-      minzoom: 12,
-      layout: { "line-cap": "round", "line-join": "round" },
-      paint: { "line-color": "#FFE066",
-               "line-width": ["interpolate", ["linear"], ["zoom"], 12, 0.4, 16, 1.5] } },
-
-    // ── Place labels ──
-    { id: "place-town", type: "symbol", source: "osm", "source-layer": "place",
-      filter: ["in", ["get", "class"], ["literal", ["city", "town", "village", "suburb"]]],
+      paint: { "fill-color": "#1b263b", "fill-opacity": 0.5 } },
+    { id: "road-case", type: "line", source: "osm", "source-layer": "transportation",
+      paint: { "line-color": "#ffc812", "line-opacity": 0.2,
+               "line-width": ["interpolate", ["linear"], ["zoom"], 8, 1, 12, 2, 16, 4] } },
+    { id: "road-fill", type: "line", source: "osm", "source-layer": "transportation",
+      paint: { "line-color": "#ffc812", "line-opacity": 0.6,
+               "line-width": ["interpolate", ["linear"], ["zoom"], 8, 0.5, 12, 1.2, 16, 2.5] } },
+    { id: "place-label", type: "symbol", source: "osm", "source-layer": "place",
       layout: {
-        "text-field": ["coalesce", ["get", "name:en"], ["get", "name"]],
+        "text-field": ["get", "name"],
         "text-font": ["Noto Sans Regular"],
-        "text-size": ["interpolate", ["linear"], ["zoom"], 10, 10, 14, 13],
-        "text-anchor": "center",
-        "text-max-width": 8,
+        "text-size": 11,
       },
-      paint: {
-        "text-color": "#444444",
-        "text-halo-color": "#ffffff",
-        "text-halo-width": 1.5,
-      },
-    },
+      paint: { "text-color": "#ffffff", "text-opacity": 0.4, "text-halo-color": "#000", "text-halo-width": 1 }
+    }
   ],
 };
 
 // ─── Component ────────────────────────────────────────────────────────────────
 export default function LocationMap() {
-  const mapRef      = useRef<HTMLDivElement>(null);
+  const mapRef = useRef<HTMLDivElement>(null);
   const mapInstance = useRef<maplibregl.Map | null>(null);
-  const markers     = useRef<Record<string, maplibregl.Marker>>({});
-  const [active, setActive]   = useState<string | null>(null);
+  const markers = useRef<Record<string, maplibregl.Marker>>({});
+  const [active, setActive] = useState<string | null>(null);
   const [webGlError, setWebGlError] = useState(false);
 
   useEffect(() => {
@@ -233,7 +163,7 @@ export default function LocationMap() {
 
   const flyTo = (co: (typeof COMPANIES)[0]) => {
     const map = mapInstance.current;
-    const m   = markers.current[co.name];
+    const m = markers.current[co.name];
     if (!map || !m) return;
     setActive(co.name);
     map.flyTo({ center: [co.lng, co.lat], zoom: 13, duration: 900, essential: true });
@@ -249,20 +179,20 @@ export default function LocationMap() {
   };
 
   return (
-    <section id="about" className="py-8 lg:py-6 bg-[#f8f8f8] scroll-mt-[72px] flex flex-col justify-center h-auto lg:h-[calc(100vh-72px)] overflow-hidden">
+    <section id="about" className="py-8 lg:py-6 bg-[#050505] scroll-mt-[72px] flex flex-col justify-center h-auto lg:h-[calc(100vh-72px)] overflow-hidden">
       <div className="max-w-7xl mx-auto px-6 md:px-12 w-full h-full flex flex-col">
         {/* Header */}
         <div className="mb-4 lg:mb-4 shrink-0 flex flex-col md:flex-row md:items-end md:justify-between gap-4">
           <div>
             <div className="flex items-center gap-3 mb-3">
               <div className="h-px w-10 bg-[#ffc812]" />
-              <span className="text-[#808080] text-xs tracking-[0.3em] uppercase"
-                    style={{ fontFamily: "Michroma, sans-serif" }}>
+              <span className="text-white/40 text-xs tracking-[0.3em] uppercase font-mono"
+                style={{ fontFamily: "Michroma, sans-serif" }}>
                 Strategic Location
               </span>
             </div>
-            <h2 className="text-4xl md:text-5xl font-bold text-black leading-tight"
-                style={{ fontFamily: "Michroma, sans-serif" }}>
+            <h2 className="text-4xl md:text-5xl font-bold text-white leading-tight"
+              style={{ fontFamily: "Michroma, sans-serif" }}>
               At the Heart of<br /><span className="text-[#ffc812]">Industry Giants</span>
             </h2>
           </div>
@@ -270,7 +200,7 @@ export default function LocationMap() {
         </div>
 
         {/* Map block */}
-        <div className="flex-1 min-h-0 flex flex-col lg:grid lg:grid-cols-3 gap-0 rounded-sm overflow-hidden shadow-2xl border border-gray-200 h-[600px] lg:h-full">
+        <div className="flex-1 min-h-0 flex flex-col lg:grid lg:grid-cols-3 gap-0 rounded-sm overflow-hidden shadow-2xl border border-white/10 h-[600px] lg:h-full">
 
           {/* ── Map pane ── */}
           <div className="lg:col-span-2 relative min-h-[300px] lg:min-h-0 h-full">
@@ -298,16 +228,16 @@ export default function LocationMap() {
             {/* Bottom label overlay */}
             <div
               className="absolute bottom-0 left-0 right-0 z-10 flex flex-col items-center pb-5 pt-8 pointer-events-none"
-              style={{ background: "linear-gradient(to top, rgba(13,27,42,0.92) 0%, transparent 100%)" }}
+              style={{ background: "linear-gradient(to top, rgba(13,27,42,1) 0%, transparent 100%)" }}
             >
               <p className="text-[#ffc812] text-xl md:text-2xl font-black tracking-[0.5em] uppercase"
-                 style={{ fontFamily: "Michroma, sans-serif" }}>
+                style={{ fontFamily: "Michroma, sans-serif" }}>
                 ORAGADAM
               </p>
               <p className="text-white/50 text-[10px] tracking-[0.3em] uppercase mt-0.5"
-                 style={{ fontFamily: "Michroma, sans-serif" }}>Tamilnadu | India</p>
+                style={{ fontFamily: "Michroma, sans-serif" }}>Tamilnadu | India</p>
               <p className="text-white/30 text-[10px] tracking-widest mt-0.5"
-                 style={{ fontFamily: "Michroma, sans-serif" }}>
+                style={{ fontFamily: "Michroma, sans-serif" }}>
                 12.8365° N &nbsp;/&nbsp; 79.9212° E
               </p>
             </div>
@@ -323,7 +253,7 @@ export default function LocationMap() {
           </div>
 
           {/* ── Sidebar ── */}
-          <div className="bg-[#0d1b2a] flex flex-col overflow-y-auto h-full">
+          <div className="bg-[#0d1b2a] flex flex-col overflow-y-auto h-full border-l border-white/10">
 
             {/* Our facility header */}
             <div className="px-5 py-4 border-b border-white/5">
@@ -332,7 +262,7 @@ export default function LocationMap() {
                   <span className="absolute inset-0 rounded-full bg-[#ffc812] animate-ping opacity-60" />
                 </div>
                 <span className="text-[#ffc812] text-[10px] tracking-[0.3em] uppercase"
-                      style={{ fontFamily: "Michroma, sans-serif" }}>
+                  style={{ fontFamily: "Michroma, sans-serif" }}>
                   Our Facility
                 </span>
               </div>
@@ -350,32 +280,28 @@ export default function LocationMap() {
                 <button
                   key={co.name}
                   onClick={() => flyTo(co)}
-                  className={`text-left px-5 py-3.5 transition-all duration-200 group border-l-2 ${
-                    active === co.name
+                  className={`text-left px-5 py-3.5 transition-all duration-200 group border-l-2 ${active === co.name
                       ? "bg-[#ffc812]/10 border-[#ffc812]"
                       : "border-transparent hover:bg-white/5"
-                  }`}
+                    }`}
                 >
                   <div className="flex items-center justify-between gap-2">
                     <div className="flex items-center gap-2.5 min-w-0">
-                      <div className={`w-2 h-2 rounded-full flex-shrink-0 transition-colors ${
-                        active === co.name ? "bg-[#ffc812]" : "bg-white/20 group-hover:bg-[#ffc812]/60"
-                      }`} />
+                      <div className={`w-2 h-2 rounded-full flex-shrink-0 transition-colors ${active === co.name ? "bg-[#ffc812]" : "bg-white/20 group-hover:bg-[#ffc812]/60"
+                        }`} />
                       <div className="min-w-0">
-                        <p className={`text-xs font-bold truncate transition-colors ${
-                          active === co.name ? "text-[#ffc812]" : "text-white/80 group-hover:text-white"
-                        }`} style={{ fontFamily: "Michroma, sans-serif" }}>
+                        <p className={`text-xs font-bold truncate transition-colors ${active === co.name ? "text-[#ffc812]" : "text-white/80 group-hover:text-white"
+                          }`} style={{ fontFamily: "Michroma, sans-serif" }}>
                           {co.name}
                         </p>
                         <p className="text-[10px] text-white/30 truncate mt-0.5"
-                           style={{ fontFamily: "Lexend, sans-serif" }}>
+                          style={{ fontFamily: "Lexend, sans-serif" }}>
                           {co.sector}
                         </p>
                       </div>
                     </div>
-                    <span className={`text-[10px] font-bold flex-shrink-0 transition-colors ${
-                      active === co.name ? "text-[#ffc812]" : "text-white/40 group-hover:text-[#ffc812]/80"
-                    }`} style={{ fontFamily: "Michroma, sans-serif" }}>
+                    <span className={`text-[10px] font-bold flex-shrink-0 transition-colors ${active === co.name ? "text-[#ffc812]" : "text-white/40 group-hover:text-[#ffc812]/80"
+                      }`} style={{ fontFamily: "Michroma, sans-serif" }}>
                       {fmtKm(co.km)}
                     </span>
                   </div>
@@ -412,18 +338,18 @@ export default function LocationMap() {
         }
         .wr-popup .maplibregl-popup-tip { display: none !important; }
         .maplibregl-ctrl-attrib {
-          background: rgba(255,255,255,0.85) !important;
-          font-size: 9px !important;
+          background: rgba(0,0,0,0.5) !important;
+          color: #aaa !important;
+          font-size: 8px !important;
         }
-        .maplibregl-ctrl-zoom-in,
-        .maplibregl-ctrl-zoom-out {
-          border-color: #ffc812 !important;
+        .maplibregl-ctrl-group {
+          background: #0d1b2a !important;
+          border: 1px solid rgba(255,200,18,0.2) !important;
         }
-        .maplibregl-ctrl-zoom-in:hover,
-        .maplibregl-ctrl-zoom-out:hover {
-          background-color: #ffc812 !important;
+        .maplibregl-ctrl-group button {
+          filter: invert(1) brightness(2) !important;
         }
-        .maplibregl-canvas { background: #fff !important; }
+        .maplibregl-canvas { background: #050505 !important; }
       `}</style>
     </section>
   );

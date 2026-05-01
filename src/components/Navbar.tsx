@@ -9,10 +9,18 @@ const PRODUCT_CATEGORIES = [
     menuLabel: "HAEMNG",
     tagline: "UAV & eVTOL Motors — 11 variants",
     icon: (
-      <img 
-        src="/assets/prod_list/haemng_logo_128.svg" 
-        className="w-5 h-5 object-contain brightness-0 opacity-50 group-hover:opacity-100 transition-all"
-        alt=""
+      <div 
+        className="w-5 h-5 bg-current transition-all"
+        style={{ 
+          maskImage: "url(/assets/prod_list/haemng_logo_128.svg)",
+          WebkitMaskImage: "url(/assets/prod_list/haemng_logo_128.svg)",
+          maskSize: "contain",
+          WebkitMaskSize: "contain",
+          maskRepeat: "no-repeat",
+          WebkitMaskRepeat: "no-repeat",
+          maskPosition: "center",
+          WebkitMaskPosition: "center"
+        }}
       />
     ),
     products: PRODUCTS.filter(p => p.series === "haemng"),
@@ -23,10 +31,18 @@ const PRODUCT_CATEGORIES = [
     menuLabel: "MAELARD",
     tagline: "Marine, UAV & Multi-mission — 10 variants",
     icon: (
-      <img 
-        src="/assets/prod_list/maelard_logo_128.svg" 
-        className="w-5 h-5 object-contain brightness-0 opacity-50 group-hover:opacity-100 transition-all"
-        alt=""
+      <div 
+        className="w-5 h-5 bg-current transition-all"
+        style={{ 
+          maskImage: "url(/assets/prod_list/maelard_logo_128.svg)",
+          WebkitMaskImage: "url(/assets/prod_list/maelard_logo_128.svg)",
+          maskSize: "contain",
+          WebkitMaskSize: "contain",
+          maskRepeat: "no-repeat",
+          WebkitMaskRepeat: "no-repeat",
+          maskPosition: "center",
+          WebkitMaskPosition: "center"
+        }}
       />
     ),
     products: PRODUCTS.filter(p => p.series === "maelard"),
@@ -140,16 +156,44 @@ export default function Navbar() {
   const [megaOpen, setMegaOpen] = useState(false);
   const [activeCategory, setActiveCategory] = useState(PRODUCT_CATEGORIES[0].id);
   const [activeSegment, setActiveSegment] = useState("uav");
+  const [currentSection, setCurrentSection] = useState("home");
 
   const [location, navigate] = useLocation();
 
   const isHome = location === "/" || location === "";
+  const isAboutPage = location.startsWith("/about");
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
     window.addEventListener("scroll", onScroll);
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+
+    // Observer for adaptive navbar transparency & glassmorphism
+    const sections = isHome 
+      ? ["home", "products", "families", "depth", "architecture", "about", "contact"]
+      : isAboutPage
+        ? ["about-hero", "about-timeline", "about-usp", "about-expertise", "about-team", "about-partners", "about-cta"]
+        : [];
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          setCurrentSection(entry.target.id);
+        }
+      });
+    }, { threshold: 0.3 });
+
+    if (isHome || isAboutPage) {
+      sections.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) observer.observe(el);
+      });
+    }
+
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      observer.disconnect();
+    };
+  }, [isHome, isAboutPage]);
 
   const scrollToSection = (id: string) => {
     setMenuOpen(false);
@@ -186,19 +230,32 @@ export default function Navbar() {
 
   const activeCat = PRODUCT_CATEGORIES.find(c => c.id === activeCategory)!;
   // Pages that should keep the dark navbar theme even when scrolled
-  const forceDark = location.startsWith("/about") || location.startsWith("/calculators");
+  const forceDark = location.startsWith("/calculators") || location.startsWith("/products");
+  
+  // Adaptive transparency & glassmorphism
+  const homeDark = ["home", "families", "depth", "architecture", "about", "contact"];
+  const aboutDark = ["about-hero", "about-timeline", "about-expertise", "about-team", "about-partners", "about-cta"];
+  
   const isTransparent = !scrolled && !megaOpen;
-  const useDarkText = !isTransparent && !forceDark;
+  const isGlass = scrolled && !megaOpen && (
+    (isHome && homeDark.includes(currentSection)) ||
+    (isAboutPage && aboutDark.includes(currentSection))
+  );
+  
+  const useLightText = true;
+
+  // Background Class Logic
+  let navBgClass = "bg-[#050505]/95 backdrop-blur-md shadow-sm border-b border-white/5";
+  if (isTransparent) {
+    navBgClass = "bg-transparent";
+  } else if (isGlass) {
+    navBgClass = "bg-white/[0.03] backdrop-blur-xl border-b border-white/10 shadow-2xl";
+  }
 
   return (
     <>
       <nav
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${isTransparent
-            ? "bg-transparent"
-            : forceDark
-              ? "bg-[#0a0a0a]/95 backdrop-blur-md shadow-sm"
-              : "bg-white/95 backdrop-blur-md shadow-sm"
-          }`}
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${navBgClass}`}
       >
         <div className="max-w-7xl mx-auto px-4 md:px-6 py-3 md:py-4 flex items-center">
 
@@ -212,7 +269,7 @@ export default function Navbar() {
               <button
                 key={label}
                 onClick={action}
-                className={`text-xs tracking-widest uppercase font-medium transition-all duration-300 hover:text-[#ffc812] relative group ${useDarkText ? "text-black" : "text-white"
+                className={`text-xs tracking-widest uppercase font-medium transition-all duration-300 hover:text-[#ffc812] relative group ${useLightText ? "text-white" : "text-white"
                   }`}
                 style={{ fontFamily: "Michroma, sans-serif" }}
               >
@@ -225,7 +282,7 @@ export default function Navbar() {
             <div className="relative">
               <button
                 onClick={() => setMegaOpen(!megaOpen)}
-                className={`text-xs tracking-widest uppercase font-medium transition-all duration-300 flex items-center gap-1 relative group ${useDarkText ? "text-black" : "text-white"
+                className={`text-xs tracking-widest uppercase font-medium transition-all duration-300 flex items-center gap-1 relative group ${useLightText ? "text-white" : "text-white"
                   } ${megaOpen ? "text-[#ffc812]" : "hover:text-[#ffc812]"}`}
                 style={{ fontFamily: "Michroma, sans-serif" }}
               >
@@ -255,7 +312,7 @@ export default function Navbar() {
             className="flex items-center gap-2 md:gap-3 ml-auto"
           >
             <img
-              src={`${import.meta.env.BASE_URL}${useDarkText ? "welkinrim-logo.svg" : "welkinrim-logo-white.svg"}`}
+              src={`${import.meta.env.BASE_URL}welkinrim-logo-white.svg`}
               alt="Welkinrim Technologies"
               className="h-8 md:h-10 lg:h-12 w-auto transition-opacity duration-500"
             />
@@ -263,7 +320,7 @@ export default function Navbar() {
 
           {/* ── Mobile toggle ── */}
           <button
-            className={`md:hidden flex flex-col gap-1.5 transition-colors duration-300 ml-4 ${useDarkText ? "text-black" : "text-white"}`}
+            className={`md:hidden flex flex-col gap-1.5 transition-colors duration-300 ml-4 ${useLightText ? "text-white" : "text-white"}`}
             onClick={() => setMenuOpen(!menuOpen)}
           >
             <span className={`block w-6 h-0.5 bg-current transition-all duration-300 ${menuOpen ? "rotate-45 translate-y-2" : ""}`} />
@@ -273,7 +330,7 @@ export default function Navbar() {
         </div>
 
         {/* ── Mobile Menu ── */}
-        <div className={`md:hidden transition-all duration-300 overflow-hidden ${menuOpen ? "max-h-[500px] bg-white/97 backdrop-blur-md border-t border-gray-100" : "max-h-0"}`}>
+        <div className={`md:hidden transition-all duration-300 overflow-hidden ${menuOpen ? "max-h-[500px] bg-[#0a0a0a]/97 backdrop-blur-md border-t border-white/10" : "max-h-0"}`}>
           <div className="px-4 py-4 flex flex-col gap-4">
             {[
               { label: "Home", action: () => scrollToSection("home") },
@@ -284,7 +341,7 @@ export default function Navbar() {
               <button
                 key={label}
                 onClick={action}
-                className="text-left text-xs tracking-widest uppercase font-medium text-black hover:text-[#ffc812] transition-colors duration-200"
+                className="text-left text-xs tracking-widest uppercase font-medium text-white hover:text-[#ffc812] transition-colors duration-200"
                 style={{ fontFamily: "Michroma, sans-serif" }}
               >
                 {label}
@@ -305,7 +362,7 @@ export default function Navbar() {
         className={`fixed top-[60px] md:top-[72px] left-0 right-0 z-40 transition-all duration-300 ${megaOpen ? "opacity-100 translate-y-0 pointer-events-auto" : "opacity-0 -translate-y-2 pointer-events-none"
           }`}
       >
-        <div className="bg-white border-b border-gray-100 shadow-2xl overflow-y-auto max-h-[80vh] md:max-h-none">
+        <div className="bg-[#050505] border-b border-white/10 shadow-2xl overflow-y-auto max-h-[80vh] md:max-h-none">
 
 
 
@@ -325,7 +382,7 @@ export default function Navbar() {
                   }}
                   className={`flex items-center gap-2 px-6 py-1.5 text-[8px] tracking-[0.15em] uppercase font-bold transition-all duration-300 ${activeSegment === seg.id
                       ? "bg-[#ffc812] text-black shadow-sm"
-                      : "bg-gray-50 text-[#808080] hover:bg-gray-100 hover:text-black"
+                      : "bg-white/5 text-white/40 hover:bg-white/10 hover:text-white"
                     }`}
                   style={{ fontFamily: "Michroma, sans-serif", transform: "skewX(-10deg)" }}
                 >
@@ -343,8 +400,8 @@ export default function Navbar() {
             {activeSegment === "uav" || activeSegment === "other" ? (
               <div className="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-0">
                 {/* Left: category list */}
-                <div className="col-span-1 md:col-span-3 border-b md:border-b-0 md:border-r border-gray-100 pr-0 md:pr-4 pb-4 md:pb-0 mb-4 md:mb-0">
-                  <p className="text-[9px] text-[#808080] tracking-[0.3em] uppercase mb-3 md:mb-4" style={{ fontFamily: "Michroma, sans-serif" }}>
+                <div className="col-span-1 md:col-span-3 border-b md:border-b-0 md:border-r border-white/10 pr-0 md:pr-4 pb-4 md:pb-0 mb-4 md:mb-0">
+                  <p className="text-[9px] text-white/30 tracking-[0.3em] uppercase mb-3 md:mb-4" style={{ fontFamily: "Michroma, sans-serif" }}>
                     Product Lines
                   </p>
                   <div className="flex md:flex-col gap-1 overflow-x-auto md:overflow-visible pb-2 md:pb-0">
@@ -352,10 +409,10 @@ export default function Navbar() {
                       <button
                         key={cat.id}
                         onClick={() => setActiveCategory(cat.id)}
-                        className={`flex items-center gap-2 md:gap-3 px-2 md:px-3 py-2 rounded-sm text-left transition-all duration-200 group flex-shrink-0 ${activeCategory === cat.id ? "bg-[#ffc812]/10 text-black" : "text-[#444] hover:bg-gray-50"
+                        className={`flex items-center gap-2 md:gap-3 px-2 md:px-3 py-2 rounded-sm text-left transition-all duration-200 group flex-shrink-0 ${activeCategory === cat.id ? "bg-[#ffc812]/10 text-[#ffc812]" : "text-white/60 hover:bg-white/5 hover:text-white"
                           }`}
                       >
-                        <span className={`transition-colors duration-200 flex-shrink-0 ${activeCategory === cat.id ? "text-[#ffc812]" : "text-[#808080] group-hover:text-black"}`}>
+                        <span className={`transition-colors duration-200 flex-shrink-0 ${activeCategory === cat.id ? "text-[#ffc812]" : "text-white/40 group-hover:text-white"}`}>
                           {cat.icon}
                         </span>
                         <div className="h-11 flex items-center">
@@ -385,13 +442,13 @@ export default function Navbar() {
                 <div className="col-span-1 md:col-span-9 pl-0 md:pl-4 md:pl-8">
                   <div className="flex items-start justify-between mb-4">
                     <div>
-                      <p className="text-[9px] text-[#808080] tracking-[0.3em] uppercase" style={{ fontFamily: "Michroma, sans-serif" }}>
+                      <p className="text-[9px] text-white/30 tracking-[0.3em] uppercase" style={{ fontFamily: "Michroma, sans-serif" }}>
                         {activeCat.label} <span className="lowercase inline-block ml-1 tracking-normal font-bold">({activeCat.products.length} variants)</span>
                       </p>
                     </div>
                     <button
                       onClick={() => goToProducts(activeCategory)}
-                      className="text-[10px] text-[#ffc812] hover:text-black tracking-widest uppercase transition-colors duration-200 flex items-center gap-1"
+                      className="text-[10px] text-[#ffc812] hover:text-white tracking-widest uppercase transition-colors duration-200 flex items-center gap-1"
                       style={{ fontFamily: "Michroma, sans-serif" }}
                     >
                       View All
@@ -404,28 +461,28 @@ export default function Navbar() {
                       <button
                         key={p.id}
                         onClick={() => goToProduct(p.id)}
-                        className="text-left border border-gray-100 hover:border-[#ffc812] p-2 md:p-3 transition-all duration-200 group"
+                        className="text-left border border-white/5 hover:border-[#ffc812] p-2 md:p-3 transition-all duration-200 group bg-[#080808]"
                       >
-                        <div className="w-full h-12 md:h-16 bg-gray-50 mb-1 md:mb-2 flex items-center justify-center group-hover:bg-[#ffc812]/5 transition-colors duration-200">
+                        <div className="w-full h-12 md:h-16 bg-white/5 mb-1 md:mb-2 flex items-center justify-center group-hover:bg-[#ffc812]/5 transition-colors duration-200">
                           <div className="flex flex-col items-center">
                             {p.series === 'haemng' || p.series === 'maelard' ? (
                               <img
                                 src={`${import.meta.env.BASE_URL}${p.series === 'maelard' ? 'Maelard.svg' : 'haemng.svg'}`}
                                 alt={p.series}
-                                className="h-5 md:h-7 w-auto opacity-80"
+                                className="h-5 md:h-7 w-auto opacity-80 brightness-0 invert"
                               />
                             ) : (
-                              <img src={`${import.meta.env.BASE_URL}favicon.svg`} alt="favicon" className="h-4 md:h-5 w-auto opacity-70" />
+                              <img src={`${import.meta.env.BASE_URL}favicon.svg`} alt="favicon" className="h-4 md:h-5 w-auto opacity-70 brightness-0 invert" />
                             )}
                           </div>
                         </div>
                         <p className="text-xs truncate" style={{ fontFamily: "Michroma, sans-serif", fontWeight: 400 }}>
                           <span className="text-[#ffc812]">{p.model.split(' ')[0]}</span>{' '}
-                          <span className="text-black">{p.model.split(' ').slice(1).join(' ')}</span>
+                          <span className="text-white">{p.model.split(' ').slice(1).join(' ')}</span>
                         </p>
                         <div className="flex flex-wrap gap-0.5 md:gap-1 mt-1 md:mt-1.5">
                           {p.keySpecs.map((s) => (
-                            <span key={s.label} className="text-[6px] md:text-[7px] bg-gray-100 text-[#444] px-1 py-0.5" style={{ fontFamily: "Lexend, sans-serif" }}>{s.value}</span>
+                            <span key={s.label} className="text-[6px] md:text-[7px] bg-white/10 text-white/60 px-1 py-0.5" style={{ fontFamily: "Lexend, sans-serif" }}>{s.value}</span>
                           ))}
                         </div>
                       </button>
@@ -433,20 +490,20 @@ export default function Navbar() {
                     {activeCat.products.length > 4 && (
                       <button
                         onClick={() => goToProducts(activeCategory)}
-                        className="border border-dashed border-gray-200 hover:border-[#ffc812] p-2 md:p-3 flex flex-col items-center justify-center gap-1 md:gap-2 group transition-all duration-200"
+                        className="border border-dashed border-white/10 hover:border-[#ffc812] p-2 md:p-3 flex flex-col items-center justify-center gap-1 md:gap-2 group transition-all duration-200"
                       >
-                        <div className="w-6 md:w-8 h-6 md:h-8 rounded-full bg-gray-100 group-hover:bg-[#ffc812]/10 flex items-center justify-center transition-colors duration-200">
-                          <span className="text-[#808080] group-hover:text-[#ffc812] text-sm md:text-base font-bold leading-none">+</span>
+                        <div className="w-6 md:w-8 h-6 md:h-8 rounded-full bg-white/5 group-hover:bg-[#ffc812]/10 flex items-center justify-center transition-colors duration-200">
+                          <span className="text-white/40 group-hover:text-[#ffc812] text-sm md:text-base font-bold leading-none">+</span>
                         </div>
-                        <p className="text-[7px] md:text-[9px] text-[#808080] group-hover:text-black text-center" style={{ fontFamily: "Michroma, sans-serif" }}>
+                        <p className="text-[7px] md:text-[9px] text-white/40 group-hover:text-white text-center" style={{ fontFamily: "Michroma, sans-serif" }}>
                           +{activeCat.products.length - 4} more
                         </p>
                       </button>
                     )}
                   </div>
 
-                  <div className="mt-4 md:mt-6 pt-3 md:pt-4 border-t border-gray-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 md:gap-0">
-                    <p className="text-[9px] md:text-[10px] text-[#808080]" style={{ fontFamily: "Lexend, sans-serif" }}>
+                  <div className="mt-4 md:mt-6 pt-3 md:pt-4 border-t border-white/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 md:gap-0">
+                    <p className="text-[9px] md:text-[10px] text-white/30" style={{ fontFamily: "Lexend, sans-serif" }}>
                       36+ product variants across 5 lines
                     </p>
                     <button
@@ -466,18 +523,18 @@ export default function Navbar() {
                   style={{ fontFamily: "Michroma, sans-serif" }}>
                   Coming Soon
                 </p>
-                <h3 className="text-xl md:text-2xl font-bold text-black"
+                <h3 className="text-xl md:text-2xl font-bold text-white"
                   style={{ fontFamily: "Michroma, sans-serif" }}>
                   {SEGMENTS.find(s => s.id === activeSegment)?.label} Products
                 </h3>
-                <p className="text-sm text-[#808080] max-w-md"
+                <p className="text-sm text-white/40 max-w-md"
                   style={{ fontFamily: "Lexend, sans-serif" }}>
                   We're expanding our electric drive solutions to this segment.
                   Contact us for early access or custom requirements.
                 </p>
                 <div className="flex items-center gap-2 mt-1">
                   <div className="w-1.5 h-1.5 rounded-full bg-[#ffc812] animate-pulse" />
-                  <p className="text-[10px] tracking-widest uppercase text-[#555]"
+                  <p className="text-[10px] tracking-widest uppercase text-white/60"
                     style={{ fontFamily: "Michroma, sans-serif" }}>In development</p>
                 </div>
                 <button
@@ -497,5 +554,5 @@ export default function Navbar() {
         <div className="fixed inset-0 z-30" onClick={() => setMegaOpen(false)} />
       )}
     </>
-  );
+   );
 }

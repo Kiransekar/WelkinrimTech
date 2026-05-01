@@ -115,9 +115,9 @@ export default function Products() {
 
   return (
     <>
-      <div className="min-h-screen bg-white">
+      <div className="min-h-screen bg-[#050505]">
         {/* ── Page header ── */}
-        <div className="bg-black pt-16 md:pt-20 pb-4 md:pb-6">
+        <div className="bg-black pt-20 md:pt-24 pb-4 md:pb-6">
           <div className="max-w-7xl mx-auto px-6 md:px-12 flex flex-col md:flex-row md:items-center justify-between gap-4">
             <h1 className="text-2xl md:text-4xl lg:text-5xl font-bold text-white leading-tight" style={{ fontFamily: "Michroma, sans-serif" }}>
               Product <span className="text-[#ffc812]">Catalogue</span>
@@ -130,7 +130,7 @@ export default function Products() {
                 placeholder="Search models..."
                 value={search}
                 onChange={e => setSearch(e.target.value)}
-                className="w-full bg-white/10 border border-white/20 px-4 py-2.5 text-[10px] text-white focus:outline-none focus:border-[#ffc812] transition-all duration-300 rounded-sm"
+                className="w-full bg-white/5 border border-white/10 px-4 py-2.5 text-[10px] text-white focus:outline-none focus:border-[#ffc812] transition-all duration-300 rounded-sm"
                 style={{ fontFamily: "Michroma, sans-serif" }}
               />
               <div className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40">
@@ -143,7 +143,7 @@ export default function Products() {
         </div>
 
         {/* ── Sticky filter bar ── */}
-        <div className="sticky top-[60px] md:top-[72px] z-30 bg-[#0a0a0a] border-b border-white/5 py-3 md:py-4">
+        <div className="sticky top-[60px] md:top-[72px] z-30 bg-[#0a0a0a]/80 backdrop-blur-md border-b border-white/5 py-3 md:py-4">
           <div className="max-w-7xl mx-auto px-6 md:px-12 space-y-3">
             
             {/* Family Row */}
@@ -158,7 +158,7 @@ export default function Products() {
                     onClick={() => { window.location.hash = tab.id; }}
                     className={`px-3 py-1.5 text-[8px] md:text-[9px] tracking-widest uppercase font-bold rounded-full transition-all duration-300 border ${
                       activeFamily === tab.id
-                        ? "bg-white text-black border-white"
+                        ? "bg-[#ffc812] text-black border-[#ffc812]"
                         : "bg-transparent text-white/60 border-white/10 hover:border-white/30 hover:text-white"
                     }`}
                     style={{ fontFamily: "Michroma, sans-serif" }}
@@ -181,7 +181,7 @@ export default function Products() {
                     onClick={() => setActiveVoltage(volt)}
                     className={`px-3 py-1.5 text-[8px] md:text-[9px] tracking-widest uppercase font-bold rounded-full transition-all duration-300 border ${
                       activeVoltage === volt
-                        ? "bg-white text-black border-white"
+                        ? "bg-[#ffc812] text-black border-[#ffc812]"
                         : "bg-transparent text-white/60 border-white/10 hover:border-white/30 hover:text-white"
                     }`}
                     style={{ fontFamily: "Michroma, sans-serif" }}
@@ -218,16 +218,16 @@ export default function Products() {
                       <img
                         src={`${import.meta.env.BASE_URL}${(cfg as { logoSrc: string }).logoSrc}`}
                         alt={cfg.label}
-                        className="h-6 md:h-8 w-auto"
+                        className="h-6 md:h-8 w-auto brightness-0 invert"
                       />
                     ) : (
-                      <h2 className="text-lg md:text-xl font-bold text-black" style={{ fontFamily: "Michroma, sans-serif" }}>
+                      <h2 className="text-lg md:text-xl font-bold text-white" style={{ fontFamily: "Michroma, sans-serif" }}>
                         {cfg.label}
                       </h2>
                     )}
-                    <p className="text-[9px] md:text-[10px] text-[#808080] mt-0.5">{items.length} model{items.length > 1 ? "s" : ""}</p>
+                    <p className="text-[9px] md:text-[10px] text-white/40 mt-0.5">{items.length} model{items.length > 1 ? "s" : ""}</p>
                   </div>
-                  <div className="flex-1 h-px bg-gray-100" />
+                  <div className="flex-1 h-px bg-white/5" />
                 </div>
                 <ProductGrid items={items} cfg={cfg} navigate={navigate} />
               </div>
@@ -281,15 +281,15 @@ function ProductGrid({
         <button
           key={p.id}
           onClick={() => navigate(`/products/${p.id}`)}
-          className="text-left border border-gray-100 hover:border-gray-300 hover:shadow-xl transition-all duration-300 flex flex-col group"
+          className="text-left border border-white/10 hover:border-[#ffc812]/40 hover:shadow-2xl hover:shadow-[#ffc812]/5 transition-all duration-300 flex flex-col group bg-[#080808]"
         >
           {/* Visual header */}
           <div
             className="relative flex flex-col items-center justify-center h-40 overflow-hidden"
-            style={{ background: "#ffffff" }}
+            style={{ background: "#0a0a0a" }}
           >
             <div
-              className="absolute inset-0 opacity-10"
+              className="absolute inset-0 opacity-[0.03]"
               style={{
                 backgroundImage: `linear-gradient(${cfg.accent}44 1px, transparent 1px),
                                   linear-gradient(90deg, ${cfg.accent}44 1px, transparent 1px)`,
@@ -303,15 +303,15 @@ function ProductGrid({
                     src={p.thumbnailUrl}
                     alt={p.model}
                     className="max-w-full max-h-full object-contain"
-                    style={{ filter: "drop-shadow(0 4px 12px rgba(0,0,0,0.3))" }}
+                    style={{ filter: "drop-shadow(0 4px 12px rgba(0,0,0,0.5))" }}
                   />
                 </div>
               ) : (
                 <div className="relative z-10">
                   {p.series === "haemng" ? (
-                    <img src={`${import.meta.env.BASE_URL}haemng.svg`} alt="Haemng" className="h-10 md:h-14 w-auto" style={{ opacity: 0.8 }} />
+                    <img src={`${import.meta.env.BASE_URL}haemng.svg`} alt="Haemng" className="h-10 md:h-14 w-auto brightness-0 invert opacity-60" />
                   ) : (
-                    <img src={`${import.meta.env.BASE_URL}Maelard.svg`} alt="Maelard" className="h-8 md:h-10 w-auto" style={{ opacity: 0.85 }} />
+                    <img src={`${import.meta.env.BASE_URL}Maelard.svg`} alt="Maelard" className="h-8 md:h-10 w-auto brightness-0 invert opacity-60" />
                   )}
                 </div>
               )
@@ -320,13 +320,13 @@ function ProductGrid({
                 <img
                   src={`${import.meta.env.BASE_URL}favicon.svg`}
                   alt="Welkinrim"
-                  className="h-10 md:h-12 w-auto opacity-90"
+                  className="h-10 md:h-12 w-auto opacity-40 brightness-0 invert"
                 />
               </div>
             )}
             {p.allSpecs.find((s: { label: string; value: string }) => s.label === "Dimension") && (
               <div className="absolute bottom-2 left-0 right-0 text-center z-10">
-                <p className="text-[8px] md:text-[9px] tracking-widest text-black/40 uppercase"
+                <p className="text-[8px] md:text-[9px] tracking-widest text-white/30 uppercase"
                    style={{ fontFamily: "Michroma, sans-serif" }}>
                   {p.allSpecs.find((s: { label: string; value: string }) => s.label === "Dimension")?.value}
                 </p>
@@ -344,21 +344,21 @@ function ProductGrid({
           </div>
 
           {/* Card body */}
-          <div className="p-4 flex flex-col flex-1">
+          <div className="p-4 flex flex-col flex-1 bg-[#080808]">
             <p className="text-[8px] tracking-[0.25em] uppercase mb-0.5"
                style={{ fontFamily: "Michroma, sans-serif", color: cfg.accent }}>
               {p.application}
             </p>
-            <h3 className="text-sm font-bold text-black mb-3 uppercase" style={{ fontFamily: "Michroma, sans-serif" }}>
+            <h3 className="text-sm font-bold text-white mb-3 uppercase" style={{ fontFamily: "Michroma, sans-serif" }}>
               {p.model}
             </h3>
-            <div className="grid grid-cols-3 gap-px bg-gray-100 mt-auto">
+            <div className="grid grid-cols-3 gap-px bg-white/5 mt-auto">
               {p.keySpecs.map((s: { label: string; value: string }) => (
-                <div key={s.label} className="bg-white px-2 py-2 text-center">
-                  <p className="text-[10px] font-black text-black" style={{ fontFamily: "Michroma, sans-serif" }}>
+                <div key={s.label} className="bg-[#0a0a0a] px-2 py-2 text-center">
+                  <p className="text-[10px] font-black text-white" style={{ fontFamily: "Michroma, sans-serif" }}>
                     {s.value}
                   </p>
-                  <p className="text-[8px] text-[#808080] mt-0.5 leading-tight">{s.label}</p>
+                  <p className="text-[8px] text-white/30 mt-0.5 leading-tight">{s.label}</p>
                 </div>
               ))}
             </div>

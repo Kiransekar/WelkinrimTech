@@ -26,7 +26,7 @@ export default function FamiliesSection() {
   };
 
   return (
-    <section className="bg-[#050505] w-full py-16 md:py-24 overflow-hidden">
+    <section id="families" className="bg-[#050505] w-full py-16 md:py-24 overflow-hidden">
       <div className="max-w-[1600px] mx-auto px-4 md:px-8 lg:px-12">
         {/* Header Row */}
         <div className="flex items-end justify-between mb-2">

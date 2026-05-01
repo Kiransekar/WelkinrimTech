@@ -119,11 +119,13 @@ const EXPERTISE_AREAS = [
   { title: "Motion Control", items: ["Sine & FOC Control", "Motion Algorithms", "System Simulation", "Performance Optimization"] },
 ];
 
-const INVESTORS: { name: string; full: string; logo?: string }[] = [
-  { name: "GSF", full: "Global Super Fund", logo: "investors/GSF.jpg" },
-  { name: "CAN", full: "Chennai Angels Network", logo: "investors/CAN.jpg" },
-  { name: "MSH", full: "Meity Startup Hub", logo: "investors/MeitY.jpg" },
-  { name: "Forge", full: "Forge Accelerator", logo: "investors/Forge.jpg" },
+const INVESTORS: { name: string; full: string; logo?: string; noFilter?: boolean }[] = [
+  { name: "IITM", full: "IITM Incubation Cell", logo: "assets/backed/svg/iitm.svg", noFilter: true },
+  { name: "Meity", full: "Meity Startup Hub", logo: "assets/backed/svg/meity.svg" },
+  { name: "Forge", full: "Forge Innovation & Ventures", logo: "assets/backed/svg/forge.svg" },
+  { name: "SIPCOT", full: "SIPCOT", logo: "assets/backed/svg/sipcot.svg" },
+  { name: "GSF", full: "Global Super Fund", logo: "assets/backed/svg/gsf.svg" },
+  { name: "CAN", full: "Chennai Angels Network", logo: "assets/backed/svg/can.svg", noFilter: true },
 ];
 
 const USP_ITEMS = [
@@ -292,7 +294,7 @@ export default function About() {
   return (
     <>
       {/* ── HERO ───────────────────────────────────────────────────────── */}
-      <section className="relative bg-[#0a0a0a] pt-28 md:pt-36 pb-20 md:pb-32 overflow-hidden min-h-[70vh] flex items-end">
+      <section id="about-hero" className="relative bg-[#0a0a0a] pt-28 md:pt-36 pb-20 md:pb-32 overflow-hidden min-h-[70vh] flex items-end">
         {/* Grid texture */}
         <div className="absolute inset-0 opacity-[0.03]" style={{
           backgroundImage: `linear-gradient(#ffc812 1px, transparent 1px), linear-gradient(90deg, #ffc812 1px, transparent 1px)`,
@@ -350,7 +352,7 @@ export default function About() {
       </section>
 
       {/* ── TIMELINE ───────────────────────────────────────────────────── */}
-      <section className="bg-[#060606] py-20 md:py-32 relative overflow-hidden">
+      <section id="about-timeline" className="bg-[#060606] py-20 md:py-32 relative overflow-hidden">
         {/* Subtle diagonal pattern */}
         <div className="absolute inset-0 opacity-[0.015]" style={{
           backgroundImage: `repeating-linear-gradient(45deg, #ffc812 0, #ffc812 1px, transparent 0, transparent 50%)`,
@@ -400,7 +402,7 @@ export default function About() {
       </section>
 
       {/* ── USP STRIP ──────────────────────────────────────────────────── */}
-      <section className="bg-[#ffc812] py-8 overflow-hidden">
+      <section id="about-usp" className="bg-[#ffc812] py-8 overflow-hidden">
         <div className="flex animate-marquee whitespace-nowrap gap-8">
           {[...USP_ITEMS, ...USP_ITEMS].map((item, i) => (
             <span key={i} className="text-[11px] font-black text-black/70 tracking-[0.3em] uppercase flex-shrink-0 flex items-center gap-4"
@@ -413,16 +415,16 @@ export default function About() {
       </section>
 
       {/* ── CORE EXPERTISE ─────────────────────────────────────────────── */}
-      <section className="bg-white py-20 md:py-28">
+      <section id="about-expertise" className="bg-[#050505] py-20 md:py-28">
         <div className="max-w-7xl mx-auto px-4 md:px-12">
           <Reveal>
             <div className="flex items-center gap-3 mb-3">
               <div className="h-px w-10 bg-[#ffc812]" />
-              <span className="text-[#808080] text-[10px] tracking-[0.3em] uppercase" style={{ fontFamily: "Michroma, sans-serif" }}>
+              <span className="text-white/40 text-[10px] tracking-[0.3em] uppercase" style={{ fontFamily: "Michroma, sans-serif" }}>
                 Engineering DNA
               </span>
             </div>
-            <h2 className="text-2xl md:text-4xl font-bold text-black mb-12" style={{ fontFamily: "Michroma, sans-serif" }}>
+            <h2 className="text-2xl md:text-4xl font-bold text-white mb-12" style={{ fontFamily: "Michroma, sans-serif" }}>
               Deep Domain <span className="text-[#ffc812]">Expertise</span>
             </h2>
           </Reveal>
@@ -430,23 +432,23 @@ export default function About() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {EXPERTISE_AREAS.map((area, i) => (
               <Reveal key={area.title} delay={i * 100}>
-                <div className="border border-gray-100 p-6 h-full hover:border-[#ffc812]/20 hover:shadow-lg transition-all duration-400 group relative overflow-hidden bg-white">
+                <div className="border border-white/10 p-6 h-full hover:border-[#ffc812]/20 hover:bg-white/[0.06] transition-all duration-400 group relative overflow-hidden bg-white/[0.03] backdrop-blur-sm">
                   {/* Background number */}
-                  <span className="absolute -right-2 -top-4 text-[80px] font-black text-gray-50 leading-none select-none pointer-events-none group-hover:text-[#ffc812]/[0.12] group-hover:-translate-y-2 transition-all duration-500"
+                  <span className="absolute -right-2 -top-4 text-[80px] font-black text-white/[0.03] leading-none select-none pointer-events-none group-hover:text-[#ffc812]/[0.08] group-hover:-translate-y-2 transition-all duration-500"
                         style={{ fontFamily: "Michroma, sans-serif" }}>
                     {String(i + 1).padStart(2, "0")}
                   </span>
 
                   <div className="relative z-10">
                     <div className="w-8 h-0.5 bg-[#ffc812] mb-4 group-hover:w-12 transition-all duration-300" />
-                    <h3 className="text-sm font-bold text-black mb-4 tracking-wide uppercase" style={{ fontFamily: "Michroma, sans-serif" }}>
+                    <h3 className="text-sm font-bold text-white mb-4 tracking-wide uppercase" style={{ fontFamily: "Michroma, sans-serif" }}>
                       {area.title}
                     </h3>
                     <ul className="space-y-2.5">
                       {area.items.map(item => (
                         <li key={item} className="flex items-center gap-2.5">
                           <div className="w-1 h-1 bg-[#ffc812] flex-shrink-0" />
-                          <span className="text-xs text-[#666]" style={{ fontFamily: "Lexend, sans-serif" }}>{item}</span>
+                          <span className="text-xs text-white/50" style={{ fontFamily: "Lexend, sans-serif" }}>{item}</span>
                         </li>
                       ))}
                     </ul>
@@ -459,21 +461,21 @@ export default function About() {
       </section>
 
       {/* ── TEAM ───────────────────────────────────────────────────────── */}
-      <section className="bg-[#f8f8f8] py-20 md:py-28">
+      <section id="about-team" className="bg-[#0a0a0a] py-20 md:py-28">
         <div className="max-w-7xl mx-auto px-4 md:px-12">
           <Reveal>
             <div className="text-center mb-14">
               <div className="inline-flex items-center gap-4 mb-4">
                 <div className="h-px w-12 bg-gradient-to-r from-transparent to-[#ffc812]/60" />
-                <span className="text-[#808080] text-[10px] tracking-[0.4em] uppercase" style={{ fontFamily: "Michroma, sans-serif" }}>
+                <span className="text-white/40 text-[10px] tracking-[0.4em] uppercase" style={{ fontFamily: "Michroma, sans-serif" }}>
                   Leadership
                 </span>
                 <div className="h-px w-12 bg-gradient-to-l from-transparent to-[#ffc812]/60" />
               </div>
-              <h2 className="text-2xl md:text-4xl font-bold text-black" style={{ fontFamily: "Michroma, sans-serif" }}>
+              <h2 className="text-2xl md:text-4xl font-bold text-white" style={{ fontFamily: "Michroma, sans-serif" }}>
                 The <span className="text-[#ffc812]">Core</span> Team
               </h2>
-              <p className="text-sm text-[#888] mt-3 max-w-lg mx-auto" style={{ fontFamily: "Lexend, sans-serif" }}>
+              <p className="text-sm text-white/40 mt-3 max-w-lg mx-auto" style={{ fontFamily: "Lexend, sans-serif" }}>
                 Passionate engineers driven by a shared mission to indigenize propulsion technology.
               </p>
             </div>
@@ -482,13 +484,13 @@ export default function About() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {TEAM.map((member, i) => (
               <Reveal key={member.name} delay={i * 80}>
-                <div className="bg-white border border-gray-100 overflow-hidden hover:shadow-xl hover:border-[#ffc812]/20 transition-all duration-400 group">
+                <div className="bg-white/[0.03] backdrop-blur-sm border border-white/10 overflow-hidden hover:bg-white/[0.06] hover:border-[#ffc812]/20 transition-all duration-400 group">
                   {/* Top bar */}
                   <div className="h-1 bg-gradient-to-r from-[#ffc812] to-[#ffc812]/30 group-hover:to-[#ffc812] transition-all duration-500" />
 
                   <div className="p-6">
                     {/* Avatar */}
-                    <div className="w-16 h-16 bg-[#0a0a0a] flex items-center justify-center mb-5 relative overflow-hidden group-hover:shadow-[0_0_20px_rgba(255,200,18,0.15)] transition-shadow duration-300">
+                    <div className="w-16 h-16 bg-black flex items-center justify-center mb-5 relative overflow-hidden group-hover:shadow-[0_0_20px_rgba(255,200,18,0.15)] transition-shadow duration-300">
                       {member.image ? (
                         <img 
                           src={member.image} 
@@ -507,22 +509,22 @@ export default function About() {
                       )}
                     </div>
 
-                    <h3 className="text-sm font-bold text-black mb-1" style={{ fontFamily: "Michroma, sans-serif" }}>
+                    <h3 className="text-sm font-bold text-white mb-1" style={{ fontFamily: "Michroma, sans-serif" }}>
                       {member.name}
                     </h3>
                     <p className="text-[9px] text-[#ffc812] tracking-widest uppercase mb-1" style={{ fontFamily: "Michroma, sans-serif" }}>
                       {member.role}
                     </p>
-                    <p className="text-[9px] text-[#aaa] tracking-wider uppercase mb-4" style={{ fontFamily: "Michroma, sans-serif" }}>
+                    <p className="text-[9px] text-white/30 tracking-wider uppercase mb-4" style={{ fontFamily: "Michroma, sans-serif" }}>
                       {member.expertise}
                     </p>
-                    <div className="h-px bg-gray-100 mb-3" />
-                    <p className="text-xs text-[#888] leading-relaxed" style={{ fontFamily: "Lexend, sans-serif" }}>
+                    <div className="h-px bg-white/10 mb-3" />
+                    <p className="text-xs text-white/50 leading-relaxed" style={{ fontFamily: "Lexend, sans-serif" }}>
                       {member.bio}
                     </p>
                     {member.linkedin && (
                       <a href={member.linkedin} target="_blank" rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1.5 mt-3 text-[9px] text-[#808080] tracking-wider uppercase hover:text-[#ffc812] transition-colors"
+                        className="inline-flex items-center gap-1.5 mt-3 text-[9px] text-white/40 tracking-wider uppercase hover:text-[#ffc812] transition-colors"
                         style={{ fontFamily: "Michroma, sans-serif" }}>
                         <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
                           <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
@@ -539,7 +541,7 @@ export default function About() {
       </section>
 
       {/* ── BACKED BY ──────────────────────────────────────────────────── */}
-      <section className="bg-[#0a0a0a] py-14 md:py-20 relative overflow-hidden">
+      <section id="about-partners" className="bg-[#0a0a0a] py-14 md:py-20 relative overflow-hidden">
         {/* Subtle grid texture */}
         <div className="absolute inset-0 opacity-[0.02]" style={{
           backgroundImage: `linear-gradient(#ffc812 1px, transparent 1px), linear-gradient(90deg, #ffc812 1px, transparent 1px)`,
@@ -558,19 +560,18 @@ export default function About() {
               </div>
             </div>
           </Reveal>
-          <div className="flex flex-wrap items-center justify-center gap-5 md:gap-8">
+          <div className="flex flex-wrap items-center justify-center gap-12 md:gap-20">
             {INVESTORS.map((inv, i) => (
               <Reveal key={inv.name} delay={i * 80}>
-                <div className="border border-white/[0.08] bg-white/[0.03] backdrop-blur-sm px-8 py-5 hover:border-[#ffc812]/30 hover:bg-white/[0.06] transition-all duration-300 group cursor-default flex items-center justify-center min-h-[60px]">
+                <div className="group cursor-default flex items-center justify-center">
                   {inv.logo ? (
                     <img
                       src={`${import.meta.env.BASE_URL}${inv.logo}`}
                       alt={inv.full}
-                      className="h-8 md:h-10 w-auto max-w-[140px] object-contain opacity-80 group-hover:opacity-100 transition-opacity"
-                      style={{ mixBlendMode: "screen" }}
+                      className={`h-12 md:h-16 w-auto max-w-[180px] object-contain opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all duration-700 ease-out ${!inv.noFilter ? 'brightness-0 invert' : ''}`}
                     />
                   ) : (
-                    <span className="text-sm md:text-base font-black text-white/80 tracking-[0.15em] uppercase group-hover:text-[#ffc812] transition-colors"
+                    <span className="text-xl md:text-2xl font-black text-white/40 tracking-[0.15em] uppercase group-hover:text-[#ffc812] transition-colors"
                           style={{ fontFamily: "Michroma, sans-serif" }}>
                       {inv.name}
                     </span>
@@ -584,7 +585,7 @@ export default function About() {
       </section>
 
       {/* ── CTA ────────────────────────────────────────────────────────── */}
-      <section className="bg-[#0a0a0a] py-20 md:py-28 relative overflow-hidden">
+      <section id="about-cta" className="bg-[#0a0a0a] py-20 md:py-28 relative overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-0.5" style={{ background: "linear-gradient(90deg, #ffc812, transparent 60%)" }} />
         {/* Background text */}
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none overflow-hidden">

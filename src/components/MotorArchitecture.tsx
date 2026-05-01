@@ -35,7 +35,7 @@ export default function MotorArchitecture() {
   const d = (ms: number) => `${ms}ms`;
 
   return (
-    <section ref={ref} className="w-full bg-[#050505] py-32 overflow-hidden border-t border-white/[0.03]">
+    <section id="architecture" ref={ref} className="w-full bg-[#050505] py-32 overflow-hidden border-t border-white/[0.03]">
       <div className="max-w-[1400px] mx-auto px-6">
 
         {/* Header */}

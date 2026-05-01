@@ -27,17 +27,17 @@ export default function ContactSection() {
   };
 
   return (
-    <section id="contact" className="py-6 md:py-8 lg:py-12 bg-white scroll-mt-[60px] md:scroll-mt-[72px] flex flex-col justify-center min-h-[80vh] lg:min-h-[calc(100vh-72px)]">
+    <section id="contact" className="py-6 md:py-8 lg:py-12 bg-[#050505] scroll-mt-[60px] md:scroll-mt-[72px] flex flex-col justify-center min-h-[80vh] lg:min-h-[calc(100vh-72px)]">
       <div className="max-w-7xl mx-auto px-4 md:px-12 w-full my-auto">
         {/* Header */}
         <div className="mb-6 md:mb-8 lg:mb-12">
           <div className="flex items-center gap-3 mb-2 md:mb-3">
             <div className="h-px w-8 md:w-10 bg-[#ffc812]" />
-            <span className="text-[9px] md:text-xs tracking-[0.3em] uppercase" style={{ fontFamily: 'Michroma, sans-serif' }}>
+            <span className="text-white/40 text-[9px] md:text-xs tracking-[0.3em] uppercase" style={{ fontFamily: 'Michroma, sans-serif' }}>
               Enquiry
             </span>
           </div>
-          <h2 className="text-2xl md:text-4xl lg:text-5xl font-bold text-black leading-tight" style={{ fontFamily: 'Michroma, sans-serif' }}>
+          <h2 className="text-2xl md:text-4xl lg:text-5xl font-bold text-white leading-tight" style={{ fontFamily: 'Michroma, sans-serif' }}>
             Start a Conversation
             <br />
             <span className="text-[#ffc812]">With Our Engineers</span>
@@ -47,7 +47,7 @@ export default function ContactSection() {
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 lg:gap-8 items-center">
           {/* Left: Info */}
           <div className="lg:col-span-2 flex flex-col gap-4">
-            <p className="text-[#808080] text-sm leading-relaxed" style={{ fontFamily: 'Lexend, sans-serif' }}>
+            <p className="text-white/60 text-sm leading-relaxed" style={{ fontFamily: 'Lexend, sans-serif' }}>
               Whether you're integrating our propulsion systems into an existing platform or starting from scratch, our engineering team is ready to discuss your specific requirements.
             </p>
 
@@ -75,13 +75,13 @@ export default function ContactSection() {
                   value: "#23, Sujatha nagar, kandigai village, Panruti, Sripermabadur, TN - 631604",
                 },
               ].map((item) => (
-                <div key={item.label} className="flex items-start gap-3 md:gap-4 p-2 md:p-3 border border-gray-100 hover:border-[#ffc812]/50 transition-colors duration-200" style={{ transform: 'skewX(-10deg)' }}>
+                <div key={item.label} className="flex items-start gap-3 md:gap-4 p-2 md:p-3 border border-white/5 bg-[#080808] hover:border-[#ffc812]/50 transition-colors duration-200" style={{ transform: 'skewX(-10deg)' }}>
                   <div className="w-7 md:w-8 h-7 md:h-8 bg-[#ffc812]/10 flex items-center justify-center flex-shrink-0 text-[#ffc812]" style={{ transform: 'skewX(10deg)' }}>
                     {item.icon}
                   </div>
                   <div style={{ transform: 'skewX(10deg)' }}>
-                    <div className="text-[9px] md:text-[10px] text-[#808080] uppercase tracking-widest mb-0.5" style={{ fontFamily: 'Michroma, sans-serif' }}>{item.label}</div>
-                    <div className="text-xs md:text-sm text-black font-medium" style={{ fontFamily: 'Lexend, sans-serif' }}>{item.value}</div>
+                    <div className="text-[9px] md:text-[10px] text-white/30 uppercase tracking-widest mb-0.5" style={{ fontFamily: 'Michroma, sans-serif' }}>{item.label}</div>
+                    <div className="text-xs md:text-sm text-white/90 font-medium" style={{ fontFamily: 'Lexend, sans-serif' }}>{item.value}</div>
                   </div>
                 </div>
               ))}
@@ -89,12 +89,12 @@ export default function ContactSection() {
 
             {/* Industries badge */}
             <div>
-              <div className="text-[9px] text-[#808080] uppercase tracking-widest mb-2" style={{ fontFamily: 'Michroma, sans-serif' }}>We Serve</div>
+              <div className="text-[9px] text-white/30 uppercase tracking-widest mb-2" style={{ fontFamily: 'Michroma, sans-serif' }}>We Serve</div>
               <div className="flex flex-wrap gap-1 md:gap-2">
                 {["UAV/eVTOL", "Marine", "Land", "Robotics"].map((ind) => (     
                   <span
                     key={ind}
-                    className="px-2 py-1 border border-[#ffc812]/30 text-[9px] tracking-[0.15em] uppercase text-black"
+                    className="px-2 py-1 border border-[#ffc812]/30 text-[9px] tracking-[0.15em] uppercase text-white/80"
                     style={{ fontFamily: 'Michroma, sans-serif', transform: 'skewX(-10deg)' }}
                   >
                     <span style={{ display: 'inline-block', transform: 'skewX(10deg)' }}>{ind}</span>
@@ -113,15 +113,15 @@ export default function ContactSection() {
                     <polyline points="20 6 9 17 4 12" />
                   </svg>
                 </div>
-                <h3 className="text-xl font-bold text-black mb-3" style={{ fontFamily: 'Michroma, sans-serif' }}>
+                <h3 className="text-xl font-bold text-white mb-3" style={{ fontFamily: 'Michroma, sans-serif' }}>
                   Message Received
                 </h3>
-                <p className="text-[#808080] text-sm max-w-xs" style={{ fontFamily: 'Lexend, sans-serif' }}>
+                <p className="text-white/60 text-sm max-w-xs" style={{ fontFamily: 'Lexend, sans-serif' }}>
                   Our engineering team will review your inquiry and get back to you within 24 hours.
                 </p>
                 <button
                   onClick={() => { setSubmitted(false); setForm({ name: "", company: "", email: "", phone: "", industry: "", message: "" }); }}
-                  className="mt-6 px-6 py-2.5 bg-black text-white text-xs tracking-widest uppercase hover:bg-[#ffc812] hover:text-black transition-all duration-300"
+                  className="mt-6 px-6 py-2.5 bg-white text-black text-xs tracking-widest uppercase hover:bg-[#ffc812] transition-all duration-300"
                   style={{ fontFamily: 'Michroma, sans-serif', transform: 'skewX(-10deg)' }}
                 >
                   <span style={{ display: 'inline-block', transform: 'skewX(10deg)' }}>Send Another</span>
@@ -131,64 +131,64 @@ export default function ContactSection() {
               <form onSubmit={handleSubmit} className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-5 lg:gap-y-4">
                 {/* Name */}
                 <div className="flex flex-col gap-1">
-                  <label className="text-[10px] uppercase tracking-widest text-[#808080]" style={{ fontFamily: 'Michroma, sans-serif' }}>Full Name *</label>
+                  <label className="text-[10px] uppercase tracking-widest text-white/40" style={{ fontFamily: 'Michroma, sans-serif' }}>Full Name *</label>
                   <input
                     required
                     name="name"
                     value={form.name}
                     onChange={handleChange}
-                    className="w-full border border-gray-200 px-3 py-2 text-sm text-black focus:outline-none focus:border-[#ffc812] transition-colors duration-200 bg-white"
+                    className="w-full border border-white/10 px-3 py-2 text-sm text-white focus:outline-none focus:border-[#ffc812] transition-colors duration-200 bg-[#0a0a0a]"
                     style={{ fontFamily: 'Lexend, sans-serif', transform: 'skewX(-10deg)' }}
                   />
                 </div>
 
                 {/* Company */}
                 <div className="flex flex-col gap-1">
-                  <label className="text-[10px] uppercase tracking-widest text-[#808080]" style={{ fontFamily: 'Michroma, sans-serif' }}>Company</label>
+                  <label className="text-[10px] uppercase tracking-widest text-white/40" style={{ fontFamily: 'Michroma, sans-serif' }}>Company</label>
                   <input
                     name="company"
                     value={form.company}
                     onChange={handleChange}
-                    className="w-full border border-gray-200 px-3 py-2 text-sm text-black focus:outline-none focus:border-[#ffc812] transition-colors duration-200 bg-white"
+                    className="w-full border border-white/10 px-3 py-2 text-sm text-white focus:outline-none focus:border-[#ffc812] transition-colors duration-200 bg-[#0a0a0a]"
                     style={{ fontFamily: 'Lexend, sans-serif', transform: 'skewX(-10deg)' }}
                   />
                 </div>
 
                 {/* Email */}
                 <div className="flex flex-col gap-1">
-                  <label className="text-[10px] uppercase tracking-widest text-[#808080]" style={{ fontFamily: 'Michroma, sans-serif' }}>Email *</label>
+                  <label className="text-[10px] uppercase tracking-widest text-white/40" style={{ fontFamily: 'Michroma, sans-serif' }}>Email *</label>
                   <input
                     required
                     type="email"
                     name="email"
                     value={form.email}
                     onChange={handleChange}
-                    className="w-full border border-gray-200 px-3 py-2 text-sm text-black focus:outline-none focus:border-[#ffc812] transition-colors duration-200 bg-white"
+                    className="w-full border border-white/10 px-3 py-2 text-sm text-white focus:outline-none focus:border-[#ffc812] transition-colors duration-200 bg-[#0a0a0a]"
                     style={{ fontFamily: 'Lexend, sans-serif', transform: 'skewX(-10deg)' }}
                   />
                 </div>
 
                 {/* Phone */}
                 <div className="flex flex-col gap-1">
-                  <label className="text-[10px] uppercase tracking-widest text-[#808080]" style={{ fontFamily: 'Michroma, sans-serif' }}>Phone</label>
+                  <label className="text-[10px] uppercase tracking-widest text-white/40" style={{ fontFamily: 'Michroma, sans-serif' }}>Phone</label>
                   <input
                     type="tel"
                     name="phone"
                     value={form.phone}
                     onChange={handleChange}
-                    className="w-full border border-gray-200 px-3 py-2 text-sm text-black focus:outline-none focus:border-[#ffc812] transition-colors duration-200 bg-white"
+                    className="w-full border border-white/10 px-3 py-2 text-sm text-white focus:outline-none focus:border-[#ffc812] transition-colors duration-200 bg-[#0a0a0a]"
                     style={{ fontFamily: 'Lexend, sans-serif', transform: 'skewX(-10deg)' }}
                   />
                 </div>
 
                 {/* Industry */}
                 <div className="sm:col-span-2 flex flex-col gap-1">
-                  <label className="text-[10px] uppercase tracking-widest text-[#808080]" style={{ fontFamily: 'Michroma, sans-serif' }}>Industry Sector</label>
+                  <label className="text-[10px] uppercase tracking-widest text-white/40" style={{ fontFamily: 'Michroma, sans-serif' }}>Industry Sector</label>
                   <select
                     name="industry"
                     value={form.industry}
                     onChange={handleChange}
-                    className="w-full border border-gray-200 px-3 py-2 text-sm text-black focus:outline-none focus:border-[#ffc812] transition-colors duration-200 bg-white appearance-none"
+                    className="w-full border border-white/10 px-3 py-2 text-sm text-white focus:outline-none focus:border-[#ffc812] transition-colors duration-200 bg-[#0a0a0a] appearance-none"
                     style={{ fontFamily: 'Lexend, sans-serif', transform: 'skewX(-10deg)' }}
                   >
                     <option value=""></option>
@@ -200,14 +200,14 @@ export default function ContactSection() {
 
                 {/* Message */}
                 <div className="sm:col-span-2 flex flex-col gap-1">
-                  <label className="text-[10px] uppercase tracking-widest text-[#808080]" style={{ fontFamily: 'Michroma, sans-serif' }}>Message *</label>
+                  <label className="text-[10px] uppercase tracking-widest text-white/40" style={{ fontFamily: 'Michroma, sans-serif' }}>Message *</label>
                   <textarea
                     required
                     name="message"
                     value={form.message}
                     onChange={handleChange}
                     rows={3}
-                    className="w-full border border-gray-200 px-3 py-2 text-sm text-black focus:outline-none focus:border-[#ffc812] transition-colors duration-200 bg-white resize-none"
+                    className="w-full border border-white/10 px-3 py-2 text-sm text-white focus:outline-none focus:border-[#ffc812] transition-colors duration-200 bg-[#0a0a0a] resize-none"
                     style={{ fontFamily: 'Lexend, sans-serif', transform: 'skewX(-10deg)' }}
                   />
                 </div>
