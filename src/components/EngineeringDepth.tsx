@@ -63,6 +63,8 @@ const industries = [
   },
 ];
 
+
+// ── SpecRow ──────────────────────────────────────────────────────────────────
 function SpecRow({
   metric,
   active,
@@ -103,6 +105,7 @@ function SpecRow({
   );
 }
 
+// ── Main Section ─────────────────────────────────────────────────────────────
 export default function EngineeringDepth() {
   const [activeIdx, setActiveIdx] = useState(0);
   const [metricsActive, setMetricsActive] = useState(false);
@@ -113,10 +116,13 @@ export default function EngineeringDepth() {
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting) setMetricsActive(true);
-        else setMetricsActive(false);
+        if (entry.isIntersecting) {
+          setMetricsActive(true);
+        } else {
+          setMetricsActive(false);
+        }
       },
-      { threshold: 0.15 }
+      { threshold: 0.1 }
     );
     if (sectionRef.current) observer.observe(sectionRef.current);
     return () => observer.disconnect();
@@ -138,7 +144,7 @@ export default function EngineeringDepth() {
     >
       <div className="max-w-[1600px] mx-auto px-4 md:px-8 lg:px-12 py-16 md:py-24">
 
-        {/* ── Section header — matches FamiliesSection exactly ── */}
+        {/* ── Section header ── */}
         <div className="flex items-end justify-between mb-5">
           <h2
             className="text-3xl md:text-5xl lg:text-6xl text-white font-medium tracking-tight"
@@ -157,7 +163,7 @@ export default function EngineeringDepth() {
           </button>
         </div>
 
-        {/* ── Sub-label row — industry tabs ── */}
+        {/* ── Industry tabs ── */}
         <div className="flex items-center gap-4 text-[9px] md:text-[10px] text-white/50 tracking-[0.3em] uppercase font-mono mb-10">
           {industries.map((ind, i) => (
             <button
@@ -174,23 +180,21 @@ export default function EngineeringDepth() {
           ))}
         </div>
 
+
         {/* ── Main two-column body ── */}
         <div className="flex flex-col lg:flex-row gap-0 lg:gap-0 items-stretch">
 
-          {/* LEFT — dramatic motor card (same style as family cards) */}
-          <div className="relative w-full lg:w-[52%] flex-shrink-0 overflow-hidden bg-[#0a0a0a] border border-white/[0.06]"
+          {/* LEFT — motor card */}
+          <div
+            className="relative w-full lg:w-[52%] flex-shrink-0 overflow-hidden bg-[#0a0a0a] border border-white/[0.06]"
             style={{ minHeight: "420px" }}
           >
-            {/* Active index badge */}
             <div className="absolute top-4 left-4 z-20">
-              <span
-                className="text-[10px] text-[#ffc812] tracking-[0.2em] font-mono"
-              >
+              <span className="text-[10px] text-[#ffc812] tracking-[0.2em] font-mono">
                 0{activeIdx + 1}
               </span>
             </div>
 
-            {/* Ghost label overlay */}
             <div
               className="absolute bottom-0 left-0 right-0 z-10 px-6 pb-6 pt-16"
               style={{
@@ -208,7 +212,6 @@ export default function EngineeringDepth() {
               </p>
             </div>
 
-            {/* Motor photo */}
             <img
               key={activeIdx}
               src={`${import.meta.env.BASE_URL}motor-hero.png`}
@@ -217,14 +220,11 @@ export default function EngineeringDepth() {
             />
           </div>
 
-          {/* RIGHT — spec list panel */}
+          {/* RIGHT — spec panel */}
           <div className="flex-1 flex flex-col justify-between bg-[#080808] border border-l-0 border-white/[0.06] px-8 md:px-10 py-8 md:py-10">
 
-            {/* Ghost oversized category label */}
             <div className="mb-6 overflow-hidden">
-              <p
-                className="text-[9px] tracking-[0.3em] text-white/20 uppercase font-mono mb-2"
-              >
+              <p className="text-[9px] tracking-[0.3em] text-white/20 uppercase font-mono mb-2">
                 Product Range
               </p>
               <h4
@@ -240,7 +240,6 @@ export default function EngineeringDepth() {
               </h4>
             </div>
 
-            {/* Spec rows — 2 column grid */}
             <div key={resetKey} className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-5 flex-1">
               {active.metrics.map((metric, i) => (
                 <SpecRow
@@ -252,7 +251,6 @@ export default function EngineeringDepth() {
               ))}
             </div>
 
-            {/* Footer — same style as FamiliesSection footer */}
             <div className="flex items-center justify-between mt-8 pt-5 border-t border-white/[0.06]">
               <div className="flex items-center gap-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#ffc812] animate-pulse flex-shrink-0" />
