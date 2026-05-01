@@ -82,7 +82,7 @@ const TEAM = [
     bio: "Masters in Power Electronics · 10+ yrs R&D & commercialization · Ex CTO Swadha Energies · 2017 National Entrepreneur Award",
     initials: "DN",
     expertise: "Power Electronics · Motor Drives",
-    image: "/public/assets/team/dinesh.jpg",
+    image: "assets/team/dinesh.jpg",
     linkedin: "https://www.linkedin.com/in/dinesh-natarajan-41b71bb3/",
   },
   {
@@ -91,7 +91,7 @@ const TEAM = [
     bio: "Masters in Power Electronics · 10+ yrs R&D · Specialist in machine design and motor drives",
     initials: "GR",
     expertise: "Machine Design · Special Motors",
-    image: "/public/assets/team/govindraj.jpg",
+    image: "assets/team/govindraj.jpg",
     linkedin: "https://www.linkedin.com/in/govindaraj1290/",
   },
   {
@@ -100,7 +100,7 @@ const TEAM = [
     bio: "Bachelors in Electronics · 8+ yrs hardware design · Leads operations and production workflows",
     initials: "KD",
     expertise: "Hardware Design · Operations",
-    image: "/public/assets/team/keerthiga.jpeg",
+    image: "assets/team/keerthiga.jpeg",
     linkedin: "https://www.linkedin.com/in/keerthiga-dinesh-36793575/",
   },
   {
@@ -109,7 +109,7 @@ const TEAM = [
     bio: "Master's from Madras Institute of Technology (MIT) · 5+ yrs in motor control algorithms · FOC and sensorless control",
     initials: "AK",
     expertise: "FOC Algorithms · Sensorless Control",
-    image: "/public/assets/team/akilesh.jpg",
+    image: "assets/team/akilesh.jpg",
     linkedin: "https://www.linkedin.com/in/akileshkumar/",
   },
 ];
@@ -464,7 +464,7 @@ export default function About() {
                     <div className="w-16 h-16 bg-black flex items-center justify-center mb-5 relative overflow-hidden group-hover:shadow-[0_0_20px_rgba(255,200,18,0.15)] transition-shadow duration-300">
                       {member.image ? (
                         <img 
-                          src={member.image} 
+                          src={`${import.meta.env.BASE_URL}${member.image}`} 
                           alt={member.name} 
                           className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500"
                         />
