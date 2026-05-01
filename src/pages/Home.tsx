@@ -4,6 +4,7 @@ import EngineeringDepth from "@/components/EngineeringDepth";
 import MotorArchitecture from "@/components/MotorArchitecture";
 import LocationMap from "@/components/LocationMap";
 import ContactSection from "@/components/ContactSection";
+import InvestorsSection from "@/components/InvestorsSection";
 import Footer from "@/components/Footer";
 
 export default function Home() {
@@ -15,6 +16,7 @@ export default function Home() {
       <MotorArchitecture />
       <LocationMap />
       <ContactSection />
+      <InvestorsSection />
       <Footer />
     </main>
   );

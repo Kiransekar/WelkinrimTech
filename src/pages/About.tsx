@@ -4,6 +4,8 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { useLocation } from "wouter";
 import Footer from "@/components/Footer";
+import InvestorsSection from "@/components/InvestorsSection";
+import Reveal from "@/components/Reveal";
 
 // ─── Data ────────────────────────────────────────────────────────────────────
 
@@ -119,14 +121,6 @@ const EXPERTISE_AREAS = [
   { title: "Motion Control", items: ["Sine & FOC Control", "Motion Algorithms", "System Simulation", "Performance Optimization"] },
 ];
 
-const INVESTORS: { name: string; full: string; logo?: string; noFilter?: boolean }[] = [
-  { name: "IITM", full: "IITM Incubation Cell", logo: "assets/backed/svg/iitm.svg", noFilter: true },
-  { name: "Meity", full: "Meity Startup Hub", logo: "assets/backed/svg/meity.svg" },
-  { name: "Forge", full: "Forge Innovation & Ventures", logo: "assets/backed/svg/forge.svg" },
-  { name: "SIPCOT", full: "SIPCOT", logo: "assets/backed/svg/sipcot.svg" },
-  { name: "GSF", full: "Global Super Fund", logo: "assets/backed/svg/gsf.svg" },
-  { name: "CAN", full: "Chennai Angels Network", logo: "assets/backed/svg/can.svg", noFilter: true },
-];
 
 const USP_ITEMS = [
   "Vacuum Impregnation",
@@ -172,29 +166,6 @@ function useCountUp(target: number, duration = 1800) {
 
 // ─── Scroll-reveal wrapper ───────────────────────────────────────────────────
 
-function Reveal({ children, delay = 0, className = "" }: { children: ReactNode; delay?: number; className?: string }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const [visible, setVisible] = useState(false);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) { setVisible(true); observer.disconnect(); } },
-      { threshold: 0.15, rootMargin: "0px 0px -40px 0px" }
-    );
-    if (ref.current) observer.observe(ref.current);
-    return () => observer.disconnect();
-  }, []);
-
-  return (
-    <div
-      ref={ref}
-      className={`transition-all duration-700 ease-out ${visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"} ${className}`}
-      style={{ transitionDelay: `${delay}ms` }}
-    >
-      {children}
-    </div>
-  );
-}
 
 // ─── Stat Card ───────────────────────────────────────────────────────────────
 
@@ -541,48 +512,7 @@ export default function About() {
       </section>
 
       {/* ── BACKED BY ──────────────────────────────────────────────────── */}
-      <section id="about-partners" className="bg-[#0a0a0a] py-14 md:py-20 relative overflow-hidden">
-        {/* Subtle grid texture */}
-        <div className="absolute inset-0 opacity-[0.02]" style={{
-          backgroundImage: `linear-gradient(#ffc812 1px, transparent 1px), linear-gradient(90deg, #ffc812 1px, transparent 1px)`,
-          backgroundSize: "48px 48px",
-        }} />
-
-        <div className="max-w-7xl mx-auto px-4 md:px-12 relative">
-          <Reveal>
-            <div className="text-center mb-12">
-              <div className="inline-flex items-center gap-4 mb-4">
-                <div className="h-px w-12 bg-gradient-to-r from-transparent to-[#ffc812]/60" />
-                <span className="text-[#808080] text-[10px] tracking-[0.4em] uppercase" style={{ fontFamily: "Michroma, sans-serif" }}>
-                  Backed By
-                </span>
-                <div className="h-px w-12 bg-gradient-to-l from-transparent to-[#ffc812]/60" />
-              </div>
-            </div>
-          </Reveal>
-          <div className="flex flex-wrap items-center justify-center gap-12 md:gap-20">
-            {INVESTORS.map((inv, i) => (
-              <Reveal key={inv.name} delay={i * 80}>
-                <div className="group cursor-default flex items-center justify-center">
-                  {inv.logo ? (
-                    <img
-                      src={`${import.meta.env.BASE_URL}${inv.logo}`}
-                      alt={inv.full}
-                      className={`h-12 md:h-16 w-auto max-w-[180px] object-contain opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all duration-700 ease-out ${!inv.noFilter ? 'brightness-0 invert' : ''}`}
-                    />
-                  ) : (
-                    <span className="text-xl md:text-2xl font-black text-white/40 tracking-[0.15em] uppercase group-hover:text-[#ffc812] transition-colors"
-                          style={{ fontFamily: "Michroma, sans-serif" }}>
-                      {inv.name}
-                    </span>
-                  )}
-                </div>
-              </Reveal>
-            ))}
-          </div>
-
-        </div>
-      </section>
+      <InvestorsSection />
 
       {/* ── CTA ────────────────────────────────────────────────────────── */}
       <section id="about-cta" className="bg-[#0a0a0a] py-20 md:py-28 relative overflow-hidden">
