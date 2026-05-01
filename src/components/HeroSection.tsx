@@ -4,26 +4,34 @@ const industries = [
   {
     id: "uav",
     label: "UAV",
-    bg: "/hero-uav-bg.jpeg",
+    bg: "/motor-hero.png",
     accent: "Autonomous Aerial Systems",
+    pos: "right center",
+    fit: "contain",
   },
   {
     id: "marine",
     label: "Marine",
-    bg: "/hero-uav-bg.jpeg",
+    bg: "/place/h.jpeg",
     accent: "Maritime Electric Drives",
+    pos: "center",
+    fit: "cover",
   },
   {
     id: "land",
     label: "Land",
-    bg: "/hero-uav-bg.jpeg",
+    bg: "/place/h.jpeg",
     accent: "Ground Vehicle Propulsion",
+    pos: "center",
+    fit: "cover",
   },
   {
     id: "robotics",
     label: "Robotics",
-    bg: "/hero-uav-bg.jpeg",
+    bg: "/place/h.jpeg",
     accent: "Industrial Automation",
+    pos: "right center",
+    fit: "contain",
   },
 ];
 
@@ -75,13 +83,36 @@ export default function HeroSection() {
             style={{
               opacity: i === activeIdx ? 1 : 0,
               zIndex: i === activeIdx ? 1 : 0,
+              backgroundColor: "#050505",
             }}
           >
             <img
               src={ind.bg}
               alt={ind.label}
-              className="w-full h-full object-cover object-center"
+              className="w-full h-full opacity-80"
+              style={{ 
+                objectPosition: (ind as any).pos || "center",
+                objectFit: (ind as any).fit || "cover"
+              }}
               loading={i === 0 ? "eager" : "lazy"}
+            />
+
+            {/* Slide Index (Engineering Depth style) */}
+            <div className="absolute top-8 left-8 md:top-12 md:left-12 lg:top-16 lg:left-16 z-20">
+              <span className="text-[10px] md:text-xs text-[#ffc812] tracking-[0.3em] font-mono font-bold">
+                0{i + 1}
+              </span>
+            </div>
+
+            {/* Vignette Overlay (Engineering Depth theme) */}
+            <div 
+              className="absolute inset-0 z-[1]"
+              style={{
+                background: `
+                  radial-gradient(circle at 70% 50%, transparent 20%, rgba(5,5,5,0.4) 60%, rgba(5,5,5,0.95) 100%),
+                  linear-gradient(to top, rgba(5,5,5,1) 0%, rgba(5,5,5,0.5) 20%, transparent 50%)
+                `
+              }}
             />
           </div>
         );
@@ -104,11 +135,10 @@ export default function HeroSection() {
           {industries.map((ind, i) => (
             <div
               key={ind.id}
-              className={`absolute left-0 transition-all duration-700 ease-in-out ${
-                i === activeIdx
+              className={`absolute left-0 transition-all duration-700 ease-in-out ${i === activeIdx
                   ? "opacity-100 translate-y-0"
                   : "opacity-0 translate-y-12"
-              }`}
+                }`}
               style={{ top: 0 }}
             >
               <h1
@@ -120,8 +150,8 @@ export default function HeroSection() {
                 </span>
                 {(ind.label.includes(' ') || ind.label.includes('/')) && (
                   <span className="text-[#ffc812] ml-4">
-                    {ind.label.includes('/') 
-                      ? ind.label.substring(ind.label.indexOf('/')) 
+                    {ind.label.includes('/')
+                      ? ind.label.substring(ind.label.indexOf('/'))
                       : ind.label.split(' ').slice(1).join(' ')}
                   </span>
                 )}
@@ -135,11 +165,10 @@ export default function HeroSection() {
           {industries.map((ind, i) => (
             <div
               key={ind.id}
-              className={`absolute left-0 transition-all duration-700 ease-in-out delay-100 ${
-                i === activeIdx
+              className={`absolute left-0 transition-all duration-700 ease-in-out delay-100 ${i === activeIdx
                   ? "opacity-100 translate-y-0"
                   : "opacity-0 translate-y-6"
-              }`}
+                }`}
             >
               <p
                 className="text-sm tracking-[0.5em] uppercase text-[#ffc812] font-semibold"
@@ -184,11 +213,10 @@ export default function HeroSection() {
           <div key={ind.id} className="flex items-center">
             <button
               onClick={() => goTo(i)}
-              className={`text-xs tracking-[0.15em] uppercase font-bold pb-1 transition-all duration-200 ${
-                i === activeIdx
+              className={`text-xs tracking-[0.15em] uppercase font-bold pb-1 transition-all duration-200 ${i === activeIdx
                   ? "text-white border-b-2 border-[#ffc812]"
                   : "text-white/50 hover:text-white border-b-2 border-transparent"
-              }`}
+                }`}
               style={{ fontFamily: 'Michroma, sans-serif' }}
             >
               {ind.label}
