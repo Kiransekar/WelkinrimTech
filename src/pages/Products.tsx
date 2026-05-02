@@ -6,7 +6,7 @@ import Footer from "@/components/Footer";
 
 type Product = {
   id: string;
-  series: "haemng" | "maelard" | "esc" | "fc" | "ips" | "other";
+  series: "haemng" | "maelard" | "esc" | "fc" | "ips" | "cellar" | "vagans" | "sciatic" | "other";
   seriesLabel: string;
   model: string;
   name: string;
@@ -77,6 +77,9 @@ export default function Products() {
     { id: "esc", label: "ESC", count: products.filter(p => p.series === "esc").length },
     { id: "fc", label: "Auto Pilot", count: products.filter(p => p.series === "fc").length },
     { id: "ips", label: "IPS", count: products.filter(p => p.series === "ips").length },
+    { id: "vagans", label: "VAGANS", count: products.filter(p => p.series === "vagans").length },
+    { id: "cellar", label: "CELLAR", count: products.filter(p => p.series === "cellar").length },
+    { id: "sciatic", label: "SCIATIC", count: products.filter(p => p.series === "sciatic").length },
     { id: "other", label: "Other", count: products.filter(p => p.series === "other").length },
   ];
 
@@ -351,25 +354,20 @@ function ProductGrid({
                 </p>
               </div>
             )}
-            {/* Series badge */}
-            <div className="absolute top-2.5 right-2.5 px-2 py-0.5" style={{ background: cfg.accent, transform: "skewX(-10deg)" }}>
-              <span className="text-[7px] font-black tracking-widest uppercase"
-                    style={{ fontFamily: "Michroma, sans-serif", color: cfg.textOnAccent, display: "inline-block", transform: "skewX(10deg)" }}>
-                {p.series === "ips" ? "IPS" : p.series === "fc" ? "FC" : p.series.toUpperCase()}
-              </span>
-            </div>
+            {/* Badge removed as per request */}
 
 
           </div>
 
           {/* Card body */}
           <div className="p-4 flex flex-col flex-1 bg-[#080808]">
-            <p className="text-[8px] tracking-[0.25em] uppercase mb-0.5"
-               style={{ fontFamily: "Michroma, sans-serif", color: cfg.accent }}>
+            <p className="text-[8px] tracking-[0.25em] uppercase mb-0.5 text-white/40"
+               style={{ fontFamily: "Michroma, sans-serif" }}>
               {p.application}
             </p>
-            <h3 className="text-sm font-bold text-white mb-3 uppercase" style={{ fontFamily: "Michroma, sans-serif" }}>
-              {p.model}
+            <h3 className="text-sm font-bold mb-3 uppercase" style={{ fontFamily: "Michroma, sans-serif" }}>
+              <span style={{ color: cfg.accent }}>{p.model.split(' ')[0]}</span>
+              <span className="text-white"> {p.model.split(' ').slice(1).join(' ')}</span>
             </h3>
             <div className="grid grid-cols-3 gap-px bg-white/5 mt-auto">
               {p.keySpecs.map((s: { label: string; value: string }) => (
