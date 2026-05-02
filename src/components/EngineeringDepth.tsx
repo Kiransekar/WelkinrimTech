@@ -77,7 +77,7 @@ function SpecRow({
   const [visible, setVisible] = useState(false);
   useEffect(() => {
     if (!active) { setVisible(false); return; }
-    const t = setTimeout(() => setVisible(true), idx * 80);
+    const t = setTimeout(() => setVisible(true), idx * 50);
     return () => clearTimeout(t);
   }, [active, idx]);
 
@@ -110,9 +110,11 @@ export default function EngineeringDepth() {
   const [activeIdx, setActiveIdx] = useState(0);
   const [metricsActive, setMetricsActive] = useState(false);
   const [resetKey, setResetKey] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
   const sectionRef = useRef<HTMLDivElement>(null);
   const active = industries[activeIdx];
 
+  // Intersection Observer for initial animation
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -133,8 +135,19 @@ export default function EngineeringDepth() {
     setMetricsActive(false);
     setActiveIdx(idx);
     setResetKey((k) => k + 1);
-    setTimeout(() => setMetricsActive(true), 100);
+    setTimeout(() => setMetricsActive(true), 10);
   };
+
+  // Auto-slideshow logic
+  useEffect(() => {
+    if (isPaused) return;
+
+    const timer = setInterval(() => {
+      handleTab((activeIdx + 1) % industries.length);
+    }, 2500); // 2.5 seconds per slide
+
+    return () => clearInterval(timer);
+  }, [activeIdx, isPaused]);
 
   return (
     <section
@@ -221,7 +234,11 @@ export default function EngineeringDepth() {
           </div>
 
           {/* RIGHT — spec panel */}
-          <div className="flex-1 flex flex-col justify-between bg-[#080808] border border-l-0 border-white/[0.06] px-8 md:px-10 py-8 md:py-10">
+          <div 
+            onMouseEnter={() => setIsPaused(true)}
+            onMouseLeave={() => setIsPaused(false)}
+            className="flex-1 flex flex-col justify-between bg-[#080808] border border-l-0 border-white/[0.06] px-8 md:px-10 py-8 md:py-10"
+          >
 
             <div className="mb-6 overflow-hidden">
               <p className="text-[9px] tracking-[0.3em] text-white/20 uppercase font-mono mb-2">
