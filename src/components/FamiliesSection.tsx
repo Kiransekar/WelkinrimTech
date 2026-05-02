@@ -1,20 +1,21 @@
 import { Link } from "wouter";
 import { PRODUCTS } from "@/data/products";
+import { useRef, useEffect, useCallback } from "react";
 
 const FAMILIES = [
   { id: "haemng", name: "HÆMNG", series: "haemng", num: "01", image: "/welkinrim-motor.png" },
-  { id: "maelard", name: "MÆLARD", series: "maelard", num: "02", image: "/place/image.png" },
+  { id: "maelard", name: "MÆLARD", series: "maelard", num: "02", image: "/welkinrim-motor.png" },
   { id: "esc", name: "ESC", series: "esc", num: "03", image: "/motor-hero.png" },
   { id: "fc", name: "AUTO PILOT", series: "fc", num: "04", image: "/hero-uav-bg.jpeg" },
   { id: "ips", name: "IPS", series: "ips", num: "05", image: "/welkinrim-motor.png" },
-  { id: "cellar", name: "CELLAR", series: "cellar", num: "06", image: "/place/image.png" },
+  { id: "cellar", name: "CELLAR", series: "cellar", num: "06", image: "/motor-hero.png" },
   { id: "vagans", name: "VAGANS", series: "vagans", num: "07", image: "/motor-hero.png" },
   { id: "sciatic", name: "SCIATIC", series: "sciatic", num: "08", image: "/welkinrim-motor.png" },
 ];
 
-// Card fixed width in px — change here to resize cards everywhere
 const CARD_W = 360;
 const CARD_GAP = 24;
+const SPEED = 1.2; // px per frame at 60fps
 
 export default function FamiliesSection() {
   const totalModels = PRODUCTS.length;
@@ -22,8 +23,70 @@ export default function FamiliesSection() {
 
   const getFamilyImage = (family: typeof FAMILIES[0]) => {
     const productWithImage = PRODUCTS.find(p => p.series === family.series && p.thumbnailUrl);
-    return productWithImage?.thumbnailUrl || import.meta.env.BASE_URL + family.image.replace(/^\//, "");
+    if (productWithImage?.thumbnailUrl) return productWithImage.thumbnailUrl;
+    return import.meta.env.BASE_URL + family.image.replace(/^\//, "");
   };
+
+  // --- Refs (no re-renders needed for animation state) ---
+  const trackRef = useRef<HTMLDivElement>(null);
+  const posRef = useRef(0);          // current x offset in px
+  const isDraggingRef = useRef(false);
+  const isHoveredRef = useRef(false);
+  const dragStartXRef = useRef(0);   // pointer x when drag started
+  const dragStartPosRef = useRef(0); // posRef.value when drag started
+  const dragDistanceRef = useRef(0); // total distance moved since down
+  const rafRef = useRef<number>(0);
+  const setWidth = FAMILIES.length * (CARD_W + CARD_GAP);
+
+  const applyTransform = useCallback(() => {
+    if (trackRef.current) {
+      trackRef.current.style.transform = `translateX(${posRef.current}px)`;
+    }
+  }, []);
+
+  // Animation loop
+  useEffect(() => {
+    let lastTime = performance.now();
+
+    const tick = (now: number) => {
+      const delta = now - lastTime;
+      lastTime = now;
+
+      if (!isDraggingRef.current && !isHoveredRef.current) {
+        posRef.current -= SPEED * (delta / 16.67);
+      }
+
+      // Infinite wrap
+      if (posRef.current <= -setWidth) posRef.current += setWidth;
+      if (posRef.current > 0) posRef.current -= setWidth;
+
+      applyTransform();
+      rafRef.current = requestAnimationFrame(tick);
+    };
+
+    rafRef.current = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(rafRef.current);
+  }, [setWidth, applyTransform]);
+
+  // --- Pointer event handlers ---
+  const onPointerDown = useCallback((e: React.PointerEvent) => {
+    isDraggingRef.current = true;
+    dragStartXRef.current = e.clientX;
+    dragStartPosRef.current = posRef.current;
+    dragDistanceRef.current = 0;
+    (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+  }, []);
+
+  const onPointerMove = useCallback((e: React.PointerEvent) => {
+    if (!isDraggingRef.current) return;
+    const delta = e.clientX - dragStartXRef.current;
+    posRef.current = dragStartPosRef.current + delta;
+    dragDistanceRef.current = Math.abs(delta);
+  }, []);
+
+  const onPointerUp = useCallback(() => {
+    isDraggingRef.current = false;
+  }, []);
 
   return (
     <section id="families" className="bg-[#050505] w-full py-16 md:py-24 overflow-hidden">
@@ -53,43 +116,48 @@ export default function FamiliesSection() {
         </div>
       </div>
 
-      {/* ── Marquee ─────────────────────────────────────────────────────────── */}
-      {/*
-        Technique: place two identical lists side-by-side and slide the whole
-        wrapper left by exactly 50% (= width of one list). When it reaches -50%
-        we reset to 0 — seamless because both halves look identical.
-      */}
+      {/* Global override for native dragging in this section */}
       <style>{`
-        @keyframes families-marquee {
-          0%   { transform: translateX(0); }
-          100% { transform: translateX(-50%); }
-        }
-        .families-track {
-          animation: families-marquee 38s linear infinite;
-        }
-        .families-track:hover {
-          animation-play-state: paused;
+        #families-marquee-container img, 
+        #families-marquee-container a {
+          -webkit-user-drag: none;
+          -khtml-user-drag: none;
+          -moz-user-drag: none;
+          -o-user-drag: none;
+          user-drag: none;
         }
       `}</style>
 
-      {/* Outer clipping window */}
-      <div className="relative mt-2 overflow-hidden">
+      {/* ── Marquee with Drag Support ── */}
+      <div
+        id="families-marquee-container"
+        className="relative mt-2 overflow-hidden cursor-grab active:cursor-grabbing select-none touch-none"
+        onMouseEnter={() => { isHoveredRef.current = true; }}
+        onMouseLeave={() => { isHoveredRef.current = false; }}
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={onPointerUp}
+        onPointerCancel={onPointerUp}
+      >
         {/* Edge fades */}
         <div className="pointer-events-none absolute inset-y-0 left-0 w-24 md:w-40 z-10 bg-gradient-to-r from-[#050505] to-transparent" />
         <div className="pointer-events-none absolute inset-y-0 right-0 w-24 md:w-40 z-10 bg-gradient-to-l from-[#050505] to-transparent" />
 
-        {/* Sliding track — exactly 2× one set of cards wide */}
+        {/* Sliding track */}
         <div
-          className="families-track flex"
-          style={{ gap: `${CARD_GAP}px`, paddingInline: `${CARD_GAP / 2}px` }}
+          ref={trackRef}
+          className="flex will-change-transform"
+          style={{
+            gap: `${CARD_GAP}px`,
+            paddingInline: `${CARD_GAP / 2}px`,
+            width: "max-content",
+          }}
         >
-          {/* List A */}
           {FAMILIES.map((fam) => (
-            <FamilyCard key={fam.id} fam={fam} cardW={CARD_W} getImage={getFamilyImage} getCount={getVariantCount} />
+            <FamilyCard key={fam.id} fam={fam} cardW={CARD_W} getImage={getFamilyImage} getCount={getVariantCount} dragDistanceRef={dragDistanceRef} />
           ))}
-          {/* List B — identical clone for seamless loop */}
           {FAMILIES.map((fam) => (
-            <FamilyCard key={`${fam.id}-b`} fam={fam} cardW={CARD_W} getImage={getFamilyImage} getCount={getVariantCount} />
+            <FamilyCard key={`${fam.id}-b`} fam={fam} cardW={CARD_W} getImage={getFamilyImage} getCount={getVariantCount} dragDistanceRef={dragDistanceRef} />
           ))}
         </div>
       </div>
@@ -114,7 +182,6 @@ export default function FamiliesSection() {
               </a>
             </Link>
           </div>
-
         </div>
       </div>
     </section>
@@ -127,23 +194,36 @@ function FamilyCard({
   cardW,
   getImage,
   getCount,
+  dragDistanceRef,
 }: {
   fam: { id: string; name: string; series: string; num: string };
   cardW: number;
   getImage: (f: any) => string;
   getCount: (s: string) => number;
+  dragDistanceRef: React.RefObject<number>;
 }) {
   return (
     <Link href={`/products#${fam.id}`}>
       <a
-        className="relative block flex-none rounded-xl overflow-hidden group cursor-pointer border border-white/10 hover:border-[#ffc812]/50 hover:shadow-2xl transition-all duration-500 bg-[#0a0a0a] hover:-translate-y-2"
+        draggable="false"
+        onDragStart={(e) => e.preventDefault()}
+        className="relative block flex-none rounded-xl overflow-hidden group border border-white/10 hover:border-[#ffc812]/50 hover:shadow-2xl transition-all duration-500 bg-[#0a0a0a] hover:-translate-y-2 select-none"
         style={{ width: cardW, aspectRatio: "4/3" }}
+        onClick={(e) => {
+          // Prevent navigation if user was dragging
+          if (dragDistanceRef.current > 10) {
+            e.preventDefault();
+            e.stopPropagation();
+          }
+        }}
       >
         {/* Background image */}
-        <div className="absolute inset-0">
+        <div className="absolute inset-0 pointer-events-none">
           <img
             src={getImage(fam)}
             alt={fam.name}
+            draggable="false"
+            onDragStart={(e) => e.preventDefault()}
             className="w-full h-full object-cover object-center opacity-70 group-hover:opacity-100 group-hover:scale-110 transition-all duration-700 ease-out"
           />
         </div>
