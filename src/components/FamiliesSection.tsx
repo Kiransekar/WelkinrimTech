@@ -5,12 +5,12 @@ import { useRef, useEffect, useCallback } from "react";
 const FAMILIES = [
   { id: "haemng", name: "HÆMNG", series: "haemng", num: "01", image: "/welkinrim-motor.png" },
   { id: "maelard", name: "MÆLARD", series: "maelard", num: "02", image: "/welkinrim-motor.png" },
-  { id: "esc", name: "ESC", series: "esc", num: "03", image: "/motor-hero.png" },
-  { id: "fc", name: "AUTO PILOT", series: "fc", num: "04", image: "/hero-uav-bg.jpeg" },
-  { id: "ips", name: "IPS", series: "ips", num: "05", image: "/welkinrim-motor.png" },
-  { id: "cellar", name: "CELLAR", series: "cellar", num: "06", image: "/motor-hero.png" },
-  { id: "vagans", name: "VAGANS", series: "vagans", num: "07", image: "/motor-hero.png" },
-  { id: "sciatic", name: "SCIATIC", series: "sciatic", num: "08", image: "/welkinrim-motor.png" },
+  { id: "stroke", name: "STROKE", series: "stroke", num: "03", image: "/motor-hero.png" },
+  { id: "vagans", name: "VAGANS", series: "vagans", num: "04", image: "/motor-hero.png" },
+  { id: "sciatic", name: "SCIATIC", series: "sciatic", num: "05", image: "/welkinrim-motor.png" },
+  { id: "esc", name: "ESC", series: "esc", num: "06", image: "/motor-hero.png" },
+  { id: "ips", name: "IPS", series: "ips", num: "07", image: "/welkinrim-motor.png" },
+  { id: "fc", name: "AUTO PILOT", series: "fc", num: "08", image: "/hero-uav-bg.jpeg" },
 ];
 
 const CARD_W = 360;

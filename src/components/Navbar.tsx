@@ -48,59 +48,26 @@ const PRODUCT_CATEGORIES = [
     products: PRODUCTS.filter(p => p.series === "maelard"),
   },
   {
-    id: "esc",
-    label: "ESCs",
-    menuLabel: "ESC",
-    tagline: "Electronic Speed Controllers — 9 models",
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-5 h-5">
-        <rect x="2" y="6" width="20" height="12" rx="1" />
-        <path d="M6 10h2M10 10h2M14 10h2M6 14h4M12 14h4" />
-      </svg>
-    ),
-    products: PRODUCTS.filter(p => p.series === "esc"),
-  },
-  {
-    id: "fc",
-    label: "Flight Controller",
-    menuLabel: "AUTO PILOT",
-    tagline: "Autonomous UAV Navigation",
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-5 h-5">
-        <rect x="3" y="3" width="18" height="18" rx="2" />
-        <circle cx="12" cy="12" r="3" />
-        <path d="M12 3v3M12 18v3M3 12h3M18 12h3" />
-      </svg>
-    ),
-    products: PRODUCTS.filter(p => p.series === "fc"),
-  },
-  {
-    id: "ips",
-    label: "Integrated Power Systems",
-    menuLabel: "IPS",
-    tagline: "Motor + ESC Matched Assemblies — 5 combos",
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-5 h-5">
-        <path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z" />
-        <path d="M10 7h4M7 10v4M17 10v4M10 17h4" />
-      </svg>
-    ),
-    products: PRODUCTS.filter(p => p.series === "ips"),
-  },
-  {
-    id: "cellar",
-    label: "Cellar Series",
-    menuLabel: "CELLAR",
+    id: "stroke",
+    label: "Stroke Series",
+    menuLabel: "STROKE",
     tagline: "High-Density Storage & Industrial — 4 models",
     icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-5 h-5">
-        <rect x="4" y="4" width="6" height="6" rx="1" />
-        <rect x="14" y="4" width="6" height="6" rx="1" />
-        <rect x="4" y="14" width="6" height="6" rx="1" />
-        <rect x="14" y="14" width="6" height="6" rx="1" />
-      </svg>
+      <div 
+        className="w-5 h-5 bg-current transition-all"
+        style={{ 
+          maskImage: "url(/assets/prod_list/stoaek_128.svg)",
+          WebkitMaskImage: "url(/assets/prod_list/stoaek_128.svg)",
+          maskSize: "contain",
+          WebkitMaskSize: "contain",
+          maskRepeat: "no-repeat",
+          WebkitMaskRepeat: "no-repeat",
+          maskPosition: "center",
+          WebkitMaskPosition: "center"
+        }}
+      />
     ),
-    products: PRODUCTS.filter(p => p.series === "cellar"),
+    products: PRODUCTS.filter(p => p.series === "stroke"),
   },
   {
     id: "vagans",
@@ -126,6 +93,46 @@ const PRODUCT_CATEGORIES = [
       </svg>
     ),
     products: PRODUCTS.filter(p => p.series === "sciatic"),
+  },
+  {
+    id: "esc",
+    label: "ESCs",
+    menuLabel: "ESC",
+    tagline: "Electronic Speed Controllers — 9 models",
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-5 h-5">
+        <rect x="2" y="6" width="20" height="12" rx="1" />
+        <path d="M6 10h2M10 10h2M14 10h2M6 14h4M12 14h4" />
+      </svg>
+    ),
+    products: PRODUCTS.filter(p => p.series === "esc"),
+  },
+  {
+    id: "ips",
+    label: "Integrated Power Systems",
+    menuLabel: "IPS",
+    tagline: "Motor + ESC Matched Assemblies — 5 combos",
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-5 h-5">
+        <path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z" />
+        <path d="M10 7h4M7 10v4M17 10v4M10 17h4" />
+      </svg>
+    ),
+    products: PRODUCTS.filter(p => p.series === "ips"),
+  },
+  {
+    id: "fc",
+    label: "Flight Controller",
+    menuLabel: "AUTO PILOT",
+    tagline: "Autonomous UAV Navigation",
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-5 h-5">
+        <rect x="3" y="3" width="18" height="18" rx="2" />
+        <circle cx="12" cy="12" r="3" />
+        <path d="M12 3v3M12 18v3M3 12h3M18 12h3" />
+      </svg>
+    ),
+    products: PRODUCTS.filter(p => p.series === "fc"),
   },
   {
     id: "other",

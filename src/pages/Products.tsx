@@ -6,7 +6,7 @@ import Footer from "@/components/Footer";
 
 type Product = {
   id: string;
-  series: "haemng" | "maelard" | "esc" | "fc" | "ips" | "cellar" | "vagans" | "sciatic" | "other";
+  series: "haemng" | "maelard" | "esc" | "fc" | "ips" | "stroke" | "vagans" | "sciatic" | "other";
   seriesLabel: string;
   model: string;
   name: string;
@@ -74,12 +74,12 @@ export default function Products() {
     { id: "all", label: "All", count: products.length },
     { id: "haemng", label: "HAEMNG", count: products.filter(p => p.series === "haemng").length },
     { id: "maelard", label: "MAELARD", count: products.filter(p => p.series === "maelard").length },
-    { id: "esc", label: "ESC", count: products.filter(p => p.series === "esc").length },
-    { id: "fc", label: "Auto Pilot", count: products.filter(p => p.series === "fc").length },
-    { id: "ips", label: "IPS", count: products.filter(p => p.series === "ips").length },
+    { id: "stroke", label: "STROKE", count: products.filter(p => p.series === "stroke").length },
     { id: "vagans", label: "VAGANS", count: products.filter(p => p.series === "vagans").length },
-    { id: "cellar", label: "CELLAR", count: products.filter(p => p.series === "cellar").length },
     { id: "sciatic", label: "SCIATIC", count: products.filter(p => p.series === "sciatic").length },
+    { id: "esc", label: "ESC", count: products.filter(p => p.series === "esc").length },
+    { id: "ips", label: "IPS", count: products.filter(p => p.series === "ips").length },
+    { id: "fc", label: "Auto Pilot", count: products.filter(p => p.series === "fc").length },
     { id: "other", label: "Other", count: products.filter(p => p.series === "other").length },
   ];
 

@@ -10,7 +10,7 @@ export type PerfRow = {
 
 export type Product = {
   id: string;
-  series: "haemng" | "maelard" | "esc" | "fc" | "ips" | "cellar" | "vagans" | "sciatic" | "other";
+  series: "haemng" | "maelard" | "esc" | "fc" | "ips" | "stroke" | "vagans" | "sciatic" | "other";
   seriesLabel: string;
   model: string;
   name: string;
