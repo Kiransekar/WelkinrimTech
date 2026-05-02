@@ -25,7 +25,7 @@ export default function Footer() {
   return (
     <footer className="bg-black text-white">
       {/* Top section */}
-      <div className="max-w-7xl mx-auto px-4 md:px-12 py-6 md:py-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12">
+      <div className="max-w-[1600px] mx-auto px-4 md:px-12 lg:px-16 py-6 md:py-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12">
         {/* Brand */}
         <div className="md:col-span-1">
           <div className="inline-flex items-center gap-2 md:gap-3 mb-3 md:mb-4">
@@ -121,7 +121,7 @@ export default function Footer() {
 
       {/* Divider */}
       <div className="border-t border-white/5">
-        <div className="max-w-7xl mx-auto px-6 md:px-12 py-3 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="max-w-[1600px] mx-auto px-4 md:px-12 lg:px-16 py-3 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="text-[10px] text-white/30 uppercase tracking-widest" style={{ fontFamily: 'Michroma, sans-serif' }}>
             © {new Date().getFullYear()} Welkinrim Technologies Pvt. Ltd. All rights reserved.
           </div>

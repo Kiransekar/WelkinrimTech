@@ -18,7 +18,7 @@ export default function InvestorsSection() {
         backgroundSize: "48px 48px",
       }} />
 
-      <div className="max-w-7xl mx-auto px-4 md:px-12 relative">
+      <div className="max-w-[1600px] mx-auto px-4 md:px-12 lg:px-16 relative">
         <Reveal>
           <div className="text-center mb-12">
             <div className="inline-flex items-center gap-4 mb-4">

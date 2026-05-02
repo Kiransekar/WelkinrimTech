@@ -142,7 +142,7 @@ export default function EngineeringDepth() {
       ref={sectionRef}
       className="w-full bg-[#050505] overflow-hidden scroll-mt-[60px] md:scroll-mt-[72px]"
     >
-      <div className="max-w-[1600px] mx-auto px-4 md:px-8 lg:px-12 py-16 md:py-24">
+      <div className="max-w-[1600px] mx-auto px-4 md:px-12 lg:px-16 py-16 md:py-24">
 
         {/* ── Section header ── */}
         <div className="flex items-end justify-between mb-5">

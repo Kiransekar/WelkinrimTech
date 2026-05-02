@@ -28,7 +28,7 @@ export default function ContactSection() {
 
   return (
     <section id="contact" className="py-6 md:py-8 lg:py-12 bg-[#050505] scroll-mt-[60px] md:scroll-mt-[72px] flex flex-col justify-center min-h-[80vh] lg:min-h-[calc(100vh-72px)]">
-      <div className="max-w-7xl mx-auto px-4 md:px-12 w-full my-auto">
+      <div className="max-w-[1600px] mx-auto px-4 md:px-12 lg:px-16 w-full my-auto">
         {/* Header */}
         <div className="mb-6 md:mb-8 lg:mb-12">
           <div className="flex items-center gap-3 mb-2 md:mb-3">

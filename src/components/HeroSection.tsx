@@ -119,7 +119,7 @@ export default function HeroSection() {
       })}
 
       {/* Content */}
-      <div className="relative z-10 h-full flex flex-col justify-end pb-20 md:pb-28 lg:pb-36 px-4 md:px-12 lg:px-16">
+      <div className="relative z-10 h-full flex flex-col justify-end pb-20 md:pb-28 lg:pb-36 px-4 md:px-12 lg:px-16 max-w-[1600px] mx-auto">
         {/* Fixed headline */}
         <div className="mb-1">
           <p

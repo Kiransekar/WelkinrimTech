@@ -27,7 +27,7 @@ export default function FamiliesSection() {
 
   return (
     <section id="families" className="bg-[#050505] w-full py-16 md:py-24 overflow-hidden">
-      <div className="max-w-[1600px] mx-auto px-4 md:px-8 lg:px-12">
+      <div className="max-w-[1600px] mx-auto px-4 md:px-12 lg:px-16">
         {/* Header Row */}
         <div className="flex items-end justify-between mb-2">
           <h2 className="text-3xl md:text-5xl lg:text-6xl text-white font-medium tracking-tight">
@@ -95,7 +95,7 @@ export default function FamiliesSection() {
       </div>
 
       {/* Footer Row */}
-      <div className="max-w-[1600px] mx-auto px-4 md:px-8 lg:px-12">
+      <div className="max-w-[1600px] mx-auto px-4 md:px-12 lg:px-16">
         <div className="mt-12 md:mt-16 pt-6 border-t border-white/10 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
           <div className="flex flex-wrap items-center gap-6 md:gap-8">
             <Link href="/about">

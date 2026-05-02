@@ -180,7 +180,7 @@ export default function LocationMap() {
 
   return (
     <section id="about" className="py-8 lg:py-6 bg-[#050505] scroll-mt-[72px] flex flex-col justify-center h-auto lg:h-[calc(100vh-72px)] overflow-hidden">
-      <div className="max-w-7xl mx-auto px-6 md:px-12 w-full h-full flex flex-col">
+      <div className="max-w-[1600px] mx-auto px-4 md:px-12 lg:px-16 w-full h-full flex flex-col">
         {/* Header */}
         <div className="mb-4 lg:mb-4 shrink-0 flex flex-col md:flex-row md:items-end md:justify-between gap-4">
           <div>

@@ -49,7 +49,7 @@ export default function MotorArchitecture() {
       ref={containerRef}
       className="w-full bg-[#050505] py-32 overflow-hidden border-t border-white/[0.03]"
     >
-      <div className="max-w-[1300px] mx-auto px-6">
+      <div className="max-w-[1600px] mx-auto px-4 md:px-12 lg:px-16">
         
         {/* ── Heading ──────────────────────────────────────────────────────── */}
         <motion.div

@@ -118,7 +118,7 @@ export default function Products() {
       <div className="min-h-screen bg-[#050505]">
         {/* ── Page header ── */}
         <div className="bg-black pt-20 md:pt-24 pb-4 md:pb-6">
-          <div className="max-w-7xl mx-auto px-6 md:px-12 flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="max-w-[1600px] mx-auto px-4 md:px-12 lg:px-16 flex flex-col md:flex-row md:items-center justify-between gap-4">
             <h1 className="text-2xl md:text-4xl lg:text-5xl font-bold text-white leading-tight" style={{ fontFamily: "Michroma, sans-serif" }}>
               Product <span className="text-[#ffc812]">Catalogue</span>
             </h1>
@@ -144,7 +144,7 @@ export default function Products() {
 
         {/* ── Sticky filter bar ── */}
         <div className="sticky top-[60px] md:top-[72px] z-30 bg-[#0a0a0a]/80 backdrop-blur-md border-b border-white/5 py-3 md:py-4">
-          <div className="max-w-7xl mx-auto px-6 md:px-12 space-y-3">
+          <div className="max-w-[1600px] mx-auto px-4 md:px-12 lg:px-16 space-y-3">
             
             {/* Family Row */}
             <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-4">
@@ -195,7 +195,7 @@ export default function Products() {
         </div>
 
         {/* ── Product grid ── */}
-        <div className="max-w-7xl mx-auto px-4 md:px-12 py-8 md:py-12">
+        <div className="max-w-[1600px] mx-auto px-4 md:px-12 lg:px-16 py-8 md:py-12">
           {loading ? (
             <div className="py-24 text-center">
               <p className="text-[#808080] text-sm" style={{ fontFamily: "Michroma, sans-serif" }}>
@@ -239,7 +239,7 @@ export default function Products() {
 
         {/* ── Bottom CTA ── */}
         <div className="bg-black py-16">
-          <div className="max-w-7xl mx-auto px-6 md:px-12 flex flex-col md:flex-row items-center justify-between gap-6">
+          <div className="max-w-[1600px] mx-auto px-4 md:px-12 lg:px-16 flex flex-col md:flex-row items-center justify-between gap-6">
             <div>
               <p className="text-[10px] text-[#ffc812] tracking-[0.3em] uppercase mb-1" style={{ fontFamily: "Michroma, sans-serif" }}>
                 Custom Requirements?

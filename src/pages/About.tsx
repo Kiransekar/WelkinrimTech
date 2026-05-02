@@ -278,7 +278,7 @@ export default function About() {
           <div className="absolute -bottom-1/3 -left-1/4 w-[600px] h-[600px] border border-[#ffc812]/[0.03] rounded-full" />
         </div>
 
-        <div className="relative max-w-7xl mx-auto px-4 md:px-12 w-full">
+        <div className="relative max-w-[1600px] mx-auto px-4 md:px-12 lg:px-16 w-full">
           {/* Breadcrumb */}
           <div className="flex items-center gap-2 mb-8">
             <button onClick={() => navigate("/")}
@@ -330,7 +330,7 @@ export default function About() {
           backgroundSize: "28px 28px",
         }} />
 
-        <div className="max-w-6xl mx-auto px-4 md:px-12 relative">
+        <div className="max-w-[1600px] mx-auto px-4 md:px-12 lg:px-16 relative">
           <Reveal>
             <div className="text-center mb-16 md:mb-24">
               <div className="inline-flex items-center gap-4 mb-5">
@@ -387,7 +387,7 @@ export default function About() {
 
       {/* ── CORE EXPERTISE ─────────────────────────────────────────────── */}
       <section id="about-expertise" className="bg-[#050505] py-20 md:py-28">
-        <div className="max-w-7xl mx-auto px-4 md:px-12">
+        <div className="max-w-[1600px] mx-auto px-4 md:px-12 lg:px-16">
           <Reveal>
             <div className="flex items-center gap-3 mb-3">
               <div className="h-px w-10 bg-[#ffc812]" />
@@ -433,7 +433,7 @@ export default function About() {
 
       {/* ── TEAM ───────────────────────────────────────────────────────── */}
       <section id="about-team" className="bg-[#0a0a0a] py-20 md:py-28">
-        <div className="max-w-7xl mx-auto px-4 md:px-12">
+        <div className="max-w-[1600px] mx-auto px-4 md:px-12 lg:px-16">
           <Reveal>
             <div className="text-center mb-14">
               <div className="inline-flex items-center gap-4 mb-4">
@@ -524,7 +524,7 @@ export default function About() {
           </span>
         </div>
 
-        <div className="max-w-7xl mx-auto px-4 md:px-12 relative flex flex-col md:flex-row items-center justify-between gap-10">
+        <div className="max-w-[1600px] mx-auto px-4 md:px-12 lg:px-16 relative flex flex-col md:flex-row items-center justify-between gap-10">
           <Reveal>
             <div>
               <p className="text-[10px] tracking-[0.4em] uppercase text-[#ffc812] mb-3" style={{ fontFamily: "Michroma, sans-serif" }}>

@@ -213,9 +213,9 @@ export default function CalculatorDetail() {
 
         <div
           style={{
-            maxWidth: 1280,
+            maxWidth: 1600,
             margin: "0 auto",
-            padding: "52px 48px 16px",
+            padding: "52px 64px 16px",
             position: "relative",
           }}
         >
@@ -273,7 +273,7 @@ export default function CalculatorDetail() {
       >
         <div
           className="cd-tab-wrapper"
-          style={{ maxWidth: 1280, margin: "0 auto", padding: "0 48px", position: "relative" }}
+          style={{ maxWidth: 1600, margin: "0 auto", padding: "0 64px", position: "relative" }}
         >
           <div
             className="cd-tab-scroll"
@@ -348,7 +348,7 @@ export default function CalculatorDetail() {
       {/* ── CONTENT ─────────────────────────────────────────────────────── */}
       <div style={{ background: "#fff", minHeight: "60vh" }}>
         <div
-          style={{ maxWidth: 1280, margin: "0 auto", padding: "20px 48px" }}
+          style={{ maxWidth: 1600, margin: "0 auto", padding: "20px 64px" }}
           className="cd-panel-enter"
           key={active} // remount animation when tab changes
         >
@@ -558,9 +558,9 @@ export default function CalculatorDetail() {
 
         <div
           style={{
-            maxWidth: 1280,
+            maxWidth: 1600,
             margin: "0 auto",
-            padding: "0 48px",
+            padding: "0 64px",
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",

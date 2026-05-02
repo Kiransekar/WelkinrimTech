@@ -211,7 +211,7 @@ export default function Calculators() {
           {/* Gradient overlay */}
           <div className="absolute inset-0 bg-gradient-to-br from-black via-black/95 to-black/90" />
           
-          <div className="relative max-w-7xl mx-auto px-4 md:px-12">
+          <div className="relative max-w-[1600px] mx-auto px-4 md:px-12 lg:px-16">
             {/* Accent stripe */}
             <div className="w-12 h-0.5 bg-[#ffc812] mb-6" />
             
@@ -263,7 +263,7 @@ export default function Calculators() {
 
         {/* ── Search and Filter Bar ── */}
         <div className="bg-[#0a0a0a]/80 backdrop-blur-md border-b border-white/5 sticky top-[60px] md:top-[72px] z-20 shadow-xl">
-          <div className="max-w-7xl mx-auto px-4 md:px-12 py-5">
+          <div className="max-w-[1600px] mx-auto px-4 md:px-12 lg:px-16 py-5">
             <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
               {/* Filter tabs */}
               <div className="flex flex-wrap gap-2 order-2 lg:order-1">
@@ -338,7 +338,7 @@ export default function Calculators() {
         </div>
 
         {/* ── Calculator grid ── */}
-        <div className="max-w-7xl mx-auto px-4 md:px-12 py-10 md:py-14">
+        <div className="max-w-[1600px] mx-auto px-4 md:px-12 lg:px-16 py-10 md:py-14">
           {/* Section header showing current filter */}
           <div className="flex items-center justify-between mb-6">
             <div>
@@ -397,7 +397,7 @@ export default function Calculators() {
         </div>
 
         {/* ── Disclaimer ── */}
-        <div className="max-w-7xl mx-auto px-4 md:px-12 pb-12">
+        <div className="max-w-[1600px] mx-auto px-4 md:px-12 lg:px-16 pb-12">
           <div className="flex items-start gap-3 bg-[#ffc812]/[0.03] border border-[#ffc812]/10 px-4 py-3">
             <svg className="w-4 h-4 text-[#ffc812] flex-shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" />

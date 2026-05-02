@@ -190,7 +190,7 @@ export default function ProductsSection() {
 
   return (
     <section id="products" className="py-24 bg-white scroll-mt-[72px]">
-      <div className="max-w-7xl mx-auto px-6 md:px-12">
+      <div className="max-w-[1600px] mx-auto px-4 md:px-12 lg:px-16">
 
         {/* Header */}
         <div className="mb-12 flex flex-col md:flex-row md:items-end md:justify-between gap-6">
