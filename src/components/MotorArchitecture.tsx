@@ -47,7 +47,7 @@ export default function MotorArchitecture() {
     <section
       id="process"
       ref={containerRef}
-      className="w-full bg-[#050505] py-32 overflow-hidden border-t border-white/[0.03]"
+      className="w-full bg-[#050505] py-16 md:py-20 overflow-hidden border-t border-white/[0.03]"
     >
       <div className="max-w-[1600px] mx-auto px-4 md:px-12 lg:px-16">
         
@@ -56,7 +56,7 @@ export default function MotorArchitecture() {
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
           transition={{ duration: 1, ease: "easeOut" }}
-          className="mb-24"
+          className="mb-12 md:mb-14"
         >
           <span className="px-5 py-2 rounded-full bg-[#ffc812]/5 text-[#ffc812] text-[10px] tracking-[0.3em] font-mono uppercase mb-6 inline-block border border-[#ffc812]/15">
             Operational Workflow
