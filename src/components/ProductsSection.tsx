@@ -18,7 +18,7 @@ function ProductCard({ p, expanded, onToggle }: {
   const cfg = SERIES_CFG[p.series];
 
   return (
-    <div className={`flex flex-col border transition-all duration-300 ${expanded ? "border-gray-300 shadow-xl" : "border-gray-100 hover:border-gray-300 hover:shadow-md"
+    <div className={`flex flex-col h-full border transition-all duration-300 ${expanded ? "border-gray-300 shadow-xl" : "border-gray-100 hover:border-gray-300 hover:shadow-md"
       }`}>
 
       {/* Visual header */}

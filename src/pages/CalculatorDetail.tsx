@@ -603,7 +603,7 @@ export default function CalculatorDetail() {
                 lineHeight: 1.6,
               }}
             >
-              Welkinrim provides dyno-tested motor data sheets for all product variants.
+              Welkinrim provides thrust test motor data sheets for all product variants.
             </p>
           </div>
 

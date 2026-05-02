@@ -304,7 +304,7 @@ export default function About() {
               <span className="text-[#ffc812]">Motor & Drive</span><br />
               Technology
             </h1>
-            <p className="text-white/40 text-sm md:text-base max-w-xl leading-relaxed mt-6" style={{ fontFamily: "Lexend, sans-serif" }}>
+            <p className="text-white/40 text-sm md:text-base max-w-xl leading-relaxed mt-6 text-justify" style={{ fontFamily: "Lexend, sans-serif" }}>
               From a service-based power electronics startup to India's indigenous drone
               propulsion OEM — building motors and drives that defend, deliver, and explore.
             </p>
@@ -402,8 +402,8 @@ export default function About() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {EXPERTISE_AREAS.map((area, i) => (
-              <Reveal key={area.title} delay={i * 100}>
-                <div className="border border-white/10 p-6 h-full hover:border-[#ffc812]/20 hover:bg-white/[0.06] transition-all duration-400 group relative overflow-hidden bg-white/[0.03] backdrop-blur-sm">
+              <Reveal key={area.title} delay={i * 100} className="h-full">
+                <div className="border border-white/10 p-6 h-full hover:border-[#ffc812]/20 hover:bg-white/[0.06] transition-all duration-400 group relative overflow-hidden bg-white/[0.03] backdrop-blur-sm flex flex-col">
                   {/* Background number */}
                   <span className="absolute -right-2 -top-4 text-[80px] font-black text-white/[0.03] leading-none select-none pointer-events-none group-hover:text-[#ffc812]/[0.08] group-hover:-translate-y-2 transition-all duration-500"
                         style={{ fontFamily: "Michroma, sans-serif" }}>
@@ -454,12 +454,12 @@ export default function About() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {TEAM.map((member, i) => (
-              <Reveal key={member.name} delay={i * 80}>
-                <div className="bg-white/[0.03] backdrop-blur-sm border border-white/10 overflow-hidden hover:bg-white/[0.06] hover:border-[#ffc812]/20 transition-all duration-400 group">
+              <Reveal key={member.name} delay={i * 80} className="h-full">
+                <div className="bg-white/[0.03] backdrop-blur-sm border border-white/10 overflow-hidden hover:bg-white/[0.06] hover:border-[#ffc812]/20 transition-all duration-400 group h-full flex flex-col">
                   {/* Top bar */}
                   <div className="h-1 bg-gradient-to-r from-[#ffc812] to-[#ffc812]/30 group-hover:to-[#ffc812] transition-all duration-500" />
 
-                  <div className="p-6">
+                  <div className="p-6 flex-1 flex flex-col">
                     {/* Avatar */}
                     <div className="w-16 h-16 bg-black flex items-center justify-center mb-5 relative overflow-hidden group-hover:shadow-[0_0_20px_rgba(255,200,18,0.15)] transition-shadow duration-300">
                       {member.image ? (

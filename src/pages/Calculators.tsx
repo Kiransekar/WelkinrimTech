@@ -33,7 +33,7 @@ function CalculatorCard({ calc }: CalculatorCardProps) {
     <button
       onClick={() => isLive && navigate(`/calculators/detail/${calc.id}`)}
       disabled={!isLive}
-      className={`text-left border transition-all duration-300 flex flex-col group ${
+      className={`text-left border transition-all duration-300 flex flex-col h-full group ${
         isLive
           ? "border-white/10 hover:border-[#ffc812]/40 hover:shadow-2xl hover:shadow-[#ffc812]/5 cursor-pointer bg-[#080808]"
           : "border-white/5 opacity-40 cursor-default bg-[#050505]"
