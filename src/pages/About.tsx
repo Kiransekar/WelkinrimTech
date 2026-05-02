@@ -309,7 +309,7 @@ export default function About() {
             </h1>
             <p className="text-white/40 text-sm md:text-base max-w-xl leading-relaxed mt-6 text-justify" style={{ fontFamily: "Lexend, sans-serif" }}>
               From a service-based power electronics startup to India's indigenous drone
-              propulsion OEM — building motors and drives that defend, deliver, and explore.
+              propulsion OEM — building motors and drives that explore, deliver and defend.
             </p>
           </div>
 

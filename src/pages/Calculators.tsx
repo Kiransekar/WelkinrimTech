@@ -58,23 +58,7 @@ function CalculatorCard({ calc }: CalculatorCardProps) {
           <Icon />
         </div>
 
-        {/* Status badge */}
-        <div
-          className="absolute top-3 right-3 px-2 py-0.5"
-          style={{ background: isLive ? calc.accent : "#222", transform: "skewX(-10deg)" }}
-        >
-          <span
-            className="text-[7px] font-black tracking-widest uppercase"
-            style={{
-              fontFamily: "Michroma, sans-serif",
-              color: isLive ? calc.textColor : "#666",
-              display: "inline-block",
-              transform: "skewX(10deg)",
-            }}
-          >
-            {isLive ? calc.tag : "Soon"}
-          </span>
-        </div>
+        {/* Badges removed as per request */}
 
         {/* Live indicator */}
         {isLive && (
@@ -85,30 +69,9 @@ function CalculatorCard({ calc }: CalculatorCardProps) {
           </div>
         )}
 
-        {/* Popular badge */}
-        {calc.popular && (
-          <div className="absolute bottom-3 right-3">
-            <span className="text-[6px] bg-[#ffc812] text-black px-1.5 py-0.5 font-bold tracking-wider uppercase"
-                  style={{ fontFamily: "Michroma, sans-serif" }}>
-              Popular
-            </span>
-          </div>
-        )}
+        {/* Popular badge removed */}
 
-        {/* Hover overlay */}
-        {isLive && (
-          <div
-            className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-            style={{ background: "rgba(255, 200, 18, 0.02)" }}
-          >
-            <div className="border border-[#ffc812]/20 bg-black/40 backdrop-blur-sm px-4 py-1.5" style={{ transform: "skewX(-10deg)" }}>
-              <span className="text-[9px] text-[#ffc812] tracking-widest uppercase"
-                    style={{ fontFamily: "Michroma, sans-serif", display: "inline-block", transform: "skewX(10deg)" }}>
-                Open Module →
-              </span>
-            </div>
-          </div>
-        )}
+        {/* Hover overlay removed as per request */}
       </div>
 
       {/* Card body */}
@@ -117,7 +80,7 @@ function CalculatorCard({ calc }: CalculatorCardProps) {
            style={{ fontFamily: "Michroma, sans-serif", color: calc.accent }}>
           {calc.label}
         </p>
-        <h3 className="text-sm font-bold text-white mb-2"
+        <h3 className="text-sm font-bold text-white mb-2 uppercase"
             style={{ fontFamily: "Michroma, sans-serif" }}>
           {calc.tag}
         </h3>

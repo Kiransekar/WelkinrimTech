@@ -158,10 +158,11 @@ export default function ProductDetail() {
 
                 {/* Product name — large, bold */}
                 <h1
-                  className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-[1.05] mb-2 uppercase"
+                  className="text-4xl md:text-5xl lg:text-6xl font-bold mb-2 uppercase"
                   style={{ fontFamily: "Michroma, sans-serif" }}
                 >
-                  {product.name}
+                  <span style={{ color: cfg.accent }}>{product.name.split(' ')[0]}</span>
+                  <span className="text-white"> {product.name.split(' ').slice(1).join(' ')}</span>
                 </h1>
 
                 {/* Model subtitle */}
@@ -544,8 +545,10 @@ export default function ProductDetail() {
                style={{ fontFamily: "Michroma, sans-serif" }}>
               Ready to Order?
             </p>
-            <h3 className="text-2xl font-bold text-white" style={{ fontFamily: "Michroma, sans-serif" }}>
-              Get a quote for {product.model}
+            <h3 className="text-2xl font-bold" style={{ fontFamily: "Michroma, sans-serif" }}>
+              <span className="text-white">Get a quote for </span>
+              <span style={{ color: "#ffc812" }}>{product.model.split(' ')[0]}</span>
+              <span className="text-white"> {product.model.split(' ').slice(1).join(' ')}</span>
             </h3>
             <p className="text-sm text-white/40 mt-1">Custom specs · Volume pricing · OEM available</p>
           </div>
@@ -594,8 +597,9 @@ export default function ProductDetail() {
                   <div className="p-3">
                     {/* Swap: product name is now larger text-xs, spec number is smaller text-[10px] */}
                     <p className="text-xs font-bold truncate mb-0.5"
-                       style={{ fontFamily: "Michroma, sans-serif", color: cfg.accent }}>
-                      {p.name}
+                       style={{ fontFamily: "Michroma, sans-serif" }}>
+                      <span style={{ color: cfg.accent }}>{p.name.split(' ')[0]}</span>
+                      <span className="text-black"> {p.name.split(' ').slice(1).join(' ')}</span>
                     </p>
                     <p className="text-[10px] tracking-widest uppercase text-black font-black" style={{ fontFamily: "Michroma, sans-serif" }}>
                       {p.keySpecs[0].value}
