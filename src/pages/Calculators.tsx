@@ -198,7 +198,7 @@ export default function Calculators() {
     <>
       <div className="min-h-screen bg-[#050505]">
         {/* ── Page header ── */}
-        <div className="relative bg-black pt-24 md:pt-28 pb-14 md:pb-20 overflow-hidden">
+        <div className="relative bg-black pt-28 md:pt-32 pb-14 md:pb-20 overflow-hidden">
           {/* Subtle grid background */}
           <div
             className="absolute inset-0 opacity-[0.04]"

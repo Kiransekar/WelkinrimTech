@@ -265,7 +265,7 @@ export default function About() {
   return (
     <>
       {/* ── HERO ───────────────────────────────────────────────────────── */}
-      <section id="about-hero" className="relative bg-[#0a0a0a] pt-28 md:pt-36 pb-20 md:pb-32 overflow-hidden min-h-[70vh] flex items-end">
+      <section id="about-hero" className="relative bg-[#0a0a0a] pt-28 md:pt-32 pb-20 md:pb-32 overflow-hidden min-h-[70vh] flex items-end">
         {/* Grid texture */}
         <div className="absolute inset-0 opacity-[0.03]" style={{
           backgroundImage: `linear-gradient(#ffc812 1px, transparent 1px), linear-gradient(90deg, #ffc812 1px, transparent 1px)`,
@@ -279,6 +279,9 @@ export default function About() {
         </div>
 
         <div className="relative max-w-[1600px] mx-auto px-4 md:px-12 lg:px-16 w-full">
+          {/* Accent stripe */}
+          <div className="w-12 h-0.5 bg-[#ffc812] mb-6" style={{ animation: "about-stripe 0.6s cubic-bezier(0.22,1,0.36,1) both" }} />
+
           {/* Breadcrumb */}
           <div className="flex items-center gap-2 mb-8">
             <button onClick={() => navigate("/")}
@@ -295,7 +298,7 @@ export default function About() {
 
           {/* Large title */}
           <div className="mb-6">
-            <div className="w-16 h-0.5 bg-[#ffc812] mb-6" style={{ animation: "about-stripe 0.6s cubic-bezier(0.22,1,0.36,1) both" }} />
+
             <p className="text-[10px] tracking-[0.4em] uppercase text-[#ffc812]/80 mb-3" style={{ fontFamily: "Michroma, sans-serif" }}>
               Indigenously Developed
             </p>

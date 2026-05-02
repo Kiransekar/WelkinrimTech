@@ -117,8 +117,26 @@ export default function Products() {
     <>
       <div className="min-h-screen bg-[#050505]">
         {/* ── Page header ── */}
-        <div className="bg-black pt-20 md:pt-24 pb-4 md:pb-6">
-          <div className="max-w-[1600px] mx-auto px-4 md:px-12 lg:px-16 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="bg-black pt-28 md:pt-32 pb-4 md:pb-6">
+          <div className="max-w-[1600px] mx-auto px-4 md:px-12 lg:px-16 flex flex-col">
+            {/* Accent stripe */}
+            <div className="w-12 h-0.5 bg-[#ffc812] mb-6" />
+
+            {/* Breadcrumb */}
+            <div className="flex items-center gap-2 mb-6">
+              <button onClick={() => navigate("/")}
+                className="text-[#ffc812]/60 hover:text-[#ffc812] text-[10px] tracking-widest uppercase transition-colors flex items-center gap-1 group"
+                style={{ fontFamily: "Michroma, sans-serif" }}>
+                <svg className="w-3 h-3 transition-transform group-hover:-translate-x-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <polyline points="15 18 9 12 15 6" />
+                </svg>
+                Home
+              </button>
+              <span className="text-white/20 text-[10px]">/</span>
+              <span className="text-[#ffc812] text-[10px] tracking-widest uppercase" style={{ fontFamily: "Michroma, sans-serif" }}>Products</span>
+            </div>
+
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <h1 className="text-2xl md:text-4xl lg:text-5xl font-bold text-white leading-tight" style={{ fontFamily: "Michroma, sans-serif" }}>
               Product <span className="text-[#ffc812]">Catalogue</span>
             </h1>
@@ -138,6 +156,7 @@ export default function Products() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
               </div>
+            </div>
             </div>
           </div>
         </div>
